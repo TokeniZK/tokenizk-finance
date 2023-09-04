@@ -9,7 +9,7 @@ TokeniZK Finance is a decentralized launchpad where you could launch your own zk
 
 ​									Proposal: https://zkignite.minaprotocol.com/zkignite/zkapp-track-cohort-2/funding/suggestion/516
  
-NOTE: under development currently, cannot used at production.
+NOTE: yet under development currently, cannot be used on production.
 
 ## Description
 
