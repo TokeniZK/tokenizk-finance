@@ -31,7 +31,7 @@ Please go to [doc](./docs/README.md) for more details.
 
 ```bash
 
-git clone https://github.com/tokenizk/tokenizk-network.git
+git clone https://github.com/TokeniZK/tokenizk-finance.git
 
 cd tokenizk-network
 
