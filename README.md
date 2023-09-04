@@ -25,7 +25,7 @@ Like,We need to develop &deploy a smart contract mannually and make the calculat
 
 Therefore, A suite of tools is necessary to help the common users create their own tokens in a fast, simple and cheap way, with no prior knowledge on code and zkp required and 100% decentralized.
 
-Please go to [doc](./docs/README.md) for more details.
+Please go to [doc](./docs/TokeniZK-Finance-proposal516-zkapp-track.md) for more details.
 
 ## Quick start
 
