@@ -1,7 +1,7 @@
 # TokeniZK Finance
 
 <div align="center">
-<img align='center' src="./docs/img/tokenizk-brand3.png" height="60%" width="60%">
+<img align='center' src="./docs/img/tokenizk-brand2.png" height="60%" width="60%">
 </div>
 
 NOTE: under development currently, cannot used at production.
