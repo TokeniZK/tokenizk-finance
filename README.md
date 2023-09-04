@@ -13,6 +13,18 @@ NOTE: under development currently, cannot used at production.
 
 ## Description
 
+ERC-style Tokens have greatly contributed to the prosperity of the Ethereum ecosystem by providing a flexible, and standardized way to create new custom digital assets, then facilitating application development, improving liquidity, and interoperability.
+
+According to statistics, there are an significant number of users and teams who want to issue their own tokens.However, issuing a secure and fully-custom token is difficult for people without enough knowledge on programming and cryptography tech.This pain point motivates the birth of many popular online tools/platforms, such as Pinksale,Dxsale,etc, providing convinient flow for people to create or sell, auto list on dex custom tokens, which booms the onchain ecosystem.
+
+Samely, Custom Token on Mina matters much to the ecosystem.Specially,Custom Token is designed as an underlying native property on Mina chain, which hold similar capabilities as ERC-style fungible token and natively works with Zero Knowledge Proof, further meaning it could be more easily used within privacy-preserving scenarios.
+
+However,the developing/interacting pattern of Mina’s natively supporting custom token performs distinguishingly differently with ERC-style Fungible Token. Like the fine distinction of token account and regular user account. Like,why transfer/burn operations on custom token require proof authorization or even  token owner’s signature authorization. 
+
+Like,We need to develop &deploy a smart contract mannually and make the calculation offchain and verification onchain. Like,The limited onchain storage of token account makes many usages like Airdrop/Vote,etc much dependent on offchain storage,further meaning we also need to solve the issue of data race condition. Like we need to make code audit on smart contract(circuits)... You can see, issuing a custom token requires developers with much knowledge on not only the mechanism of underlying Mina chain but also complicated zero knowledge proof. Apparently this also must be an more enormous challenge for the common users.
+
+Therefore, A suite of tools is necessary to help the common users create their own tokens in a fast, simple and cheap way, with no prior knowledge on code and zkp required and 100% decentralized.
+
 Please go to [doc](./docs/README.md) for more details.
 
 ## Quick start
