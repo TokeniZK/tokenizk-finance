@@ -55,7 +55,7 @@
     "snarkyjs": "0.12.*"
   },
   "dependencies": {
-    "@tokenizk/types": "^0.1.0",
-    "@tokenizk/util": "^0.1.0"
+    "@tokenizk/types": "^0.0.1",
+    "@tokenizk/util": "^0.0.1"
   }
 }

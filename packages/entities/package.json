@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "typeorm": "^0.2.45",
-    "@tokenizk/types": "0.1.0"
+    "@tokenizk/types": "^0.0.1",
+    "@tokenizk/util": "^0.0.1"
   }
 }
