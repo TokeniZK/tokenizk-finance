@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "libs:build": "npm run lib:build -w @tokenizk/types && npm run lib:build -w @tokenizk/util && npm run lib:build -w @tokenizk/merkle-tree && npm run lib:build -w @tokenizk/contracts && npm run lib:build -w @tokenizk/entities",
-    "webUI:dev": "npm run serve -w @tokenizk/ui",
+    "webUI:dev": "npm run dev -w @tokenizk/web-ui",
     "coreService:dev": "npm run serve -w @tokenizk/core-service",
     "apiGateway:dev": "npm run serve -w @tokenizk/api-gateway",
     "proofGen:dev": "npm run serve -w @tokenizk/proof-gen",
