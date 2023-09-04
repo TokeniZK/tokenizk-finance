@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "deployAliases": {},
+  "networks": {
+    "berkeley": {
+      "mina": "https://berkeley.minascan.io/graphql",
+      "archive": "https://archive-node-api.p42.xyz/"
+    }
+  }
+}
