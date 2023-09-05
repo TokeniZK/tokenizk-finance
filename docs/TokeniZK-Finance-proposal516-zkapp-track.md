@@ -559,30 +559,6 @@ Within three months, we will carry out a fully functional launchpad platform, im
    * Support extra functionalities listed at milestone3
 
 
-
-### **Proposer Experience**
-
-I has been an senior frontend engineer in KONKA GROUP for 5years, currently work as an freelancer & online-educator focusing on frontend and blockchain technology. The below are some of my teaching materials or cases: 
-
-https://github.com/Yoga2015/CSS3-Tutorial
-
-https://github.com/Yoga2015/JavaScriptGuide
-
-https://github.com/Yoga2015/ES6-syntax-tutorial
-
-https://github.com/Yoga2015/jQueryBasicSyntax
-
-https://github.com/Yoga2015/Vue-syntax-tutorial
-
-https://github.com/Yoga2015/vue3-tutorial
-
-I have been joining blockchain industry for 4years, familiar with Solidity/Circom/Cairo as well as ‘ZK+Dapp’ development pattern, wherein I tried the promotion on Starknet-Cairo language in China in early 2022.
-
-http://suo.nz/36ciLt
-
-I have been joining Mina community for 2 years, with continuous attention and study on the upgrade of SnarkyJS library.
-
-
 ### **Risks**
 
 We conclude risks sources as below for our project:
@@ -621,6 +597,37 @@ Custom Token Issuing to the public might challenge regulation of some countries.
 
 ### **Team Members**
 
-// TODO
+#### Proposer Experience
+
+I has been an senior frontend engineer in KONKA GROUP for 5years, currently work as an freelancer & online-educator focusing on frontend and blockchain technology. The below are some of my teaching materials or cases: 
+
+https://github.com/Yoga2015/CSS3-Tutorial
+
+https://github.com/Yoga2015/JavaScriptGuide
+
+https://github.com/Yoga2015/ES6-syntax-tutorial
+
+https://github.com/Yoga2015/jQueryBasicSyntax
+
+https://github.com/Yoga2015/Vue-syntax-tutorial
+
+https://github.com/Yoga2015/vue3-tutorial
+
+I have been joining blockchain industry for 4years, familiar with Solidity/Circom/Cairo as well as ‘ZK+Dapp’ development pattern, wherein I tried the promotion on Starknet-Cairo language in China in early 2022.
+
+http://suo.nz/36ciLt
+
+I have been joining Mina community for 2 years, with continuous attention and study on the upgrade of SnarkyJS library.
+
+
+#### teammates info
+Tank Tang, Application Architect for 7years, ever been working for China large state-owned bank and conducting development of a large-scale e-commerce shopping platforms, and with rich experience on Dapp development. He is responsiable for the whole architecture design of TokeniZK Platform as well as  system security.
+
+http://www.studycairo.cn/
+
+Cherry Chen, Senior Frontend Engineer for 4years, responsable for the UI design and frontend development of TokeniZK Platform.
+
+https://gitee.com/Trance_CrystalWorld
+
 
 
