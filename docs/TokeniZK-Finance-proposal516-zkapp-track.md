@@ -235,19 +235,19 @@ A project team(custom token owner) might launch multi-round presale activities f
 
 At each preSale contract, before the preSale activity starts, token owner could only configure rules/parameters as listed at ‘solution’section.During this, it’s worth noting on the parameters below:
 
-**whitelist：**
+* **whitelist：**
 
-​		Whitelist means the membership requirement to participate the preSale activity .Token owner would list on page all members’ addresses within whitelist,  based on which web client would **defaultly** construct locally a merkle tree in memory and compute the root as parameter to be configured later into the **TokeniZkPresale** contract. 
+  Whitelist means the membership requirement to participate the preSale activity .Token owner would list on page all members’ addresses within whitelist,  based on which web client would **defaultly** construct locally a merkle tree in memory and compute the root as parameter to be configured later into the **TokeniZkPresale** contract. 
 
-​	Regarding whitelist,defaultly TokeniZK platform just stores all members into backend storage as normal sales info, without help on the merkle tree construction/maintainance on it as well as corresponding merkle proof query service during activity for members in whitelist. It means in case the whitelist’s size is large, such as larger than 500, it might cause really much memory/cpu/time resource to construct the whole merkle tree on each presale  investor’s local device, which impacts investor’s experience.To avoid this, token owner could choose and pay for **Outsourced Computing Service** provided by platform, then platform backend will help construct/maintain the merkle tree and provide proof query service for investors during contribution.
+  Regarding whitelist,defaultly TokeniZK platform just stores all members into backend storage as normal sales info, without help on the merkle tree construction/maintainance on it as well as corresponding merkle proof query service during activity for members in whitelist. It means in case the whitelist’s size is large, such as larger than 500, it might cause really much memory/cpu/time resource to construct the whole merkle tree on each presale  investor’s local device, which impacts investor’s experience.To avoid this, token owner could choose and pay for **Outsourced Computing Service** provided by platform, then platform backend will help construct/maintain the merkle tree and provide proof query service for investors during contribution.
 
-**vesting schedule for contributors：**
+* **vesting schedule for contributors：**
 
-​		Vesting For Contributors is a feature on preSale that helps projects to lock away the tokens of presale investors for a period of time. Imaging in the future,it could work for preventing presale investors from selling all their tokens at once at listing time, which causes too much sell pressure and crashes the price.
-
-​		At Standard Milestone, PreSale contract leverages Mina’s native time-locking account feature for vesting schedule, which means investors could only utilize token accounts without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
-
-​		At Advanced Milesone, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for contributors.
+  Vesting For Contributors is a feature on preSale that helps projects to lock away the tokens of presale investors for a period of time. Imaging in the future,it could work for preventing presale investors from selling all their tokens at once at listing time, which causes too much sell pressure and crashes the price.
+  
+  $\underline{\text{At Standard Milestone}}$, PreSale contract leverages Mina’s native time-locking account feature for vesting schedule, which means investors could only utilize token accounts without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
+  
+  $\underline{\text{At Advanced Milesone}}$, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for contributors.
 
 In additions, Currently TokeniZk just supports Mina as contribution currency.
 
@@ -260,14 +260,15 @@ In additions, Currently TokeniZk just supports Mina as contribution currency.
 It’s a smart contract working for project team to make a private sale from specified investors or the public and deployed at project owner’s given **regular account** with basic configurations as talked at ‘solution’section. During this, it’s worth noting on the parameters below:
 * **whitelist：**
 
-​		As the same as the one at ‘**TokeniZkPresale**’.
+  As the same as the one at ‘**TokeniZkPresale**’.
 
 * **vesting schedule for project team：**
-​		Vesting For project team is a feature on Private Sale that helps to lock away the assets from investors to project team for a period of time to limit the asset usage. This feature helps projects establish an increased level of trust with their investors.
 
-​			<u>At Standard Milestone</u>, PrivateSale contract leverages Mina’s native time-locking account feature for vesting schedule, which means one investor could only utilize token account without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
+  Vesting For project team is a feature on Private Sale that helps to lock away the assets from investors to project team for a period of time to limit the asset usage. This feature helps projects establish an increased level of trust with their investors.
 
-   <u>At Advanced Milesone</u>, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for project team.
+  $\underline{\text{At Standard Milestone}}$, PrivateSale contract leverages Mina’s native time-locking account feature for vesting schedule, which means one investor could only utilize token account without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
+
+  $\underline{\text{At Advanced Milesone}}$, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for project team.
 
 In additions, Currently TokeniZk just supports Mina as contribution currency.
 
