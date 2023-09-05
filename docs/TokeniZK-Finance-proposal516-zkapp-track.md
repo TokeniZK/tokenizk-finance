@@ -1,10 +1,10 @@
-## TokeniZK Finance -- A Launchpad for ZKToken on Mina
+# TokeniZK Finance -- The First Verifiable LaunchPad on Mina, with No-code.
 
-​																			**By Yoga#3374**
+**By Yoga#3374**
 
 
 
-### Briefly
+## Briefly
 
 TokeniZK Finance is a decentralized launchpad where you could launch your own zk-Token and create your own initial token sale. It provides secure smart contract templates with flexible configuration and complete tool suits for token management, where you could finish all operations simply in several clicks, without knowledge requirement about code & zkp.
 
@@ -17,7 +17,7 @@ TokeniZK Finance is a decentralized launchpad where you could launch your own zk
 
  
 
-### **Problem**
+## **Problem**
 
 ERC-style Tokens have greatly contributed to the prosperity of the Ethereum ecosystem by providing a flexible, and standardized way to create new custom digital assets, then facilitating application development, improving liquidity, and interoperability.
 
@@ -33,7 +33,7 @@ Therefore, A suite of tools is necessary to help the common users create their o
 
 
 
-### **Solution**
+## **Solution**
 
 With good reference of existing professional tools and platfroms such Pinksale and DxSale，we team expects to carry out the first launchpad platform focusing on ZK-Token,which we think makes a lot of sense for the popularity of Mina custom tokens as well as future onchain ecosystem prosperity. Our product is named as **TokeniZK Finance**, on which you can easily tokenize your idea with zkp and distribute them to fans.
 
@@ -85,13 +85,13 @@ Including withdraw contribution if Softcap is not reached
 
 PrivateSale works for project team to make a private sale from specified investors or the public. You could pre-configure it on **sales amount, target currency, softcap/hardcap, minimumBuy/maximumBuy,startTime/endTime, whitelist**, vesting schedule for project team, etc. 
 
-​	①  investment operations and information on projects and team.
+ ​	① investment operations and information on projects and team.
 
-​	② PrivateSale Listing page
+​	 ② PrivateSale Listing page
 
-​	③ PrivateSale Detail Page
+​ 	③ PrivateSale Detail Page
 
-​	④PrivateSale contribution
+​	 ④ PrivateSale contribution
 
 Including withdraw contribution if Softcap is not reached
 
@@ -101,9 +101,9 @@ Including withdraw contribution if Softcap is not reached
 
 Fair Airdrop tool, as each custom token’s exclusive unique **Intermediary role**(will explained below), helps project team to record related contributors and token distribution. 
 
-​	① configure the Airdrop
+ ​	① configure the Airdrop
 
-​	② claim Token
+ ​	② claim Token
 
  
 
@@ -111,9 +111,9 @@ Fair Airdrop tool, as each custom token’s exclusive unique **Intermediary role
 
 TokenLocker works as each custom token’s exclusive unique **Intermediary role**(will explained below) for vesting project team and contributors or even the transfer scenario where one user vests another user. A TokenLocker also could be optionally created later after or during the creation of each Presale, Private Sale and Fair Airdrop.
 
-​	① configure Vesting Rules
+ ​	① configure Vesting Rules
 
-​	②  claim Token
+​	 ② claim Token
 
  
 
@@ -131,7 +131,7 @@ Pages for user to quickly review all his participated activities.
 
 #### **8.** **Advanced Airdrop Creation**(At Advanced milestone)
 
- Project teams could make some more fine configurations on airdrop .
+Project teams could make some more fine configurations on airdrop .
 
  
 
@@ -151,35 +151,26 @@ Pages for user to quickly review all his participated activities.
 
  
 
-To directly know more on above functions, You could go to our prototype UI design:
-
- [www.tokenizk.finance](http://www.tokenizk.finance)[.](http://www.tokenizk.finance.) (Note: the UI design is not yet finalized.)
+To directly know more on above functions, You could go to our prototype UI design: [www.tokenizk.finance](http://www.tokenizk.finance) (Note: the UI design is not yet finalized.)
 
 
 
 
 
-### **Architecture：**
+## **Architecture：**
 
 To support the basic features（*listed at Standard Milestones*）above, there are 7 core contract within TokeniZK, as below. 
 
 ![WPS图片(1)](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/7eba3f78-d708-47a1-af77-157250d01e1f)
 
 
-**TokeniZkBasicToken :** an smart contract template for custom token with the most basic functionalities.
-
-**TokeniZkPresale** : an contract template attached with specified Custom Token for **Normal Presales** and **Fair Presales** (with functions as talked above).
-
-**TokeniZkPrivateSale** : an smart contract template for PrivateSales (with functions as talked above).
-
-**TokeniZkAirdrop**:a contract deployed at specified Intermediary Token Account(described below) for Token Airdrop (as talked above).
-
-**TokeniZkLocker** : a contract deployed at specified Intermediary Token Account(described below) for Token Vesting schedule (as talked above).
-
-**TokeniZkUser** : a contract deployed at User Token Account for nullified asset mainly(described below).
-
-**TokeniZkFactory** : The entry of TokeniZK for user to deploy the contracts above, recording the meta data of the platform.
-
+* **TokeniZkBasicToken :** an smart contract template for custom token with the most basic functionalities
+* **TokeniZkPresale** : an contract template attached with specified Custom Token for **Normal Presales** and **Fair Presales** (with functions as talked above).
+* **TokeniZkPrivateSale** : an smart contract template for PrivateSales (with functions as talked above).
+* **TokeniZkAirdrop**:a contract deployed at specified Intermediary Token Account(described below) for Token Airdrop (as talked above).
+* **TokeniZkLocker** : a contract deployed at specified Intermediary Token Account(described below) for Token Vesting schedule (as talked above).
+* **TokeniZkUser** : a contract deployed at User Token Account for nullified asset mainly(described below).
+* **TokeniZkFactory** : The entry of TokeniZK for user to deploy the contracts above, recording the meta data of the platform.
 
 
 
@@ -202,15 +193,15 @@ A user (denoted as Token Creator) entering TokeniZK platform would be guided to 
 
 Note: **TokeniZkAirdrop,TokeniZkLocker** could be activated separately later.
 
-1. Invoke related methods on **TokeniZkFactory** to deploy specified smart contract template; 
+5. Invoke related methods on **TokeniZkFactory** to deploy specified smart contract template; 
 
-2. Broadcast the tx with signature and proof.
+6. Broadcast the tx with signature and proof.
 
 Note: Token Creatorneed pay for the whole flow(involving platform procedure fee, all token account creation fee, transaction fee, etc.
 
  
 
-#### Contribution Part:
+#### **Contribution Part**:
 
 A user enters the sales detail page, and input the contributing amount. Corresponding smartcontract would be invoked (during which all preset sale rules will be checked in circuit). Then tx.prove and trigger the wallet to make a signature and later broadcast it.
 
@@ -219,21 +210,21 @@ A user enters the sales detail page, and input the contributing amount. Correspo
 
 #### How TokeniZkBasicToken works
 
-Since there is not yet a standard custom token interface like ERC20-Token-Interface currently in Minaecosystem,a common custom token interface is designed within TokeniZK platform, along with animplementation named **TokeniZkBasicToken** , working as a template for user to issue his own customtokens.
+ Since there is not yet a standard custom token interface like ERC20-Token-Interface currently in Minaecosystem,a common custom token interface is designed within TokeniZK platform, along with animplementation named **TokeniZkBasicToken** , working as a template for user to issue his own customtokens.
 
-All custom tokens issued by this template can be integrated with other platform contracts likeTokeniZkPresale, TokeniZkPrivateSale, TokeniZkAirdrop, TokeniZKLocker, etc.
+ All custom tokens issued by this template can be integrated with other platform contracts likeTokeniZkPresale, TokeniZkPrivateSale, TokeniZkAirdrop, TokeniZKLocker, etc.
 
-**Tips**: More details within 'User Journey Flowcharts' section at proposal link above.
+ _Tips: More details within 'User Journey Flowcharts' section at proposal link above._
 
 
 
 #### How TokeniZkPresale works
 
-TokeniZkPresale works for two scenarioes: Normal Presale and Fair Presale, which are mainly differently on sales rules & parameters. Fair Presale is a special Normal Presale, where there is no hardcap, and everyone will have the same token price after it ends. It doesn't matter if you buy first or late. Token price = total raised Mina / total tokens for Fair Presale .
+ TokeniZkPresale works for two scenarioes: Normal Presale and Fair Presale, which are mainly differently on sales rules & parameters. Fair Presale is a special Normal Presale, where there is no hardcap, and everyone will have the same token price after it ends. It doesn't matter if you buy first or late. Token price = total raised Mina / total tokens for Fair Presale .
 
-A project team(custom token owner) might launch multi-round presale activities for its issuing custom token, each of which need re-deploy a new **TokeniZkPresale** contract on a newly generated exclusive address’s token account.
+ A project team(custom token owner) might launch multi-round presale activities for its issuing custom token, each of which need re-deploy a new **TokeniZkPresale** contract on a newly generated exclusive address’s token account.
 
-At each preSale contract, before the preSale activity starts, token owner could only configure rules/parameters as listed at ‘solution’section.During this, it’s worth noting on the parameters below:
+ At each preSale contract, before the preSale activity starts, token owner could only configure rules/parameters as listed at ‘solution’ section.During this, it’s worth noting on the parameters below:
 
 * **whitelist：**
 
@@ -249,15 +240,16 @@ At each preSale contract, before the preSale activity starts, token owner could 
   
   $\underline{\text{At Advanced Milesone}}$, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for contributors.
 
-In additions, Currently TokeniZk just supports Mina as contribution currency.
+ In additions, Currently TokeniZk just supports Mina as contribution currency.
 
-**Tips**: More details within 'User Journey Flowcharts' section at proposal link above.
+ _Tips: More details within 'User Journey Flowcharts' section at proposal link above._
 
 
 
 #### How TokeniZkPrivateSale works
 
-It’s a smart contract working for project team to make a private sale from specified investors or the public and deployed at project owner’s given **regular account** with basic configurations as talked at ‘solution’section. During this, it’s worth noting on the parameters below:
+ It’s a smart contract working for project team to make a private sale from specified investors or the public and deployed at project owner’s given **regular account** with basic configurations as talked at ‘solution’section. During this, it’s worth noting on the parameters below:
+
 * **whitelist：**
 
   As the same as the one at ‘**TokeniZkPresale**’.
@@ -270,85 +262,82 @@ It’s a smart contract working for project team to make a private sale from spe
 
   $\underline{\text{At Advanced Milesone}}$, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for project team.
 
-In additions, Currently TokeniZk just supports Mina as contribution currency.
+ In additions, Currently TokeniZk just supports Mina as contribution currency.
 
-**Tips**: More details within 'User Journey Flowcharts' section at proposal link above.
+ _Tips: More details within 'User Journey Flowcharts' section at proposal link above._
 
 
 
 #### How TokeniZkAirdrop works
 
-​		Due to the limited number of AccountUpdates within a transaction, within the Airdrop activity project team usually could not distribute tokens（push）to a number of users within a transaction at one time (additionally,the  number of recipients is also limited (fixed) each time due to the static circuit), thus users need to claim tokens back（pull）.This means that we need record all related users’addresses on chain (by storing merkle-tree root of offchain storage) for each airdrop activity.  Within Mina, Token accounts are specific for each type of custom token, meaning that a single public key can have many different types of token accounts.Thus, within TokeniZK, we  provide a specific common Intermediary Address intended to be deployed with TokeniZkAirdrop contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage.TokeniZkAirdrop contract could be optionally deployed later after or during the creation of each Presale, Private Sale.
+​	Due to the limited number of AccountUpdates within a transaction, within the Airdrop activity project team usually could not distribute tokens（push）to a number of users within a transaction at one time (additionally,the  number of recipients is also limited (fixed) each time due to the static circuit), thus users need to claim tokens back（pull）.This means that we need record all related users’addresses on chain (by storing merkle-tree root of offchain storage) for each airdrop activity.  Within Mina, Token accounts are specific for each type of custom token, meaning that a single public key can have many different types of token accounts.Thus, within TokeniZK, we  provide a specific common Intermediary Address intended to be deployed with TokeniZkAirdrop contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage.TokeniZkAirdrop contract could be optionally deployed later after or during the creation of each Presale, Private Sale.
 
-​		During the Airdrop, every recipient and his rewarding tokens will be stored as an **<u>Airdrop Asset Note</u>** (with fields:{recipient, amount,conditions,etc.},seen as UTXO)and emited as an Action (as well as Event)on chain by project team(ie.token owner).
+​	During the Airdrop, every recipient and his rewarding tokens will be stored as an **<u>Airdrop Asset Note</u>** (with fields:{recipient, amount,conditions,etc.},seen as UTXO)and emited as an Action (as well as Event)on chain by project team(ie.token owner).
 
-​		To record all recipients’addresses onchain for each airdrop activity, there is a exclusive unique merkle tree (denoted as **Airdrop-Tree**,an append-only merkle tree) as offchain storage for each custom token (**ie. each custom token has its own unique Airdrop-Tree**), being stored as the  tree root inside corresponding TokeniZkAirdrop contract account(ie. Intermediary token account). Meanwhile,TokeniZK platform will provide offchain storage maintainance service for all Airdrop trees from all custom tokens, including reducing actions of Airdrop activity and storing them into merkle tree as sequenced, and also publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform. And TokeniZK platform helps notify wallet-connected users on page to claim the airdroped tokens.
+​	To record all recipients’addresses onchain for each airdrop activity, there is a exclusive unique merkle tree (denoted as **Airdrop-Tree**,an append-only merkle tree) as offchain storage for each custom token (**ie. each custom token has its own unique Airdrop-Tree**), being stored as the  tree root inside corresponding TokeniZkAirdrop contract account(ie. Intermediary token account). Meanwhile,TokeniZK platform will provide offchain storage maintainance service for all Airdrop trees from all custom tokens, including reducing actions of Airdrop activity and storing them into merkle tree as sequenced, and also publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform. And TokeniZK platform helps notify wallet-connected users on page to claim the airdroped tokens.
 
-​		The recipients claim their tokens by nullifying corresponding Airdrop Asset Note(UTXO),to avoid double spending (as described at TokeniZkUser section below).
+​	The recipients claim their tokens by nullifying corresponding Airdrop Asset Note(UTXO),to avoid double spending (as described at TokeniZkUser section below).
 
-**Tips**: More details within 'User Journey Flowcharts' section at proposal link above.
+ _Tips: More details within 'User Journey Flowcharts' section at proposal link above._
 
 
 
 #### How TokeniZKLocker works
 
-As talked above, within TokeniZK, TokenLocker works as each custom token’s exclusive unique Intermediary role for vesting project team and contributors during sales/airdrops or even the regular Token-Transfer scenario where one user vests another user. Further, with TokenLocker <u>a user could recieve different batches of vesting assets regarding the same custom token!</u>
+ As talked above, within TokeniZK, TokenLocker works as each custom token’s exclusive unique Intermediary role for vesting project team and contributors during sales/airdrops or even the regular Token-Transfer scenario where one user vests another user. Further, with TokenLocker <u>a user could recieve different batches of vesting assets regarding the same custom token!</u>
 
 
-According to mina doc(https://docs.minaprotocol.com/zkapps/snarkyjs/time-locked-accounts), Mina account’s regular feature -- Time-locking, allows us to pay someone in MINA or other custom tokens subject to a vesting schedule.Tokens are initially locked and become available for withdrawal only after a certain time or gradually according to a specific schedule. **However, Only one vesting schedule can be specified per account and The vesting schedule cannot be changed during the  vesting period.**
+ According to mina doc(https://docs.minaprotocol.com/zkapps/snarkyjs/time-locked-accounts), Mina account’s regular feature -- Time-locking, allows us to pay someone in MINA or other custom tokens subject to a vesting schedule.Tokens are initially locked and become available for withdrawal only after a certain time or gradually according to a specific schedule. **However, Only one vesting schedule can be specified per account and The vesting schedule cannot be changed during the  vesting period.**
 
-Obviously, the native feature Time-locking could not be appropriate for the basic functionalities talked above of TokenLocker. Therefore, we need a seperate TokenLocker for each custom token. Similar as the Airdrop section, within TokeniZK we provide a specific common Intermediary  Address intended to be deployed with TokeniZkLocker contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage.
+ Obviously, the native feature Time-locking could not be appropriate for the basic functionalities talked above of TokenLocker. Therefore, we need a seperate TokenLocker for each custom token. Similar as the Airdrop section, within TokeniZK we provide a specific common Intermediary  Address intended to be deployed with TokeniZkLocker contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage.
 
-TokeniZkLocker contract could be optionally deployed later after or during the creation of each Presale,and Fair Airdrop. During the contribution, every contributor and his rewarding custom tokens will be stored as an Locked Asset Note (with fields:{recipient, amount, releaseTimestamp,etc.},seen as UTXO)and emited as an Action (as well as Event) by project team （ie.token owner ）on chain.
+ TokeniZkLocker contract could be optionally deployed later after or during the creation of each Presale,and Fair Airdrop. During the contribution, every contributor and his rewarding custom tokens will be stored as an Locked Asset Note (with fields:{recipient, amount, releaseTimestamp,etc.},seen as UTXO)and emited as an Action (as well as Event) by project team （ie.token owner ）on chain.
 
-There is also a unique exclusive merkle tree (denoted as **TokenLocker-Tree**,an append-only merkle tree) as offchain storage for each custom token**(ie.  each  custom  token  has its own unique TokenLocker-Tree),** being stored as the tree root inside corresponding TokeniZkLocker contract account(ie. Intermediary token account). Meanwhile,TokeniZK platform also provide ofchain storage maintainance service for all TokenLocker-Trees from all custom tokens, including reducing actions and storing them  into merkle tree as sequenced, and also publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform. Besides,for better  user experience, TokeniZK platform watches all TokenLockers and helps notify wallet-connected users on page to claim the unlocked tokens.
+ There is also a unique exclusive merkle tree (denoted as **TokenLocker-Tree**,an append-only merkle tree) as offchain storage for each custom token (**ie.  each  custom  token  has its own unique TokenLocker-Tree**), being stored as the tree root inside corresponding TokeniZkLocker contract account(ie. Intermediary token account). Meanwhile,TokeniZK platform also provide ofchain storage maintainance service for all TokenLocker-Trees from all custom tokens, including reducing actions and storing them  into merkle tree as sequenced, and also publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform. Besides,for better  user experience, TokeniZK platform watches all TokenLockers and helps notify wallet-connected users on page to claim the unlocked tokens.
 
-​The recipients claim their tokens by nullifying corresponding <u>Locked Asset Note</u>(UTXO) to avoid double spending (as described at *TokeniZkUser* section below).
+ ​The recipients claim their tokens by nullifying corresponding <u>Locked Asset Note</u>(UTXO) to avoid double spending (as described at *TokeniZkUser* section below).
 
-**Tips**: More details within 'User Journey Flowcharts' section at proposal link above.
+ _Tips: More details within 'User Journey Flowcharts' section at proposal link above._
 
 
 
 #### How TokeniZkUser works
 
-​		As talked above, all assets recorded on both Airdrop-Tree and TokenLocker-Tree are regarded as UTXO, and recipients need nullify them when claiming tokens back.
+​As talked above, all assets recorded on both Airdrop-Tree and TokenLocker-Tree are regarded as UTXO, and recipients need nullify them when claiming tokens back.
 
-​		Within TokeniZK, a user nullifies his own Locked Asset Note(UTXO)and Airdrop Asset Note(UTXO) by recording them onto his own merkle tree, denoted as ‘**Asset_Nullifier_Tree**’.Actually, each custom token account of one user has one corresponding exclusive‘Asset_Nullifier_Tree’.
+​Within TokeniZK, a user nullifies his own `Locked Asset Note(UTXO)` and `Airdrop Asset Note(UTXO)` by recording them onto his own merkle tree, denoted as ‘**Asset_Nullifier_Tree**’.Actually, each custom token account of one user has one corresponding exclusive `Asset_Nullifier_Tree`.
 
 ![WPS图片(1)-16938569740914](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/dae6b150-f113-4194-85d7-7cb4b34355b3)
 
-Each token account of a user will be deployed with a smart contract--**TokeniZkUser**, then the correponding 8-fields states could be utilized, one of which would be stored with the corresponding Asset_Nullifier_Tree root,which is also maintained by TokeniZK platform.
+Each token account of a user will be deployed with a smart contract -- **TokeniZkUser**, then the correponding 8-fields states could be utilized, one of which would be stored with the corresponding `Asset_Nullifier_Tree` root,which is also maintained by TokeniZK platform.
 
 Here is the high-level claiming progress: 
 
-​	1.The asset owners need provide target UTXO’s existence merkle proof on ‘Airdrop Tree’ or ‘TokenLocker Tree’ as well as its non-existence merkle proof on ‘Asset_Nullifier_Tree’,to prove the UTXO is valid.
-
-​	2.Check the ‘recipient’of UTXO is equal to the owner.
-
-​	3.Tranfer the custom token from correponding Intermediary Token Account to the owner.
-
-​	4.Compute the new root of ‘Asset_Nullifier_Tree’ through this UTXO’s non-existence merkle path. Then update the root to the owner’s token account.
+ 1. The asset owners need provide target UTXO’s existence merkle proof on ‘Airdrop Tree’ or ‘TokenLocker Tree’ as well as its non-existence merkle proof on ‘Asset_Nullifier_Tree’,to prove the UTXO is valid.
+ 2. Check the ‘recipient’ of UTXO is equal to the owner.
+ 3. Tranfer the custom token from correponding Intermediary Token Account to the owner.
+ 4. Compute the new root of ‘Asset_Nullifier_Tree’ through this UTXO’s non-existence merkle path. Then update the root to the owner’s token account.
 
 
 
 ### Platform Components Architect Figure
 
-To support the features above, there are 5 major roles within Platform. 
+To support the features above, there are 5 major roles within Platform: 
 
 ![WPS图片(1)-16938571920466](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/2fe26fbf-4af2-45d7-a468-5b558d24df0d)
 
 
-​*	**Smart Contracts** : as listed above
+ ​*	**Smart Contracts** : as listed above
 
-*​	**Web Client** : a website for all user journeys as talked above
+ *​	**Web Client** : a website for all user journeys as talked above
 
-​*	**Onchain Tracker** : listen for all onchain activities of all custom tokens’smart contracts and notify **Offchain Storage Maintainer** and **Platform Backend.** 
+ ​*	**Onchain Tracker** : listen for all onchain activities of all custom tokens’ smart contracts and notify **Offchain Storage Maintainer** and **Platform Backend.** 
 
-​*	**Offchain Storage Maintainer** : maintain all merkle trees by reducing all actions at intervals and onchain tree root for all custom tokens.
+ *	**Offchain Storage Maintainer** : maintain all merkle trees by reducing all actions at intervals and onchain tree root for all custom tokens.
 
-​*	**Platform Backend** : a daemon service for token creators and contributors. like maintain information on project/team and all sales, like notifying users about the their own airdrop notes and unlocked notes, and exposing open api for users to obtain merkle path for each asset note, etc.
+ *	**Platform Backend** : a daemon service for token creators and contributors. like maintain information on project/team and all sales, like notifying users about the their own airdrop notes and unlocked notes, and exposing open api for users to obtain merkle path for each asset note, etc.
 
-​	Besides, Mina chain (Archive Nodes) stores all historical Actions/Events and all token states.
+​Besides, Mina chain (Archive Nodes) stores all historical Actions/Events and all token states.
 
 
 
@@ -361,7 +350,7 @@ To support the features above, there are 5 major roles within Platform.
 ![TokeniZK-ZkToken-Presale-Creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/1b972afd-7b64-4612-882b-1d9f456c7a6b)
 
 
-#### **ZkToken-PreSales-Contribution-journey:**
+#### ZkToken-PreSales-Contribution-journey:
 
 ![TokeniZK-ZkToken-PreSales-Contribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/404118d8-77a2-4bc3-bf07-78b8ded0135e)
 
@@ -409,7 +398,7 @@ To support the features above, there are 5 major roles within Platform.
 
 
 
-#### **TokenLocker-Creation-Distribution-UnlockedTokenClaim--journey:**
+#### TokenLocker-Creation-Distribution-UnlockedTokenClaim--journey:
 
 ![tokenizk-tokenlocker-creation-distribution-claim-journey (5)](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/3b27f013-b95f-466f-bae6-8d844dd9e306)
 
@@ -429,13 +418,10 @@ To support the features above, there are 5 major roles within Platform.
 
 #### **Standard Scope**
 
-​	We has almost completed the whole design on the whole platform before. Within 3 months,
+Since We has almost completed the whole design on the whole platform before. Within 3 months, TokeniZK team spends the budget mainly on __cloud infra && design improvement && software development__ .
 
-  TokeniZK team spends the budget mainly on cloud infra && design improvement && software development .
-
-​			Cloud Infra expense: 2400 U (about 800 U/month)
-
-​			Design improvement && Software development: 22600 U
+* Cloud Infra expense: 2400 U (about 800 U/month)
+* Design improvement && Software development: 22600 U
 
 
 
@@ -445,27 +431,27 @@ Milestones in three months:
 
 Within three months, we will carry out a fully functional launchpad platform, implementing a refined UI and UX design, the required MINA Smart Contracts and all interactions with the supporting service.
 
-  **Milestone1**:  Cloud Infra preparation
+ * **Milestone1**:  Cloud Infra preparation
+   
+ * **Milestone2**:  Smart Contracts development
+   
+    Support functionalities listed at milestone3
+   
+ * **Milestone3**:  Web client UI development
 
-  **Milestone2**:  Smart Contracts development
+   Seen as functionalities Listed at ‘**Solution’** section, **Excluding** the items with suffix ‘at Advanced milestone’.
 
-​			Support functionalities listed at milestone3
+ * **Milestone4**:  Onchain Tracker development
 
-  **Milestone3**:  Web client UI development
+   Support functionalities listed at milestone3
 
-​		Seen as functionalities Listed at ‘**Solution’** section, **Excluding** the items with suffix ‘at Advanced milestone’.
+ * **Milestone5**:  Offchain Storage Maintainer development
 
-  **Milestone4**:  Onchain Tracker development
+   Support functionalities listed at milestone3
 
-​			Support functionalities listed at milestone3
+ * **Milestone6**: Platform Backend Service development
 
-  **Milestone5**:  Offchain Storage Maintainer development
-
-​			Support functionalities listed at milestone3
-
- **Milestone6**: Platform Backend Service development
-
-​			Support functionalities listed at milestone3
+   Support functionalities listed at milestone3
 
 
 
@@ -479,9 +465,9 @@ Within three months, we will carry out a fully functional launchpad platform, im
 
 We has almost completed the whole design on the whole platform before. Within 3 months, TokeniZK team spends the budget mainly on cloud infra && design improvement && software development .
 
-  	Cloud Infra expense: 9000 U (about 1000 U/month, 6 extra months after cohort2)
+* Cloud Infra expense: 9000 U (about 1000 U/month, 6 extra months after cohort2)
 
-  	Design improvement && Software development: 36000 U
+* Design improvement && Software development: 36000 U
 
 
 
@@ -489,49 +475,48 @@ We has almost completed the whole design on the whole platform before. Within 3 
 
 Within three months, we will carry out a fully functional launchpad platform, implementing a refined UI and UX design, the required MINA Smart Contracts and all interactions with the supporting service.
 
-  **Milestone1**: Cloud Infra preparation
+ * **Milestone1**: Cloud Infra preparation
 
-  **Milestone2**: Smart Contracts development
+ * **Milestone2**: Smart Contracts development
 
-   * Support **extra **functionalities listed at milestone3
+   Support **extra **functionalities listed at milestone3
 
-  * **PreSales/PrivateSale contract templates** integrated with **TokeniZkLocker** 
+   *PreSales/PrivateSale contract templates* integrated with **TokeniZkLocker** 
 
- **Milestone3**: Web client UI development
+ * **Milestone3**: Web client UI development
 
-  * Seen as Listed at ‘Solution’ section, **Including** the items with suffix ‘**at Advanced milestone**’ as below :
+   Seen as Listed at ‘Solution’ section, **Including** the items with suffix ‘**at Advanced milestone**’ as below :
 
-1. Advanced Airdrop Creation(At Advanced milestone)
+     1. Advanced Airdrop Creation(At Advanced milestone)
 
- 		Project teams could make some more fine configurations on airdrop.
+        Project teams could make some more fine configurations on airdrop.
 
-2. zkNFT Pages(At Advanced milestone)
+     2. zkNFT Pages(At Advanced milestone)
 
-​		 Project team could launch a zkNFT sales.
+​	     	 Project team could launch a zkNFT sales.
+        * configure Rules and register&record project/team details.
+        
+        * Projects Listing Page
 
-​	(1) configure Rules and register&record project/team details.
+        * Project Detail Page
 
-​	(2) Projects Listing Page
+          * NFT purchasing
+          
+          * Claim NFT
 
-​	(3) Project Detail Page
+     3. TokeniZK online Mannual Doc(At Advanced milestone)
 
-​		① NFT purchasing
+ * **Milestone4**: Onchain Tracker development
 
-​		② Claim NFT
+   * Support extra functionalities listed at milestone3
 
-3. TokeniZK online Mannual Doc(At Advanced milestone)
+ * **Milestone5**:  Offchain Storage Maintainer development
 
-  **Milestone4**: Onchain Tracker development
+   * Support extra functionalities listed at milestone3
 
-* Support extra functionalities listed at milestone3
+ * **Milestone6**: Platform Backend Service development
 
-  **Milestone5**:  Offchain Storage Maintainer development
-
-* Support extra functionalities listed at milestone3
-
-  **Milestone6**: Platform Backend Service development
-
-* Support extra functionalities listed at milestone3
+   * Support extra functionalities listed at milestone3
 
 
 
