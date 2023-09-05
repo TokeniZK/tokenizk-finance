@@ -189,19 +189,19 @@ A user (denoted as Token Creator) entering TokeniZK platform would be guided to 
 
 4. Configure all related parameters and sale rules on pages,as well as choosing or not to configure other basic widgets like whitelist, **TokeniZkLocker**,  etc.;
 
-Note: **TokeniZkAirdrop,TokeniZkLocker** could be activated separately later.
+   Note: **TokeniZkAirdrop,TokeniZkLocker** could be activated separately later.
 
 5. Invoke related methods on **TokeniZkFactory** to deploy specified smart contract template; 
 
 6. Broadcast the tx with signature and proof.
 
-Note: Token Creatorneed pay for the whole flow(involving platform procedure fee, all token account creation fee, transaction fee, etc.
+Note: Token Creator need pay for the whole flow(involving platform procedure fee, all token account creation fee, transaction fee, etc.
 
  
 
 #### **Contribution Part**:
 
-A user enters the sales detail page, and input the contributing amount. Corresponding smartcontract would be invoked (during which all preset sale rules will be checked in circuit). Then tx.prove and trigger the wallet to make a signature and later broadcast it.
+A user enters the sales detail page, and input the contributing amount. Corresponding smart contract would be invoked (during which all preset sale rules will be checked in circuit). Then <tx.prove> and trigger the wallet to make a signature and later broadcast it.
 
 
 ### Working Mechanism of TokeniZk SmartContracts
