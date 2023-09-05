@@ -451,7 +451,7 @@ TokeniZK, as a LaunchPad platform that focuses on zkTokens for a wide range of u
 
 In our team's view, a good user experience is a direct result of the overall high performance of the system. Below I will talk about some of our solutions in combination with scenarios talked about.
 
-From a macro perspective, TokeniZK as a whole can be divided into three parts: Circuit (SmartContract), Frontend, Backend.
+From a macro perspective, TokeniZK as a whole can be divided into three parts: **Circuit (SmartContract)**, **Frontend**, **Backend**.
 
 #### Circuit Part：
 * **Computation-OutSource Service**：
@@ -460,7 +460,7 @@ From a macro perspective, TokeniZK as a whole can be divided into three parts: C
   
   Takes '[TokeniZK-Airdrop-claim-journey]()' & '[TokeniZK-TokenLocker-claim-journey]()' as examples: Users need firstly deploy 'TokeniZkUser' at his account. During the progress, Server side could help them generate a L1Tx (covering compile&witness cal&prove)  and return to them(web client side) for further wallet-signature and broadcast.
   
-  And When users go on claim their own assets back from 'TokeniZkAirdrop or TokeniZkLocker' contract, then server also could help generate a L1Tx (covering compile&witness cal&prove)  and return to them(web client side) for further wallet-signature and broadcast.
+  And When users go on claim their own assets back from 'TokeniZkAirdrop or TokeniZkLocker' contract, then server also could help generate a L1Tx (covering compile & witness-cal & prove)  and return to them(web client side) for further wallet-signature and broadcast.
 
 * **Serialize circuits' provingKey** (recently expecting)
 
