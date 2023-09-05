@@ -171,7 +171,7 @@ To support the basic features（*listed at Standard Milestones*）above, there a
 * **TokeniZkFactory** : The entry of TokeniZK for user to deploy the contracts above, recording the meta data of the platform.
 
 
-
+<br>
 
 ### User Jouney within TokeniZK at High Level
 
@@ -204,7 +204,7 @@ Note: Token Creator need pay for the whole flow(involving platform procedure fee
 A user enters the sales detail page, and input the contributing amount. Corresponding smart contract would be invoked (during which all preset sale rules will be checked in circuit). Then <tx.prove> and trigger the wallet to make a signature and later broadcast it.
 
 <br>
-<br>
+
 
 ### Working Mechanism of TokeniZk SmartContracts
 
@@ -319,6 +319,7 @@ Here is the high-level claiming progress:
  4. Compute the new root of ‘Asset_Nullifier_Tree’ through this UTXO’s non-existence merkle path. Then update the root to the owner’s token account.
 
 
+<br>
 
 ### Platform Components Architect Figure
 
