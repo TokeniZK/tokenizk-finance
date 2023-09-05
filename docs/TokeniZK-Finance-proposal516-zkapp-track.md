@@ -203,6 +203,8 @@ Note: Token Creator need pay for the whole flow(involving platform procedure fee
 
 A user enters the sales detail page, and input the contributing amount. Corresponding smart contract would be invoked (during which all preset sale rules will be checked in circuit). Then <tx.prove> and trigger the wallet to make a signature and later broadcast it.
 
+<br>
+<br>
 
 ### Working Mechanism of TokeniZk SmartContracts
 
