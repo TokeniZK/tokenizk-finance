@@ -501,7 +501,7 @@ The high performance and high availability of the back-end support system is cru
   
 * Caching: Using an appropriate caching strategy can significantly improve the performance of your system. Caching frequently accessed data in memory reduces the number of requests to backend services, lowering latency and improving response times. For example, after storing AirdropAssetNote and LockedAssetNote in Merkle-Tree, there will be a unique corresponding leafIndex, which is the key to query the merkle proof of a assetNote! We can cache their mapping relationship (commitment->leafIndex) to avoid traversing queries in mysqlDB every time.
   
-* Database Optimization: After the number of users increases significantly in the future, we consider separating reads and writes from the DB.
+* Database Optimization: After the number of users increases significantly in the future, we consider separating reads and writes from the msyqlDB.
 
 
 <br>
