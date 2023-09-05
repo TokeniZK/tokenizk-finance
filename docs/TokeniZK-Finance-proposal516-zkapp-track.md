@@ -49,7 +49,7 @@ Users could easily create a originally natively basic custom token with given se
 
 **(1)** **Normal Presale** 
 
-Normal Presale pages work for project team to pre-configure a set of presale rules like sales amount, target currency, softcap/hardcap, minimumBuy/maximumBuy,startTime/endTime, **whitelist, vesting schedule for contributors,** etc. And it also provide entry for contribution.
+Normal Presale pages work for project team to pre-configure a set of presale rules like _sales amount, target currency, softcap/hardcap, minimumBuy/maximumBuy,startTime/endTime, **whitelist, vesting schedule for contributors,** etc_. And it also provide entry for contribution.
 
 ​		① config the preSales rules & parameters and information on projects and team.
 
