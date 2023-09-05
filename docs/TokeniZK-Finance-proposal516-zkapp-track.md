@@ -620,7 +620,7 @@ http://suo.nz/36ciLt
 I have been joining Mina community for 2 years, with continuous attention and study on the upgrade of SnarkyJS library.
 
 
-#### teammates info
+#### Teammates Info
 Tank Tang, Application Architect for 7years, ever been working for China large state-owned bank and conducting development of a large-scale e-commerce shopping platforms, and with rich experience on Dapp development. He is responsiable for the whole architecture design of TokeniZK Platform as well as  system security.
 
 http://www.studycairo.cn/
