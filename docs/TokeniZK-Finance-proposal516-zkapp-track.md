@@ -399,8 +399,8 @@ To support the features above, there are 5 major roles within Platform:
 
 
 
-#### System Security Consideration
-As a LaunchPad platform, TokeniZK should rank SECURITY as the first into consideration. 
+### System Security Consideration
+`As a LaunchPad platform, TokeniZK should rank SECURITY as the first into consideration.`
 
 The below is a brief description on TokeniZK’s three major components where has the most possibility of attacks&victims and how we manage the risks. 
 
