@@ -21,7 +21,7 @@ const __dirname = dirname(__filename);
 export type SubProcessCordinator = {
     workerMap: Map<string, { worker: Worker; status: WorkerStatus; type: string }[]>,
 
-    tokenClaim: (proofPayload: ProofPayload<any>, sendCallBack?: (x: any) => void) => Promise<ProofPayload<any>>,
+    lockedTokenClaim: (proofPayload: ProofPayload<any>, sendCallBack?: (x: any) => void) => Promise<ProofPayload<any>>,
 
 };
 
@@ -89,7 +89,7 @@ export const createSubProcesses = async (n: number) => {
     return {
         workerMap,
 
-        tokenClaim: async (proofPayload: ProofPayload<any>, sendCallBack?: any) => {
+        lockedTokenClaim: async (proofPayload: ProofPayload<any>, sendCallBack?: any) => {
             return await new Promise(
                 (
                     resolve: (payload: ProofPayload<any>) => any,
@@ -97,7 +97,7 @@ export const createSubProcesses = async (n: number) => {
                 ) => {
 
                     const msg = {
-                        type: `${ProofTaskType[ProofTaskType.USER_FIRST_WITHDRAW]}`,
+                        type: `${ProofTaskType[ProofTaskType.LOCK_TOKEN_CLAIM]}`,
                         payload: {
                             feePayer: proofPayload.payload.feePayer, verificationKey: proofPayload.payload.verificationKey,
                             withdrawNoteWitnessData: proofPayload.payload.withdrawNoteWitnessData,

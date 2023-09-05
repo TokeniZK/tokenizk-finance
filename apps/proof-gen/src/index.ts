@@ -51,7 +51,7 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator) {
                             payload: proofTaskDto.payload
                         } as ProofPayload<any>;
 
-                        subProcessCordinator.tokenClaim(payload, sendResultSeqCallback);
+                        subProcessCordinator.lockedTokenClaim(payload, sendResultSeqCallback);
                     }
                     break;
 
