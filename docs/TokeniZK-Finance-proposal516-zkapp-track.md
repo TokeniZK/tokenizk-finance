@@ -473,10 +473,10 @@ Within three months, we will carry out a fully functional launchpad platform, im
 
 
 
+
 #### Advanced Budget
 
 45000
-
 
 
 #### **Advanced Scope**
