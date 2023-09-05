@@ -21,7 +21,7 @@ TokeniZK Finance is a decentralized launchpad where you could launch your own zk
 
 ERC-style Tokens have greatly contributed to the prosperity of the Ethereum ecosystem by providing a flexible, and standardized way to create new custom digital assets, then facilitating application development, improving liquidity, and interoperability.
 
-According to statistics, there are an significant number of users and teams who want to issue their own tokens.However, issuing a secure and fully-custom token is difficult for people without enough knowledge on programming and cryptography tech.This pain point motivates the birth of many popular online tools/platforms, such as Pinksale,Dxsale,etc, providing convinient flow for people to create or sell, auto list on dex custom tokens, which booms the onchain ecosystem.
+According to statistics ([https://github.com/o1-labs/snarkyjs/issues/87](https://www.pinksale.finance/leaderboard)), there are an significant number of users and teams who want to issue their own tokens.However, issuing a secure and fully-custom token is difficult for people without enough knowledge on programming and cryptography tech.This pain point motivates the birth of many popular online tools/platforms, such as Pinksale,Dxsale,etc, providing convinient flow for people to create or sell, auto list on dex custom tokens, which booms the onchain ecosystem.
 
 Samely, Custom Token on Mina matters much to the ecosystem.Specially,Custom Token is designed as an underlying native property on Mina chain, which hold similar capabilities as ERC-style fungible token and natively works with Zero Knowledge Proof, further meaning it could be more easily used within privacy-preserving scenarios.
 
