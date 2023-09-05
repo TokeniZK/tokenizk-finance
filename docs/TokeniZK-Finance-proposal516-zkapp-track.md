@@ -405,35 +405,36 @@ As a LaunchPad platform, TokeniZK should rank SECURITY as the first into conside
 The below is a brief description on TokeniZK’s three major components where has the most possibility of attacks&victims and how we manage the risks. 
 
 **Smart Contract Part**
+
 Contract is the core for a dapp, and according to historical cases, most attacks/victimshappens here. As a launchpad platform, the code security of all smart contract templates should be considered FIRST. 
 
 1) Authentization & Authorization & Asset-Validity-Proof Check
 
-Within TokeniZK, we would focus much on the _authentization & authorization_ of most core operations covering ‘zkToken issuing/transfer/mint/burn’, ‘sales launch/contribution’, ‘token claiming at Airdrop/Locker’, etc.
+  Within TokeniZK, we would focus much on the _authentization & authorization_ of most core operations covering ‘zkToken issuing/transfer/mint/burn’, ‘sales launch/contribution’, ‘token claiming at Airdrop/Locker’, etc.
 
-* Take ‘zkToken issuing/transfer/mint/burn’ as an example, we configure the signature-auth or proof-auth for each fund operation(ie.`Check Authorization`). 
+  * Take ‘zkToken issuing/transfer/mint/burn’ as an example, we configure the signature-auth or proof-auth for each fund operation(ie.`Check Authorization`). 
 
-* Take ‘zkToken claiming at Airdrop/Locker’ as an example. Seen in proposal, all assets recorded on Airdrop/Locker are UTXO, we avoid ‘double spending’ by verifying both existence-merkle-proof and non-existence-merkle-proof (ie.`Check Asset-Validity-Proof`) during claiming assets. Besides, we also require the signature to confirm the token claimer is indeed the owner(ie.`Check Authentization`). Wherein, each signature is bound to each operation to avoid the ‘Replay Attacks’. 
+  * Take ‘zkToken claiming at Airdrop/Locker’ as an example. Seen in proposal, all assets recorded on Airdrop/Locker are UTXO, we avoid ‘double spending’ by verifying both existence-merkle-proof and non-existence-merkle-proof (ie.`Check Asset-Validity-Proof`) during claiming assets. Besides, we also require the signature to confirm the token claimer is indeed the owner(ie.`Check Authentization`). Wherein, each signature is bound to each operation to avoid the ‘Replay Attacks’. 
 
 2) Code audit
 
-Code audit is required for each template before production release to avoid deeper vulnerabilities. There are many parties working on this, including [zkSecurity.xyz](https://www.zkSecurity.xyz) intended for zkApps:
+* Code audit is required for each template before production release to avoid deeper vulnerabilities. There are many parties working on this, including [zkSecurity.xyz](https://www.zkSecurity.xyz) intended for zkApps:
 
-https://twitter.com/mitschabaude/status/1663596691381944331
+  https://twitter.com/mitschabaude/status/1663596691381944331
 
-https://www.zksecurity.xyz/blog/posts/noname/
+  https://www.zksecurity.xyz/blog/posts/noname/
 
 **Web UI Client and Backend System Part**
 
-There are many normal attacks on a website, such as Xss, InjectionAttack, DDos, Man-In-The-Middle Attack(MITM). Luckily there are already many best practices to prevent them. 
+  There are many normal attacks on a website, such as Xss, InjectionAttack, DDos, Man-In-The-Middle Attack(MITM). Luckily there are already many best practices to prevent them. 
 
 **Data Availability of TokeniZK Platform**
 
-1) At our ideal design we expect to publish/upgrade the entire web UI at IPFS or Arweave.
+  1) At our ideal design we expect to publish/upgrade the entire web UI at IPFS or Arweave.
 
-2) Besides, regarding the merkle trees storing state(seen in proposal), at early stage, we would publish them to the public periodically.
+  2) Besides, regarding the merkle trees storing state(seen in proposal), at early stage, we would publish them to the public periodically.
 
-3) Furthermore, we leverage Mina chain’s Actions/Events (_in Archive Nodes_) to record most core operations. Thus, For example, any one could rebuild the whole states(like merkle trees, etc.) by them.
+  3) Furthermore, we leverage Mina chain’s Actions/Events (_in Archive Nodes_) to record most core operations. Thus, For example, any one could rebuild the whole states(like merkle trees, etc.) by them.
 
 ### **Long-term Vision And Dream Scenario**
 
