@@ -408,7 +408,7 @@ The below is a brief description on TokeniZK’s three major components where ha
 
 Contract is the core for a dapp, and according to historical cases, most attacks/victimshappens here. As a launchpad platform, the code security of all smart contract templates should be considered FIRST. 
 
-1) Authentization & Authorization & Asset-Validity-Proof Check
+**1) Authentization & Authorization & Asset-Validity-Proof Check**
 
   Within TokeniZK, we would focus much on the _authentization & authorization_ of most core operations covering ‘zkToken issuing/transfer/mint/burn’, ‘sales launch/contribution’, ‘token claiming at Airdrop/Locker’, etc.
 
@@ -416,7 +416,7 @@ Contract is the core for a dapp, and according to historical cases, most attacks
 
   * Take ‘zkToken claiming at Airdrop/Locker’ as an example. Seen in proposal, all assets recorded on Airdrop/Locker are UTXO, we avoid ‘double spending’ by verifying both existence-merkle-proof and non-existence-merkle-proof (ie.`Check Asset-Validity-Proof`) during claiming assets. Besides, we also require the signature to confirm the token claimer is indeed the owner(ie.`Check Authentization`). Wherein, each signature is bound to each operation to avoid the ‘Replay Attacks’. 
 
-2) Code audit
+**2) Code audit**
 
 * Code audit is required for each template before production release to avoid deeper vulnerabilities. There are many parties working on this, including [zkSecurity.xyz](https://www.zkSecurity.xyz) intended for zkApps:
 
