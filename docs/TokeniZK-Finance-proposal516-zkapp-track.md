@@ -480,13 +480,15 @@ Business model and monetization plan is crucial for TokeniZK to go further. We t
 As a decentralized platform for token issuance and sale, TokeniZK acts as an intermediary to connect projects with ordinary investors. It allows project parties to issue tokens on the platform easily and directly, enabling ordinary investors to participate in the early stages of these projects. During the progress, TokeniZK charges fees a revenue source. 
 
 #### 1) zkToken Issuance Service
-   TokeniZK provides a token launch board service where projects can conduct the initial tokens offerring. The service includes functions such as token creation and issuance, smart contract deployment, token allocation and Locking/Airdrop. TokeniZK charges a fee for these services. 
+TokeniZK provides a token launch board service where projects can conduct the initial tokens offerring. The service includes functions such as token creation and issuance, smart contract deployment, token allocation and Locking/Airdrop. TokeniZK charges a fee for these services. 
 
 #### 2) zkToken Sale Service
-TokeniZK charges a percentage based on the total amount of funds raised during the token sale. This fee typically represents a small percentage of the total amount raised, providing TokeniZK with a source of revenue. The cost structure may vary depending on the specific terms agreed for each project. In addition, during the process of token sale, the platform additionally provides targeted 'Outsourced Computing Services' (seen in proposal), and charges a certain fee as a revenue source. 
+TokeniZK charges a percentage based on the total amount of funds raised during the token sale. This fee typically represents a small percentage of the total amount raised, providing TokeniZK with a source of revenue. The cost structure may vary depending on the specific terms agreed for each project. 
+
+In addition, during the process of token sale, the platform additionally provides targeted 'Outsourced Computing Services' (seen in proposal), and charges a certain fee as a revenue source. 
 
 #### 3) zkToken Holding:
-   TokeniZK may also hold a portion of the tokens issued on its platform. As the value of these tokens appreciates, TokeniZK can generate profits by selling them at a later stage. This strategy allows TokeniZK to benefit from the success of the projects it supports. 
+TokeniZK may also hold a portion of the tokens issued on its platform. As the value of these tokens appreciates, TokeniZK can generate profits by selling them at a later stage. This strategy allows TokeniZK to benefit from the success of the projects it supports. 
    
 #### Future Stages 
 #### 4) Listing Service:
@@ -498,19 +500,18 @@ TokeniZK provides additional quality services for the project, such as project L
 #### 6) Partnerships and Integrations:
 TokeniZK can explore partnerships and integrations with other platforms, wallets, or blockchain projects. By partnering with established players in the cryptocurrency space, TokeniZK can generate additional revenue through referral fees, revenue-sharing agreements, or technology licenses. 
 
-7) In the future, TokeniZK can extend its business model by introducing new features and services. For example, it could offer pledging services, liquidity mining opportunities, or Launch TokeniZK's Platform Token. These developments can create additional revenue streams and attract a larger user base. Overall, TokeniZK's business model revolves around providing a comprehensive platform for token issuance, token sale/listing, and contribution, establishing itself as a leader in the digital asset space through a variety of convenient services.
+7) In the future, TokeniZK can extend its business model by introducing new features and services.
+   For example, it could offer pledging services, liquidity mining opportunities, or Launch TokeniZK's Platform Token. These developments can create additional revenue streams and attract a larger user base.
+
+Overall, TokeniZK's business model revolves around providing a comprehensive platform for token issuance, token sale/listing, and contribution, establishing itself as a leader in the digital asset space through a variety of convenient services.
 
 
 
 ### **Budget and Milestones**
 
-
-
 #### **Standard Budget**
 
 25000
-
-
 
 #### **Standard Scope**
 
@@ -518,8 +519,6 @@ Since We has almost completed the whole design on the whole platform before. Wit
 
 * Cloud Infra expense: 2400 U (about 800 U/month)
 * Design improvement && Software development: 22600 U
-
-
 
 #### Standard Scope Milestones
 
@@ -556,7 +555,6 @@ Within three months, we will carry out a fully functional launchpad platform, im
 
 45000
 
-
 #### **Advanced Scope**
 
 We has almost completed the whole design on the whole platform before. Within 3 months, TokeniZK team spends the budget mainly on cloud infra && design improvement && software development .
@@ -564,8 +562,6 @@ We has almost completed the whole design on the whole platform before. Within 3 
 * Cloud Infra expense: 9000 U (about 1000 U/month, 6 extra months after cohort2)
 
 * Design improvement && Software development: 36000 U
-
-
 
 #### Advanced Scope Milestones
 
@@ -685,6 +681,7 @@ http://www.studycairo.cn/
 Cherry Chen, Senior Frontend Engineer for 4years, responsable for the UI design and frontend development of TokeniZK Platform.
 
 https://gitee.com/Trance_CrystalWorld
+
 
 
 
