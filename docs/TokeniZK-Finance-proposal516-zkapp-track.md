@@ -400,9 +400,40 @@ To support the features above, there are 5 major roles within Platform:
 
 
 #### System Security Consideration
+As a LaunchPad platform, TokeniZK should rank SECURITY as the first into consideration. 
 
+The below is a brief description on TokeniZK’s three major components where has the most possibility of attacks&victims and how we manage the risks. 
 
+**Smart Contract Part**
+Contract is the core for a dapp, and according to historical cases, most attacks/victimshappens here. As a launchpad platform, the code security of all smart contract templates should be considered FIRST. 
 
+1) Authentization & Authorization & Asset-Validity-Proof Check
+
+Within TokeniZK, we would focus much on the _authentization & authorization_ of most core operations covering ‘zkToken issuing/transfer/mint/burn’, ‘sales launch/contribution’, ‘token claiming at Airdrop/Locker’, etc.
+
+* Take ‘zkToken issuing/transfer/mint/burn’ as an example, we configure the signature-auth or proof-auth for each fund operation(ie.`Check Authorization`). 
+
+* Take ‘zkToken claiming at Airdrop/Locker’ as an example. Seen in proposal, all assets recorded on Airdrop/Locker are UTXO, we avoid ‘double spending’ by verifying both existence-merkle-proof and non-existence-merkle-proof (ie.`Check Asset-Validity-Proof`) during claiming assets. Besides, we also require the signature to confirm the token claimer is indeed the owner(ie.`Check Authentization`). Wherein, each signature is bound to each operation to avoid the ‘Replay Attacks’. 
+
+2) Code audit
+
+Code audit is required for each template before production release to avoid deeper vulnerabilities. There are many parties working on this, including [zkSecurity.xyz](https://www.zkSecurity.xyz) intended for zkApps:
+
+https://twitter.com/mitschabaude/status/1663596691381944331
+
+https://www.zksecurity.xyz/blog/posts/noname/
+
+**Web UI Client and Backend System Part**
+
+There are many normal attacks on a website, such as Xss, InjectionAttack, DDos, Man-In-The-Middle Attack(MITM). Luckily there are already many best practices to prevent them. 
+
+**Data Availability of TokeniZK Platform**
+
+1) At our ideal design we expect to publish/upgrade the entire web UI at IPFS or Arweave.
+
+2) Besides, regarding the merkle trees storing state(seen in proposal), at early stage, we would publish them to the public periodically.
+
+3) Furthermore, we leverage Mina chain’s Actions/Events (_in Archive Nodes_) to record most core operations. Thus, For example, any one could rebuild the whole states(like merkle trees, etc.) by them.
 
 ### **Long-term Vision And Dream Scenario**
 
@@ -562,38 +593,32 @@ I have been joining Mina community for 2 years, with continuous attention and st
 
 We conclude risks sources as below for our project:
 
-##### **From potential bug of SnarkyJs**
+* **From potential bug of SnarkyJs**
 
 SnarkyJs library is a young library for zkApp development with actively new upgrade. This might causes potential bugs during the development of TokeniZK, which however is inevitable and reasonable for a new thing. But we are confident on overcoming this with active & powerful Mina technology community as the backing. 
 
-##### **From performance of circuit**
+* **From performance of circuit**
 
 It is a well-known problem that the compilation, witness-calc and proof-gen of circuit usually cost much cpu/memory/time resources, which impact much on experience of various user devices. 
 
 Regarding this opening issue#87(https://github.com/o1-labs/snarkyjs/issues/87), currently the **proverKey** of circuit cannot be serialized and cached for later, which means users need compile the circuits for later interactions each time accessing or refreshing the page. 
 
+Regarding this opening issue#673(https://github.com/o1-labs/snarkyjs/issues/673), currently the **all dependent circuits require to be compiled in sequences together at one process** before working, for example, _circuitA <- circuitB <- circuitC_, even if we just need circuitC, we now have to compile circuitA and circuitB first in sequences together at one process. This means extra great cpu/memory/time expenses for circuitA and circuitB, which impact performance really much. But in the future when issue#673 is solved, then we just need compile circuitC, and could easily verify the proof from circuitA and circuitB by their side-loaded verification key, which lead to great advances on performance!
+
 But We think it could be completed sooner or later by official team, because it is urgent for the zkApps’ performance improvement .
 
- 
-
-##### **From Mina network**
+* **From Mina network**
 
 Project development and testing schedule could be impacted by potential network issues. We no need worry too much on this risk because testnet or mainnet maintainers always ASAP take actions to fix/recover it since network issues impact so much around.
 
- 
-
-##### **From Product Design**
+* **From Product Design**
 
 We completed the initial design of TokeniZK, but details need improving or refactoring, which might cause efforts.
 
- 
-
-##### **From Competitors**
+* **From Competitors**
 
 There are several existing popular launchpad platforms, such as PinkSale, DxSale, etc. Although they currently mainly focus on non-zk tokens, they could be strong competitors in the future.
 
-
-
-##### **From Regulation**
+* **From Regulation**
 
 Custom Token Issuing to the public might challenge regulation of some countries.
