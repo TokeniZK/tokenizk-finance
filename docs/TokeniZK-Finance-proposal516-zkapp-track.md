@@ -220,27 +220,27 @@ A user enters the sales detail page, and input the contributing amount. Correspo
 
 #### How TokeniZkPresale works
 
- TokeniZkPresale works for two scenarioes: Normal Presale and Fair Presale, which are mainly differently on sales rules & parameters. Fair Presale is a special Normal Presale, where there is no hardcap, and everyone will have the same token price after it ends. It doesn't matter if you buy first or late. Token price = total raised Mina / total tokens for Fair Presale .
+ TokeniZkPresale works for two scenarioes: Normal Presale and Fair Presale, which are mainly differently on sales rules & parameters. Fair Presale is a special Normal Presale, where there is no hardcap, and everyone will have the same token price after it ends. It doesn't matter if you buy first or late. _Token price = total raised Mina / total tokens_ for Fair Presale .
 
- A project team(custom token owner) might launch multi-round presale activities for its issuing custom token, each of which need re-deploy a new **TokeniZkPresale** contract on a newly generated exclusive address’s token account.
+ A project team(custom token owner) might launch _multi-round_ presale activities for its issuing custom token, each of which need re-deploy a new **TokeniZkPresale** contract on a newly generated exclusive address’s token account.
 
- At each preSale contract, before the preSale activity starts, token owner could only configure rules/parameters as listed at ‘solution’ section.During this, it’s worth noting on the parameters below:
+ At each preSale contract, before the preSale activity starts, token owner could only configure _rules/parameters_ as listed at ‘Solution’ section. But During this, it’s worth noting on the parameters below:
 
 * **whitelist：**
 
-  Whitelist means the membership requirement to participate the preSale activity .Token owner would list on page all members’ addresses within whitelist,  based on which web client would **defaultly** construct locally a merkle tree in memory and compute the root as parameter to be configured later into the **TokeniZkPresale** contract. 
+  _Whitelist_ means the membership requirement to participate the preSale activity. Token owner would list on page all members’ addresses within whitelist,  based on which web client would **defaultly** construct locally a merkle tree in memory and compute the root as parameter to be configured later into the **TokeniZkPresale** contract. 
 
-  Regarding whitelist,defaultly TokeniZK platform just stores all members into backend storage as normal sales info, without help on the merkle tree construction/maintainance on it as well as corresponding merkle proof query service during activity for members in whitelist. It means in case the whitelist’s size is large, such as larger than 500, it might cause really much memory/cpu/time resource to construct the whole merkle tree on each presale  investor’s local device, which impacts investor’s experience.To avoid this, token owner could choose and pay for **Outsourced Computing Service** provided by platform, then platform backend will help construct/maintain the merkle tree and provide proof query service for investors during contribution.
+  Regarding whitelist,defaultly TokeniZK platform just stores all members into backend storage as normal sales info, without help on the merkle tree construction/maintainance on it as well as corresponding merkle proof query service during activity for members in whitelist. It means in case the whitelist’s size is large, such as larger than 500, it might cause really much memory/cpu/time resource to construct the whole merkle tree on each presale  investor’s local device, which impacts investor’s experience.To avoid this, token owner could choose to pay for **Outsourced Computing Service** provided by platform, then platform backend will help _construct/maintain the merkle tree_ and _provide merkle-witness-querying service_ for investors during contribution.
 
 * **vesting schedule for contributors：**
 
-  Vesting For Contributors is a feature on preSale that helps projects to lock away the tokens of presale investors for a period of time. Imaging in the future,it could work for preventing presale investors from selling all their tokens at once at listing time, which causes too much sell pressure and crashes the price.
+  _Vesting For Contributors_ is a feature on preSale that helps projects to lock away the tokens of presale investors for a period of time. Imaging in the future,it could work for preventing presale investors from selling all their tokens at once at listing time, which causes too much sell pressure and crashes the price.
   
-  $\underline{\text{At Standard Milestone}}$, PreSale contract leverages Mina’s native time-locking account feature for vesting schedule, which means investors could only utilize token accounts without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
+  $\underline{\text{At Standard Milestone}}$, PreSale contract leverages Mina’s _native time-locking account feature_ for vesting schedule, which means investors could only utilize token accounts without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
   
   $\underline{\text{At Advanced Milesone}}$, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for contributors.
 
- In additions, Currently TokeniZk just supports Mina as contribution currency.
+ In additions, Currently TokeniZk just supports _Mina_ as contribution currency.
 
  _Tips: More details within 'User Journey Flowcharts' section at proposal link above._
 
@@ -248,7 +248,7 @@ A user enters the sales detail page, and input the contributing amount. Correspo
 
 #### How TokeniZkPrivateSale works
 
- It’s a smart contract working for project team to make a private sale from specified investors or the public and deployed at project owner’s given **regular account** with basic configurations as talked at ‘solution’section. During this, it’s worth noting on the parameters below:
+ It’s a smart contract working for project team to make a private sale from specified investors or the public and deployed at project owner’s given **regular account** with basic configurations as talked at ‘Solution’section. But During this, it’s worth noting on the parameters below:
 
 * **whitelist：**
 
@@ -256,9 +256,9 @@ A user enters the sales detail page, and input the contributing amount. Correspo
 
 * **vesting schedule for project team：**
 
-  Vesting For project team is a feature on Private Sale that helps to lock away the assets from investors to project team for a period of time to limit the asset usage. This feature helps projects establish an increased level of trust with their investors.
+  Vesting For project team is a feature on Private Sale that helps to _lock away the assets from investors to project team for a period of time_ to limit the asset usage. This feature helps projects establish an increased level of trust with their investors.
 
-  $\underline{\text{At Standard Milestone}}$, PrivateSale contract leverages Mina’s native time-locking account feature for vesting schedule, which means one investor could only utilize token account without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
+  $\underline{\text{At Standard Milestone}}$, PrivateSale contract leverages _Mina’s native time-locking account feature_ for vesting schedule, which means one investor could only utilize token account without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
 
   $\underline{\text{At Advanced Milesone}}$, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for project team.
 
@@ -270,13 +270,15 @@ A user enters the sales detail page, and input the contributing amount. Correspo
 
 #### How TokeniZkAirdrop works
 
-​	Due to the limited number of AccountUpdates within a transaction, within the Airdrop activity project team usually could not distribute tokens（push）to a number of users within a transaction at one time (additionally,the  number of recipients is also limited (fixed) each time due to the static circuit), thus users need to claim tokens back（pull）.This means that we need record all related users’addresses on chain (by storing merkle-tree root of offchain storage) for each airdrop activity.  Within Mina, Token accounts are specific for each type of custom token, meaning that a single public key can have many different types of token accounts.Thus, within TokeniZK, we  provide a specific common Intermediary Address intended to be deployed with TokeniZkAirdrop contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage.TokeniZkAirdrop contract could be optionally deployed later after or during the creation of each Presale, Private Sale.
+​	Due to the limited number of AccountUpdates within a transaction, within the Airdrop activity project team usually could not distribute tokens（_PUSH_）to a number of users within a transaction at one time (additionally,the number of recipients is also limited (fixed) each time due to the _STATIC_ circuit), thus users need to claim tokens back（_PULL_）. This means that we need record all related users’ addresses on chain (by storing merkle-tree root of offchain storage) for each airdrop activity.  
+Within Mina, Token accounts are specific for each type of custom token, meaning that a single public key can have many different types of token accounts. Thus, within TokeniZK, we  provide a specific common **Intermediary Address** intended to be deployed with TokeniZkAirdrop contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage. 
+BTW, TokeniZkAirdrop contract could be optionally deployed later after or during the creation of each Presale, Private Sale.
 
-​	During the Airdrop, every recipient and his rewarding tokens will be stored as an **<u>Airdrop Asset Note</u>** (with fields:{recipient, amount,conditions,etc.},seen as UTXO)and emited as an Action (as well as Event)on chain by project team(ie.token owner).
+​	During the Airdrop, every recipient and his rewarding tokens will be stored as an **Airdrop Asset Note** (with fields:*{recipient, amount,conditions,etc.}*,seen as **UTXO**)and emited as an Action (as well as Event)on chain by project team(ie.token owner).
 
-​	To record all recipients’addresses onchain for each airdrop activity, there is a exclusive unique merkle tree (denoted as **Airdrop-Tree**,an append-only merkle tree) as offchain storage for each custom token (**ie. each custom token has its own unique Airdrop-Tree**), being stored as the  tree root inside corresponding TokeniZkAirdrop contract account(ie. Intermediary token account). Meanwhile,TokeniZK platform will provide offchain storage maintainance service for all Airdrop trees from all custom tokens, including reducing actions of Airdrop activity and storing them into merkle tree as sequenced, and also publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform. And TokeniZK platform helps notify wallet-connected users on page to claim the airdroped tokens.
+​	To record all recipients’ addresses onchain for each airdrop activity, there is a exclusive unique merkle tree (denoted as **Airdrop-Tree**, an append-only merkle tree) as offchain storage for each custom token (**ie. each custom token has its own unique Airdrop-Tree**), being stored as the  tree root inside corresponding TokeniZkAirdrop contract account(ie. Intermediary token account). Meanwhile,TokeniZK platform will provide offchain-storage-maintainance service for all Airdrop trees from all custom tokens, including reducing actions(ie. Sequenced Events) of Airdrop activity and storing them into merkle tree as sequenced, and also publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform. And TokeniZK platform helps notify wallet-connected users on page to claim the airdroped tokens.
 
-​	The recipients claim their tokens by nullifying corresponding Airdrop Asset Note(UTXO),to avoid double spending (as described at TokeniZkUser section below).
+​	The recipients claim their tokens by Nullifying corresponding *Airdrop Asset Note(UTXO)*,to avoid double spending (as described at _How TokeniZkUser works_ section below).
 
  _Tips: More details within 'User Journey Flowcharts' section at proposal link above._
 
@@ -284,18 +286,18 @@ A user enters the sales detail page, and input the contributing amount. Correspo
 
 #### How TokeniZKLocker works
 
- As talked above, within TokeniZK, TokenLocker works as each custom token’s exclusive unique Intermediary role for vesting project team and contributors during sales/airdrops or even the regular Token-Transfer scenario where one user vests another user. Further, with TokenLocker <u>a user could recieve different batches of vesting assets regarding the same custom token!</u>
+ As talked above, within TokeniZK, TokenLocker works as each custom token’s exclusive unique Intermediary role for vesting project team and contributors during sales/airdrops or even the regular Token-Transfer scenario where one user need vest another user. Furthermore, with TokenLocker <u>a user could recieve different batches of vesting assets regarding the same custom token!!</u>
 
 
- According to mina doc(https://docs.minaprotocol.com/zkapps/snarkyjs/time-locked-accounts), Mina account’s regular feature -- Time-locking, allows us to pay someone in MINA or other custom tokens subject to a vesting schedule.Tokens are initially locked and become available for withdrawal only after a certain time or gradually according to a specific schedule. **However, Only one vesting schedule can be specified per account and The vesting schedule cannot be changed during the  vesting period.**
+ According to mina doc(https://docs.minaprotocol.com/zkapps/snarkyjs/time-locked-accounts), Mina account’s regular feature -- **Time-locking**, allows us to pay someone in MINA or other custom tokens subject to a vesting schedule.Tokens are initially locked and become available for withdrawal only after a certain time or gradually according to a specific schedule. **However, Only one vesting schedule can be specified per account and The vesting schedule cannot be changed during the  vesting period.**
 
- Obviously, the native feature Time-locking could not be appropriate for the basic functionalities talked above of TokenLocker. Therefore, we need a seperate TokenLocker for each custom token. Similar as the Airdrop section, within TokeniZK we provide a specific common Intermediary  Address intended to be deployed with TokeniZkLocker contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage.
+ Obviously, the native feature Time-locking could NOT be appropriate for the basic functionalities(ie. *recieve different batches of vesting assets regarding the same custom token*) talked above of TokenLocker. Therefore, we need a seperate TokenLocker for each custom token. Similar as the Airdrop section, within TokeniZK we provide a specific common **Intermediary Address** intended to be deployed with TokeniZkLocker contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage.
 
- TokeniZkLocker contract could be optionally deployed later after or during the creation of each Presale,and Fair Airdrop. During the contribution, every contributor and his rewarding custom tokens will be stored as an Locked Asset Note (with fields:{recipient, amount, releaseTimestamp,etc.},seen as UTXO)and emited as an Action (as well as Event) by project team （ie.token owner ）on chain.
+ TokeniZkLocker contract could be optionally deployed later after or during the creation of each Presale,and Fair Airdrop. During the contribution, every contributor and his rewarding custom tokens will be stored as an **Locked Asset Note** (with fields:_{recipient, amount, releaseTimestamp,etc.}_,seen as **UTXO**) and emited as an _Action_ (as well as Event) by project team （ie.token owner ）on chain.
 
- There is also a unique exclusive merkle tree (denoted as **TokenLocker-Tree**,an append-only merkle tree) as offchain storage for each custom token (**ie.  each  custom  token  has its own unique TokenLocker-Tree**), being stored as the tree root inside corresponding TokeniZkLocker contract account(ie. Intermediary token account). Meanwhile,TokeniZK platform also provide ofchain storage maintainance service for all TokenLocker-Trees from all custom tokens, including reducing actions and storing them  into merkle tree as sequenced, and also publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform. Besides,for better  user experience, TokeniZK platform watches all TokenLockers and helps notify wallet-connected users on page to claim the unlocked tokens.
+ There is also a unique exclusive merkle tree (denoted as **TokenLocker-Tree**,an append-only merkle tree) as offchain storage for each custom token (**ie.  each  custom  token  has its own unique TokenLocker-Tree**), being stored as the tree root inside corresponding TokeniZkLocker contract account(ie. *Intermediary token account*). Meanwhile,TokeniZK platform also provide *offchain-storage-maintainance service* for all TokenLocker-Trees from all custom tokens, including *reducing actions and storing them  into merkle tree as sequenced*, and also *publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform*. Besides,for better user experience, TokeniZK platform watches all TokenLockers and helps notify wallet-connected users on page to claim the unlocked tokens.
 
- ​The recipients claim their tokens by nullifying corresponding <u>Locked Asset Note</u>(UTXO) to avoid double spending (as described at *TokeniZkUser* section below).
+ ​The recipients claim their tokens by *Nullifying* corresponding **Locked Asset Note**(UTXO) to avoid double spending (as described at *TokeniZkUser* section below).
 
  _Tips: More details within 'User Journey Flowcharts' section at proposal link above._
 
@@ -303,20 +305,20 @@ A user enters the sales detail page, and input the contributing amount. Correspo
 
 #### How TokeniZkUser works
 
-​As talked above, all assets recorded on both Airdrop-Tree and TokenLocker-Tree are regarded as UTXO, and recipients need nullify them when claiming tokens back.
+​As talked above, all assets recorded on both *Airdrop-Tree* and *TokenLocker-Tree* are regarded as UTXO, and recipients need Nullify them when claiming tokens back.
 
-​Within TokeniZK, a user nullifies his own `Locked Asset Note(UTXO)` and `Airdrop Asset Note(UTXO)` by recording them onto his own merkle tree, denoted as ‘**Asset_Nullifier_Tree**’.Actually, each custom token account of one user has one corresponding exclusive `Asset_Nullifier_Tree`.
+​Within TokeniZK, a user nullifies his own `Locked Asset Note(UTXO)` and `Airdrop Asset Note(UTXO)` by recording them onto his own merkle tree, denoted as ‘**Asset_Nullifier_Tree**’.Actually, each custom token account of one user address has one corresponding exclusive `Asset_Nullifier_Tree`.
 
 ![WPS图片(1)-16938569740914](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/dae6b150-f113-4194-85d7-7cb4b34355b3)
 
-Each token account of a user will be deployed with a smart contract -- **TokeniZkUser**, then the correponding 8-fields states could be utilized, one of which would be stored with the corresponding `Asset_Nullifier_Tree` root,which is also maintained by TokeniZK platform.
+Each token account of a user address will be deployed with a smart contract -- **TokeniZkUser**, then the correponding 8-fields states could be utilized, one of which would be stored with the corresponding `Asset_Nullifier_Tree` root, which is also maintained by TokeniZK platform.
 
 Here is the high-level claiming progress: 
 
- 1. The asset owners need provide target UTXO’s existence merkle proof on ‘Airdrop Tree’ or ‘TokenLocker Tree’ as well as its non-existence merkle proof on ‘Asset_Nullifier_Tree’,to prove the UTXO is valid.
+ 1. The asset owners need provide target UTXO’s *existence-merkle-proof* on ‘Airdrop Tree’ or ‘TokenLocker Tree’ as well as its *non-existence-merkle-proof* on ‘Asset_Nullifier_Tree’,to prove the UTXO is valid.
  2. Check the ‘recipient’ of UTXO is equal to the owner.
- 3. Tranfer the custom token from correponding Intermediary Token Account to the owner.
- 4. Compute the new root of ‘Asset_Nullifier_Tree’ through this UTXO’s non-existence merkle path. Then update the root to the owner’s token account.
+ 3. Tranfer the custom token from correponding *Intermediary Token Account* to the owner.
+ 4. Compute the new root of ‘Asset_Nullifier_Tree’ through this UTXO’s non-existence-merkle-path. Then update the root to the owner’s token account.
 
 
 <br>
