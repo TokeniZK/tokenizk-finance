@@ -44,7 +44,7 @@ let jsonTx = tx.toJSON();
 
 // ...  http ...
 
-// recieve txJson from network, de-serialize into a tx obj
+// recieve the txJson from predecessor, de-serialize into a tx obj
 tx = Mina.Transaction.fromJSON(JSON.parse(jsonTx));
 tx.transaction.feePayer.lazyAuthorization = { kind: 'lazy-signature' };
 tx.transaction.accountUpdates[0].lazyAuthorization = { kind: 'lazy-signature' };
