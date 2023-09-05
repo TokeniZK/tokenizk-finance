@@ -163,7 +163,8 @@ To directly know more on above functions, You could go to our prototype UI desig
 
 To support the basic features（*listed at Standard Milestones*）above, there are 7 core contract within TokeniZK, as below. 
 
-![](F:\Typora\typora-user-images\WPS图片(1).png)
+![WPS图片(1)](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/7eba3f78-d708-47a1-af77-157250d01e1f)
+
 
 **TokeniZkBasicToken :** an smart contract template for custom token with the most basic functionalities.
 
@@ -295,7 +296,6 @@ In additions, Currently TokeniZk just supports Mina as contribution currency.
 
 As talked above, within TokeniZK, TokenLocker works as each custom token’s exclusive unique Intermediary role for vesting project team and contributors during sales/airdrops or even the regular Token-Transfer scenario where one user vests another user. Further, with TokenLocker <u>a user could recieve different batches of vesting assets regarding the same custom token!</u>
 
- 
 
 According to mina doc(https://docs.minaprotocol.com/zkapps/snarkyjs/time-locked-accounts), Mina account’s
 
@@ -319,7 +319,7 @@ There is also a unique exclusive merkle tree (denoted as **TokenLocker-Tree**,an
 
 ​		Within TokeniZK, a user nullifies his own Locked Asset Note(UTXO)and Airdrop Asset Note(UTXO) by recording them onto his own merkle tree, denoted as ‘**Asset_Nullifier_Tree**’.Actually, each custom token account of one user has one corresponding exclusive‘Asset_Nullifier_Tree’.
 
-![](F:\Typora\typora-user-images\WPS图片(1)-16938569740914.png)
+![WPS图片(1)-16938569740914](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/dae6b150-f113-4194-85d7-7cb4b34355b3)
 
 Each token account of a user will be deployed with a smart contract--**TokeniZkUser**, then the correponding 8-fields states could be utilized, one of which would be stored with the corresponding Asset_Nullifier_Tree root,which is also maintained by TokeniZK platform.
 
@@ -339,7 +339,8 @@ Here is the high-level claiming progress:
 
 To support the features above, there are 5 major roles within Platform. 
 
-![](F:\Typora\typora-user-images\WPS图片(1)-16938571920466.png)
+![WPS图片(1)-16938571920466](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/2fe26fbf-4af2-45d7-a468-5b558d24df0d)
+
 
 ​	**Smart Contracts** : as listed above
 
@@ -361,59 +362,60 @@ To support the features above, there are 5 major roles within Platform.
 
 ##### ZkToken-PreSales-Creation-journey:
 
-![](F:\Typora\typora-user-images\TokeniZK-ZkToken-Presale-Creation-journey.png)
-
+![TokeniZK-ZkToken-Presale-Creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/1b972afd-7b64-4612-882b-1d9f456c7a6b)
 
 
 ##### **ZkToken-PreSales-Contribution-journey:**
 
-![](F:\Typora\typora-user-images\TokeniZK-ZkToken-PreSales-Contribution-journey.png)
+![TokeniZK-ZkToken-PreSales-Contribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/404118d8-77a2-4bc3-bf07-78b8ded0135e)
 
 
 
 ##### PrivateSales-Creation-journey:
 
-![](F:\Typora\typora-user-images\TokeniZK-PrivateSales-Creation-journey.png)
+![TokeniZK-PrivateSales-Creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/4aa6e373-dd85-419a-ae2c-09047141bca6)
 
 
 
 ##### PrivateSales-Contribution-journey:
 
-![](F:\Typora\typora-user-images\TokeniZK-PrivateSales-Contribution-journey.png)
+![TokeniZK-PrivateSales-Contribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/5de770c8-8462-4baa-bb87-defdee51a893)
 
 
 
 ##### Airdrop-creation-journey: 
 
-![](F:\Typora\typora-user-images\TokeniZK-Airdrop-creation-journey.png)
+![TokeniZK-Airdrop-creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/e96cd61f-f4b3-4919-bfb8-67d7a52ed091)
 
 
 
 ##### Airdrop-Distribution-journey:
 
-![](F:\Typora\typora-user-images\TokeniZK-Airdrop-distribution-journey.png)
+![TokeniZK-Airdrop-distribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/baf5f7cf-4668-4a37-a5fe-6b93a4c1853e)
 
 
 
 ##### Airdrop-claim-journey: 
 
-![](F:\Typora\typora-user-images\TokeniZK-Airdrop-claim-journey.png)
+![TokeniZK-Airdrop-claim-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/43b2714a-6755-4910-bd0f-e651dc59b9ad)
+
+
 
 ##### TokenLocker-creation-journey: 
 
-![](F:\Typora\typora-user-images\TokeniZK-TokenLocker-creation-journey.png)
+![TokeniZK-TokenLocker-creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/266f3666-4393-4577-8d98-bec8726ba81b)
 
 
 
 ##### TokenLocker-distribution-journey: 
 
-![](F:\Typora\typora-user-images\TokeniZK-TokenLocker-distribution-journey.png)
+![TokeniZK-TokenLocker-distribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/ae9ae1a1-69ae-48c6-a952-ab3175741f56)
 
 
 
 ##### **TokenLocker-Creation-Distribution-UnlockedTokenClaim--journey:**
 
-![](F:\Typora\typora-user-images\tokenizk-tokenlocker-creation-distribution-claim-journey (5).png)
+![tokenizk-tokenlocker-creation-distribution-claim-journey (5)](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/3b27f013-b95f-466f-bae6-8d844dd9e306)
 
 
 
