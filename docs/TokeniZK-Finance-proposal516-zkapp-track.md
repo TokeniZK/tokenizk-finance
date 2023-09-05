@@ -445,6 +445,66 @@ Contract is the core for a dapp, and according to historical cases, most attacks
   3) Furthermore, we leverage Mina chain’s Actions/Events (_in Archive Nodes_) to record most core operations. Thus, For example, any one could rebuild the whole states(like merkle trees, etc.) by them.
 
 <br>
+
+### Make User Experience Smooth
+TokeniZK, as a LaunchPad platform that focuses on zkTokens for a wide range of users, provides a good user experience is the key to improving user recognition.
+
+In our team's view, a good user experience is a direct result of the overall high performance of the system. Below I will talk about some of our solutions in combination with scenarios talked about.
+
+From a macro perspective, TokeniZK as a whole can be divided into three parts: Circuit (SmartContract), Frontend, Backend.
+
+#### Circuit Part：
+* **Computation-OutSource Service**：
+  
+  As we know circuit execution cost much resources(cpu/memory/time), which impact user experience directly. To improve it, we expect to provide Computation-OutSource Service to try to reduce partial circuit-computation at User side(device).
+  
+  Takes '[TokeniZK-Airdrop-claim-journey]()' & '[TokeniZK-TokenLocker-claim-journey]()' as examples: Users need firstly deploy 'TokeniZkUser' at his account. During the progress, Server side could help them generate a L1Tx (covering compile&witness cal&prove)  and return to them(web client side) for further wallet-signature and broadcast.
+  
+  And When users go on claim their own assets back from 'TokeniZkAirdrop or TokeniZkLocker' contract, then server also could help generate a L1Tx (covering compile&witness cal&prove)  and return to them(web client side) for further wallet-signature and broadcast.
+
+* **Serialize circuits' provingKey** (recently expecting)
+
+  Regarding this opening issue#87(o1-labs/snarkyjs#87), currently, the proverKey of circuit cannot be serialized and cached for later usage, which means users need re-compile the circuits(SmartContract) for later interactions each time accessing or refreshing the page. Apparently, the Long&Repeated compilation time wears down the user's patience!!
+  
+  Thus, before  issue#87 is solved, we need make TokeniZK.finance as an Single Page App(spa, based on vue.js) to try to avoid web-page refreshes during all user journey. But each time user (re)enter TokeniZK.finance, a new circuit compilation yet cannot avoid.
+  
+  When issue#87 is solved, we could pre-compile circuits at server side, and users just need load the compiled result(mainly proverKey) back each time entering TokeniZK.finance.  Then we could greatly deduct compilation at client side.
+  
+  Good news is that issue#87 is under solving now!!
+
+* Future:
+
+  Regarding this opening issue#673(o1-labs/snarkyjs#673), currently the all dependent circuits require to be compiled in sequences together at one process before working, for example, *circuitA <- circuitB <- circuitC*, even if we just need circuitC, we now have to compile circuitA and circuitB first in sequences together at one process. This means extra great cpu/memory/time expenses for circuitA and circuitB, which impact performance really much.
+
+  But in the future when issue#673 is solved, then we just need compile circuitC, and could easily verify the proof from circuitA and circuitB by their (side-loaded) verification key, which lead to great advances on performance!
+  
+  We think it could be completed sooner or later by official team, because it is urgent for the zkApps’ performance improvement .
+
+#### Frontend UI Part：
+As a LauchPad Platform, each project will upload its own exclusive logo, brand promotional pictures, etc. If you have browsed our demo URL (such as https://tokenizk.finance/pre-sales.html), you can foresee that the number of image displays on the official website will be very high in the future. Obviously, the loading efficiency of pictures will most directly affect the user experience! Fortunately, the optimization scheme in this area is already very mature in the industry!
+
+Here's the approach we plan to take early in our development:
+
+* Lazy loading of images: The image lazy loading technology is adopted, and the image is only loaded when the user scrolls to the position where the image is located. This reduces initial load time and increases page load speed.
+* Image caching: Use an appropriate caching strategy to reduce the number of times images are loaded repeatedly. Set appropriate http cache header information to enable browsers to cache images and reduce loading time on subsequent visits.
+* Image CDN Acceleration: Use Content Delivery Network (CDN) to accelerate the loading of images. CDN can cache images on servers around the world, allowing users to load images from the server closest to them, reducing network latency and increasing loading speed.
+* Image Compression and Optimization: Use appropriate image compression tools to reduce image file size while maintaining good visual quality. Optimizing image formats, adjusting resolution and compression ratio, etc. can reduce loading time and improve website performance.
+
+In the middle and later stages of development, we can consider publishing images, UI, etc. to distributed storage networks such as IPFS, etc.
+
+#### Backend Part：
+The high performance and high availability of the back-end support system is crucial to the smooth and efficient operation of TokeniZK.
+
+* Vertical splitting: Split large microservices into smaller, independent service units to improve concurrency performance and scalability. As shown in the architecture diagram of Proposal, our entire backend architecture will be split into multiple independent services: api-gateway, chain-tracker, proof-generator and core service, etc. This allows each service unit to focus on a specific business functionality and can be independently extended and optimized.
+  
+* Horizontal scaling: Scale microservices horizontally by adding more instances to cope with high load and concurrent requests. Use a load balancer to distribute requests and ensure that each instance can handle the load evenly, improving system scalability and performance. Among them, we will use NGINX to achieve load balancing.
+  
+* Caching: Using an appropriate caching strategy can significantly improve the performance of your system. Caching frequently accessed data in memory reduces the number of requests to backend services, lowering latency and improving response times. For example, after storing AirdropAssetNote and LockedAssetNote in Merkle-Tree, there will be a unique corresponding leafIndex, which is the key to query the merkle proof of a assetNote! We can cache their mapping relationship (commitment->leafIndex) to avoid traversing queries in mysqlDB every time.
+  
+* Database Optimization: After the number of users increases significantly in the future, we consider separating reads and writes from the DB.
+
+
+<br>
 <br>
 
 ### **Long-term Vision And Dream Scenario**
