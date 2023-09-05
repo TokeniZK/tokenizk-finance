@@ -583,13 +583,6 @@ http://suo.nz/36ciLt
 I have been joining Mina community for 2 years, with continuous attention and study on the upgrade of SnarkyJS library.
 
 
-
-### **Team Members**
-
-// TODO
-
-
-
 ### **Risks**
 
 We conclude risks sources as below for our project:
@@ -623,3 +616,11 @@ There are several existing popular launchpad platforms, such as PinkSale, DxSale
 * **From Regulation**
 
 Custom Token Issuing to the public might challenge regulation of some countries.
+
+
+
+### **Team Members**
+
+// TODO
+
+
