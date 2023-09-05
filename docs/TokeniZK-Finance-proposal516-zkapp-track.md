@@ -11,7 +11,7 @@ TokeniZK Finance is a decentralized launchpad where you could launch your own zk
 ![WPS图片(1)-16938547198322](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/2468e3da-853e-4317-bcbd-0b1a8bb94d85)
 
 
-​									Official: https://tokenizk.finance
+​									Official(draft ui): https://tokenizk.finance
 
 ​									Proposal: https://zkignite.minaprotocol.com/zkignite/zkapp-track-cohort-2/funding/suggestion/516
 
