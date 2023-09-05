@@ -8,7 +8,8 @@
 
 TokeniZK Finance is a decentralized launchpad where you could launch your own zk-Token and create your own initial token sale. It provides secure smart contract templates with flexible configuration and complete tool suits for token management, where you could finish all operations simply in several clicks, without knowledge requirement about code & zkp.
 
-![](F:\Typora\typora-user-images\WPS图片(1)-16938547198322.png)
+![WPS图片(1)-16938547198322](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/2468e3da-853e-4317-bcbd-0b1a8bb94d85)
+
 
 ​									Official: https://tokenizk.finance
 
