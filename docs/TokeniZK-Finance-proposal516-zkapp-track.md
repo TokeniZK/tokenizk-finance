@@ -338,9 +338,6 @@ To support the features above, there are 5 major roles within Platform:
 ​Besides, Mina chain (Archive Nodes) stores all historical Actions/Events and all token states.
 
 
-
-
-
 ### User Journey Flowcharts
 
 #### ZkToken-PreSales-Creation-journey:
@@ -402,7 +399,19 @@ To support the features above, there are 5 major roles within Platform:
 
 
 
+#### System Security Consideration
 
+
+
+
+### **Long-term Vision And Dream Scenario**
+
+DDDDD
+
+
+### **Business model And Monetization plan**
+
+DDDDD
 
 ### **Budget and Milestones**
 
