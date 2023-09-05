@@ -41,13 +41,13 @@ TokeniZK provides users with secure smart contract templates with flexible confi
 
 The below is the major functions TokeniZK provides.(More details within User Journey section blow.)
 
-##### **1.** **ZK-Token Creation**
+#### **1.** **ZK-Token Creation**
 
 Users could easily create a originally natively basic custom token with given secure smart contract templates.
 
  
 
-##### **2.** **Presale**
+#### **2.** **Presale**
 
 **(1)** **Normal Presale** 
 
@@ -81,7 +81,7 @@ Including withdraw contribution if Softcap is not reached
 
  
 
-##### **3.** **PrivateSale**
+#### **3.** **PrivateSale**
 
 PrivateSale works for project team to make a private sale from specified investors or the public. You could pre-configure it on **sales amount, target currency, softcap/hardcap, minimumBuy/maximumBuy,startTime/endTime, whitelist**, vesting schedule for project team, etc. 
 
@@ -97,7 +97,7 @@ Including withdraw contribution if Softcap is not reached
 
  
 
-##### **4.** Fair Airdrop
+#### **4.** Fair Airdrop
 
 Fair Airdrop tool, as each custom token’s exclusive unique **Intermediary role**(will explained below), helps project team to record related contributors and token distribution. 
 
@@ -107,7 +107,7 @@ Fair Airdrop tool, as each custom token’s exclusive unique **Intermediary role
 
  
 
-##### **5.** TokenLocker
+#### **5.** TokenLocker
 
 TokenLocker works as each custom token’s exclusive unique **Intermediary role**(will explained below) for vesting project team and contributors or even the transfer scenario where one user vests another user. A TokenLocker also could be optionally created later after or during the creation of each Presale, Private Sale and Fair Airdrop.
 
@@ -117,25 +117,25 @@ TokenLocker works as each custom token’s exclusive unique **Intermediary role*
 
  
 
-##### **6.** Transfer Token
+#### **6.** Transfer Token
 
 A tiny web page wallet for users to transfer their tokens.
 
  
 
-##### **7.** User Participation History Page
+#### **7.** User Participation History Page
 
 Pages for user to quickly review all his participated activities.
 
 
 
-##### **8.** **Advanced Airdrop Creation**(At Advanced milestone)
+#### **8.** **Advanced Airdrop Creation**(At Advanced milestone)
 
  Project teams could make some more fine configurations on airdrop .
 
  
 
-##### **9.** **zkNFT Pages**(At Advanced milestone)
+#### **9.** **zkNFT Pages**(At Advanced milestone)
 
  Project team could launch a zkNFT sales.
 
@@ -153,7 +153,7 @@ Pages for user to quickly review all his participated activities.
 
 To directly know more on above functions, You could go to our prototype UI design:
 
- [www.tokenizk.finance](http://www.tokenizk.finance)[.](http://www.tokenizk.finance.) (will publish by 18 July. Note: the UI design is not yet finalized.)
+ [www.tokenizk.finance](http://www.tokenizk.finance)[.](http://www.tokenizk.finance.) (Note: the UI design is not yet finalized.)
 
 
 
@@ -188,7 +188,7 @@ To support the basic features（*listed at Standard Milestones*）above, there a
 
 We have designed a UI prototype on the all flows(but not finalized yet), pls go to: [www.tokenizk.finance](http://www.tokenizk.finance) for more details.
 
-**Token & Sales Creation Part:**
+#### **Token & Sales Creation Part:**
 
 A user (denoted as Token Creator) entering TokeniZK platform would be guided to complete the flow below: 
 
@@ -215,6 +215,7 @@ Note: Token Creatorneed pay for the whole flow(involving platform procedure fee,
 A user enters the sales detail page, and input the contributing amount. Corresponding smartcontract would be invoked (during which all preset sale rules will be checked in circuit). Then tx.prove and trigger the wallet to make a signature and later broadcast it.
 
 
+### Working Mechanism of TokeniZk SmartContracts
 
 #### How TokeniZkBasicToken works
 
@@ -234,13 +235,13 @@ A project team(custom token owner) might launch multi-round presale activities f
 
 At each preSale contract, before the preSale activity starts, token owner could only configure rules/parameters as listed at ‘solution’section.During this, it’s worth noting on the parameters below:
 
-**whitelist**
+**whitelist：**
 
 ​		Whitelist means the membership requirement to participate the preSale activity .Token owner would list on page all members’ addresses within whitelist,  based on which web client would **defaultly** construct locally a merkle tree in memory and compute the root as parameter to be configured later into the **TokeniZkPresale** contract. 
 
 ​	Regarding whitelist,defaultly TokeniZK platform just stores all members into backend storage as normal sales info, without help on the merkle tree construction/maintainance on it as well as corresponding merkle proof query service during activity for members in whitelist. It means in case the whitelist’s size is large, such as larger than 500, it might cause really much memory/cpu/time resource to construct the whole merkle tree on each presale  investor’s local device, which impacts investor’s experience.To avoid this, token owner could choose and pay for **Outsourced Computing Service** provided by platform, then platform backend will help construct/maintain the merkle tree and provide proof query service for investors during contribution.
 
-**vesting schedule for contributors**
+**vesting schedule for contributors：**
 
 ​		Vesting For Contributors is a feature on preSale that helps projects to lock away the tokens of presale investors for a period of time. Imaging in the future,it could work for preventing presale investors from selling all their tokens at once at listing time, which causes too much sell pressure and crashes the price.
 
@@ -257,18 +258,16 @@ In additions, Currently TokeniZk just supports Mina as contribution currency.
 #### How TokeniZkPrivateSale works
 
 It’s a smart contract working for project team to make a private sale from specified investors or the public and deployed at project owner’s given **regular account** with basic configurations as talked at ‘solution’section. During this, it’s worth noting on the parameters below:
-
-**whitelist**
+* **whitelist：**
 
 ​		As the same as the one at ‘**TokeniZkPresale**’.
 
-**vesting schedule for project team**
-
+* **vesting schedule for project team：**
 ​		Vesting For project team is a feature on Private Sale that helps to lock away the assets from investors to project team for a period of time to limit the asset usage. This feature helps projects establish an increased level of trust with their investors.
 
 ​			<u>At Standard Milestone</u>, PrivateSale contract leverages Mina’s native time-locking account feature for vesting schedule, which means one investor could only utilize token account without exsiting vesting schedule (will explain this below at ‘**TokeniZkLocker** ’section).
 
-<u>			At Advanced Milesone</u>, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for project team.
+   <u>At Advanced Milesone</u>, PrivateSale contract leverages **TokeniZkLocker** for vesting schedule for more flexiability for project team.
 
 In additions, Currently TokeniZk just supports Mina as contribution currency.
 
@@ -295,9 +294,7 @@ In additions, Currently TokeniZk just supports Mina as contribution currency.
 As talked above, within TokeniZK, TokenLocker works as each custom token’s exclusive unique Intermediary role for vesting project team and contributors during sales/airdrops or even the regular Token-Transfer scenario where one user vests another user. Further, with TokenLocker <u>a user could recieve different batches of vesting assets regarding the same custom token!</u>
 
 
-According to mina doc(https://docs.minaprotocol.com/zkapps/snarkyjs/time-locked-accounts), Mina account’s
-
-regular feature -- Time-locking, allows us to pay someone in MINA or other custom tokens subject to a vesting schedule.Tokens are initially locked and become available for withdrawal only after a certain time or gradually according to a specific schedule. **However, Only one vesting schedule can be specified per account and The vesting schedule cannot be changed during the  vesting period.**
+According to mina doc(https://docs.minaprotocol.com/zkapps/snarkyjs/time-locked-accounts), Mina account’s regular feature -- Time-locking, allows us to pay someone in MINA or other custom tokens subject to a vesting schedule.Tokens are initially locked and become available for withdrawal only after a certain time or gradually according to a specific schedule. **However, Only one vesting schedule can be specified per account and The vesting schedule cannot be changed during the  vesting period.**
 
 Obviously, the native feature Time-locking could not be appropriate for the basic functionalities talked above of TokenLocker. Therefore, we need a seperate TokenLocker for each custom token. Similar as the Airdrop section, within TokeniZK we provide a specific common Intermediary  Address intended to be deployed with TokeniZkLocker contract at its each custom token account to activate each 8-fields onchain storage where we could store merkle-tree root of offchain storage.
 
@@ -305,7 +302,7 @@ TokeniZkLocker contract could be optionally deployed later after or during the c
 
 There is also a unique exclusive merkle tree (denoted as **TokenLocker-Tree**,an append-only merkle tree) as offchain storage for each custom token**(ie.  each  custom  token  has its own unique TokenLocker-Tree),** being stored as the tree root inside corresponding TokeniZkLocker contract account(ie. Intermediary token account). Meanwhile,TokeniZK platform also provide ofchain storage maintainance service for all TokenLocker-Trees from all custom tokens, including reducing actions and storing them  into merkle tree as sequenced, and also publish the whole tree to the public to guarantee Data Availibility of TokeniZK platform. Besides,for better  user experience, TokeniZK platform watches all TokenLockers and helps notify wallet-connected users on page to claim the unlocked tokens.
 
-​		The recipients claim their tokens by nullifying corresponding <u>Locked Asset Note</u>(UTXO) to avoid double spending (as described at *TokeniZkUser* section below).
+​The recipients claim their tokens by nullifying corresponding <u>Locked Asset Note</u>(UTXO) to avoid double spending (as described at *TokeniZkUser* section below).
 
 **Tips**: More details within 'User Journey Flowcharts' section at proposal link above.
 
@@ -333,22 +330,22 @@ Here is the high-level claiming progress:
 
 
 
-##### Platform Components Architect Figure
+### Platform Components Architect Figure
 
 To support the features above, there are 5 major roles within Platform. 
 
 ![WPS图片(1)-16938571920466](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/2fe26fbf-4af2-45d7-a468-5b558d24df0d)
 
 
-​	**Smart Contracts** : as listed above
+​*	**Smart Contracts** : as listed above
 
-​	**Web Client** : a website for all user journeys as talked above
+*​	**Web Client** : a website for all user journeys as talked above
 
-​	**Onchain Tracker** : listen for all onchain activities of all custom tokens’smart contracts and notify **Offchain Storage Maintainer** and **Platform Backend.** 
+​*	**Onchain Tracker** : listen for all onchain activities of all custom tokens’smart contracts and notify **Offchain Storage Maintainer** and **Platform Backend.** 
 
-​	**Offchain Storage Maintainer** : maintain all merkle trees by reducing all actions at intervals and onchain tree root for all custom tokens.
+​*	**Offchain Storage Maintainer** : maintain all merkle trees by reducing all actions at intervals and onchain tree root for all custom tokens.
 
-​	**Platform Backend** : a daemon service for token creators and contributors. like maintain information on project/team and all sales, like notifying users about the their own airdrop notes and unlocked notes, and exposing open api for users to obtain merkle path for each asset note, etc.
+​*	**Platform Backend** : a daemon service for token creators and contributors. like maintain information on project/team and all sales, like notifying users about the their own airdrop notes and unlocked notes, and exposing open api for users to obtain merkle path for each asset note, etc.
 
 ​	Besides, Mina chain (Archive Nodes) stores all historical Actions/Events and all token states.
 
@@ -358,60 +355,60 @@ To support the features above, there are 5 major roles within Platform.
 
 ### User Journey Flowcharts
 
-##### ZkToken-PreSales-Creation-journey:
+#### ZkToken-PreSales-Creation-journey:
 
 ![TokeniZK-ZkToken-Presale-Creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/1b972afd-7b64-4612-882b-1d9f456c7a6b)
 
 
-##### **ZkToken-PreSales-Contribution-journey:**
+#### **ZkToken-PreSales-Contribution-journey:**
 
 ![TokeniZK-ZkToken-PreSales-Contribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/404118d8-77a2-4bc3-bf07-78b8ded0135e)
 
 
 
-##### PrivateSales-Creation-journey:
+#### PrivateSales-Creation-journey:
 
 ![TokeniZK-PrivateSales-Creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/4aa6e373-dd85-419a-ae2c-09047141bca6)
 
 
 
-##### PrivateSales-Contribution-journey:
+#### PrivateSales-Contribution-journey:
 
 ![TokeniZK-PrivateSales-Contribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/5de770c8-8462-4baa-bb87-defdee51a893)
 
 
 
-##### Airdrop-creation-journey: 
+#### Airdrop-creation-journey: 
 
 ![TokeniZK-Airdrop-creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/e96cd61f-f4b3-4919-bfb8-67d7a52ed091)
 
 
 
-##### Airdrop-Distribution-journey:
+#### Airdrop-Distribution-journey:
 
 ![TokeniZK-Airdrop-distribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/baf5f7cf-4668-4a37-a5fe-6b93a4c1853e)
 
 
 
-##### Airdrop-claim-journey: 
+#### Airdrop-claim-journey: 
 
 ![TokeniZK-Airdrop-claim-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/43b2714a-6755-4910-bd0f-e651dc59b9ad)
 
 
 
-##### TokenLocker-creation-journey: 
+#### TokenLocker-creation-journey: 
 
 ![TokeniZK-TokenLocker-creation-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/266f3666-4393-4577-8d98-bec8726ba81b)
 
 
 
-##### TokenLocker-distribution-journey: 
+#### TokenLocker-distribution-journey: 
 
 ![TokeniZK-TokenLocker-distribution-journey](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/ae9ae1a1-69ae-48c6-a952-ab3175741f56)
 
 
 
-##### **TokenLocker-Creation-Distribution-UnlockedTokenClaim--journey:**
+#### **TokenLocker-Creation-Distribution-UnlockedTokenClaim--journey:**
 
 ![tokenizk-tokenlocker-creation-distribution-claim-journey (5)](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/3b27f013-b95f-466f-bae6-8d844dd9e306)
 
