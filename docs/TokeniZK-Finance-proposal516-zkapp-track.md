@@ -599,7 +599,7 @@ Custom Token Issuing to the public might challenge regulation of some countries.
 
 #### Proposer Experience
 
-I has been an senior frontend engineer in KONKA GROUP for 5years, currently work as an freelancer & online-educator focusing on frontend and blockchain technology. The below are some of my teaching materials or cases: 
+I am Yoga#3374, I has been an senior frontend engineer in KONKA GROUP for 5years, currently work as an freelancer & online-educator focusing on frontend and blockchain technology. The below are some of my teaching materials or cases: 
 
 https://github.com/Yoga2015/CSS3-Tutorial
 
