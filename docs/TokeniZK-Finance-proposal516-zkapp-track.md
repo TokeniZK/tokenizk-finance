@@ -458,7 +458,7 @@ From a macro perspective, TokeniZK as a whole can be divided into three parts: *
   
   As we know circuit execution cost much resources(cpu/memory/time), which impact user experience directly. To improve it, we expect to provide Computation-OutSource Service to try to reduce partial circuit-computation at User side(device).
   
-  Takes '[TokeniZK-Airdrop-claim-journey]()' & '[TokeniZK-TokenLocker-claim-journey]()' as examples: Users need firstly deploy 'TokeniZkUser' at his account. During the progress, Server side could help them generate a L1Tx (covering compile&witness cal&prove)  and return to them(web client side) for further wallet-signature and broadcast.
+  Takes '[TokeniZK-Airdrop-claim-journey](#how-tokenizkuser-works)' & '[TokeniZK-TokenLocker-claim-journey](#how-tokenizkuser-works)' as examples: Users need firstly deploy 'TokeniZkUser' at his account. During the progress, Server side could help them generate a L1Tx (covering compile&witness cal&prove)  and return to them(web client side) for further wallet-signature and broadcast.
   
   And When users go on claim their own assets back from 'TokeniZkAirdrop or TokeniZkLocker' contract, then server also could help generate a L1Tx (covering compile & witness-cal & prove)  and return to them(web client side) for further wallet-signature and broadcast.
 
