@@ -81,7 +81,7 @@ Including withdraw contribution if Softcap is not reached
 
 #### **3.** **PrivateSale**
 
-PrivateSale works for project team to make a private sale from specified investors or the public. You could pre-configure it on **sales amount, target currency, softcap/hardcap, minimumBuy/maximumBuy,startTime/endTime, whitelist**, vesting schedule for project team, etc. 
+PrivateSale works for project team to make a private sale from specified investors or the public. You could pre-configure it on _sales amount, target currency, softcap/hardcap, minimumBuy/maximumBuy,startTime/endTime, **whitelist**, **vesting schedule for project team**, etc_. 
 
  ​	① investment operations and information on projects and team.
 
@@ -129,7 +129,7 @@ Pages for user to quickly review all his participated activities.
 
 #### **8.** **Advanced Airdrop Creation**(At Advanced milestone)
 
-Project teams could make some more fine configurations on airdrop .
+Project teams could make some more fine configurations on airdrop.
 
  
 
@@ -149,7 +149,7 @@ Project teams could make some more fine configurations on airdrop .
 
  
 
-To directly know more on above functions, You could go to our prototype UI design: [www.tokenizk.finance](http://www.tokenizk.finance) (Note: the UI design is not yet finalized.)
+To directly experience more on above functions, You could go to our prototype UI design: [www.tokenizk.finance](http://www.tokenizk.finance) (Note: the UI design is NOT yet finalized.)
 
 
 
