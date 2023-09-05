@@ -438,12 +438,55 @@ Contract is the core for a dapp, and according to historical cases, most attacks
 
 ### **Long-term Vision And Dream Scenario**
 
-DDDDD
+We all trust ZKP matters much in the coming future, where we could easily further foresee  that Tokens with ZKP capabilities must plays an important role wherein. So we expect to  carry out a launchpad platform(TokeniZK) focusing on zkToken -- mainly Custom Token on  Mina chain.   
+
+Furthermore, as a platform that support issuing and selling tokens, TokeniZK's vision for  future development revolves around creating a safe and efficient ecosystem for token  issuance and sale. The platform aims to provide a user-friendly experience for token issuers  and investors while prioritizing transparency and trust. Therefore, our expected future  development route is as follows:  
+
+1) **A platform where anyone can issue&sell zkTokens**  
+Our platform provides a user-friendly interface that enables individuals and businesses to  create and sell their own tokens. By democratizing the token issuance process, we make it  possible for anyone, regardless of technical expertise, to participate in the token economy.   This inclusive approach fosters innovation and opens new avenues for fundraising,  investment, and asset representation.   
+
+2) **A platform to popularize zkToken**  
+One of the main goals is to increase the visibility and adoption rate of zkToken. This can be  achieved through various strategies, such as targeted marketing campaigns, educational  initiatives, and partnerships with key industry players. By effectively communicating the  unique features and benefits of zkToken, we aim to appeal to a wider user base and build it  into the leading zkTokenizing platform.   
+
+3) **Project incubation and brand building platform**  
+In addition to token issuance, our platform also serves as a comprehensive ecosystem for  project incubation and brand building. We provide resources, mentoring, and networking  opportunities to help entrepreneurs and startups turn their ideas into successful businesses.   Through mentorship programs, funding access, and strategic partnerships, we aim to nurture  promising projects and foster their growth. In addition, our platform provides tools and  strategies for brand building, enabling projects to build a strong market presence and  interact effectively with their target audience.   
+
+4) **Ordinary investors and VC**  
+We bridge the gap between ordinary investors and venture capitalists (VC) by providing a  comprehensive matchmaking service. Our platform facilitates the connection between these  two groups, enabling ordinary investors to access investment opportunities traditionally  reserved for venture capitalists. By leveraging our network and due diligence process, we  could curate a selection of high-potential projects that match the preferences of ordinary  investors and VC. This creates a win-win situation where ordinary investors have access to  promising projects and venture capital firms can identify potential investment targets moreeffectively.   
+
+5) **Continue to innovate and embrace compliance**  TokeniZK is committed to continuous innovation and improvement. The platform actively  seeks user feedback and adopts new technologies and features to enhance the user  experience. It also keeps up with the changing regulatory environment to ensure compliance  and adaptability.   Overall, TokeniZK's vision is to create a secure, transparent and user-friendly platform that  supports token issuers and investors while promoting trust and liquidity in the token sale  ecosystem.  
+
 
 
 ### **Business model And Monetization plan**
 
-DDDDD
+Business model and monetization plan is crucial for TokeniZK to go further. We think there are two stages of TokeniZK’s business model and monetization plan.
+
+#### Early Stages
+As a decentralized platform for token issuance and sale, TokeniZK acts as an intermediary to connect projects with ordinary investors. It allows project parties to issue tokens on the platform easily and directly, enabling ordinary investors to participate in the early stages of these projects. During the progress, TokeniZK charges fees a revenue source. 
+
+#### 1) zkToken Issuance Service
+   TokeniZK provides a token launch board service where projects can conduct the initial tokens offerring. The service includes functions such as token creation and issuance, smart contract deployment, token allocation and Locking/Airdrop. TokeniZK charges a fee for these services. 
+
+#### 2) zkToken Sale Service
+TokeniZK charges a percentage based on the total amount of funds raised during the token sale. This fee typically represents a small percentage of the total amount raised, providing TokeniZK with a source of revenue. The cost structure may vary depending on the specific terms agreed for each project. In addition, during the process of token sale, the platform additionally provides targeted 'Outsourced Computing Services' (seen in proposal), and charges a certain fee as a revenue source. 
+
+#### 3) zkToken Holding:
+   TokeniZK may also hold a portion of the tokens issued on its platform. As the value of these tokens appreciates, TokeniZK can generate profits by selling them at a later stage. This strategy allows TokeniZK to benefit from the success of the projects it supports. 
+   
+#### Future Stages 
+#### 4) Listing Service:
+In the future, when Dex on Mina is mature, TokeniZK will provide a one-stop service for listing its tokens on DEX, in which TokeniZK will charge a certain amount of listing fee to the project party. 
+
+#### 5) Project Operation Service:
+TokeniZK provides additional quality services for the project, such as project Logo management, home-page recommendation service and other marketing support, community management and consulting services. These services are designed to increase the success rate of token sales and increase the visibility of the project. TokeniZK charges for these premium services separately, thus contributing to its overall revenue. 
+
+#### 6) Partnerships and Integrations:
+TokeniZK can explore partnerships and integrations with other platforms, wallets, or blockchain projects. By partnering with established players in the cryptocurrency space, TokeniZK can generate additional revenue through referral fees, revenue-sharing agreements, or technology licenses. 
+
+7) In the future, TokeniZK can extend its business model by introducing new features and services. For example, it could offer pledging services, liquidity mining opportunities, or Launch TokeniZK's Platform Token. These developments can create additional revenue streams and attract a larger user base. Overall, TokeniZK's business model revolves around providing a comprehensive platform for token issuance, token sale/listing, and contribution, establishing itself as a leader in the digital asset space through a variety of convenient services.
+
+
 
 ### **Budget and Milestones**
 
