@@ -338,7 +338,7 @@ To support the features above, there are 5 major roles within Platform:
   
 * **Platform Backend** : a daemon service for token creators and contributors. like maintain information on project/team and all sales, like notifying users about the their own airdrop notes and unlocked notes, and exposing open api for users to obtain merkle path for each asset note, etc.
 
-​Besides, Mina chain (Archive Nodes) stores all historical Actions/Events and all token states.
+​Besides, At persistence layer, to guarantee *Data Availability* of TokeniZK platform, Mina chain (Archive Nodes) stores all historical Actions/Events and all token states which could be leverged to rebuild the whole world state of TokeniZK at any time.
 
 
 ### User Journey Flowcharts
