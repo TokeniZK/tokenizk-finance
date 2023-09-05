@@ -449,25 +449,25 @@ Milestones in three months:
 
 Within three months, we will carry out a fully functional launchpad platform, implementing a refined UI and UX design, the required MINA Smart Contracts and all interactions with the supporting service.
 
-**Milestone1**:  Cloud Infra preparation
+  **Milestone1**:  Cloud Infra preparation
 
-**Milestone2**:  Smart Contracts development
+  **Milestone2**:  Smart Contracts development
 
 ​			Support functionalities listed at milestone3
 
-**Milestone3**:  Web client UI development
+  **Milestone3**:  Web client UI development
 
 ​		Seen as functionalities Listed at ‘**Solution’** section, **Excluding** the items with suffix ‘at Advanced milestone’.
 
-**Milestone4**:  Onchain Tracker development
+  **Milestone4**:  Onchain Tracker development
 
 ​			Support functionalities listed at milestone3
 
-**Milestone5**:  Offchain Storage Maintainer development
+  **Milestone5**:  Offchain Storage Maintainer development
 
 ​			Support functionalities listed at milestone3
 
-**Milestone6**: Platform Backend Service development
+ **Milestone6**: Platform Backend Service development
 
 ​			Support functionalities listed at milestone3
 
@@ -493,17 +493,17 @@ We has almost completed the whole design on the whole platform before. Within 3 
 
 Within three months, we will carry out a fully functional launchpad platform, implementing a refined UI and UX design, the required MINA Smart Contracts and all interactions with the supporting service.
 
-**Milestone1**: Cloud Infra preparation
+  **Milestone1**: Cloud Infra preparation
 
-**Milestone2**: Smart Contracts development
+  **Milestone2**: Smart Contracts development
 
-* Support **extra **functionalities listed at milestone3
+   * Support **extra **functionalities listed at milestone3
 
-* **PreSales/PrivateSale contract templates** integrated with **TokeniZkLocker** 
+  * **PreSales/PrivateSale contract templates** integrated with **TokeniZkLocker** 
 
-**Milestone3**: Web client UI development
+ **Milestone3**: Web client UI development
 
-* Seen as Listed at ‘Solution’ section, **Including** the items with suffix ‘**at Advanced milestone**’ as below :
+  * Seen as Listed at ‘Solution’ section, **Including** the items with suffix ‘**at Advanced milestone**’ as below :
 
 1. Advanced Airdrop Creation(At Advanced milestone)
 
@@ -525,15 +525,15 @@ Within three months, we will carry out a fully functional launchpad platform, im
 
 3. TokeniZK online Mannual Doc(At Advanced milestone)
 
-**Milestone4**: Onchain Tracker development
+  **Milestone4**: Onchain Tracker development
 
 * Support extra functionalities listed at milestone3
 
-**Milestone5**:  Offchain Storage Maintainer development
+  **Milestone5**:  Offchain Storage Maintainer development
 
 * Support extra functionalities listed at milestone3
 
-**Milestone6**: Platform Backend Service development
+  **Milestone6**: Platform Backend Service development
 
 * Support extra functionalities listed at milestone3
 
