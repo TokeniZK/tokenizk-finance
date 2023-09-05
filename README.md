@@ -25,6 +25,10 @@ Like,We need to develop &deploy a smart contract mannually and make the calculat
 
 Therefore, A suite of tools is necessary to help the common users create their own tokens in a fast, simple and cheap way, with no prior knowledge on code and zkp required and 100% decentralized.
 
+With good reference of existing professional tools and platfroms such Pinksale and DxSale，we team expects to carry out the first launchpad platform focusing on ZK-Token, which we think makes a lot of sense for the popularity of Mina custom tokens as well as future onchain ecosystem prosperity. Our product is named as **TokeniZK Finance**, on which you can easily tokenize your idea with zkp and distribute them to fans.
+
+TokeniZK provides users with secure smart contract templates with flexible configuration on custom parameters as well as complete tool suits for token deployment&management, on which you could complete any zkToken operations easily in several steps.
+
 Please go to [doc](./docs/TokeniZK-Finance-proposal516-zkapp-track.md) for more details.
 
 ## Quick start
