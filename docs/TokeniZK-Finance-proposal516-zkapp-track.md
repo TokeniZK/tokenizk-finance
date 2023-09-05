@@ -322,20 +322,18 @@ Here is the high-level claiming progress:
 
 ### Platform Components Architect Figure
 
-To support the features above, there are 5 major roles within Platform: 
-
 ![WPS图片(1)-16938571920466](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/2fe26fbf-4af2-45d7-a468-5b558d24df0d)
 
-
- ​*	**Smart Contracts** : as listed above
-
- *​	**Web Client** : a website for all user journeys as talked above
-
- ​*	**Onchain Tracker** : listen for all onchain activities of all custom tokens’ smart contracts and notify **Offchain Storage Maintainer** and **Platform Backend.** 
-
- *	**Offchain Storage Maintainer** : maintain all merkle trees by reducing all actions at intervals and onchain tree root for all custom tokens.
-
- *	**Platform Backend** : a daemon service for token creators and contributors. like maintain information on project/team and all sales, like notifying users about the their own airdrop notes and unlocked notes, and exposing open api for users to obtain merkle path for each asset note, etc.
+To support the features above, there are 5 major roles within Platform:
+* **Smart Contracts** : as listed above
+  
+* **Web Client** : a website for all user journeys as talked above
+  
+* **Onchain Tracker** : listen for all onchain activities of all custom tokens’ smart contracts and notify **Offchain Storage Maintainer** and **Platform Backend.**
+  
+* **Offchain Storage Maintainer** : maintain all merkle trees by reducing all actions at intervals and onchain tree root for all custom tokens.
+  
+* **Platform Backend** : a daemon service for token creators and contributors. like maintain information on project/team and all sales, like notifying users about the their own airdrop notes and unlocked notes, and exposing open api for users to obtain merkle path for each asset note, etc.
 
 ​Besides, Mina chain (Archive Nodes) stores all historical Actions/Events and all token states.
 
@@ -492,19 +490,20 @@ Within three months, we will carry out a fully functional launchpad platform, im
         Project teams could make some more fine configurations on airdrop.
 
      2. zkNFT Pages(At Advanced milestone)
+       
+        Project team could launch a zkNFT sales.
 
-​	     	 Project team could launch a zkNFT sales.
         * configure Rules and register&record project/team details.
-        
+  
         * Projects Listing Page
-
+  
         * Project Detail Page
-
+  
           * NFT purchasing
-          
+    
           * Claim NFT
 
-     3. TokeniZK online Mannual Doc(At Advanced milestone)
+     5. TokeniZK online Mannual Doc(At Advanced milestone)
 
  * **Milestone4**: Onchain Tracker development
 
