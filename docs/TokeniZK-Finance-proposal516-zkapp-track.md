@@ -39,7 +39,7 @@ With good reference of existing professional tools and platfroms such Pinksale a
 
 TokeniZK provides users with secure smart contract templates with flexible configuration on custom parameters as well as complete tool suits for token deployment&management, on which you could complete any zkToken operations easily in several steps.
 
-The below is the major functions TokeniZK provides.(More details within User Journey section blow.)
+### The below is the Major Functions TokeniZK provides.(More details within User Journey section blow.)
 
 #### **1.** **ZK-Token Creation**
 
