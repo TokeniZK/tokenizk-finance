@@ -495,11 +495,17 @@ In the middle and later stages of development, we can consider publishing images
 #### Backend Part：
 The high performance and high availability of the back-end support system is crucial to the smooth and efficient operation of TokeniZK.
 
-* Vertical splitting: Split large microservices into smaller, independent service units to improve concurrency performance and scalability. As shown in the architecture diagram of Proposal, our entire backend architecture will be split into multiple independent services: api-gateway, chain-tracker, proof-generator and core service, etc. This allows each service unit to focus on a specific business functionality and can be independently extended and optimized.
+* Vertical splitting: Split large microservices into smaller, independent service units to improve concurrency performance and scalability.
   
-* Horizontal scaling: Scale microservices horizontally by adding more instances to cope with high load and concurrent requests. Use a load balancer to distribute requests and ensure that each instance can handle the load evenly, improving system scalability and performance. Among them, we will use NGINX to achieve load balancing.
+  As shown in the architecture diagram of Proposal, our entire backend architecture will be split into multiple independent services: *api-gateway*, *chain-tracker*, *proof-generator* and *core base service*, etc. This allows each service unit to focus on a specific business functionality and can be independently extended and optimized.
   
-* Caching: Using an appropriate caching strategy can significantly improve the performance of your system. Caching frequently accessed data in memory reduces the number of requests to backend services, lowering latency and improving response times. For example, after storing AirdropAssetNote and LockedAssetNote in Merkle-Tree, there will be a unique corresponding leafIndex, which is the key to query the merkle proof of a assetNote! We can cache their mapping relationship (commitment->leafIndex) to avoid traversing queries in mysqlDB every time.
+* Horizontal scaling: Scale microservices horizontally by adding more instances to cope with high load and concurrent requests. Use a load balancer to distribute requests and ensure that each instance can handle the load evenly, improving system scalability and performance.
+  
+  Among them, we will use *NGINX* to achieve load balancing.
+  
+* Caching: Using an appropriate caching strategy can significantly improve the performance of your system. Caching frequently accessed data in memory reduces the number of requests to backend services, lowering latency and improving response times.
+
+  For example, after storing **AirdropAssetNote** and **LockedAssetNote** in Merkle-Tree, there will be a unique corresponding *leafIndex*, which is the key to query the merkle proof of a assetNote! We can cache their mapping relationship (*commitment->leafIndex*) to avoid traversing queries in mysqlDB every time.
   
 * Database Optimization: After the number of users increases significantly in the future, we consider separating reads and writes from the msyqlDB.
 
