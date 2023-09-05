@@ -400,7 +400,8 @@ To support the features above, there are 5 major roles within Platform:
 
 ![tokenizk-tokenlocker-creation-distribution-claim-journey (5)](https://github.com/TokeniZK/tokenizk-finance/assets/94358089/3b27f013-b95f-466f-bae6-8d844dd9e306)
 
-
+<br>
+<br>
 
 ### System Security Consideration
 `As a LaunchPad platform, TokeniZK should rank SECURITY as the first into consideration.`
@@ -426,10 +427,14 @@ Contract is the core for a dapp, and according to historical cases, most attacks
   https://twitter.com/mitschabaude/status/1663596691381944331
 
   https://www.zksecurity.xyz/blog/posts/noname/
+  
+<br>
 
 **Web UI Client and Backend System Part**
 
   There are many normal attacks on a website, such as Xss, InjectionAttack, DDos, Man-In-The-Middle Attack(MITM). Luckily there are already many best practices to prevent them. 
+
+<br>
 
 **Data Availability of TokeniZK Platform**
 
@@ -438,6 +443,9 @@ Contract is the core for a dapp, and according to historical cases, most attacks
   2) Besides, regarding the merkle trees storing state(seen in proposal), at early stage, we would publish them to the public periodically.
 
   3) Furthermore, we leverage Mina chain’s Actions/Events (_in Archive Nodes_) to record most core operations. Thus, For example, any one could rebuild the whole states(like merkle trees, etc.) by them.
+
+<br>
+<br>
 
 ### **Long-term Vision And Dream Scenario**
 
@@ -457,9 +465,12 @@ In addition to token issuance, our platform also serves as a comprehensive ecosy
 4) **Ordinary investors and VC**  
 We bridge the gap between ordinary investors and venture capitalists (VC) by providing a  comprehensive matchmaking service. Our platform facilitates the connection between these  two groups, enabling ordinary investors to access investment opportunities traditionally  reserved for venture capitalists. By leveraging our network and due diligence process, we  could curate a selection of high-potential projects that match the preferences of ordinary  investors and VC. This creates a win-win situation where ordinary investors have access to  promising projects and venture capital firms can identify potential investment targets moreeffectively.   
 
-5) **Continue to innovate and embrace compliance**  TokeniZK is committed to continuous innovation and improvement. The platform actively  seeks user feedback and adopts new technologies and features to enhance the user  experience. It also keeps up with the changing regulatory environment to ensure compliance  and adaptability.   Overall, TokeniZK's vision is to create a secure, transparent and user-friendly platform that  supports token issuers and investors while promoting trust and liquidity in the token sale  ecosystem.  
+5) **Continue to innovate and embrace compliance**  TokeniZK is committed to continuous innovation and improvement. The platform actively  seeks user feedback and adopts new technologies and features to enhance the user  experience. It also keeps up with the changing regulatory environment to ensure compliance  and adaptability.
+  
+Overall, TokeniZK's vision is to create a secure, transparent and user-friendly platform that supports token issuers and investors while promoting trust and liquidity in the token sale  ecosystem. 
 
-
+<br>
+<br>
 
 ### **Business model And Monetization plan**
 
