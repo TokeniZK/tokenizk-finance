@@ -10,7 +10,7 @@ import {
 } from 'snarkyjs';
 
 export async function activeMinaInstance() {
-    const isLocalBlockChain = false;// TODO get it from config here
+    const isLocalBlockChain = false;    // TODO get it from config here
     /*
         const Blockchain = isLocalBlockChain ? Mina.LocalBlockchain({ proofsEnabled: true }) : Mina.Network({
             mina: 'https://proxy.berkeley.minaexplorer.com/graphql',
@@ -37,6 +37,8 @@ export async function activeMinaInstance() {
     Mina.setActiveInstance(Blockchain);
 }
 
+
+
 /**
  * 
  * @param targetAddr 
@@ -45,7 +47,7 @@ export async function activeMinaInstance() {
  */
 export async function syncActions(targetAddr: PublicKey, startActionHash: Field, isLocalBlockChain?: boolean) {
     if (!isLocalBlockChain) {
-        for (let i = 0; i < 5; i++) {// just for 5 iterations for 5 blocks, enough
+        for (let i = 0; i < 7; i++) {// just for 5 iterations for 5 blocks, enough
             let actionsList;
             try {
                 // get the length of actions list, and compare later to confirm the tx is done!
@@ -267,3 +269,5 @@ export const zkAppNeedsInitialization = async (
 }
 
 // ========================================================
+
+
