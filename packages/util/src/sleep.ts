@@ -19,7 +19,7 @@
  * setTimeout(() =\> sleeper.interrupt(true), 1500); // Interrupt the sleep after 1.5 seconds
  */
 export class InterruptableSleep {
-  private interruptResolve: (shouldThrow: boolean) => void = () => {};
+  private interruptResolve: (shouldThrow: boolean) => void = () => { };
   private interruptPromise = new Promise<boolean>(
     (resolve) => (this.interruptResolve = resolve)
   );
@@ -55,10 +55,15 @@ export class InterruptableSleep {
    * @param sleepShouldThrow - A boolean value indicating whether the sleep operation should throw an error when interrupted. Default is false.
    */
   public interrupt(sleepShouldThrow = false) {
-    this.interruptResolve(sleepShouldThrow);
-    this.interruptPromise = new Promise(
-      (resolve) => (this.interruptResolve = resolve)
-    );
+    try {
+      this.interruptResolve(sleepShouldThrow);
+      this.interruptPromise = new Promise(
+        (resolve) => (this.interruptResolve = resolve)
+      );
+    } catch (error) {
+      console.log(error);
+
+    }
   }
 }
 
