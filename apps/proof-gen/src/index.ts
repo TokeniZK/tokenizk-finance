@@ -1,14 +1,14 @@
 import cp from "child_process";
 import cluster from "cluster";
-import { activeMinaInstance } from "@tokenizk/util";
-import { ProofTaskDto, ProofTaskType, } from "@tokenizk/types";
+// import { activeMinaInstance } from "@tokenizk/util";
+// import { ProofTaskDto, ProofTaskType, } from "@tokenizk/types";
 import config from "./lib/config";
 
 import { ProofPayload } from "./constant";
 import { createSubProcesses, SubProcessCordinator } from "./sub-processes-creator";
-import {
-    SimpleZkApp
-} from "@tokenizk/contracts";
+// import {
+//     SimpleZkApp
+// } from "@tokenizk/contracts";
 import { getLogger } from "./lib/logUtils";
 import { $axiosCoreService } from "./lib";
 import { fileURLToPath } from 'url';
