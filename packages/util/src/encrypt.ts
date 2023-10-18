@@ -7,7 +7,8 @@ import {
     utf8ArrayToString,
 } from "./binary";
 
-const IV_LENGTH = 12;
+// Modify database table fields
+const IV_LENGTH = 15;
 const ALGORITHM = "AES-GCM";
 const PBKDF2_ITERATIONS = 1000;
 
