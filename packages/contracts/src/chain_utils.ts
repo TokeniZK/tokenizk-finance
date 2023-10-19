@@ -51,7 +51,7 @@ interface TestContext {
  * Support proofsEnabled setting
  */
 function getTestContext(onlySupportProof = false): TestContext {
-    let deployToBerkeley = false;
+    let deployToBerkeley = true;
     if (process.env.TEST_ON_BERKELEY === 'true') {
         deployToBerkeley = true;
     }

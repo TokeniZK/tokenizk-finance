@@ -66,7 +66,12 @@ export async function retryUntil<T>(
       return result;
     }
 
+   try {
     await sleep(interval * 1000);
+   } catch (error) {
+     console.log(error);
+     
+   }
 
     if (timeout && timer.s() > timeout) {
       throw new Error(name ? `Timeout awaiting ${name}` : 'Timeout');
