@@ -107,8 +107,8 @@ export function recoverReceiverBySender(
     senderPubKeyBigInt: bigint,
     randValueBigInt: bigint
 ): PublicKey {
-    if (receiverInfo.length !== 2) {
-        throw new Error("receiverInfo length must be 2");
+    if (receiverInfo.length !== 3) {
+        throw new Error("receiverInfo length must be 3");
     }
     const sercet = senderPubKeyBigInt | randValueBigInt;
     const fs0BigInt = receiverInfo[0].toBigInt();
