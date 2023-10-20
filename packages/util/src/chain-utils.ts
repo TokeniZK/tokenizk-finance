@@ -47,7 +47,7 @@ export async function activeMinaInstance() {
  */
 export async function syncActions(targetAddr: PublicKey, startActionHash: Field, isLocalBlockChain?: boolean) {
     if (!isLocalBlockChain) {
-        for (let i = 0; i < 7; i++) {// just for 5 iterations for 5 blocks, enough
+        for (let i = 0; i < 4; i++) {// just for 4 iterations for 4 blocks, enough
             let actionsList;
             try {
                 // get the length of actions list, and compare later to confirm the tx is done!
