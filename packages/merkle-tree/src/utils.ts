@@ -49,7 +49,7 @@ export function toBigIntBE(buf: Buffer): bigint {
  * @returns A big-endian buffer representation of num.
  */
 export function toBufferBE(num: bigint, width: number): Buffer {
-  const hex = num.toString(16);
+  const hex = num.toString(18);
   const buffer = Buffer.from(
     hex.padStart(width * 2, '0').slice(0, width * 2),
     'hex'
