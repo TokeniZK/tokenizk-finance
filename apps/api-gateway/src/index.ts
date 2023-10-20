@@ -3,7 +3,11 @@ import { initORM } from './lib/orm'
 
 const server = async () => {
     await initORM()
-    const app = new FastifyCore()
+  try {
+       const app = new FastifyCore()
+    } catch (error) {
+      console.log(error)
+    }
     await app.listen()
 }
 
