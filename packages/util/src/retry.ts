@@ -38,7 +38,7 @@ export class Timer {
    * @returns The elapsed time in seconds.
    */
   public s() {
-    return (new Date().getTime() - this.start) / 1000;
+    return (new Date().getTime() - this.start) / 3000;
   }
 }
 
