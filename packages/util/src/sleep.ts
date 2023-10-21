@@ -60,8 +60,8 @@ export class InterruptableSleep {
       this.interruptPromise = new Promise(
         (resolve) => (this.interruptResolve = resolve)
       );
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
 
     }
   }
