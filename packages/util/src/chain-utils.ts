@@ -211,6 +211,7 @@ export const makeAndSendTransaction = async <State extends ToString>({
 }) => {
     // Why this line? It increments internal feePayer account variables, such as
     // nonce, necessary for successfully sending a transaction
+    const flag = true;
     await syncAcctInfo(zkAppAddress, tokenId, isLocalBlockChain);
     const initialState = await getState();
 
@@ -220,11 +221,17 @@ export const makeAndSendTransaction = async <State extends ToString>({
             mutateZkApp();
         }
     );
+
     await transaction.prove();
+
     signTx(transaction);
+
     console.log('Sending the transaction...');
+
     const res = await transaction.send();
-    const hash = await res.hash(); // This will change in a future version of SnarkyJS
+
+    const hash = await res.hash();   // This will change in a future version of SnarkyJS
+
     if (hash == null) {
         throw new Error('error sending transaction');
     } else {
