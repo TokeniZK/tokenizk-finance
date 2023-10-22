@@ -48,6 +48,7 @@ interface TestContext {
 /**
  * Generate a test context according to the setting of the current environment variable.
  * Context contains the method that can be reused both in Berkeley and Local
+ * 
  * Support proofsEnabled setting
  */
 function getTestContext(onlySupportProof = false): TestContext {
