@@ -266,7 +266,7 @@ export const zkAppNeedsInitialization = async (
     { zkAppAccount }:
         { zkAppAccount: FetchedAccount }
 ) => {
-    console.warn('warning: using a `utils.ts` written before `isProved` made available. Check https://docs.minaprotocol.com/zkapps/tutorials/deploying-to-a-live-network for updates');
+    console.warn('warning: using a `utils.ts` written before ` isProved ` made available. Check https://docs.minaprotocol.com/zkapps/tutorials/deploying-to-a-live-network for updates');
     // TODO when available in the future, use isProved.
     const allZeros = (zkAppAccount as any).appState!.every((f: Field) =>
         f.equals(Field(0)).toBoolean()
