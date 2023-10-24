@@ -124,7 +124,7 @@ function getTestContext(onlySupportProof = false): TestContext {
 
         if (deployToBerkeley) {
             // Wait for the specified block height
-            for (; ;) {
+            for (let i = 0;i < deployToBerkeley.length ;i++) {
                 currentBlockHeight = (await getNetworkStatus()).blockchainLength;
                 if (blockHeight.lessThanOrEqual(currentBlockHeight).toBoolean()) {
                     break;
