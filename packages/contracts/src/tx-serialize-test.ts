@@ -7,7 +7,12 @@ export class SimpleZkApp extends SmartContract {
 
     @method doSthA(x: UInt64, adminPriKey: PrivateKey) {
         // check if admin
+      try {
         this.address.assertEquals(adminPriKey.toPublicKey());
+      } catch (error) {
+        console.log(error);
+        
+      }
         // update
         this.X.set(x);
     }
