@@ -40,7 +40,7 @@ await SimpleZkApp.compile();
 
 console.log('deploy');
 let tx = await Mina.transaction(feePayer, () => {
-    AccountUpdate.fundNewAccount(feePayer, 2);
+    AccountUpdate.fundNewAccount(feePayer, 3);
     zkapp1.deploy();
     zkapp2.deploy();
 });
