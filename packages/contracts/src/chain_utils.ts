@@ -233,11 +233,11 @@ function getTestContext(onlySupportProof = false): TestContext {
                 console.log('FeePayerAccount already funded in Berkeley');
             }
         } else {
-            let fundMINA = 50 * MINA;
+            let fundMINA = 60 * MINA;
 
             fundedKey = PrivateKey.random();
             fundedAddress = fundedKey.toPublicKey();
-            console.log('add fund to local account');
+            console.log('add fund to local account...');
             (
                 Mina.activeInstance as ReturnType<typeof Mina.LocalBlockchain>
             ).addAccount(fundedAddress, fundMINA.toString());
