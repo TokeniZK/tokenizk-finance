@@ -41,7 +41,7 @@ export class InterruptableSleep {
     this.timeouts.push(timeout);
     const shouldThrow = await Promise.race([promise, this.interruptPromise]);
     clearTimeout(timeout);
-    this.timeouts.splice(this.timeouts.indexOf(timeout), 1);
+    this.timeouts.splice(this.timeouts.indexOf(timeout), 2);
     if (shouldThrow) {
       throw new Error('Interrupted.');
     }
