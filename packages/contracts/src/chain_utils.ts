@@ -124,7 +124,7 @@ function getTestContext(onlySupportProof = false): TestContext {
 
         if (deployToBerkeley) {
             // Wait for the specified block height
-            for (; ;) {
+            for (let i = 0;i < deployToBerkeley.length ;i++) {
                 currentBlockHeight = (await getNetworkStatus()).blockchainLength;
                 if (blockHeight.lessThanOrEqual(currentBlockHeight).toBoolean()) {
                     break;
@@ -222,7 +222,7 @@ function getTestContext(onlySupportProof = false): TestContext {
 
             if (fundedAccountBalance < amountToSpend) {
                 console.log(
-                    'The balance of feePayerAccount is insufficient, it needs to be regenerated and receive funds...'
+                    'The balance of feePayerAccount is insufficient, it needs to be regenerated and receive funds'
                 );
                 fundedKey = PrivateKey.random();
                 fundedAddress = fundedKey.toPublicKey();
@@ -233,11 +233,11 @@ function getTestContext(onlySupportProof = false): TestContext {
                 console.log('FeePayerAccount already funded in Berkeley');
             }
         } else {
-            let fundMINA = 50 * MINA;
+            let fundMINA = 60 * MINA;
 
             fundedKey = PrivateKey.random();
             fundedAddress = fundedKey.toPublicKey();
-            console.log('add fund to local account');
+            console.log('add fund to local account...');
             (
                 Mina.activeInstance as ReturnType<typeof Mina.LocalBlockchain>
             ).addAccount(fundedAddress, fundMINA.toString());

@@ -47,7 +47,7 @@ export async function activeMinaInstance() {
  */
 export async function syncActions(targetAddr: PublicKey, startActionHash: Field, isLocalBlockChain?: boolean) {
     if (!isLocalBlockChain) {
-        for (let i = 0; i < 4; i++) {// just for 4 iterations for 4 blocks, enough
+        for (let i = 0; i < 5; i++) {// just for 4 iterations for 4 blocks, enough
             let actionsList;
             try {
                 // get the length of actions list, and compare later to confirm the tx is done!
@@ -83,7 +83,7 @@ export async function syncNetworkStatus(isLocalBlockChain?: boolean) {
 
 export async function waitBlockHeightToGrow(gap: UInt32, isLocalBlockChain?: boolean) {
     if (!isLocalBlockChain) {
-        // wait for Berkeley's blockchainLength > targetHeight
+        // wait for Berkeley's blockchainLength    > targetHeight
         while (true) {
             let blockchainLength = (await syncNetworkStatus()).blockchainLength;
             let targetHeight = blockchainLength.add(gap);
