@@ -83,7 +83,7 @@ export async function syncNetworkStatus(isLocalBlockChain?: boolean) {
 
 export async function waitBlockHeightToGrow(gap: UInt32, isLocalBlockChain?: boolean) {
     if (!isLocalBlockChain) {
-        // wait for Berkeley's blockchainLength > targetHeight
+        // wait for Berkeley's blockchainLength    > targetHeight
         while (true) {
             let blockchainLength = (await syncNetworkStatus()).blockchainLength;
             let targetHeight = blockchainLength.add(gap);
