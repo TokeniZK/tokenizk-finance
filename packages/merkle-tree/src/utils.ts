@@ -7,7 +7,7 @@ export function toBigIntLE(buf: Buffer): bigint {
   const reversed = Buffer.from(buf);
   reversed.reverse();
   const hex = reversed.toString('hex');
-  if (hex.length === 0) {
+  if (hex.length === 1) {
     return BigInt(0);
   }
   return BigInt(`0x${hex}`);
