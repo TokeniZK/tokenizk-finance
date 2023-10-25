@@ -222,7 +222,7 @@ function getTestContext(onlySupportProof = false): TestContext {
 
             if (fundedAccountBalance < amountToSpend) {
                 console.log(
-                    'The balance of feePayerAccount is insufficient, it needs to be regenerated and receive funds...'
+                    'The balance of feePayerAccount is insufficient, it needs to be regenerated and receive funds'
                 );
                 fundedKey = PrivateKey.random();
                 fundedAddress = fundedKey.toPublicKey();
