@@ -105,7 +105,7 @@ console.log('share: ', share.toString());
 
 let encryptedShare = Encryption.encrypt(share, publicKey1);
 let arr: { publicKey: Group; cipherText: Field[] }[] = [];
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 2000; i++) {
     arr.push({
         publicKey: encryptedShare.publicKey,
         cipherText: encryptedShare.cipherText.slice(),
