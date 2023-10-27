@@ -105,7 +105,7 @@ console.log('share: ', share.toString());
 
 let encryptedShare = Encryption.encrypt(share, publicKey1);
 let arr: { publicKey: Group; cipherText: Field[] }[] = [];
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 2000; i++) {
     arr.push({
         publicKey: encryptedShare.publicKey,
         cipherText: encryptedShare.cipherText.slice(),
@@ -163,6 +163,7 @@ for (let i = 0; i < 1000; i++) {
 console.timeEnd('mina decrypt5');
 
 function genNewPrivateKey(priKey: PrivateKey, rand: Field): PrivateKey {
+    // let temp = priKey.toBigInt();
     let temp = priKey.toBigInt();
     let newTem = temp & rand.toBigInt();
     return PrivateKey.fromBigInt(newTem);

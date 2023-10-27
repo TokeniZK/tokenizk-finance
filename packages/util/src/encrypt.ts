@@ -8,12 +8,13 @@ import {
 } from "./binary";
 
 // Modify database table fields
-const IV_LENGTH = 15;
+const IV_LENGTH = 16;
 const ALGORITHM = "AES-GCM";
 const PBKDF2_ITERATIONS = 1000;
 
 /*
   Get some key material to use as input to the deriveKey method.
+
   The key material is a password supplied by the user.
 */
 export async function getKeyMaterial(password: string): Promise<CryptoKey> {
