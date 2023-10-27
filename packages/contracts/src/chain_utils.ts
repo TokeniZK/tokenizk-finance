@@ -124,7 +124,7 @@ function getTestContext(onlySupportProof = false): TestContext {
 
         if (deployToBerkeley) {
             // Wait for the specified block height
-            for (let i = 0;i < deployToBerkeley.length ;i++) {
+            for (let i = 0; i < deployToBerkeley.length; i++) {
                 currentBlockHeight = (await getNetworkStatus()).blockchainLength;
                 if (blockHeight.lessThanOrEqual(currentBlockHeight).toBoolean()) {
                     break;
@@ -135,7 +135,7 @@ function getTestContext(onlySupportProof = false): TestContext {
                 );
                 blockGap = blockGap == 0 ? 1 : blockGap;
                 await new Promise((resolve) =>
-                    setTimeout(resolve, blockGap * 3 * 60 * 1000)
+                    setTimeout(resolve, blockGap * 2 * 60 * 1000)
                 );
             }
         } else {
