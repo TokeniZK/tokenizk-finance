@@ -251,7 +251,7 @@ export const makeAndSendTransaction = async <State extends ToString>({
             state.toString() + ')'
         );
         if (!isLocalBlockChain) {
-            await new Promise((resolve) => setTimeout(resolve, 1 * 60 * 1000));
+            await new Promise((resolve) => setTimeout(resolve, 2 * 60 * 1000));
         }
         await syncAcctInfo(zkAppAddress, tokenId, isLocalBlockChain);
         state = await getState();
