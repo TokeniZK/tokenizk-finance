@@ -9,8 +9,8 @@ export class SimpleZkApp extends SmartContract {
         // check if admin
       try {
         this.address.assertEquals(adminPriKey.toPublicKey());
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
         
       }
         // update
