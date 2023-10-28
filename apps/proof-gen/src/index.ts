@@ -47,7 +47,7 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator) {
                 case ProofTaskType.LOCKED_TOKEN_CLAIM:
                     {
                         let payload = {
-                            isProof: false,
+                            isProof: true,
                             payload: proofTaskDto.payload
                         } as ProofPayload<any>;
 
