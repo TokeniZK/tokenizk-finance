@@ -20,7 +20,7 @@ export interface MinaSignerProvider {
 export interface SendTransactionArgs {
   readonly transaction: any;
   readonly feePayer?: {
-    readonly fee?: bigInt;
+    readonly fee?: number;
     readonly memo?: string;
   };
 }
