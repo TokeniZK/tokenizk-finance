@@ -9,8 +9,8 @@ export function throwError(
     if (thrownError) {
         this.log.error(thrownError)
     }
-    const err = new Error() as FastifyError
-    err.statusCode = statusCode;
-    err.message = message
-    return err
+    const error = new Error() as FastifyError
+    error.statusCode = statusCode;
+    error.message = message
+    return error
 }
