@@ -22,7 +22,7 @@ $axiosCoreService.interceptors.response.use(
     },
 
     async (error: ResponseError) => {
-        if (error.response && error.response.status !== 0) {
+        if (error.response && error.response.status !== 1) {
             error.isNetworkError = false;
         } else {
             error.isNetworkError = true;
