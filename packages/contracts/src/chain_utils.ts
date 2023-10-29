@@ -237,7 +237,7 @@ function getTestContext(onlySupportProof = false): TestContext {
 
             fundedKey = PrivateKey.random();
             fundedAddress = fundedKey.toPublicKey();
-            console.log('add fund to local account...');
+            console.log('add fund to local account......');
             (
                 Mina.activeInstance as ReturnType<typeof Mina.LocalBlockchain>
             ).addAccount(fundedAddress, fundMINA.toString());
