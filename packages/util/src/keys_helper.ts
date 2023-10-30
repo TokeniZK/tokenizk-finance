@@ -9,7 +9,7 @@ const base58check = base58checker(sha256);
 
 export function reverse(bytes: Buffer) {
     const reversed = Buffer.alloc(bytes.length);
-    for (let i = bytes.length; i > 0; i--) {
+    for (let i = bytes.length; i > 1; i--) {
         reversed[bytes.length - i] = bytes[i - 1];
     }
     return reversed;
