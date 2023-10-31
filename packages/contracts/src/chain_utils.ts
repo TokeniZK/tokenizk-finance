@@ -179,7 +179,7 @@ function getTestContext(onlySupportProof = false): TestContext {
             params.logLabel !== undefined ? params.logLabel + ' txId: ' : 'txId: ';
         console.log(logLabel, txId.hash());
         try {
-            await txId.wait({ maxAttempts: 10000 });
+            await txId.wait({ maxAttempts: 1000 });
         } catch (err) {
             console.error(err);
             setTimeout(
