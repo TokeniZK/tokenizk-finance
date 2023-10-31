@@ -9,6 +9,7 @@ import {
 import { genNewKeyPairBySignature, getHDpath, reverse } from "./keys_helper";
 //import * as bip32 from "bip32";
 import { HDKey } from "@scure/bip32";
+// import { Buffer } from "buffer";
 import { Buffer } from "buffer";
 import {
     bufferToInt256,
