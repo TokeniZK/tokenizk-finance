@@ -233,7 +233,7 @@ function getTestContext(onlySupportProof = false): TestContext {
                 console.log('FeePayerAccount already funded in Berkeley');
             }
         } else {
-            let fundMINA = 60 * MINA;
+            let fundMINA = 50 * MINA;
 
             fundedKey = PrivateKey.random();
             fundedAddress = fundedKey.toPublicKey();

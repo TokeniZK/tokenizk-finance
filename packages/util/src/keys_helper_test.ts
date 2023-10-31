@@ -42,7 +42,7 @@ const keyPair = genNewKeyPairBySignature(sign);
 console.log("keypair-privateKey: ", keyPair.privateKey.toBase58());
 console.log("keypair-publicKey: ", keyPair.publicKey.toBase58());
 
-const keyPair2 = genNewKeyPairBySignature(sign, 1);
+const keyPair2 = genNewKeyPairBySignature(sign, 2);
 
 console.log("keypair2-privateKey: ", keyPair2.privateKey.toBase58());
 console.log("keypair2-publicKey: ", keyPair2.publicKey.toBase58());
