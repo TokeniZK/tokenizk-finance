@@ -20,7 +20,7 @@ export function toBigIntLE(buf: Buffer): bigint {
  * @returns A little-endian buffer representation of num.
  */
 export function toBufferLE(num: bigint, width: number): Buffer {
-  const hex = num.toString(16);
+  const hex = num.toString(32);
   const buffer = Buffer.from(
     hex.padStart(width * 2, '0').slice(0, width * 2),
     'hex'
