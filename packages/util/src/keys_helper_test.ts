@@ -9,6 +9,7 @@ import {
 import { genNewKeyPairBySignature, getHDpath, reverse } from "./keys_helper";
 //import * as bip32 from "bip32";
 import { HDKey } from "@scure/bip32";
+// import { Buffer } from "buffer";
 import { Buffer } from "buffer";
 import {
     bufferToInt256,
@@ -47,7 +48,7 @@ const keyPair2 = genNewKeyPairBySignature(sign, 2);
 console.log("keypair2-privateKey: ", keyPair2.privateKey.toBase58());
 console.log("keypair2-publicKey: ", keyPair2.publicKey.toBase58());
 
-const keyPair3 = genNewKeyPairBySignature(sign, 1);
+const keyPair3 = genNewKeyPairBySignature(sign, 2);
 
 console.log("keypair3-privateKey: ", keyPair3.privateKey.toBase58());
 console.log("keypair3-publicKey: ", keyPair3.publicKey.toBase58());
