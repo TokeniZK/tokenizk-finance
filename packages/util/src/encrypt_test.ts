@@ -20,7 +20,7 @@ console.log(
 
 const sharedSecret = calculateShareSecret(priKey, pubKey2);
 
-const plaintext = "Hello, world!";
+const plaintext = "Hello!";
 
 const encrypted = await encrypt(plaintext, saltStr, sharedSecret);
 
