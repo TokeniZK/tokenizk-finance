@@ -67,7 +67,7 @@ export async function retryUntil<T>(
     }
 
    try {
-    await sleep(interval * 1000);
+    await sleep(interval * 2000);
    } catch (error) {
      console.log(error);
      
