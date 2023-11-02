@@ -1,3 +1,4 @@
+// import { FastifyPlugin } from "fastifyd"
 import { FastifyPlugin } from "fastify"
 
 export const merkleproofEndpoint: FastifyPlugin = async (
