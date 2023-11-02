@@ -114,9 +114,9 @@ async function run() {
     const ctx = getTestContext();
     await ctx.initMinaNetwork();
 
-    // const userKey = PrivateKey.fromBase58(
-    //   'EKE61ia2RDreftM6EAHZxh8UWizoKA4J7o8G2QnCn824QdZDZiZ8'
-    // );
+    const userKey = PrivateKey.fromBase58(
+      'EKE61ia2RDreftM6EAHZxh8UWizoKA4J7o8G2QnCn824QdZDZiZ8'
+    );
     // const userAddress = PublicKey.fromBase58(
     //   'B62qiyKCKgjkYJ8fdA9U1KRgi3p6GcZmgfjanAvGKpVi7f55vYaiz63'
     // );
