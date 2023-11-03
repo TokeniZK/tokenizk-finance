@@ -68,8 +68,8 @@ import {
 //   },
 // });
 
-let result = MyProgram2.compile();
-console.log('result: ', result);
+// let result = MyProgram2.compile();
+// console.log('result: ', result);
 
 let privateKey1 = PrivateKey.random();
 let publicKey1 = privateKey1.toPublicKey();
