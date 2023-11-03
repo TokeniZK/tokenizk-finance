@@ -67,7 +67,7 @@ export class Manager extends SmartContract {
         deployUpdate.account.verificationKey.set(verificationKey);
         deployUpdate.account.isNew.assertEquals(Bool(true));
 
-        AccountUpdate.setValue(deployUpdate.body.update.appState[0], Field(1));
+        AccountUpdate.setValue(deployUpdate.body.update.appState[0], Field(0));
         deployUpdate.requireSignature();
     }
 
