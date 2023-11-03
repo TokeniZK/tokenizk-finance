@@ -165,7 +165,7 @@ function generateProof(
         let worker = workerEntity as { worker: Worker, status: WorkerStatus, type: string };
         worker.worker!.on('message', (message: any) => {
             workers.find(
-                //(w) => w.worker.process.pid == worker!.worker.process.pid
+                //(w) => w.worker.process.pid === worker!.worker.process.pid
                 (w) => w.worker.pid == worker!.worker.pid
             )!.status = 'IsReady';
 
