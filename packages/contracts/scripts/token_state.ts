@@ -194,7 +194,7 @@ async function run() {
     );
     await ctx.submitTx(tx, {
         feePayerKey,
-        logLabel: 'deploy manager contract',
+        logLabel: 'deploy manager contract ',
     });
     console.log('tx done');
 
