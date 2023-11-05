@@ -29,7 +29,7 @@ class TokenContract extends SmartContract {
             ...Permissions.default(),
             access: Permissions.proof(),
         });
-        //this.balance.addInPlace(UInt64.from(initialBalance));
+        this.balance.addInPlace(UInt64.from(initialBalance));
     }
 
     @method firstWithDraw(user: PublicKey) {
@@ -82,7 +82,7 @@ class TokenContract extends SmartContract {
         let tokenId = this.token.id;
         accountUpdate.body.tokenId.assertEquals(tokenId);
         accountUpdate.body.publicKey.assertEquals(user);
-        accountUpdate.body.update.appState[0].isSome.assertTrue('appState[0]');
+        accountUpdate.body.update.appState[0].isSome.assertTrue('appState[1]');
         accountUpdate.body.update.appState[1].isSome.assertTrue('appState[1]');
     }
 

@@ -88,7 +88,7 @@ export async function waitBlockHeightToGrow(gap: UInt32, isLocalBlockChain?: boo
             let blockchainLength = (await syncNetworkStatus()).blockchainLength;
             let targetHeight = blockchainLength.add(gap);
             console.log(`targetHeight: ${targetHeight.toString()}, current blockchainLength: ${blockchainLength.toString()}`);
-            await new Promise((resolve) => setTimeout(resolve, Number(gap.toBigint()) * 3 * 60 * 1000));// about 3 minutes/block
+            await new Promise((resolve) => setTimeout(resolve, Number(gap.toBigint()) * 1 * 60 * 1000));// about 3 minutes/block
         }
     } else {
         let targetHeight = Mina.activeInstance.getNetworkState().blockchainLength.add(gap);
