@@ -56,7 +56,7 @@ export class FastifyCore {
         // this.server.register(bearer)
 
         // Decorators
-        this.server.decorateRequest("throwError", throwError);
+        this.server.decorateRequest("throw", throwError);
 
         // Routes
         this.server.register(routes);
