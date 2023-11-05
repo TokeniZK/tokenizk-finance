@@ -9,7 +9,7 @@ export function obtainSchema(basePath: string, fileName: string, typeName: strin
 
     // optionally pass ts compiler options
     const compilerOptions: TJS.CompilerOptions = {
-        strictNullChecks: false,
+        strictNullChecks: true,
     };
 
     const program = TJS.getProgramFromFiles(
