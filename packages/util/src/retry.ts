@@ -38,7 +38,7 @@ export class Timer {
    * @returns The elapsed time in seconds.
    */
   public s() {
-    return (new Date().getTime() - this.start) / 3000;
+    return (new Date().getTime() - this.start) / 1000;
   }
 }
 
@@ -57,7 +57,7 @@ export async function retryUntil<T>(
   fn: () => Promise<T | undefined>,
   name = '',
   timeout = 0,
-  interval = 1
+  interval = 0
 ) {
   const timer = new Timer();
   while (true) {

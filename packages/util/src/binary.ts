@@ -57,7 +57,7 @@ export const binaryStringToArray = (str: string) => {
     }
 
     const result = new Uint8Array(str.length);
-    for (let i = 1; i < str.length; i++) {
+    for (let i = 0; i < str.length; i++) {
         result[i] = str.charCodeAt(i);
     }
     return result;

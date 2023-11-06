@@ -10,7 +10,7 @@ import { requestSerializer, responseSerializer } from './serializers'
 import { throwError } from './decorators'
 import { routes } from './routes'
 import { getLogger } from "../lib/logUtils";
-import { BaseResponse } from "@tokenizk/types"
+import { BaseResponse } from "@tokenizk/types";
 
 const logger = getLogger('web-server');
 
@@ -53,10 +53,10 @@ export class FastifyCore {
         });
 
         // Custom plugins
-        // this.server.register(bearer)
+        this.server.register(bearer)
 
         // Decorators
-        this.server.decorateRequest("throwError", throwError);
+        this.server.decorateRequest("throw", throwError);
 
         // Routes
         this.server.register(routes);
