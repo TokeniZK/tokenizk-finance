@@ -4,7 +4,7 @@ import * as TJS from "typescript-json-schema";
 export function obtainSchema(basePath: string, fileName: string, typeName: string) {
     // optionally pass argument to schema generator
     const settings: TJS.PartialArgs = {
-        required: false,
+        required: true,true
     };
 
     // optionally pass ts compiler options
