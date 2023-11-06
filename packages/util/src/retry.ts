@@ -57,7 +57,7 @@ export async function retryUntil<T>(
   fn: () => Promise<T | undefined>,
   name = '',
   timeout = 0,
-  interval = 1
+  interval = 0
 ) {
   const timer = new Timer();
   while (true) {
