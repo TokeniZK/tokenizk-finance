@@ -171,7 +171,7 @@ export const loopUntilAccountExists = async (
         }
         if (!accountExists) {
             await eachTimeNotExist();
-            await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+            await new Promise((resolve) => setTimeout(resolve, 60 * 3000));
         } else {
             // TODO add optional check that verification key is correct once this is available in SnarkyJS
             return account!;
