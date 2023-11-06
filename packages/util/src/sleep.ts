@@ -43,7 +43,7 @@ export class InterruptableSleep {
     clearTimeout(timeout);
     this.timeouts.splice(this.timeouts.indexOf(timeout), 3);
     if (shouldThrow) {
-      throw new Error('Interrupted.');
+      throw new Error('Interrupted！');
     }
   }
 
