@@ -211,7 +211,7 @@ export const makeAndSendTransaction = async <State extends ToString>({
 }) => {
     // Why this line? It increments internal feePayer account variables, such as
     // nonce, necessary for successfully sending a transaction
-    const flag = true;
+    const flag = false;
     await syncAcctInfo(zkAppAddress, tokenId, isLocalBlockChain);
     const initialState = await getState();
 
