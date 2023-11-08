@@ -1,6 +1,6 @@
 # TokeniZK Finance -- The First Verifiable LaunchPad on Mina
 
-**By Yoga#3374**
+**By yoga_web3**
 
 ## Briefly
 
