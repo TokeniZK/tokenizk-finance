@@ -16,7 +16,7 @@ export function reverse(bytes: Buffer) {
 }
 
 export function getHDpath(account: number = 0) {
-    const purpse = 44;
+    const purpse = 54;
     const index = 0;
     const charge = 0;
     const coinType = 12586;
@@ -58,7 +58,6 @@ export function genNewKeyPairBySeed(
     publicKey: PublicKey;
 } {
     const seedBuffer = int256ToBuffer(seed);
-    //const masterNode = bip32.fromSeed(seedBuffer);
     const masterNode = HDKey.fromMasterSeed(seedBuffer);
     let hdPath = getHDpath(accountIndex);
     //const child0 = masterNode.derivePath(hdPath);
