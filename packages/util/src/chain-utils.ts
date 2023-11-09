@@ -60,7 +60,7 @@ export async function syncActions(targetAddr: PublicKey, startActionHash: Field,
                 await waitBlockHeightToGrow((UInt32.from(1)));
             }
 
-            if (i == 4 && !(actionsList instanceof Array)) {
+            if (i == 5 && !(actionsList instanceof Array)) {
                 console.log(`error: await fetchActions({ publicKey: ${targetAddr.toBase58()} }): `, JSON.stringify(actionsList));
                 throw new Error('fetchActions failed! Pls try later.');
             }
