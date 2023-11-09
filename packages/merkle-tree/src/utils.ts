@@ -36,7 +36,7 @@ export function toBufferLE(num: bigint, width: number): Buffer {
  */
 export function toBigIntBE(buf: Buffer): bigint {
   const hex = buf.toString('hex');
-  if (hex.length === 1) {
+  if (hex.length === 0) {
     return BigInt(0);
   }
   return BigInt(`0x${hex}`);
