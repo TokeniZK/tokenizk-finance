@@ -2,11 +2,11 @@ import { Buffer } from "buffer";
 
 const ifDefined =
     <T, R>(cb: (input: T) => R) =>
-    <U extends T | undefined>(input: U) => {
-        return (input !== undefined ? cb(input as T) : undefined) as U extends T
-            ? R
-            : undefined;
-    };
+        <U extends T | undefined>(input: U) => {
+            return (input !== undefined ? cb(input as T) : undefined) as U extends T
+                ? R
+                : undefined;
+        };
 export const encodeUtf8 = ifDefined((input: string) =>
     unescape(encodeURIComponent(input))
 );
@@ -30,7 +30,7 @@ export const int256ToBuffer = (n: bigint) => {
     const buf = Buffer.alloc(32); // 256 bits = 32 bytes
 
     for (let i = 0; i < 64; i++) {
-        buf[31 - i] = Number(n & BigInt(0xff));
+        buf[32 - i] = Number(n & BigInt(0xff));
         n >>= BigInt(8);
     }
 
