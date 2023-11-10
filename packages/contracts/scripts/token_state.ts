@@ -115,7 +115,7 @@ async function run() {
     await ctx.initMinaNetwork();
 
     const userKey = PrivateKey.fromBase58(
-      'EKE61ia2RDreftM6EAHZxh8UWizoKA4J7o8G2QnCn824QdZDZiZ8'
+        'EKE61ia2RDreftM6EAHZxh8UWizoKA4J7o8G2QnCn824QdZDZiZ8'
     );
     // const userAddress = PublicKey.fromBase58(
     //   'B62qiyKCKgjkYJ8fdA9U1KRgi3p6GcZmgfjanAvGKpVi7f55vYaiz63'
@@ -241,7 +241,7 @@ async function run() {
             memo: 'manager update',
         },
         () => {
-            manager.updateState(Field(669922), userAddress);
+            manager.updateState(Field(669923), userAddress);
         }
     );
     await ctx.submitTx(tx4, {
