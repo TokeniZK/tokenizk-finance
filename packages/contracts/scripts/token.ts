@@ -58,7 +58,7 @@ class TokenContract extends SmartContract {
             TokenContract.withDrawAccountVerifyKey
         );
         deployUpdate.account.isNew.assertEquals(Bool(true));
-        AccountUpdate.setValue(deployUpdate.body.update.appState[0], Field(1));
+        AccountUpdate.setValue(deployUpdate.body.update.appState[0], Field(2));
         AccountUpdate.setValue(deployUpdate.body.update.appState[1], Field(1));
         deployUpdate.requireSignature();
 
