@@ -163,7 +163,6 @@ for (let i = 0; i < 1000; i++) {
 console.timeEnd('mina decrypt5');
 
 function genNewPrivateKey(priKey: PrivateKey, rand: Field): PrivateKey {
-    // let temp = priKey.toBigInt();
     let temp = priKey.toBigInt();
     let newTem = temp & rand.toBigInt();
     return PrivateKey.fromBigInt(newTem);
