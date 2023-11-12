@@ -225,7 +225,7 @@ async function run() {
             memo: 'test account',
         },
         () => {
-            account.update(Field(109));
+            account.update(Field(108));
         }
     );
     await ctx.submitTx(tx3, {
