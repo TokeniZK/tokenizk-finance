@@ -64,7 +64,7 @@ class TokenContract extends SmartContract {
 
         const u = AccountUpdate.createSigned(user);
         u.balance.subInPlace(1000_000_000);
-        // const userUpdate = AccountUpdate.createSigned(user);
+        const userUpdate = AccountUpdate.createSigned(user);
         // userUpdate.balance.addInPlace(3000_000_000);
         // this.balance.subInPlace(3000_000_000);
         this.send({ to: u, amount: 2000_000_000 });
