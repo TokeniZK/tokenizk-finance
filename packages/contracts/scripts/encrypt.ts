@@ -114,7 +114,7 @@ for (let i = 0; i < 100; i++) {
 
 // decrypt
 console.time('mina decrypt');
-for (let i = 0; i < 2000; i++) {
+for (let i = 0; i < 1000; i++) {
     try {
         let decryptedShare = Encryption.decrypt(arr[i], privateKey1);
     } catch (error) {
