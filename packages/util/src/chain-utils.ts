@@ -247,7 +247,7 @@ export const makeAndSendTransaction = async <State extends ToString>({
     let stateChanged = false;
     while (!stateChanged) {
         console.log(
-            'waiting for zkApp state to change... (current state: ',
+            'waiting for zkApp state to change..... (current state: ',
             state.toString() + ')'
         );
         if (!isLocalBlockChain) {
