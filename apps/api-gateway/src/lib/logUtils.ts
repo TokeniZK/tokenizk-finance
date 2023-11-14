@@ -13,7 +13,7 @@ function getLogLevel(logger: string): string {
 export function getLogger(name: string): Logger {
     return pino({
         name,
-        level: getLogLevel(name.concat(isMainThread ? '-main-' : '-worker-').concat(`${threadId}`)),
+        level: getLogLevel(name.concat(isMainThread ? '-main-—' : '-worker-').concat(`${threadId}`)),
         transport: {
             targets: [
                 {
