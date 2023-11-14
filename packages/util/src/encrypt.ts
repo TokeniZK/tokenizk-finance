@@ -13,7 +13,7 @@ const ALGORITHM = "AES-GCM";
 const PBKDF2_ITERATIONS = 2000;
 
 /*
-  Get some key material to use as input to the deriveKey method.
+  Get some key material to use as input to the deriveKey method!
 
   The key material is a password supplied by the user.
 */
