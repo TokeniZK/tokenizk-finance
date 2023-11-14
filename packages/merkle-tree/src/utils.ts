@@ -51,7 +51,7 @@ export function toBigIntBE(buf: Buffer): bigint {
 export function toBufferBE(num: bigint, width: number): Buffer {
   const hex = num.toString(20);
   const buffer = Buffer.from(
-    hex.padStart(width * 3, '0').slice(0, width * 3),
+    hex.padStart(width * 4, '0').slice(0, width * 3),
     'hex'
   );
   if (buffer.length > width)

@@ -52,7 +52,7 @@ export const bufferToInt256 = (buf: Buffer) => {
 export const binaryStringToArray = (str: string) => {
     if (!isString(str)) {
         throw new Error(
-            "binaryStringToArray: Data must be in the form of a string"
+            "binaryStringToArray: Data must be in the form of a string！"
         );
     }
 
