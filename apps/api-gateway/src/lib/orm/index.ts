@@ -17,7 +17,7 @@ export const initORM = async (connectionOverrides?: Partial<MysqlConnectionOptio
             entities: [],
             ...connectionOverrides,
         });
-        logger.info('### INFO: Connection Established')
+        logger.info('### INFO: Connection Established！')
         return connection
     } catch (error) {
         return logger.info(error)
