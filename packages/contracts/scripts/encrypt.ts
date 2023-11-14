@@ -151,7 +151,7 @@ for (let i = 0; i < 1000; i++) {
 console.timeEnd('mina decrypt3');
 
 console.time('mina decrypt4');
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 2000; i++) {
     const priKeyHash = Poseidon.hash(privateKey1.toFields()).toBigInt();
 }
 console.timeEnd('mina decrypt4');
