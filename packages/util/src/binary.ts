@@ -107,7 +107,7 @@ export const hexStringToArray = (hex: string) => {
  */
 export const arrayToHexString = (bytes: Uint8Array) => {
     const hexAlphabet = "0123456789abcdef";
-    let s = "";
+    let s = '';
     bytes.forEach((v) => {
         s += hexAlphabet[v >> 4] + hexAlphabet[v & 15];
     });
