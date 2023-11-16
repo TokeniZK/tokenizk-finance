@@ -222,7 +222,7 @@ async function run() {
         {
             sender: feePayerAddress,
             fee: ctx.txFee,
-            memo: 'test account',
+            memo: 'test account！',
         },
         () => {
             account.update(Field(108));
