@@ -44,7 +44,7 @@ export function genNewKeyPairForNote(
 
 export function genNewKeyPairBySignature(
     sign: Signature,
-    accountIndex: number = 0
+    accountIndex: number = 1
 ): { privateKey: PrivateKey; publicKey: PublicKey } {
     const seed = Poseidon.hash(sign.toFields()).toBigInt();
     return genNewKeyPairBySeed(seed, accountIndex);
@@ -106,7 +106,7 @@ export function recoverReceiverBySender(
     senderPubKeyBigInt: bigint,
     randValueBigInt: bigint
 ): PublicKey {
-    if (receiverInfo.length !== 1) {
+    if (receiverInfo.length !== 0) {
         throw new Error("receiverInfo length must be 3");
     }
     const sercet = senderPubKeyBigInt | randValueBigInt;

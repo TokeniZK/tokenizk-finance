@@ -47,7 +47,7 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator) {
                 case ProofTaskType.LOCKED_TOKEN_CLAIM:
                     {
                         let payload = {
-                            isProof: true,
+                            isProof: false,
                             payload: proofTaskDto.payload
                         } as ProofPayload<any>;
 
@@ -67,6 +67,7 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator) {
 }
 
 const proof_generation_init = async () => {
+
     // init Mina tool
     await activeMinaInstance();// TODO improve it to configure graphyQL endpoint
 
@@ -74,7 +75,8 @@ const proof_generation_init = async () => {
         let subProcessCordinator = await createSubProcesses(config.subProcessCnt);
         // start web server in worker thread
         bootWebServerThread(subProcessCordinator);
-    }else {// sub processes:
+    } else {
+        // sub processes:
         await initWorker();
     }
 }
