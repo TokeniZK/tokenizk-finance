@@ -75,7 +75,8 @@ const proof_generation_init = async () => {
         let subProcessCordinator = await createSubProcesses(config.subProcessCnt);
         // start web server in worker thread
         bootWebServerThread(subProcessCordinator);
-    } else {// sub processes:
+    } else {
+        // sub processes:
         await initWorker();
     }
 }
