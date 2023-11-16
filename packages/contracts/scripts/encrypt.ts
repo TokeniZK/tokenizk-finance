@@ -49,24 +49,24 @@ import {
 //   value1: TestProof,
 // }) {}
 
-// let MyProgram2 = Experimental.ZkProgram({
-//   publicOutput: Field,
+let MyProgram2 = Experimental.ZkProgram({
+  publicOutput: Field,
 
-//   methods: {
-//     baseCase: {
-//       // @ts-ignore
-//       privateInputs: [ProofArr, Field],
-//       method(ps: ProofArr, f: Field) {
-//         //@ts-ignore
-//         ps.value.verify();
-//         //@ts-ignore
-//         ps.value1.verify();
-//         const a = Provable.if(f.equals(0), Field, Field(1), Field(2));
-//         return a.add(1);
-//       },
-//     },
-//   },
-// });
+  methods: {
+    baseCase: {
+      // @ts-ignore
+      privateInputs: [ProofArr, Field],
+      method(ps: ProofArr, f: Field) {
+        //@ts-ignore
+        ps.value.verify();
+        //@ts-ignore
+        ps.value1.verify();
+        const a = Provable.if(f.equals(0), Field, Field(1), Field(2));
+        return a.add(1);
+      },
+    },
+  },
+});
 
 // let result = MyProgram2.compile();
 // console.log('result: ', result);
