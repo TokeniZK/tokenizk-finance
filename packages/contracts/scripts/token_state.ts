@@ -249,7 +249,7 @@ async function run() {
         logLabel: 'manager update',
     });
 
-    console.log('tx5 start 2');
+    console.log('tx5 start 3');
     // userKey = PrivateKey.fromBase58(
     //   'EKEfZHFBSUpkXALmKM46bSAx44J22G7C7YGBzW8zQ56VQBfCPkVs'
     // );
@@ -258,21 +258,21 @@ async function run() {
     //   'B62qq86EwQABBUiXLSNm3MwCgjx9YUm2XzWfcejbgWAuaYmdTYxsexT'
     // );
     let tx5 = await Mina.transaction(
-      {
-        sender: feePayerAddress,
-        fee: ctx.txFee,
-        memo: 'deploy test',
-      },
-      () => {
-        AccountUpdate.fundNewAccount(feePayerAddress, 1);
-        manager.deployAccount(withdrawAccountVerifyKey, userAddress);
-        manager.updateState(Field(997), userAddress);
-      }
+        {
+            sender: feePayerAddress,
+            fee: ctx.txFee,
+            memo: 'deploy test',
+        },
+        () => {
+            AccountUpdate.fundNewAccount(feePayerAddress, 1);
+            manager.deployAccount(withdrawAccountVerifyKey, userAddress);
+            manager.updateState(Field(997), userAddress);
+        }
     );
     await ctx.submitTx(tx5, {
-      feePayerKey,
-      otherSignKeys: [userKey],
-      logLabel: 'deploy test',
+        feePayerKey,
+        otherSignKeys: [userKey],
+        logLabel: 'deploy test',
     });
 }
 
