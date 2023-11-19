@@ -2,8 +2,8 @@ import { Field, PrivateKey, PublicKey, Signature, Encoding } from "snarkyjs";
 import { decrypt, encrypt } from "./encrypt";
 import { calculateShareSecret } from "./keys_helper";
 
-const saltStr = Field.random().toString();
-console.log("salt: ", saltStr);
+const saltStr1 = Field.random().toString();
+console.log("salt: ", saltStr1);
 
 const priKey = PrivateKey.random();
 const priKey2 = PrivateKey.random();
