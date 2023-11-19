@@ -22,7 +22,7 @@ git clone https://github.com/TokeniZK/tokenizk-finance.git
 
 cd tokenizk-network
 
-npm install
+npm install leveldb
 
 npm run`coreService:dev`
 
