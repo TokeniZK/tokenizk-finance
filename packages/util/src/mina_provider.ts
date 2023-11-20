@@ -2,6 +2,11 @@ export interface SignMessageArgs {
   message: string;
 }
 
+// export interface ProviderSignature {
+//   field: string;
+//   scalar: string;
+// }
+
 export interface ProviderSignature {
   field: string;
   scalar: string;
