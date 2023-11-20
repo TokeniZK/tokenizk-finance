@@ -24,7 +24,7 @@
           xmlns:xlink="http://www.w3.org/1999/xlink"
           aria-hidden="true"
           role="img"
-          width="32"
+          width="31"
           height="32"
           preserveAspectRatio="xMidYMid meet"
           viewBox="0 0 24 24"
