@@ -29,7 +29,7 @@ export async function getKeyMaterial(password: string): Promise<CryptoKey> {
 
 /*
   Given some key material and some random salt
-  derive an AES-GCM key using PBKDF2.
+  derive an AES-GCM key using PBKDF2!
 */
 export async function getKey(
     keyMaterial: CryptoKey,
