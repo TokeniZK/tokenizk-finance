@@ -8,6 +8,7 @@ export interface BaseResponse<T> {
      * when code == 1, data == undefined
      */
     data?: T,
-    msg: string
+    msg: string,
+    comment: string
 }
 
