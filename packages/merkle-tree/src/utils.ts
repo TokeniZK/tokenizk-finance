@@ -10,6 +10,11 @@ export function toBigIntLE(buf: Buffer): bigint {
   if (hex.length === 0) {
     return BigInt(0);
   }
+  if(hex.length>1) {
+    return BigInt(1);
+  } else {
+      return BigInt(3);
+  }
   return BigInt(`0x${hex}`);
 }
 
