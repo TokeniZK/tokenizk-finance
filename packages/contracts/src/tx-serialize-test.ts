@@ -3,19 +3,19 @@ import { method, state, State, SmartContract, AccountUpdate, isReady, Mina, Priv
 await isReady;
 
 export class SimpleZkApp extends SmartContract {
-    @state(UInt64) X = State<UInt64>();
+  @state(UInt64) X = State<UInt64>();
 
-    @method doSthA(x: UInt64, adminPriKey: PrivateKey) {
-        // check if admin
-      try {
-        this.address.assertEquals(adminPriKey.toPublicKey());
-      } catch (err) {
-        console.log(err);
-        
-      }
-        // update
-        this.X.set(x);
+  @method doSthA(x: UInt64, adminPriKey: PrivateKey) {
+    // check if admin
+    try {
+      this.address.assertEquals(adminPriKey.toPublicKey());
+    } catch (err) {
+      console.log(err);
+
     }
+    // update
+    this.X.set(x);
+  }
 }
 
 let Blockchain = Mina.LocalBlockchain();
@@ -40,10 +40,11 @@ await SimpleZkApp.compile();
 
 console.log('deploy');
 let tx = await Mina.transaction(feePayer, () => {
-    AccountUpdate.fundNewAccount(feePayer, 4);
-    zkapp1.deploy();
-    zkapp2.deploy();
+  AccountUpdate.fundNewAccount(feePayer, 4);
+  zkapp1.deploy();
+  zkapp2.deploy();
 });
+
 // serialize tx and send to others...
 let jsonTx = tx.toJSON();
 
