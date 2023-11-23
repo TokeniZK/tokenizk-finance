@@ -12,7 +12,8 @@ export type RequestHandler<
 > = (
     req: FastifyRequest<{
         Body: Body,
-        Params: Params
+        Params: Params,
+        reqId: string,
     }>,
     res: FastifyReply
 ) => any
