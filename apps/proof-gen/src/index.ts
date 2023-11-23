@@ -37,10 +37,10 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator) {
                 proofTaskDto.payload.data.data = p;
                 await $axiosCoreService.post('/proof-result', proofTaskDto)
                     .then(value => {
-                    console.log('$axiosCoreService.post to /proof-result, response:', value);
-                }).catch(reason => {
-                    console.log('$axiosCoreService.post to /proof-result, error:', reason);
-                });
+                        console.log('$axiosCoreService.post to /proof-result, response:', value);
+                    }).catch(reason => {
+                        console.log('$axiosCoreService.post to /proof-result, error:', reason);
+                    });
             }
 
             // recieve from http-server thread
@@ -59,10 +59,10 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator) {
                 default:
                     break;
             }
-        } catch (error) {
+        } catch (err) {
             // notice: don't throw error, will make primary process exit!
-            logger.error(error);
-            console.error(error);
+            logger.error(err);
+            console.error(err);
         }
     })
 }
