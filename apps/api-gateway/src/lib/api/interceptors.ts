@@ -10,10 +10,6 @@ interface CallbackTrigger {
     responseError: ResponseErrorCallback;
 }
 
-const callbackTrigger: CallbackTrigger = {
-    responseSuccess: (null as any) as ResponseSuccessCallback,
-    responseError: (null as any) as ResponseErrorCallback
-};
 
 $axiosCoreService.interceptors.response.use(
     (response: AxiosResponse) => {
