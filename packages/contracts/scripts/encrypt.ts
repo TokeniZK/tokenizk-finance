@@ -50,22 +50,22 @@ import {
 // }) {}
 
 let MyProgram2 = Experimental.ZkProgram({
-  publicOutput: Field,
+    publicOutput: Field,
 
-  methods: {
-    baseCase: {
-      // @ts-ignore
-      privateInputs: [ProofArr, Field],
-      method(ps: ProofArr, f: Field) {
-        //@ts-ignore
-        ps.value.verify();
-        //@ts-ignore
-        ps.value1.verify();
-        const a = Provable.if(f.equals(0), Field, Field(1), Field(2));
-        return a.add(1);
-      },
+    methods: {
+        baseCase: {
+            // @ts-ignore
+            privateInputs: [ProofArr, Field],
+            method(ps: ProofArr, f: Field) {
+                //@ts-ignore
+                ps.value.verify();
+                //@ts-ignore
+                ps.value1.verify();
+                const a = Provable.if(f.equals(0), Field, Field(1), Field(2));
+                return a.add(1);
+            },
+        },
     },
-  },
 });
 
 // let result = MyProgram2.compile();
@@ -169,10 +169,14 @@ function genNewPrivateKey(priKey: PrivateKey, rand: Field): PrivateKey {
 }
 
 function getEncKey(oriFs: Field[], priKeyHash: bigint, rand: Field): PublicKey {
-    let se = priKeyHash | rand.toBigInt();
-    let oriF0BigInt = oriFs[0].toBigInt();
+    try {
+        let se = priKeyHash | rand.toBigInt();
+        let oriF0BigInt = oriFs[0].toBigInt();
+        let ori = oriF0BigInt ^ se;
+        let newPk = PublicKey.fromFields([Field(ori), oriFs[1]]);
+        return newPk;
+    } catch (error) {
+        console.log(error);
+    }
 
-    let ori = oriF0BigInt ^ se;
-    let newPk = PublicKey.fromFields([Field(ori), oriFs[1]]);
-    return newPk;
 }
