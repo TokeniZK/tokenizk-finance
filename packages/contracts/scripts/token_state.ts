@@ -213,7 +213,7 @@ async function run() {
     await ctx.submitTx(tx2, {
         feePayerKey,
         otherSignKeys: [userKey],
-        logLabel: 'deploy withdraw account',
+        logLabel: 'deploy withdraw account!',
     });
     console.log('tx2 done');
 
