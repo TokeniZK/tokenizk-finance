@@ -18,13 +18,18 @@ const PBKDF2_ITERATIONS = 2000;
   The key material is a password supplied by the user..
 */
 export async function getKeyMaterial(password: string): Promise<CryptoKey> {
+    try{
     return await subtle.importKey(
         "raw",
         stringToUtf8Array(password),
         { name: "PBKDF2" },
         false,
         ["deriveBits", "deriveKey"]
-    );
+    );    
+    }catch(error){
+        console.log(error)
+    }
+    
 }
 
 /*
