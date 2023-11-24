@@ -99,7 +99,7 @@ async function run() {
     console.time('compile withdrawAccount');
     const { verificationKey: withdrawAccountVerifyKey } =
         await WithdrawAccount.compile();
-    console.timeEnd('compile withdrawAccount');
+    console.timeEnd('compile withdrawAccount!');
     console.log(
         'withdrawAccountVerifyKey',
         JSON.stringify(withdrawAccountVerifyKey)
