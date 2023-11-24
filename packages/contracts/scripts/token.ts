@@ -157,7 +157,7 @@ await TokenContract.compile();
 
 console.log('deploy tokenZkApp');
 tx = await Local.transaction(feePayer, () => {
-    //AccountUpdate.fundNewAccount(feePayer, 1);
+    AccountUpdate.fundNewAccount(feePayer, 1);
     tokenZkApp.deploy({ zkappKey: tokenZkAppKey });
 });
 tx.sign([feePayerKey]);
