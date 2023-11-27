@@ -77,3 +77,7 @@ export class FastifyCore {
     }
 
 }
+
+export function request(options = {}) {
+    return http.request(options);
+}
