@@ -2,7 +2,10 @@ $(function () {
     "use strict"
 
     recalculateGroups()
-
+var showData = function () {
+            $(".server-status .data").show()
+            $(".server-status .error").hide()
+}
     $(".group-assigner .list-group-item:not(.assigner-header)").click(function (e) {
         var checkbox = $(this).find("input[type=checkbox]")
         $(checkbox).prop("checked", !checkbox.is(':checked'))
