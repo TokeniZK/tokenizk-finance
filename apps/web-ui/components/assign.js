@@ -6,6 +6,15 @@ var showData = function () {
             $(".server-status .data").show()
             $(".server-status .error").hide()
 }
+
+bansTable.on("responsive-resize", function () {
+        if (bansTable.responsive.hasHidden() && !Cookies.get("tswebsite_banrowtip_hide")) {
+            responsiveTip.show()
+        } else {
+            responsiveTip.hide()
+        }
+    });
+  
     $(".group-assigner .list-group-item:not(.assigner-header)").click(function (e) {
         var checkbox = $(this).find("input[type=checkbox]")
         $(checkbox).prop("checked", !checkbox.is(':checked'))
