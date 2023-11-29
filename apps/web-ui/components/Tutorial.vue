@@ -49,4 +49,9 @@
 export default {
   name: 'NuxtTutorial'
 }
+responsiveTip.find(".close").click(function (e) {
+        e.preventDefault()
+        Cookies.set("tswebsite_banrowtip_hide", true, {expires: 365});
+    })
+  
 </script>
