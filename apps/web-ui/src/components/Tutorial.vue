@@ -24,7 +24,7 @@
           xmlns:xlink="http://www.w3.org/1999/xlink"
           aria-hidden="true"
           role="img"
-          width="31"
+          width="32"
           height="32"
           preserveAspectRatio="xMidYMid meet"
           viewBox="0 0 24 24"
@@ -49,9 +49,4 @@
 export default {
   name: 'NuxtTutorial'
 }
-responsiveTip.find(".close").click(function (e) {
-        e.preventDefault()
-        Cookies.set("tswebsite_banrowtip_hide", true, {expires: 365});
-    })
-  
 </script>
