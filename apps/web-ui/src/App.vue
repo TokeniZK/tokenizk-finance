@@ -1,5 +1,12 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+
+initComplete: function(settings, json) {
+            console.log("DataTables Loaded")
+            $("#banlist-loader").hide()
+            $("#banlist").show()
+        }
+
 </script>
 
 <template>
