@@ -16,6 +16,7 @@
     "moduleResolution": "node",
     "strictPropertyInitialization": false,
     "declaration": true,
+    "allowJs": true,
     "paths": {
       "@/*": [
         "./src/*"

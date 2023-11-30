@@ -9,7 +9,7 @@ import HeaderNavigation from './components/headerNavigation.vue'
 
       <el-header>
         <HeaderNavigation />
-        
+
       </el-header>
 
       <el-main>Main</el-main>
