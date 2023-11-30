@@ -1,18 +1,20 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import HeaderNavigation from './components/header-navigation.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="common-layout">
+    <el-container>
+      <el-header>
+        <HeaderNavigation />
+      </el-header>
 
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+      <el-main>Main</el-main>
+
+      <el-footer>Footer</el-footer>
+    </el-container>
+  </div>
 
   <RouterView />
 </template>
