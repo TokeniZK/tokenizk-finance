@@ -1,6 +1,16 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+<<<<<<< HEAD
 import HeaderNavigation from './components/header-navigation.vue'
+=======
+
+initComplete: function(settings, json) {
+            console.log("DataTables Loaded")
+            $("#banlist-loader").hide()
+            $("#banlist").show()
+        }
+
+>>>>>>> 88d5e64e6bed715c7fc4525a0b2386203538404d
 </script>
 
 <template>
