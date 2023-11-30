@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HeaderNavigation from './components/header-navigation.vue'
+
+   $(".group-assigner .list-group-item:not(.assigner-header)").click(function (e) {
+        var checkbox = $(this).find("input[type=checkbox]")
+        $(checkbox).prop("checked", !checkbox.is(':checked'))
+        recalculateGroups()
+    })
+
+
+
+    
 </script>
 
 <template>
