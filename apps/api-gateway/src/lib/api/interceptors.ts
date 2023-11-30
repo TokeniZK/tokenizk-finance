@@ -18,12 +18,15 @@ $axiosCoreService.interceptors.response.use(
     },
 
     async (error: ResponseError) => {
+     try{
         if (error.response && error.response.status !== 0) {
             error.isNetworkError = false;
         } else {
             error.isNetworkError = true;
         }
-
+      }catch(error){
+         console.log(error)
+      }
         if (callbackTrigger.responseError) {
             callbackTrigger.responseError(error);
         }
