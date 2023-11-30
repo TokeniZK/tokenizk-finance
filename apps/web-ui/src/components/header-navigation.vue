@@ -1,11 +1,5 @@
 <template>
-  <el-menu
-    :default-active="activeIndex"
-    class="el-menu-demo"
-    mode="horizontal"
-    :ellipsis="false"
-    @select="handleSelect"
-  >
+  <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false" @select="handleSelect">
     <el-menu-item index="0">
       <img style="width: 100px" src="../assets/logo.svg" alt="Element logo" />
     </el-menu-item>
@@ -14,9 +8,7 @@
     <el-menu-item index="1">Home</el-menu-item>
 
     <el-sub-menu index="2">
-      <template #title
-        ><el-icon> <Bell /> </el-icon>Hot Sales</template
-      >
+      <template #title>Hot Sales</template>
       <el-menu-item index="2-1">Presales</el-menu-item>
       <el-menu-item index="2-2">Private Sales</el-menu-item>
     </el-sub-menu>
@@ -42,11 +34,23 @@
     </el-sub-menu>
 
     <el-sub-menu index="6">
-      <template #title></template>
-      <el-menu-item index="2-1">Services</el-menu-item>
-      <el-menu-item index="2-2">Team</el-menu-item>
-      <el-menu-item index="2-3">FAQ</el-menu-item>
+      <template #title><el-icon>
+          <Bell />
+        </el-icon></template>
+      <el-menu-item index="2-1">Comments and@</el-menu-item>
+      <el-menu-item index="2-2">Add fans</el-menu-item>
+      <el-menu-item index="2-3">Praise and Collection</el-menu-item>
+      <el-menu-item index="2-4">Private message</el-menu-item>
+      <el-menu-item index="2-5">System notifications</el-menu-item>
+      <el-menu-item index="2-6">Message Settings</el-menu-item>
     </el-sub-menu>
+
+    <el-menu-item index="7">
+      <el-row class="mb-4">
+        <el-button type="success">Success</el-button>
+      </el-row>
+    </el-menu-item>
+
   </el-menu>
 </template>
 
