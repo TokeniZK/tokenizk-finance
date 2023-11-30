@@ -57,7 +57,8 @@ const config = {
     coreServiceHost: <string>process.env.CORE_SERVICE_HOST || '127.0.0.1',
     coreServicePort: <number>Number(<string>process.env.CORE_SERVICE_PORT) || 8080,
     httpProtocol: <string>process.env.HTTP_PROTOCOL || 'http'
-    pinoLogFilePath: <string>process.env.HTTP_PROTOCOL || './api-gateway.log'
+    pinoLogFilePath: <string>process.env.HTTP_PROTOCOL || './api-gateway.log',
+    archiveNode: <string>process.env.ARCHIVE_NODE
 }
 
 export default config
