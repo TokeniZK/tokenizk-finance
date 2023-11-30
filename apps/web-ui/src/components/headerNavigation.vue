@@ -11,40 +11,80 @@
 
     <el-sub-menu index="2">
       <template #title>Hot Sales</template>
-      <el-menu-item index="2-1">Presales</el-menu-item>
-      <el-menu-item index="2-2">Private Sales</el-menu-item>
+      <el-menu-item index="2-1">
+        <router-link to="/pre-Sales">Presales</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-2">
+        <router-link to="/private-Sales">Private Sales</router-link>
+      </el-menu-item>
     </el-sub-menu>
 
-    <el-menu-item index="3">Airdrop</el-menu-item>
+    <el-menu-item index="3">
+      <router-link to="/airdrop-list">Airdrop</router-link>
+    </el-menu-item>
 
     <el-sub-menu index="4">
       <template #title>Boot</template>
-      <el-menu-item index="2-1">Create zkToken</el-menu-item>
-      <el-menu-item index="2-2">Create Fair Launch</el-menu-item>
-      <el-menu-item index="2-3">Create Normal Launch</el-menu-item>
-      <el-menu-item index="2-4">Create Private Sale</el-menu-item>
-      <el-menu-item index="2-5">Create Airdrop</el-menu-item>
-      <el-menu-item index="2-6">Create Lock</el-menu-item>
-      <el-menu-item index="2-7">Create zkNFT</el-menu-item>
+      <el-menu-item index="2-1">
+        <router-link to="/create-ZkToken">Create zkToken</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-2">
+        <router-link to="/create-Fair-Launch">Create Fair Launch</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-3">
+        <router-link to="/create-Normal-Launch">Create Normal Launch</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-4">
+        <router-link to="/create-Private-Sale">Create Private Sale</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-5">
+        <router-link to="/create-Airdrop">Create Airdrop</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-6">
+        <router-link to="/create-Lock"> Create Lock</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-7">
+        <router-link to="/create-zkNFT"> Create zkNFT</router-link>
+      </el-menu-item>
     </el-sub-menu>
 
     <el-sub-menu index="5">
       <template #title>About</template>
-      <el-menu-item index="2-1">Services</el-menu-item>
-      <el-menu-item index="2-2">Team</el-menu-item>
-      <el-menu-item index="2-3">FAQ</el-menu-item>
+      <el-menu-item index="2-1">
+        <router-link to="/services">Services</router-link>
+
+      </el-menu-item>
+      <el-menu-item index="2-2">
+        <router-link to="/team">Team</router-link>
+
+      </el-menu-item>
+      <el-menu-item index="2-3">
+        <router-link to="/faq">FAQ</router-link>
+      </el-menu-item>
     </el-sub-menu>
 
     <el-sub-menu index="6">
       <template #title><el-icon>
           <Bell />
         </el-icon></template>
-      <el-menu-item index="2-1">Comments and@</el-menu-item>
-      <el-menu-item index="2-2">Add fans</el-menu-item>
-      <el-menu-item index="2-3">Praise and Collection</el-menu-item>
-      <el-menu-item index="2-4">Private message</el-menu-item>
-      <el-menu-item index="2-5">System notifications</el-menu-item>
-      <el-menu-item index="2-6">Message Settings</el-menu-item>
+      <el-menu-item index="2-1">
+        <router-link to="/comments">Comments and @</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-2">
+        <router-link to="/add-fans">Add Fans</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-3">
+        <router-link to="/praise-and-collection">Praise and Collection</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-4">
+        <router-link to="/private-message">Private Message</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-5">
+        <router-link to="/system-notifications">System Notifications</router-link>
+      </el-menu-item>
+      <el-menu-item index="2-6">
+        <router-link to="/message-settings">Message Settings</router-link>
+      </el-menu-item>
     </el-sub-menu>
 
     <el-menu-item index="7">
