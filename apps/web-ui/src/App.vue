@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HeaderNavigation from './components/headerNavigation.vue'
+import Footer from './components/footer.vue';
 </script>
 
 <template>
@@ -14,7 +15,9 @@ import HeaderNavigation from './components/headerNavigation.vue'
 
       <el-main>Main</el-main>
 
-      <el-footer>Footer</el-footer>
+      <el-footer>
+        <Footer />
+      </el-footer>
 
     </el-container>
 
@@ -24,25 +27,16 @@ import HeaderNavigation from './components/headerNavigation.vue'
 </template>
 
 <style lang="less" scoped>
-#app {
+el-header {
   width: 100%;
+}
 
-  .common-layout {
-    width: 100%;
-    margin: 0 auto;
+el-main {
+  width: 100%;
+  height: 3000px;
+}
 
-    el-header {
-      width: 100%;
-    }
-
-    el-main {
-      width: 100%;
-      height: 3000px;
-    }
-
-    el-footer {
-      width: 100%;
-    }
-  }
+el-footer {
+  width: 100%;
 }
 </style>

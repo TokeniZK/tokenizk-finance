@@ -5,7 +5,7 @@ import { CaretBottom } from '@element-plus/icons-vue'
 <template>
   <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false" @select="handleSelect">
     <el-menu-item index="0">
-      <img style="width: 100px" src="../assets/logo.svg" alt="Element logo" />
+      <img style="width: 180px" src="../assets/logo.svg" alt="Element logo" />
     </el-menu-item>
     <div class="flex-grow" />
 
