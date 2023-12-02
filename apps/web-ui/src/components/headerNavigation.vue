@@ -4,9 +4,11 @@ import { CaretBottom } from '@element-plus/icons-vue'
 
 <template>
   <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false" @select="handleSelect">
+
     <el-menu-item index="0">
       <img style="width: 180px" src="../assets/logo.svg" alt="Element logo" />
     </el-menu-item>
+
     <div class="flex-grow" />
 
     <el-menu-item index="1">
@@ -72,6 +74,7 @@ import { CaretBottom } from '@element-plus/icons-vue'
     </el-sub-menu>
 
     <el-sub-menu index="6">
+
       <template #title>
         <el-badge :value="12" class="item">
           <el-icon>
@@ -158,10 +161,6 @@ const handleSelect = (key: string, keyPath: string[]) => {
   height: 80px;
   color: #fff;
   background-color: #000;
-
-  // .el-menu-item {
-  //   color: #fff !important;
-  // }
 
   .item {
     margin-top: 10px;
