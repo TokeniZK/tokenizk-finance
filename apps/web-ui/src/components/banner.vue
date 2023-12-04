@@ -37,9 +37,12 @@ const { increment } = counterStore;
       <button @click="increment">{{ count }}</button>
       {{ doubleCount }}
 
+      <el-button type="primary">Primary</el-button>
+
       <!-- <ul>
         <li v-for="item in counterStore.list" :key="item.id">{{ item.name }}</li>
       </ul> -->
+
     </el-row>
 
   </el-col>

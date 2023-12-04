@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HeaderNavigation from './components/headerNavigation.vue'
-import Footer from './components/footer.vue';
-import Banner from './components/banner.vue';
+// @ 这个配置项 只做 联想提示
+import HeaderNavigation from '@/components/headerNavigation.vue'
+import Footer from '@/components/footer.vue';
+import Banner from '@/components/banner.vue';
 </script>
 
 <template>
