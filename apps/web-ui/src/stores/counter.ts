@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+// 8、导入 axios
 // import axios from 'axios'
 // const API_URL = 'http://geek.itheima.net/v1_0/channels'
 
@@ -8,7 +9,7 @@ import { defineStore } from 'pinia'
 // 5、按需导出
 export const useCounterStore = defineStore('counter', () => {
 
-  // 2、定义数据（state）
+  // 2、定义 共享数据（state）
   const count = ref(0)
 
   // 6、Pinia 中 getters 直接 使用 computed 函数 进行模拟 
@@ -23,7 +24,7 @@ export const useCounterStore = defineStore('counter', () => {
   //   list.value = res.data.data.channels;
   // }
 
-  // 3、定义修改数据的方法 （action 同步 + 异步）
+  // 3、定义 修改数据 的方法 （action 同步 + 异步）
   function increment() {
     count.value++
   }
