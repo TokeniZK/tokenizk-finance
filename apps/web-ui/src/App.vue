@@ -3,7 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 // @ 这个配置项 只做 联想提示
 import HeaderNavigation from '@/components/headerNavigation.vue'
 import Footer from '@/components/footer.vue';
-import Banner from '@/components/banner.vue';
+import Home from '@/views/Home.vue';
 </script>
 
 <template>
@@ -18,7 +18,7 @@ import Banner from '@/components/banner.vue';
     <el-row>
       <el-col :span="24">
         <div class="grid-content ep-bg-purple-dark" />
-        <Banner />
+        <Home />
       </el-col>
     </el-row>
 
@@ -34,6 +34,4 @@ import Banner from '@/components/banner.vue';
   <RouterView />
 </template>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>
