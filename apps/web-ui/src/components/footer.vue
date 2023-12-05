@@ -127,6 +127,7 @@
 
   .copyright {
     margin: 100px auto 0;
+
     font-size: 13px;
     color: #8a8f9c;
   }

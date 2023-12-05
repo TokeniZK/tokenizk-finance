@@ -2,12 +2,12 @@
 import { RouterLink, RouterView } from 'vue-router'
 // @ 这个配置项 只做 联想提示
 import HeaderNavigation from '@/components/headerNavigation.vue'
-import Footer from '@/components/footer.vue';
+import Foot from '@/components/footer.vue';
 import Home from '@/views/Home.vue';
 </script>
 
 <template>
-  <el-col>
+  <el-col :span="24">
 
     <el-row>
       <el-col>
@@ -16,22 +16,19 @@ import Home from '@/views/Home.vue';
     </el-row>
 
     <el-row>
-      <el-col :span="24">
-        <div class="grid-content ep-bg-purple-dark" />
+      <el-col>
         <Home />
+        <RouterView />
       </el-col>
     </el-row>
 
     <el-row>
-      <el-col :span="24">
-        <div class="grid-content ep-bg-purple-dark" />
-        <Footer />
+      <el-col>
+        <Foot />
       </el-col>
     </el-row>
 
   </el-col>
-
-  <RouterView />
 </template>
 
 <style lang="less" scoped></style>

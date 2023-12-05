@@ -22,24 +22,27 @@ const { increment } = counterStore;
 <template>
   <el-col class="banner">
 
-    <el-row>
-      <el-row>
-        <h1 class="header-span">
-          <el-row>Tokenize Creative Ideas,</el-row>
-          <el-row>Early Access to Crazy Thinking.</el-row>
-        </h1>
-      </el-row>
+    <el-row class="banner-box1">
+      <el-col>
+        <el-row>
+          <p class="banner-header">
+            <el-row class="header-span" style="text-indent: 7rem;">Tokenize Creative Ideas,</el-row>
+            <el-row class="header-span">Early Access to Crazy Thinking.</el-row>
+          </p>
+        </el-row>
 
-      <el-row>
-        <p class="header-text">
-          The First Verifiable LaunchPad on Mina, with No-code.
-        </p>
-      </el-row>
+        <el-row>
+          <p class="header-text">
+            The First Verifiable LaunchPad on Mina, with No-code.
+          </p>
+        </el-row>
+
+      </el-col>
     </el-row>
 
-    <el-row class="box">
+    <el-row class="banner-box2" :span="24">
 
-      <el-col class="box-left" :span="12">
+      <el-col class="box2-left" :span="12">
         <el-row>
           <h2 class="title">Why Choose TokeniZK</h2>
         </el-row>
@@ -47,24 +50,22 @@ const { increment } = counterStore;
           <p class="text"> The Launchpad focusing on ZK-Token for Everyone!</p>
         </el-row>
         <el-row>
-          <p class="text">
-            A ZK-Token creation, pre-sale, and management platform suitable for
-            everyone. Anyone can easily create their own tokens
-            and project pre-sales here.
-          </p>
+          <p class="text">A ZK-Token creation, pre-sale, and management platform suitable </p>
+          <p class="text">for everyone. Anyone can easily create their own tokens and </p>
+          <p class="text">project pre-sales here.</p>
         </el-row>
       </el-col>
 
-      <el-col class="box-right" :span="12">
-        <el-row>
+      <el-col class="box2-right" :span="12">
+        <el-row style="margin: 10px 0 0;">
           <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
           <p class="text"> Create your own tokens and sales quickly, easily and cheaply</p>
         </el-row>
-        <el-row>
+        <el-row style="margin: 10px 0 0;">
           <h4 class="lasthead">No mental burden</h4>
           <p class="text">No need to understand complex zero knowledge proof, code knowledge</p>
         </el-row>
-        <el-row>
+        <el-row style="margin: 10px 0 0;">
           <h4 class="lasthead">Verifiable Security Platform</h4>
           <p class="text">Cryptography guarantees data consistency</p>
         </el-row>
@@ -77,15 +78,41 @@ const { increment } = counterStore;
 
 <style lang="less" scoped>
 .banner {
-  margin: 0;
-  margin-top: 80px;
-  margin-left: -32px;
-  padding: 110px 350px;
+  padding-top: 300px;
+  padding-left: 400px;
   height: 800px;
   background-color: #000;
-  width: 1957px;
 
-  .box {
+  .banner-box1 {
+    padding-left: 100px;
+
+    .banner-header {
+      display: inline-block;
+      width: 100%;
+      color: #00FFC2;
+      font-family: Manrope;
+      font-size: 62px;
+      line-height: 1.16;
+
+      .header-span {
+        font-family: Manrope;
+        font-weight: 700;
+      }
+    }
+
+    .header-text {
+      color: #fff;
+      font-size: 24.5px;
+      line-height: 28px;
+      padding: 27px 0px 36px;
+      font-family: Manrope;
+      text-indent: 10.5rem;
+    }
+
+  }
+
+  // 特效盒子
+  .banner-box2 {
     z-index: 2;
     border-radius: 15px;
     background-color: #161616;
@@ -93,8 +120,10 @@ const { increment } = counterStore;
     padding: 50px 80px 50px;
     font-family: Manrope;
     margin-top: 70px;
+    width: 1140px;
+    height: 415px;
 
-    .box-left {
+    .box2-left {
       padding-bottom: 10px;
 
       h2.title {
@@ -112,12 +141,13 @@ const { increment } = counterStore;
 
     }
 
-    .box-right {
+    .box2-right {
       background-color: rgb(0, 255, 194);
       border-radius: 15px;
       visibility: visible;
       animation-name: fadeInUp;
       padding: 0 15px;
+      padding-bottom: 10px;
 
       .lasthead {
         font-size: 20px;
@@ -133,24 +163,6 @@ const { increment } = counterStore;
       }
 
     }
-  }
-
-  .header-span {
-    display: inline-block;
-    width: 100%;
-    color: #00FFC2;
-    font-family: Manrope;
-    font-size: 62px;
-    line-height: 1.16;
-    font-weight: 700;
-  }
-
-  .header-text {
-    color: #fff;
-    font-size: 24.5px;
-    line-height: 28px;
-    padding: 27px 0px 36px;
-    font-family: Manrope;
   }
 
 }

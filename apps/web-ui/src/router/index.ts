@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Home from '../views/Home.vue'
 import PreSales from '../views/pre-Sales.vue'
 import PrivateSales from '../views/private-Sales.vue'
 import AirdropList from '../views/airdrop-list.vue'
@@ -26,7 +26,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: Home
     },
     {
       path: '/',
