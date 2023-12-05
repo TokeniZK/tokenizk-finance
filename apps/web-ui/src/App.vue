@@ -7,26 +7,33 @@ import Banner from '@/components/banner.vue';
 </script>
 
 <template>
-  <div class="common-layout">
-    <el-container>
+  <el-col>
 
-      <el-header>
+    <el-row>
+      <el-col>
         <HeaderNavigation />
-      </el-header>
+      </el-col>
+    </el-row>
 
-      <el-main>
-        <router-view />
+    <el-row>
+      <el-col :span="24">
+        <div class="grid-content ep-bg-purple-dark" />
         <Banner />
-      </el-main>
+      </el-col>
+    </el-row>
 
-      <el-footer>
+    <el-row>
+      <el-col :span="24">
+        <div class="grid-content ep-bg-purple-dark" />
         <Footer />
-      </el-footer>
+      </el-col>
+    </el-row>
 
-    </el-container>
-  </div>
+  </el-col>
 
   <RouterView />
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+
+</style>

@@ -11,7 +11,7 @@ import { CaretBottom } from '@element-plus/icons-vue'
 
     <div class="flex-grow" />
 
-    <el-menu-item index="1">
+    <el-menu-item index="1" style="font-size: 18px; color: #fff;">
       <router-link to="/home">Home</router-link>
     </el-menu-item>
 
@@ -29,7 +29,7 @@ import { CaretBottom } from '@element-plus/icons-vue'
       </el-menu-item>
     </el-sub-menu>
 
-    <el-menu-item index="3">
+    <el-menu-item index="3" style="font-size: 18px; color: #fff;">
       <router-link to="/airdrop-list">Airdrop</router-link>
     </el-menu-item>
 

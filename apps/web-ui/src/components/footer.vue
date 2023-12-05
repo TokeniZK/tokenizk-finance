@@ -74,7 +74,7 @@
     </el-row>
 
     <el-row>
-      <div class="copyright" style="margin: 0 auto;  font-size: 13px;  color: #8a8f9c;">
+      <div class="copyright">
         <span>Copyright © 2023 TokeniZK. All Rights Reserved.</span>
       </div>
     </el-row>
@@ -84,14 +84,15 @@
 
 <style lang="less" scoped>
 #footerView {
-  margin: 0 auto;
+  margin-left: -32px;
   padding: 0;
   left: 0;
-  right: 0; 
+  right: 0;
   bottom: 0;
   color: #fff;
   padding: 90px 0 120px;
   background-color: #03142c;
+
 
   // footer区域 flex布局 4-4-4
   .el-row {
@@ -122,6 +123,12 @@
 
   .footer-list li:active {
     color: #ffffff;
+  }
+
+  .copyright {
+    margin: 100px auto 0;
+    font-size: 13px;
+    color: #8a8f9c;
   }
 
 }
