@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
+import Login from '@/views/Login/index.vue'
+import Layout from '@/views/Layout/index.vue'
+import Home from '@/views/Home/index.vue'
+import Category from '@/views/Category/index.vue'
+
+// import Home from '../views/Home.vue'
 import PreSales from '../views/pre-Sales.vue'
 import PrivateSales from '../views/private-Sales.vue'
 import AirdropList from '../views/airdrop-list.vue'
@@ -22,107 +27,107 @@ import MessageSettings from '../views/Message-Settings.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  // path 和 component 对应关系的位置
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      component: Layout,
+      children: [
+        {
+          path: '',
+          component: Home
+        },
+        {
+          path: 'category',
+          component: Category
+        },
+        {
+          path: '/pre-Sales',
+          component: PreSales
+        },
+        {
+          path: '/private-Sales',
+          component: PrivateSales
+        },
+        {
+          path: '/airdrop-list',
+          component: AirdropList
+        },
+        {
+          path: '/create-ZkToken',
+          component: CreateZkToken
+        },
+        {
+          path: '/create-Fair-Launch',
+          component: CreateFairLaunch
+        },
+        {
+          path: '/create-Normal-Launch',
+          component: CreateNormalLaunch
+        },
+        {
+          path: '/create-Private-Sale',
+          component: CreatePrivateSale
+        },
+        {
+          path: '/create-Airdrop',
+          component: CreateAirdrop
+        },
+        {
+          path: '/create-Lock',
+          component: CreateLock
+        },
+        {
+          path: '/create-zkNFT',
+          component: CreateZkNFT
+        },
+        {
+          path: '/services',
+          component: Services
+        },
+        {
+          path: '/team',
+          component: Team
+        },
+        {
+          path: '/faq',
+          component: FAQ
+        },
+        {
+          path: '/comments',
+          component: Comments
+        },
+        {
+          path: '/add-fans',
+          component: AddFans
+        },
+        {
+          path: '/praise-and-collection',
+          component: PraiseAndCollection
+        },
+        {
+          path: '/private-message',
+          component: PrivateMessage
+        },
+        {
+          path: '/system-notifications',
+          component: SystemNotifications
+        },
+        {
+          path: '/message-settings',
+          component: MessageSettings
+        },
+
+      ]
     },
     {
-      path: '/',
-      name: 'pre-Sales',
-      component: PreSales
+      path: '/login',
+      component: Login
     },
-    {
-      path: '/',
-      name: 'private-Sales',
-      component: PrivateSales
-    },
-    {
-      path: '/',
-      name: 'airdrop-list',
-      component: AirdropList
-    },
-    {
-      path: '/',
-      name: 'create-ZkToken',
-      component: CreateZkToken
-    },
-    {
-      path: '/',
-      name: 'create-Fair-Launch',
-      component: CreateFairLaunch
-    },
-    {
-      path: '/',
-      name: 'create-Normal-Launch',
-      component: CreateNormalLaunch
-    },
-    {
-      path: '/',
-      name: 'create-Private-Sale',
-      component: CreatePrivateSale
-    },
-    {
-      path: '/',
-      name: 'create-Airdrop',
-      component: CreateAirdrop
-    },
-    {
-      path: '/',
-      name: 'create-Lock',
-      component: CreateLock
-    },
-    {
-      path: '/',
-      name: 'create-zkNFT',
-      component: CreateZkNFT
-    },
-    {
-      path: '/',
-      name: 'services',
-      component: Services
-    },
-    {
-      path: '/',
-      name: 'team',
-      component: Team
-    },
-    {
-      path: '/',
-      name: 'faq',
-      component: FAQ
-    },
-    {
-      path: '/',
-      name: 'comments',
-      component: Comments
-    },
-    {
-      path: '/',
-      name: 'add-fans',
-      component: AddFans
-    },
-    {
-      path: '/',
-      name: 'praise-and-collection',
-      component: PraiseAndCollection
-    },
-    {
-      path: '/',
-      name: 'private-message',
-      component: PrivateMessage
-    },
-    {
-      path: '/',
-      name: 'system-notifications',
-      component: SystemNotifications
-    },
-    {
-      path: '/',
-      name: 'message-settings',
-      component: MessageSettings
-    },
+    // {
+    //   path: '/',
+    //   component: Home
+    // },
   ]
 })
 
