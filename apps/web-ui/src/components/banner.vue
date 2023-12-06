@@ -78,8 +78,9 @@ const { increment } = counterStore;
 
 <style lang="less" scoped>
 .banner {
-  padding-top: 300px;
-  padding-left: 400px;
+  width: 100%;
+  padding-top: 230px;
+  padding-left: 200px;
   height: 800px;
   background-color: #000;
 

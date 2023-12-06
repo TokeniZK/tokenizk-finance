@@ -23,6 +23,7 @@ declare module 'vue' {
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     Footer: typeof import('./src/components/footer.vue')['default']
     HeaderNavigation: typeof import('./src/components/headerNavigation.vue')['default']
+    Home: typeof import('./src/components/Home.vue')['default']
     HomeMainFunctionIntroduction: typeof import('./src/components/HomeMainFunctionIntroduction.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']

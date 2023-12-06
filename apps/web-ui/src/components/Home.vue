@@ -6,18 +6,14 @@ import MainFunctionIntroduction from '@/components/mainFunctionIntroduction.vue'
 <template>
   <el-col class="home-container">
 
-    <el-row :span="24">
-      <el-col :span="24">
-        <div class="grid-content ep-bg-purple-dark" />
-        <Banner />
-      </el-col>
+    <el-row>
+      <div class="grid-content ep-bg-purple-dark" />
+      <Banner />
     </el-row>
 
-    <el-row :span="24">
-      <el-col :span="24">
-        <div class="grid-content ep-bg-purple-dark" />
-        <MainFunctionIntroduction />
-      </el-col>
+    <el-row>
+      <div class="grid-content ep-bg-purple-dark" />
+      <MainFunctionIntroduction />
     </el-row>
 
   </el-col>
@@ -28,7 +24,7 @@ import MainFunctionIntroduction from '@/components/mainFunctionIntroduction.vue'
   left: 0;
   right: 0;
   margin-left: -32px;
-  width: 1960px;
+  width: 1600px;
   background-color: #f7f7f7;
   align-content: center;
 }

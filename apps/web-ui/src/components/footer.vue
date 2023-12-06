@@ -85,12 +85,9 @@
 <style lang="less" scoped>
 #footerView {
   margin-left: -32px;
-  padding: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   color: #fff;
-  padding: 90px 0 120px;
+  padding-top: 100px;
+  padding-bottom: 100px;
   background-color: #03142c;
 
 

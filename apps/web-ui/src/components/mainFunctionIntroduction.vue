@@ -16,8 +16,8 @@
 
 <style lang="less" scoped>
 .mainFunctionIntroduction {
-  padding-top: 300px;
-  padding-left: 400px;
+  padding-top: 200px;
+  padding-left: 350px;
   height: 600px;
   background-color: #fff;
 

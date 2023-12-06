@@ -120,15 +120,9 @@ const router = createRouter({
 
       ]
     },
-    {
-      path: '/login',
-      component: Login
-    },
-    // {
-    //   path: '/',
-    //   component: Home
-    // },
   ]
 })
 
 export default router
+
+
