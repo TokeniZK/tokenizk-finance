@@ -1,4 +1,8 @@
-import './assets/main.css'
+// 引入初始化样式文件
+import './styles/common.scss'
+
+//  注释 创建项目时默认提供的样式文件
+// import './assets/main.css'
 
 import { createApp } from 'vue'
 
