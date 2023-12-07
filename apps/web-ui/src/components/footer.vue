@@ -79,6 +79,24 @@
       </div>
     </el-row>
 
+    <!-- Back to top -->
+    <el-backtop :bottom="100">
+      <div style="
+        height: 100%;
+        width: 100%;
+        background-color: #00FFC2;
+        box-shadow: var(--el-box-shadow-lighter);
+        text-align: center;
+        line-height: 40px;
+        color: #fff;
+        border-radius: 20%;
+      ">
+        <el-icon>
+          <Top />
+        </el-icon>
+      </div>
+    </el-backtop>
+
   </div>
 </template>
 
