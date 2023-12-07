@@ -20,10 +20,10 @@ const { increment } = counterStore;
 </script>
 
 <template>
-  <el-col class="banner">
+  <el-row class="banner">
 
-    <el-row class="banner-box1">
-      <el-col>
+    <el-col class="banner-box1">
+      <el-row>
         <el-row>
           <p class="banner-header">
             <el-row class="header-span" style="text-indent: 7rem;">Tokenize Creative Ideas,</el-row>
@@ -37,8 +37,8 @@ const { increment } = counterStore;
           </p>
         </el-row>
 
-      </el-col>
-    </el-row>
+      </el-row>
+    </el-col>
 
     <el-row class="banner-box2" :span="24">
 
@@ -73,7 +73,7 @@ const { increment } = counterStore;
 
     </el-row>
 
-  </el-col>
+  </el-row>
 </template>
 
 <style lang="less" scoped>
