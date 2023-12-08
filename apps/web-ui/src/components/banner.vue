@@ -20,85 +20,69 @@ const { increment } = counterStore;
 </script>
 
 <template>
-  <el-col class="banner">
+  <el-row class="banner" justify="center">
 
-    <el-row class="banner-box1">
-      <el-col>
-        <el-row>
-          <p class="banner-header">
-            <el-row class="header-span" style="text-indent: 7rem;">Tokenize Creative Ideas,</el-row>
-            <el-row class="header-span">Early Access to Crazy Thinking.</el-row>
-          </p>
-        </el-row>
+    <el-col :span="15">
 
-        <el-row>
-          <p class="header-text">
-            The First Verifiable LaunchPad on Mina, with No-code.
-          </p>
-        </el-row>
+      <!-- slogan  -->
+      <el-row class="slogan">
+        <el-col>
+          <el-row class="header-span" style="text-indent: 7rem;">Tokenize Creative Ideas,</el-row>
+          <el-row class="header-span">Early Access to Crazy Thinking.</el-row>
+          <el-row class="header-text">The First Verifiable LaunchPad on Mina, with No-code.</el-row>
+        </el-col>
+      </el-row>
 
-      </el-col>
-    </el-row>
 
-    <el-row class="banner-box2" :span="24">
+      <el-row class="banner-box">
+        <el-col class="box-left" :span="12">
+          <el-row>
+            <h2 class="title">Why Choose TokeniZK</h2>
+          </el-row>
+          <el-row>
+            <p class="text"> The Launchpad focusing on ZK-Token for Everyone!</p>
+          </el-row>
+          <el-row>
+            <p class="text">A ZK-Token creation, pre-sale, and management platform suitable </p>
+            <p class="text">for everyone. Anyone can easily create their own tokens and </p>
+            <p class="text">project pre-sales here.</p>
+          </el-row>
+        </el-col>
+        <el-col class="box-right" :span="12">
+          <el-row style="margin: 10px 0 0;">
+            <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
+            <p class="text"> Create your own tokens and sales quickly, easily and cheaply</p>
+          </el-row>
+          <el-row style="margin: 10px 0 0;">
+            <h4 class="lasthead">No mental burden</h4>
+            <p class="text">No need to understand complex zero knowledge proof, code knowledge</p>
+          </el-row>
+          <el-row style="margin: 10px 0 0;">
+            <h4 class="lasthead">Verifiable Security Platform</h4>
+            <p class="text">Cryptography guarantees data consistency</p>
+          </el-row>
+        </el-col>
+      </el-row>
 
-      <el-col class="box2-left" :span="12">
-        <el-row>
-          <h2 class="title">Why Choose TokeniZK</h2>
-        </el-row>
-        <el-row>
-          <p class="text"> The Launchpad focusing on ZK-Token for Everyone!</p>
-        </el-row>
-        <el-row>
-          <p class="text">A ZK-Token creation, pre-sale, and management platform suitable </p>
-          <p class="text">for everyone. Anyone can easily create their own tokens and </p>
-          <p class="text">project pre-sales here.</p>
-        </el-row>
-      </el-col>
+    </el-col>
 
-      <el-col class="box2-right" :span="12">
-        <el-row style="margin: 10px 0 0;">
-          <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
-          <p class="text"> Create your own tokens and sales quickly, easily and cheaply</p>
-        </el-row>
-        <el-row style="margin: 10px 0 0;">
-          <h4 class="lasthead">No mental burden</h4>
-          <p class="text">No need to understand complex zero knowledge proof, code knowledge</p>
-        </el-row>
-        <el-row style="margin: 10px 0 0;">
-          <h4 class="lasthead">Verifiable Security Platform</h4>
-          <p class="text">Cryptography guarantees data consistency</p>
-        </el-row>
-      </el-col>
-
-    </el-row>
-
-  </el-col>
+  </el-row>
 </template>
 
 <style lang="less" scoped>
 .banner {
   width: 100%;
   padding-top: 230px;
-  padding-left: 200px;
   height: 800px;
   background-color: #000;
 
-  .banner-box1 {
-    padding-left: 100px;
-
-    .banner-header {
-      display: inline-block;
-      width: 100%;
+  .slogan {
+    .header-span {
       color: #00FFC2;
-      font-family: Manrope;
       font-size: 62px;
       line-height: 1.16;
-
-      .header-span {
-        font-family: Manrope;
-        font-weight: 700;
-      }
+      font-family: Manrope;
+      font-weight: 700;
     }
 
     .header-text {
@@ -113,7 +97,7 @@ const { increment } = counterStore;
   }
 
   // 特效盒子
-  .banner-box2 {
+  .banner-box {
     z-index: 2;
     border-radius: 15px;
     background-color: #161616;
@@ -124,7 +108,7 @@ const { increment } = counterStore;
     width: 1140px;
     height: 415px;
 
-    .box2-left {
+    .box-left {
       padding-bottom: 10px;
 
       h2.title {
@@ -142,7 +126,7 @@ const { increment } = counterStore;
 
     }
 
-    .box2-right {
+    .box-right {
       background-color: rgb(0, 255, 194);
       border-radius: 15px;
       visibility: visible;

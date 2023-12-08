@@ -2,22 +2,14 @@
 </script>
 
 <template>
-  <el-col :span="24">
+    <el-col :span="24">
+      我是首页
 
-    我是首页
-
-    <!-- 二级路由出口     -->
-
-    <RouterView />
-
-    <el-row>
-      <el-col>
-        <Home />
-        <RouterView />
-      </el-col>
-    </el-row>
-
-  </el-col>
+      <!-- 二级路由出口     -->
+      <!-- <RouterView /> -->
+      <Home />
+      <RouterView />
+    </el-col>
 </template>
 
 <style lang="less" scoped></style>

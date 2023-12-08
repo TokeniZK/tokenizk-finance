@@ -4,28 +4,22 @@ import MainFunctionIntroduction from '@/components/mainFunctionIntroduction.vue'
 </script>
 
 <template>
-  <el-col class="home-container">
+  <el-row class="home-container">
 
-    <el-row>
-      <div class="grid-content ep-bg-purple-dark" />
+    <el-col :span="24">
+
       <Banner />
-    </el-row>
 
-    <el-row>
-      <div class="grid-content ep-bg-purple-dark" />
       <MainFunctionIntroduction />
-    </el-row>
 
-  </el-col>
+    </el-col>
+
+  </el-row>
 </template>
 
 <style lang="less" scoped>
 .home-container {
-  left: 0;
-  right: 0;
-  margin-left: -32px;
-  width: 1600px;
+  width: 100%;
   background-color: #f7f7f7;
-  align-content: center;
 }
 </style>
