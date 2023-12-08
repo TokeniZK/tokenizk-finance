@@ -5,10 +5,11 @@ import { ref } from 'vue'
 const value = ref('')
 const input = ref('')
 
-getCategory().then(result =>{
+const result =  getCategory().then(result =>{
     console.log(result)
 })
-
+console.log(result)
+    
 const options1 = [
   {
     value: 'All Status',
