@@ -1,6 +1,13 @@
 <script setup lang="ts">
+import {getAllLaunchpadsAPI} from '@/apis/presaleAllLaunchpads'    
 import { reactive } from 'vue'
 import { ref } from 'vue'
+
+const allLaunchpadsList = reactive([]);
+const getAllLaunchpads = async () =>{
+    const res = await getAllLaunchpadsAPI()
+}    
+    
 const value = ref('')
 const input = ref('')
 
