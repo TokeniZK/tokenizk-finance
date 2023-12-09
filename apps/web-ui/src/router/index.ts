@@ -23,9 +23,9 @@ import PrivateMessage from '../views/Private-Message.vue'
 import SystemNotifications from '../views/System-Notifications.vue'
 import MessageSettings from '../views/Message-Settings.vue'
 
-import PreSales from '../views/pre-Sales.vue'
-import AllLaunchpads from '@/components/AllLaunchpads.vue'
-import MyContributions from '@/components/MyContributions.vue'
+import PreSales from '@/views/PreSales/pre-Sales.vue'
+import AllLaunchpads from '@/views/PreSales/components/AllLaunchpads.vue'
+import MyContributions from '@/views/PreSales/components/MyContributions.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
