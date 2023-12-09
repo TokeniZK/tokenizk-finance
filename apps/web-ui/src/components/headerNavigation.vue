@@ -6,12 +6,12 @@ import { CaretBottom } from '@element-plus/icons-vue'
   <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false" @select="handleSelect">
 
     <el-menu-item index="0">
-      <img style="width: 180px" src="/src/assets/logo.svg" alt="Element logo" />
+      <img class="header-logo" src="/src/assets/logo.svg" alt="Element logo" />
     </el-menu-item>
 
     <div class="flex-grow" />
 
-    <el-menu-item index="1" style="font-size: 18px; color: #fff;">
+    <el-menu-item index="1" style="font-size: 16px; color: #fff;">
       <router-link to="/">Home</router-link>
     </el-menu-item>
 
@@ -29,7 +29,7 @@ import { CaretBottom } from '@element-plus/icons-vue'
       </el-menu-item>
     </el-sub-menu>
 
-    <el-menu-item index="3" style="font-size: 18px; color: #fff;">
+    <el-menu-item index="3" style="font-size: 16px; color: #fff;">
       <router-link to="/airdrop-list">Airdrop</router-link>
     </el-menu-item>
 
@@ -161,6 +161,11 @@ const handleSelect = (key: string, keyPath: string[]) => {
   height: 80px;
   color: #fff;
   background-color: #000;
+
+  .header-logo {
+    width: 180px;
+    background-color: #000;
+  }
 
   .item {
     margin-top: 10px;

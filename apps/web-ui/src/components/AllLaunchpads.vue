@@ -61,6 +61,7 @@ const options2 = [
 
 
 let obj = [{
+  id:1,
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   star: '5',
@@ -76,7 +77,8 @@ let obj = [{
   FirstReleaseForProject: '95%',
   VestingForProject: '3% each 1 days',
 },
-{
+  {
+  id: 2,
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
   star: '2',
@@ -93,6 +95,7 @@ let obj = [{
   VestingForProject: '3% each 1 days',
 },
 {
+  id:3,
   photo: '/src/assets/images/3.png',
   name: 'Ripple Frog',
   star: '2',
@@ -108,7 +111,8 @@ let obj = [{
   FirstReleaseForProject: '95%',
   VestingForProject: '3% each 1 days',
 },
-{
+  {
+  id: 4,
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   star: '5',
@@ -124,7 +128,8 @@ let obj = [{
   FirstReleaseForProject: '95%',
   VestingForProject: '3% each 1 days',
 },
-{
+  {
+  id: 5,
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
   star: '2',
@@ -141,6 +146,7 @@ let obj = [{
   VestingForProject: '3% each 1 days',
 },
 {
+  id:6,
   photo: '/src/assets/images/3.png',
   name: 'Ripple Frog',
   star: '2',
@@ -157,6 +163,7 @@ let obj = [{
   VestingForProject: '3% each 1 days',
 },
 {
+  id:7,
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   star: '5',
@@ -173,6 +180,7 @@ let obj = [{
   VestingForProject: '3% each 1 days',
 },
 {
+  id:8,
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
   star: '2',
@@ -203,7 +211,7 @@ reactive(obj);
 
         <el-col :span="11">
           <div style="height: 19.59px;"></div>
-          <el-input v-model="input" placeholder="Please input" size="large" />
+          <el-input v-model="input" placeholder="Please input" size="large" style="border-radius: 15px;" />
         </el-col>
 
         <!-- 过滤器 -->
@@ -223,8 +231,10 @@ reactive(obj);
       </el-row>
 
       <!-- 每个项目 -->
-      <el-row>
-        
+      <el-row >
+        <el-col>
+
+        </el-col>
       </el-row>
 
     </el-col>

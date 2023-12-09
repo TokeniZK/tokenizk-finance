@@ -1,87 +1,88 @@
 <template>
-  <div id="footerView">
+  <el-row id="footerView">
+    <el-col :span="24">
 
-    <el-row class="row-bg" justify="space-evenly">
-      <el-col :span="6">
-        <div class="grid-content ep-bg-purple" />
-        <el-row>
-          <el-col>
-            <el-row>
-              <img style="width: 180px" src="../assets/logo.svg" alt="Element logo" />
-            </el-row>
-            <el-row>
-              <div style="padding: 14px; color: #bec2ce;">
-                <p>
-                  TokeniZK Finance is a decentralized launchpad where you could launch your own
-                  zk-Token and create your own initial token sale. It provides secure smart contract templates
-                  with flexible configuration and complete tool suits for token management, where you could
-                  finish all operations simply in several clicks, without knowledge requirement about code &
-                  zkp.
-                </p>
+      <el-row justify="center">
 
+        <el-col :span="8">
+          <div class="grid-content ep-bg-purple" />
+          <el-row>
+            <el-col>
+              <el-row>
+                <img class="footer-logo" src="../assets/logo.svg" alt="Element logo" />
+              </el-row>
+              <el-row>
+                <div style="padding: 14px; color: #bec2ce;">
+                  <p>
+                    TokeniZK Finance is a decentralized launchpad where you could launch your own
+                    zk-Token and create your own initial token sale. It provides secure smart contract templates
+                    with flexible configuration and complete tool suits for token management, where you could
+                    finish all operations simply in several clicks, without knowledge requirement about code &
+                    zkp.
+                  </p>
+
+                </div>
+              </el-row>
+              <el-row>
+                <div class="bottom">
+                  <!-- 没 icon 待做 -->
+                </div>
+              </el-row>
+            </el-col>
+          </el-row>
+        </el-col>
+
+        <el-col :span="4"></el-col>
+
+        <el-col :span="7">
+          <el-row>
+
+            <el-col :span="12">
+              <div class="grid-content ep-bg-purple-light" />
+              <div class="footer-box">
+                <h3 style="padding-bottom: 20px; font-size: 20px; font-family: math;">Contact US</h3>
+                <div class="footer-list">
+                  <ul>
+                    <li class="active"><a href="#0"> About Us </a></li>
+                    <li><a href="#0"> Terms </a></li>
+                    <li><a href="#0"> Licenses </a></li>
+                    <li><a href="#0"> Privacy &amp; Policy </a></li>
+                  </ul>
+                </div>
               </div>
-            </el-row>
-            <el-row>
-              <div class="bottom">
-                <!-- 没 icon 待做 -->
+            </el-col>
+
+            <el-col :span="12">
+              <div class="grid-content ep-bg-purple" />
+              <div class="footer-box">
+                <h3 style="padding-bottom: 20px; font-size: 20px; font-family: math;">Quick Resources</h3>
+                <div class="footer-list">
+                  <ul>
+                    <li class="active"><a href="#0"> Community </a></li>
+                    <li><a href="#0"> Blog </a></li>
+                    <li><a href="#0"> Forums </a></li>
+                    <li><a href="#0"> Meetups </a></li>
+                    <li><a href="#0"> Events </a></li>
+                  </ul>
+                </div>
               </div>
-            </el-row>
-          </el-col>
-        </el-row>
-      </el-col>
+            </el-col>
 
-      <el-col :span="6">
-        <el-row class="row-bg" ustify="space-evenly">
+          </el-row>
+        </el-col>
 
-          <el-col :span="12">
-            <div class="grid-content ep-bg-purple-light" />
+      </el-row>
 
-            <div class="footer-box">
-              <h3 style="padding-bottom: 20px; font-size: 20px; font-family: math;">Contact US</h3>
-              <div class="footer-list">
-                <ul>
-                  <li class="active"><a href="#0"> About Us </a></li>
-                  <li><a href="#0"> Terms </a></li>
-                  <li><a href="#0"> Licenses </a></li>
-                  <li><a href="#0"> Privacy &amp; Policy </a></li>
-                </ul>
-              </div>
-            </div>
+      <!-- Copyright Notice -->
+      <el-row>
+        <div class="copyright">
+          <span>Copyright © 2023 TokeniZK. All Rights Reserved.</span>
+        </div>
+      </el-row>
 
-          </el-col>
-
-          <el-col :span="12">
-            <div class="grid-content ep-bg-purple" />
-
-            <div class="footer-box">
-              <h3 style="padding-bottom: 20px; font-size: 20px; font-family: math;">Quick Resources</h3>
-              <div class="footer-list">
-                <ul>
-                  <li class="active"><a href="#0"> Community </a></li>
-                  <li><a href="#0"> Blog </a></li>
-                  <li><a href="#0"> Forums </a></li>
-                  <li><a href="#0"> Meetups </a></li>
-                  <li><a href="#0"> Events </a></li>
-                </ul>
-              </div>
-            </div>
-
-          </el-col>
-
-        </el-row>
-      </el-col>
-
-    </el-row>
-
-    <el-row>
-      <div class="copyright">
-        <span>Copyright © 2023 TokeniZK. All Rights Reserved.</span>
-      </div>
-    </el-row>
-
-    <!-- Back to top -->
-    <el-backtop :bottom="100">
-      <div style="
+      <!-- Back to top -->
+      <el-backtop :bottom="100">
+        <div style="
         height: 100%;
         width: 100%;
         background-color: #00FFC2;
@@ -91,25 +92,29 @@
         color: #fff;
         border-radius: 20%;
       ">
-        <el-icon>
-          <Top />
-        </el-icon>
-      </div>
-    </el-backtop>
+          <el-icon>
+            <Top />
+          </el-icon>
+        </div>
+      </el-backtop>
 
-  </div>
+    </el-col>
+  </el-row>
 </template>
 
 <style lang="less" scoped>
 #footerView {
-  margin-left: -32px;
-  color: #fff;
+  width: 100%;
   padding-top: 100px;
   padding-bottom: 100px;
+  color: #fff;
   background-color: #03142c;
 
+  .footer-logo {
+    width: 180px;
+    background-color: #03142c;
+  }
 
-  // footer区域 flex布局 4-4-4
   .el-row {
     margin-bottom: 20px;
   }

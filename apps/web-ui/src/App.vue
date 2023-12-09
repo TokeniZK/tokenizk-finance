@@ -4,16 +4,26 @@ import Foot from '@/components/footer.vue';
 </script>
 
 <template>
-  <el-col>
+  <el-row>
+    <el-col :span="24">
 
-    <HeaderNavigation />
+      <el-row>
+        <HeaderNavigation />
+      </el-row>
 
-    <!-- 一级路由出口组件 -->
-    <RouterView />
+      <el-row>
+        
+        <!-- 一级路由出口组件 -->
+        <RouterView />
 
-    <Foot />
+      </el-row>
 
-  </el-col>
+      <el-row>
+        <Foot />
+      </el-row>
+
+    </el-col>
+  </el-row>
 </template>
 
 <style lang="less" scoped></style>
