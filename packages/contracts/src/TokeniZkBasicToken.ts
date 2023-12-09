@@ -46,3 +46,6 @@ export class VestingParams extends Struct({
         ];
     }
 }
+
+
+const SUPPLY = UInt64.from(10n ** 18n);
