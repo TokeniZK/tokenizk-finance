@@ -20,6 +20,10 @@ import MainFunctionIntroduction from '@/components/mainFunctionIntroduction.vue'
 <style lang="less" scoped>
 .home-container {
   width: 100%;
+  left: 0;
+  right: 0;
+  margin-left: -3px;
+  width: 1600px;
   background-color: #f7f7f7;
 }
 </style>

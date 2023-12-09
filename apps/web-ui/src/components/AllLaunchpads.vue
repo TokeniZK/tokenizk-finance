@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive } from 'vue'
+import {getCategory} from '@/apis/bannerCategory'
 import { ref } from 'vue'
 const value = ref('')
 const input = ref('')
 
+const result =  getCategory().then(result =>{
+    console.log(result)
+})
+console.log(result)
+    
 const options1 = [
   {
     value: 'All Status',
