@@ -5,13 +5,11 @@ import LayoutFooter from './components/LayoutFooter.vue'
 
 <template>
   我是首页
-
   <LayoutHeader />
 
   <!-- 二级路由出口 -->
   <RouterView />
 
   <LayoutFooter />
-  
 </template>
 
