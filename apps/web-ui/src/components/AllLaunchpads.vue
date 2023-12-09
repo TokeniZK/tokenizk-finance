@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {getAllLaunchpadsAPI} from '@/apis/presaleAllLaunchpads'    
 import { reactive } from 'vue'
 import { ref } from 'vue'
 const value = ref('')
