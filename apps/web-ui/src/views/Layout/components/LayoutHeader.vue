@@ -25,8 +25,9 @@ const handleSelect = (key: string, keyPath: string[]) => {
         </el-menu-item>
 
         <el-sub-menu index="2">
-          <template #title><el-icon>
-              <HotWater />
+          <template #title>
+            <el-icon>
+              <i class="iconfont icon-fire"></i>
             </el-icon>
             Hot Sales
           </template>
