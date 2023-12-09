@@ -1,15 +1,17 @@
 <script  setup lang="ts">
+import LayoutHeader from './components/LayoutHeader.vue'
+import LayoutFooter from './components/LayoutFooter.vue'
 </script>
 
 <template>
-    <el-col :span="24">
-      我是首页
+  我是首页
 
-      <!-- 二级路由出口     -->
-      <!-- <RouterView /> -->
-      <Home />
-      <RouterView />
-    </el-col>
+  <LayoutHeader />
+
+  <!-- 二级路由出口 -->
+  <RouterView />
+
+  <LayoutFooter />
+  
 </template>
 
-<style lang="less" scoped></style>

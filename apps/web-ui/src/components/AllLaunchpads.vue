@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import {getCategory} from '@/apis/bannerCategory'
 import { ref } from 'vue'
 const value = ref('')
 const input = ref('')
 
-const result =  getCategory().then(result =>{
-    console.log(result)
-})
-console.log(result)
-    
 const options1 = [
   {
     value: 'All Status',
@@ -67,7 +61,7 @@ const options2 = [
 
 
 let obj = [{
-  id:1,
+  id: 1,
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   star: '5',
@@ -83,7 +77,7 @@ let obj = [{
   FirstReleaseForProject: '95%',
   VestingForProject: '3% each 1 days',
 },
-  {
+{
   id: 2,
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
@@ -101,7 +95,7 @@ let obj = [{
   VestingForProject: '3% each 1 days',
 },
 {
-  id:3,
+  id: 3,
   photo: '/src/assets/images/3.png',
   name: 'Ripple Frog',
   star: '2',
@@ -117,7 +111,7 @@ let obj = [{
   FirstReleaseForProject: '95%',
   VestingForProject: '3% each 1 days',
 },
-  {
+{
   id: 4,
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
@@ -134,7 +128,7 @@ let obj = [{
   FirstReleaseForProject: '95%',
   VestingForProject: '3% each 1 days',
 },
-  {
+{
   id: 5,
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
@@ -152,7 +146,7 @@ let obj = [{
   VestingForProject: '3% each 1 days',
 },
 {
-  id:6,
+  id: 6,
   photo: '/src/assets/images/3.png',
   name: 'Ripple Frog',
   star: '2',
@@ -169,7 +163,7 @@ let obj = [{
   VestingForProject: '3% each 1 days',
 },
 {
-  id:7,
+  id: 7,
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   star: '5',
@@ -186,7 +180,7 @@ let obj = [{
   VestingForProject: '3% each 1 days',
 },
 {
-  id:8,
+  id: 8,
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
   star: '2',
@@ -209,9 +203,8 @@ reactive(obj);
 </script>
 
 <template>
-  <el-row>
+  <el-row class="all-launchpads">
     <el-col>
-
       <!-- 搜索、过滤器 -->
       <el-row class="row-bg" justify="center">
 
@@ -237,7 +230,7 @@ reactive(obj);
       </el-row>
 
       <!-- 每个项目 -->
-      <el-row >
+      <el-row>
         <el-col>
 
         </el-col>
@@ -248,8 +241,15 @@ reactive(obj);
 </template>
 
 <style lang="less" scoped>
-.pool-filter {
-  color: #fff;
-  background-color: #00FFC2;
+.all-launchpads {
+  width: 100%;
+  height: 100%;
+  padding-top: 20px;
+  padding-bottom: 50px;
+
+  .pool-filter {
+    color: #fff;
+    background-color: #00FFC2;
+  }
 }
 </style>

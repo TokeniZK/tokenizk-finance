@@ -7,9 +7,9 @@ import Foot from '@/components/footer.vue';
   <el-row>
     <el-col :span="24">
 
-      <el-row>
+      <!-- <el-row>
         <HeaderNavigation />
-      </el-row>
+      </el-row> -->
 
       <el-row>
         
@@ -18,9 +18,9 @@ import Foot from '@/components/footer.vue';
 
       </el-row>
 
-      <el-row>
+      <!-- <el-row>
         <Foot />
-      </el-row>
+      </el-row> -->
 
     </el-col>
   </el-row>

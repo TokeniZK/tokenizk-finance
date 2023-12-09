@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <el-row class="pre-Sales">
     <el-col :span="24" justify="center" align="middle">
 
       <el-row class="row-bg">
@@ -29,6 +29,11 @@
 </template>
 
 <style lang="less" scoped>
+.pre-Sales {
+  width: 100%;
+  padding-top: 100px;
+}
+
 .el-row {
   margin-bottom: 20px;
 }
