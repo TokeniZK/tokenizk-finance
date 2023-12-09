@@ -19,10 +19,10 @@ import App from './App.vue'
 import router from './router'
 
 // 5、测试 axios 请求
-import { getCategory } from '@/apis/testAPI'
-getCategory().then(result => {
-  console.log(result);   // {code: '1', msg: '操作成功', result: Array(9)}
-})
+// import { getCategory } from '@/apis/testAPI'
+// getCategory().then(result => {
+//   console.log(result);   // {code: '1', msg: '操作成功', result: Array(9)}
+// })
 
 const app = createApp(App)
 
