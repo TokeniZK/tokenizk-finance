@@ -43,3 +43,19 @@ export class RedeemAccount extends SmartContract {
         // this.self.body.mayUseToken = AccountUpdate.MayUseToken.ParentsOwnToken; // no need this for MINA account
     }
 }
+
+
+export function updateNullifierRootAndNullStartIndex(
+    nullifierRoot: Field,
+    nullStartIndex: Field,
+    nullifier: Field,
+    lowLeafWitness: UserLowLeafWitnessData,
+    oldNullWitness: UserNullifierMerkleWitness
+): { nullifierRoot: Field; nullStartIndex: Field } {
+
+
+
+    
+}
+
+
