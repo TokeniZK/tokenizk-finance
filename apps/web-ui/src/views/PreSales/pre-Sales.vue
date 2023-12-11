@@ -1,20 +1,28 @@
 <template>
   <el-row class="pre-Sales">
-    <el-col :span="24" justify="center" align="middle">
 
-      <el-row class="row-bg">
-        <el-col :span="9">
+    <el-col :span="24">
+
+      <el-row class="row-bg" justify="center">
+        <el-col :span="18">
           <h1>Current Presales</h1>
         </el-col>
       </el-row>
 
-      <el-row style="margin-bottom:30px ;" justify="center">
-        <el-col :span="9">
-          <router-link to="/pre-Sales/all-launchpads">All launchpads</router-link>
+      <el-row style="margin:50px auto ;" justify="center">
+
+        <el-col :span="8"></el-col>
+
+        <el-col :span="5">
+          <router-link to="/pre-Sales">All launchpads</router-link>
         </el-col>
-        <el-col :span="9">
+
+        <el-col :span="5">
           <router-link to="/pre-Sales/my-contributions">My Contributions</router-link>
         </el-col>
+
+        <el-col :span="6"></el-col>
+
       </el-row>
 
       <!-- 三级路由出口组件 -->
