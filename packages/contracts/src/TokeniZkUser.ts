@@ -29,5 +29,17 @@ export class RedeemAccount extends SmartContract {
         return userState;
     }
 
+    @method updateState(nullifier: Field,
+        lowLeafWitness: UserLowLeafWitnessData,
+        oldNullWitness: UserNullifierMerkleWitness) {
 
+        const userState = this.userState.getAndAssertEquals();
+
+        // for avoid double redeem and nullify current preSaleContribution
+        const newUserState = updateNullifierRootAndNullStartIndex(userState.nullifierRoot, userState.nullStartIndex, nullifier, lowLeafWitness, oldNullWitness);
+        // update user state
+        this.userState.set(new UserState(newUserState));
+
+        // this.self.body.mayUseToken = AccountUpdate.MayUseToken.ParentsOwnToken; // no need this for MINA account
+    }
 }
