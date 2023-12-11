@@ -53,6 +53,14 @@ export function updateNullifierRootAndNullStartIndex(
     oldNullWitness: UserNullifierMerkleWitness
 ): { nullifierRoot: Field; nullStartIndex: Field } {
 
+    nullifier.assertNotEquals(DUMMY_FIELD, 'nullifier is dummy field');
+
+    let currentNullRoot = nullifierRoot;
+    // check nullifier not exist in nullifier tree
+    lowLeafWitness.checkMembershipAndAssert(
+        currentNullRoot,
+        'lowLeafWitness is not valid'
+    );
 
 
     
