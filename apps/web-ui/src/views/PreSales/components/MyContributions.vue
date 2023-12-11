@@ -252,7 +252,7 @@ reactive(obj);
   padding-bottom: 50px;
 
   .pool-filter {
-    color: #fff;
+    color: #000;
     background-color: #00FFC2;
   }
 }
