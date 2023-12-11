@@ -2,9 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
 import Home from '@/views/Home/index.vue'
 import Category from '@/views/Category/index.vue'
+import PreSales from '@/views/PreSales/pre-Sales.vue'
+import AllLaunchpads from '@/views/PreSales/components/AllLaunchpads.vue'
+import MyContributions from '@/views/PreSales/components/MyContributions.vue'
 
+import PrivateSales from '../views/PrivateSales/private-Sales.vue'
+import AllPrivateSales from '../views/PrivateSales/components/AllPrivateSales.vue'
+import MyPrivateSalesContributions from '../views/PrivateSales/components/MyPrivateSalesContributions.vue'
 
-import PrivateSales from '../views/private-Sales.vue'
 import AirdropList from '../views/airdrop-list.vue'
 import CreateZkToken from '../views/create-zkToken.vue'
 import CreateFairLaunch from '../views/create-fair-launch.vue'
@@ -22,10 +27,6 @@ import PraiseAndCollection from '../views/praise-and-collection.vue'
 import PrivateMessage from '../views/Private-Message.vue'
 import SystemNotifications from '../views/System-Notifications.vue'
 import MessageSettings from '../views/Message-Settings.vue'
-
-import PreSales from '@/views/PreSales/pre-Sales.vue'
-import AllLaunchpads from '@/views/PreSales/components/AllLaunchpads.vue'
-import MyContributions from '@/views/PreSales/components/MyContributions.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -58,7 +59,17 @@ const router = createRouter({
         },
         {
           path: '/private-Sales',
-          component: PrivateSales
+          component: PrivateSales,
+          children: [
+            {
+              path: '',
+              component: AllPrivateSales
+            },
+            {
+              path: '/private-Sales/my-Private-Sales-contributions',
+              component: MyPrivateSalesContributions
+            }
+          ]
         },
         {
           path: '/airdrop-list',
