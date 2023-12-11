@@ -432,7 +432,6 @@ reactive(obj);
         width: 100%;
         height: 100%;
         background-color: #fff;
-        // border: 1px solid yellow;
         border-radius: 15px;
 
         .thumb {
