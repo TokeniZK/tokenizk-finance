@@ -19,3 +19,15 @@ export class UserState extends Struct({
     nullifierRoot: Field,
     nullStartIndex: Field,
 }) { }
+
+
+export class RedeemAccount extends SmartContract {
+    @state(UserState) userState = State<UserState>();
+
+    @method getUserState(): UserState {
+        const userState = this.userState.getAndAssertEquals();
+        return userState;
+    }
+
+
+}
