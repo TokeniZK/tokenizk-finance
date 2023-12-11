@@ -19,3 +19,51 @@ export class UserState extends Struct({
     nullifierRoot: Field,
     nullStartIndex: Field,
 }) { }
+
+
+export class RedeemAccount extends SmartContract {
+    @state(UserState) userState = State<UserState>();
+
+    @method getUserState(): UserState {
+        const userState = this.userState.getAndAssertEquals();
+        return userState;
+    }
+
+    @method updateState(nullifier: Field,
+        lowLeafWitness: UserLowLeafWitnessData,
+        oldNullWitness: UserNullifierMerkleWitness) {
+
+        const userState = this.userState.getAndAssertEquals();
+
+        // for avoid double redeem and nullify current preSaleContribution
+        const newUserState = updateNullifierRootAndNullStartIndex(userState.nullifierRoot, userState.nullStartIndex, nullifier, lowLeafWitness, oldNullWitness);
+        // update user state
+        this.userState.set(new UserState(newUserState));
+
+        // this.self.body.mayUseToken = AccountUpdate.MayUseToken.ParentsOwnToken; // no need this for MINA account
+    }
+}
+
+
+export function updateNullifierRootAndNullStartIndex(
+    nullifierRoot: Field,
+    nullStartIndex: Field,
+    nullifier: Field,
+    lowLeafWitness: UserLowLeafWitnessData,
+    oldNullWitness: UserNullifierMerkleWitness
+): { nullifierRoot: Field; nullStartIndex: Field } {
+
+    nullifier.assertNotEquals(DUMMY_FIELD, 'nullifier is dummy field');
+
+    let currentNullRoot = nullifierRoot;
+    // check nullifier not exist in nullifier tree
+    lowLeafWitness.checkMembershipAndAssert(
+        currentNullRoot,
+        'lowLeafWitness is not valid'
+    );
+
+
+    
+}
+
+
