@@ -1,6 +1,7 @@
 <script  setup lang="ts">
-import Banner from './components/banner.vue';
-import MainFunctionIntroduction from './components/mainFunctionIntroduction.vue';
+import Banner from './components/banner.vue'
+import MainFunctionIntroduction from './components/mainFunctionIntroduction.vue'
+import OngoingPresales from './components/OngoingPresales.vue';
 </script>
 
 <template>
@@ -13,9 +14,11 @@ import MainFunctionIntroduction from './components/mainFunctionIntroduction.vue'
 
       <MainFunctionIntroduction />
 
+      <OngoingPresales />
+
     </el-col>
 
-    我是Home页面
+    <!-- 我是Home页面 -->
 
   </el-row>
 </template>
