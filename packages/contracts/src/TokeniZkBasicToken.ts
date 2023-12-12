@@ -61,5 +61,21 @@ export class TokeniZkBasicToken extends SmartContract {
      */
     @state(UInt64) totalAmountInCirculation = State<UInt64>();
 
+
+    init() {
+        super.init();
+
+        this.totalSupply.set(SUPPLY);// TODO should be as a constant inside circuit, rather than a state !!!
+
+        this.totalAmountInCirculation.set(new UInt64(0));
+
+        this.account.permissions.set({
+            ...Permissions.default(),
+            editState: Permissions.proof(),
+            access: Permissions.proofOrSignature(),
+        });
+    }
+
+    
 }
 
