@@ -49,3 +49,17 @@ export class VestingParams extends Struct({
 
 
 const SUPPLY = UInt64.from(10n ** 18n);
+
+export class TokeniZkBasicToken extends SmartContract {
+    /**
+     * Total supply of tokens
+     */
+    @state(UInt64) totalSupply = State<UInt64>();
+
+    /**
+     * Total amount in circulation
+     */
+    @state(UInt64) totalAmountInCirculation = State<UInt64>();
+
+}
+
