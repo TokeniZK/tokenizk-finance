@@ -265,14 +265,12 @@ reactive(obj);
     <el-col>
 
       <!-- 搜索、过滤器 -->
-      <el-row class="row-bg" justify="center" style="margin-bottom:50px;">
+      <el-row class="row-bg" justify="center" style="margin-bottom:50px;" :gutter="20">
 
-        <el-col :span="12">
+        <el-col :span="13">
           <div style="height: 19.59px;"></div>
           <el-input v-model="input" placeholder="Please input" size="large" />
         </el-col>
-
-        <el-col :span="1"></el-col>
 
         <!-- 过滤器 -->
         <el-col :span="3">
