@@ -84,6 +84,7 @@ const { increment } = counterStore;
   padding-top: 230px;
   height: 800px;
   background-color: #000;
+  margin-bottom: 80px;
 
   .slogan {
     width: 100%;
