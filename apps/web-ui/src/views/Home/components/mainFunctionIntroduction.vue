@@ -1,6 +1,8 @@
 <template>
   <el-row class="row-bg mainFunctionIntroduction" justify="center">
 
+    <el-col :span="4"></el-col>
+
     <el-col :span="18">
 
       <el-row class="row-bg" justify="center">
@@ -17,11 +19,14 @@
 
     </el-col>
 
+    <!-- <el-col :span="2"></el-col> -->
+
   </el-row>
 </template>
 
 <style lang="less" scoped>
 .mainFunctionIntroduction {
+  width: 100%;
   padding-top: 200px;
   height: 600px;
   background-color: #f7f7f7;

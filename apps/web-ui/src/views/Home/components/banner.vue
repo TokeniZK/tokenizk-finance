@@ -20,21 +20,26 @@ const { increment } = counterStore;
 </script>
 
 <template>
-  <el-row class="banner" justify="center">
+  <el-row class="row-bg banner" justify="center">
 
-    <el-col :span="16">
+    <el-col :span="3"></el-col>
+
+    <el-col :span="18">
 
       <!-- slogan  -->
-      <el-row class="slogan">
-        <el-col>
+      <el-row class="row-bg slogan" justify="center">
+        <el-col :span="2"></el-col>
+        <el-col :span="21">
           <el-row class="header-span" style="text-indent: 7rem;">Tokenize Creative Ideas,</el-row>
           <el-row class="header-span">Early Access to Crazy Thinking.</el-row>
           <el-row class="header-text">The First Verifiable LaunchPad on Mina, with No-code.</el-row>
         </el-col>
+        <el-col :span="1"></el-col>
       </el-row>
 
+      <!-- 特效盒子 -->
+      <el-row class="row-bg banner-box" justify="center">
 
-      <el-row class="banner-box">
         <el-col class="box-left" :span="12">
           <el-row>
             <h2 class="title">Why Choose TokeniZK</h2>
@@ -48,6 +53,7 @@ const { increment } = counterStore;
             <p class="text">project pre-sales here.</p>
           </el-row>
         </el-col>
+
         <el-col class="box-right" :span="12">
           <el-row style="margin: 10px 0 0;">
             <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
@@ -62,9 +68,12 @@ const { increment } = counterStore;
             <p class="text">Cryptography guarantees data consistency</p>
           </el-row>
         </el-col>
+
       </el-row>
 
     </el-col>
+
+    <el-col :span="3"></el-col>
 
   </el-row>
 </template>
@@ -77,6 +86,8 @@ const { increment } = counterStore;
   background-color: #000;
 
   .slogan {
+    width: 100%;
+
     .header-span {
       color: #00FFC2;
       font-size: 62px;
@@ -98,6 +109,8 @@ const { increment } = counterStore;
 
   // 特效盒子
   .banner-box {
+    width: 100%;
+    // width: 1140px;
     z-index: 2;
     border-radius: 15px;
     background-color: #161616;
@@ -105,7 +118,6 @@ const { increment } = counterStore;
     padding: 50px 80px 50px;
     font-family: Manrope;
     margin-top: 70px;
-    width: 1140px;
     height: 415px;
 
     .box-left {

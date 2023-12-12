@@ -5,7 +5,7 @@ import MainFunctionIntroduction from './components/mainFunctionIntroduction.vue'
 
 <template>
   <el-row class="home-container">
-   
+
 
     <el-col :span="24">
 
@@ -14,7 +14,9 @@ import MainFunctionIntroduction from './components/mainFunctionIntroduction.vue'
       <MainFunctionIntroduction />
 
     </el-col>
-     我是Home页面
+
+    我是Home页面
+
   </el-row>
 </template>
 
