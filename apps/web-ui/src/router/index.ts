@@ -10,7 +10,7 @@ import PrivateSales from '../views/PrivateSales/private-Sales.vue'
 import AllPrivateSales from '../views/PrivateSales/components/AllPrivateSales.vue'
 import MyPrivateSalesContributions from '../views/PrivateSales/components/MyPrivateSalesContributions.vue'
 
-import AirdropList from '../views/airdrop-list.vue'
+import AirdropList from '../views/AirDrop/airdrop-List.vue'
 import CreateZkToken from '../views/create-zkToken.vue'
 import CreateFairLaunch from '../views/create-fair-launch.vue'
 import CreateNormalLaunch from '../views/create-normal-launch.vue'
@@ -66,7 +66,7 @@ const router = createRouter({
               component: AllPrivateSales
             },
             {
-              path: '/private-Sales/my-Private-Sales-contributions',
+              path: '/private-Sales/my-contributions',
               component: MyPrivateSalesContributions
             }
           ]
