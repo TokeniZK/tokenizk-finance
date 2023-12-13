@@ -83,7 +83,8 @@ export class TokeniZkBasicToken extends SmartContract {
      */
     @method
     public createPresale(newParams: LauchpadPlatformParams,
-        presaleAddress: PublicKey, presaleVk: VerificationKey, presaleParams: PresaleParams){
+        presaleAddress: PublicKey, presaleVk: VerificationKey, presaleParams: PresaleParams
+                              privateSaleMinaFundHolderVk: VerificationKey)   ){
 
     }
     
