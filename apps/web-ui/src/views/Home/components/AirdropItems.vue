@@ -202,12 +202,11 @@ reactive(obj);
 </script>
 
 <template>
-  <el-row class="row-bg ongoing-presales" justify="center">
-
+  <el-row class="row-bg airdrop-items" justify="center">
     <el-col :span="24">
 
       <el-row class="row-bg" justify="center">
-        <!-- <el-col :span="1"></el-col> -->
+
 
         <el-col :span="18">
 
@@ -215,168 +214,154 @@ reactive(obj);
 
             <el-col :span="12">
               <el-row>
-                <h2 class="title"> Ongoing Presales</h2>
+                <h2 class="title">Airdrop items</h2>
               </el-row>
-              <el-row>Normal Presale pages work for project team to pre-configure a set of presale rules</el-row>
+              <el-row>Fair Airdrop tool helps project team to record related contributors and token distribution.</el-row>
             </el-col>
 
             <el-col :span="12">
               <el-row class="link mb-4" justify="end">
                 <el-button type="primary" size="large" round>
-                  <router-link to="/pre-sales" class="main-btn">View All Item</router-link>
+                  <router-link to="/airdrop-list" class="main-btn">View All Item</router-link>
                 </el-button>
               </el-row>
             </el-col>
 
-            <el-col :span="1"></el-col>
+            <!-- <el-col :span="1"></el-col> -->
 
           </el-row>
         </el-col>
 
       </el-row>
 
-      <!-- 轮播图 -->
       <!-- 每个项目 -->
-      <el-row class="row-bg ongoing-presales-carousel">
-
-        <el-col :span="2"></el-col>
-
+      <el-row class="row-bg" justify="center">
         <el-col :span="20">
 
-          <ul class="launchpads-ul" style="width:100%;">
-            <el-carousel :interval="3000" type="card" height="500px" style="width:100%;">
-              <el-carousel-item v-for="item in 3" :key="item" style="width:100%;">
-                <li v-for="item in obj" :key="item.id">
+          <ul class="launchpads-ul">
+            <li v-for="item in obj" :key="item.id">
 
-                  <!-- <el-card shadow="hover"> -->
+              <!-- <el-card shadow="hover"> -->
 
-                  <div class="launchpads-box">
+              <div class="launchpads-box">
 
-                    <!-- photo -->
-                    <el-row class="thumb">
+                <!-- photo -->
+                <el-row class="thumb">
 
+                  <el-col>
+
+                    <el-row>
+                      <img :src="item.photo" :alt="item.name" style="width: 349px; height: 160px;">
+                    </el-row>
+
+                    <el-row class="button-box">
+                      <el-col>
+                        <a href="Ripple-Frog-presale-details.html" class="link link-1">
+                          <el-icon>
+                            <View />
+                          </el-icon>
+                        </a>
+                      </el-col>
+                      <el-col>
+                        <a href="#0" class="link link-3"><el-icon>
+                            <StarFilled />
+                          </el-icon>
+                        </a>
+                      </el-col>
+                    </el-row>
+
+                  </el-col>
+
+                </el-row>
+
+                <!-- 项目描述 -->
+                <el-row class="launchpads-content">
+
+                  <el-col>
+
+                    <el-row>
+                      <el-col :span="24">
+                        <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
+                      </el-col>
+                    </el-row>
+
+                    <!-- 团队名称 -->
+                    <el-row class="text-review-change" justify="space-between" style="align-items: center;">
+                      <el-col class="text" :span="10">
+                        by <a href="" class="link">{{ item.teamName }}</a>
+                      </el-col>
+
+                      <el-col class="review" :span="10">
+                        <el-rate v-model="item.star" size="large" />
+                      </el-col>
+                    </el-row>
+
+                    <el-row class="row-bg soft-hard-cap" justify="space-between">
+                      <el-col :span="10">Soft / Hard</el-col>
+                      <el-col :span="2"></el-col>
+                      <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
+                    </el-row>
+
+                    <!-- 进度条 -->
+                    <el-row class="content-Progress">
                       <el-col>
 
-                        <el-row>
-                          <img :src="item.photo" :alt="item.name" style="width: 349px; height: 160px;">
+                        <el-row class="title">Progress</el-row>
+
+                        <el-row class="Progress demo-progress" style="margin-bottom: 0;">
+                          <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
                         </el-row>
 
-                        <el-row class="button-box">
-                          <el-col>
-                            <a href="Ripple-Frog-presale-details.html" class="link link-1">
-                              <el-icon>
-                                <View />
-                              </el-icon>
-                            </a>
-                          </el-col>
-                          <el-col>
-                            <a href="#0" class="link link-3"><el-icon>
-                                <StarFilled />
-                              </el-icon>
-                            </a>
-                          </el-col>
+                        <el-row class="row-bg sub-title" justify="space-between">
+                          <el-col :span="10" class="is-flex-grow-1"> 0 Mina</el-col>
+                          <el-col :span="4"></el-col>
+                          <el-col :span="6" class="is-flex-grow-1 has-text-right">50 Mina</el-col>
                         </el-row>
 
                       </el-col>
-
                     </el-row>
 
-                    <!-- 项目描述 -->
-                    <el-row class="launchpads-content">
-
-                      <el-col>
-
-                        <el-row>
-                          <el-col :span="24">
-                            <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
-                          </el-col>
-                        </el-row>
-
-                        <!-- 团队名称 -->
-                        <el-row class="text-review-change" justify="space-between" style="align-items: center;">
-                          <el-col class="text" :span="10">
-                            by <a href="" class="link">{{ item.teamName }}</a>
-                          </el-col>
-
-                          <el-col class="review" :span="10">
-                            <el-rate v-model="item.star" size="large" />
-                          </el-col>
-                        </el-row>
-
-                        <el-row class="row-bg soft-hard-cap" justify="space-between">
-                          <el-col :span="10">Soft / Hard</el-col>
-                          <el-col :span="2"></el-col>
-                          <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
-                        </el-row>
-
-
-                        <!-- 进度条 -->
-                        <el-row class="content-Progress">
-                          <el-col>
-
-                            <el-row class="title">Progress</el-row>
-
-                            <el-row class="Progress demo-progress" style="margin-bottom: 0;">
-                              <el-progress :text-inside="true" :stroke-width="14"
-                                :percentage="item.totalContributedMina" />
-                            </el-row>
-
-                            <el-row class="row-bg sub-title" justify="space-between">
-                              <el-col :span="10" class="is-flex-grow-1"> 0 Mina</el-col>
-                              <el-col :span="4"></el-col>
-                              <el-col :span="6" class="is-flex-grow-1 has-text-right">50 Mina</el-col>
-                            </el-row>
-
-                          </el-col>
-                        </el-row>
-
-                        <el-row class="row-bg liquidity-percent" justify="space-between">
-                          <el-col :span="10" class="is-flex-grow-1">Liquidity %:</el-col>
-                          <el-col :span="4"></el-col>
-                          <el-col :span="6" class="is-flex-grow-1 has-text-right time-text"> {{ item.liquidity }}</el-col>
-                        </el-row>
-
-                        <el-row class="row-bg lockup-time" justify="space-between">
-                          <el-col :span="10" class="is-flex-grow-1">Lockup Time:</el-col>
-                          <el-col :span="4"></el-col>
-                          <el-col :span="6" class="is-flex-grow-1 has-text-right time-text">365 day</el-col>
-                        </el-row>
-
-                      </el-col>
-
+                    <el-row class="row-bg liquidity-percent" justify="space-between">
+                      <el-col :span="10" class="is-flex-grow-1">Liquidity %:</el-col>
+                      <el-col :span="4"></el-col>
+                      <el-col :span="6" class="is-flex-grow-1 has-text-right time-text"> {{ item.liquidity }}</el-col>
                     </el-row>
 
-                  </div>
+                    <el-row class="row-bg lockup-time" justify="space-between">
+                      <el-col :span="10" class="is-flex-grow-1">Lockup Time:</el-col>
+                      <el-col :span="4"></el-col>
+                      <el-col :span="6" class="is-flex-grow-1 has-text-right time-text">365 day</el-col>
+                    </el-row>
 
-                </li>
-              </el-carousel-item>
-            </el-carousel>
+                  </el-col>
+
+                </el-row>
+
+              </div>
+
+              <!-- </el-card> -->
+
+            </li>
           </ul>
-
-
         </el-col>
-
-        <el-col :span="2"></el-col>
-
       </el-row>
+
 
     </el-col>
   </el-row>
 </template>
 
 <style lang="less" scoped>
-.ongoing-presales {
+.airdrop-items {
   width: 100%;
-  height: 700px;
-  padding: 0px 0px 120px;
-  background-color: #f7f7f7;
+  height: 1080px;
 
   .ongoing-presales-content {
     width: 100%;
 
     .title {
       font-size: 35px;
-      padding-bottom: 11px;
+      padding-bottom: 1px;
     }
 
     .main-btn {
@@ -384,52 +369,52 @@ reactive(obj);
       color: #fff;
 
     }
+
   }
 
-  .ongoing-presales-carousel {
-    .launchpads-ul {
-      width: 100%;
-      justify-content: space-around;
+  .launchpads-ul {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 25px;
 
-      li {
-        margin-top: 60px;
-        // margin-right: 200px;
-        margin-bottom: 30px;
-        width: 349px;
-        height: 416px;
+    li {
+      margin-top: 0px;
+      margin-bottom: 30px;
+      width: 349px;
+      height: 416px;
+      border-radius: 15px;
+
+      .launchpads-box {
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
         border-radius: 15px;
 
-        .launchpads-box {
+        .thumb {
+          width: 349px;
+          height: 160px;
+          overflow: hidden;
+        }
+
+        .launchpads-content {
           width: 100%;
-          height: 100%;
-          background-color: #fff;
-          // border: 1px solid yellow;
-          border-radius: 15px;
+          padding: 12px 20px;
 
-          .thumb {
-            width: 349px;
-            height: 160px;
-            overflow: hidden;
-          }
-
-          .launchpads-content {
-            width: 100%;
-            padding: 12px 20px;
-
-            .content-Progress {
-              margin: 6px auto 4px;
-            }
-
-            .demo-progress .el-progress--line {
-              margin-bottom: 10px;
-              width: 300px;
-            }
-
+          .demo-progress .el-progress--line {
+            margin-bottom: 15px;
+            width: 300px;
           }
 
         }
+
       }
     }
+  }
+
+  .el-row {
+    margin-bottom: 5px;
   }
 
 }
