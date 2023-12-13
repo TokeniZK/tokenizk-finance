@@ -1,8 +1,11 @@
 <template>
-  <el-row class="LayoutFooter">
+  <el-row class="row-bg LayoutFooter" justify="center">
+
     <el-col :span="24">
 
-      <el-row justify="center">
+      <el-row justify="row-bg center">
+
+        <el-col :span="4"></el-col>
 
         <el-col :span="8">
           <div class="grid-content ep-bg-purple" />
@@ -32,9 +35,9 @@
           </el-row>
         </el-col>
 
-        <el-col :span="4"></el-col>
+        <el-col :span="2"></el-col>
 
-        <el-col :span="7">
+        <el-col :span="8">
           <el-row>
 
             <el-col :span="12">
@@ -71,6 +74,8 @@
           </el-row>
         </el-col>
 
+        <!-- <el-col :span="3"></el-col> -->
+
       </el-row>
 
       <!-- Copyright Notice -->
@@ -79,6 +84,8 @@
           <span>Copyright © 2023 TokeniZK. All Rights Reserved.</span>
         </div>
       </el-row>
+
+      <el-row style="height: 60px; background-color: #011025;"></el-row>
 
       <!-- Back to top -->
       <el-backtop :bottom="100">
@@ -90,8 +97,7 @@
         text-align: center;
         line-height: 40px;
         color: #fff;
-        border-radius: 20%;
-      ">
+        border-radius: 20%;">
           <el-icon>
             <Top />
           </el-icon>
@@ -106,9 +112,11 @@
 .LayoutFooter {
   width: 100%;
   padding-top: 100px;
-  padding-bottom: 100px;
   color: #fff;
   background-color: #03142c;
+  bottom: 0;
+  left: 0;
+
 
   .footer-logo {
     width: 180px;

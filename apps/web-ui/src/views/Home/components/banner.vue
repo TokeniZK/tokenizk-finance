@@ -28,13 +28,13 @@ const { increment } = counterStore;
 
       <!-- slogan  -->
       <el-row class="row-bg slogan" justify="center">
-        <el-col :span="2"></el-col>
-        <el-col :span="21">
-          <el-row class="header-span" style="text-indent: 7rem;">Tokenize Creative Ideas,</el-row>
-          <el-row class="header-span">Early Access to Crazy Thinking.</el-row>
-          <el-row class="header-text">The First Verifiable LaunchPad on Mina, with No-code.</el-row>
+        <!-- <el-col :span="1"></el-col> -->
+        <el-col :span="24">
+          <el-row class="header-span" justify="center">Tokenize Creative Ideas,</el-row>
+          <el-row class="header-span" justify="center">Early Access to Crazy Thinking.</el-row>
+          <el-row class="header-text" justify="center">The First Verifiable LaunchPad on Mina, with No-code.</el-row>
         </el-col>
-        <el-col :span="1"></el-col>
+        <!-- <el-col :span="1"></el-col> -->
       </el-row>
 
       <!-- 特效盒子 -->
