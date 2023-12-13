@@ -220,8 +220,8 @@ reactive(obj);
               <el-row>Normal Presale pages work for project team to pre-configure a set of presale rules</el-row>
             </el-col>
 
-            <el-col :span="12">
-              <el-row class="link mb-4" justify="end">
+            <el-col :span="12" class="link">
+              <el-row class="mb-4" justify="end">
                 <el-button type="primary" size="large" round>
                   <router-link to="/pre-sales" class="main-btn">View All Item</router-link>
                 </el-button>
@@ -379,9 +379,13 @@ reactive(obj);
       padding-bottom: 11px;
     }
 
-    .main-btn {
-      font-size: 16px;
-      color: #fff;
+    .link {
+      padding-top: 40px;
+
+      .main-btn {
+        font-size: 16px;
+        color: #fff;
+      }
 
     }
   }

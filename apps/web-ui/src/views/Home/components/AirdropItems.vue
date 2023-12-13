@@ -219,8 +219,8 @@ reactive(obj);
               <el-row>Fair Airdrop tool helps project team to record related contributors and token distribution.</el-row>
             </el-col>
 
-            <el-col :span="12">
-              <el-row class="link mb-4" justify="end">
+            <el-col :span="12" class="link">
+              <el-row class="mb-4" justify="end">
                 <el-button type="primary" size="large" round>
                   <router-link to="/airdrop-list" class="main-btn">View All Item</router-link>
                 </el-button>
@@ -237,112 +237,116 @@ reactive(obj);
       <!-- 每个项目 -->
       <el-row class="row-bg" justify="center">
         <el-col :span="20">
+          <el-row>
+            <ul class="launchpads-ul">
+              <li v-for="item in obj" :key="item.id">
 
-          <ul class="launchpads-ul">
-            <li v-for="item in obj" :key="item.id">
+                <!-- <el-card shadow="hover"> -->
 
-              <!-- <el-card shadow="hover"> -->
+                <div class="launchpads-box">
 
-              <div class="launchpads-box">
+                  <!-- photo -->
+                  <el-row class="thumb">
 
-                <!-- photo -->
-                <el-row class="thumb">
+                    <el-col>
 
-                  <el-col>
+                      <el-row>
+                        <img :src="item.photo" :alt="item.name" style="width: 349px; height: 160px;">
+                      </el-row>
 
-                    <el-row>
-                      <img :src="item.photo" :alt="item.name" style="width: 349px; height: 160px;">
-                    </el-row>
+                      <el-row class="button-box">
+                        <el-col>
+                          <a href="Ripple-Frog-presale-details.html" class="link link-1">
+                            <el-icon>
+                              <View />
+                            </el-icon>
+                          </a>
+                        </el-col>
+                        <el-col>
+                          <a href="#0" class="link link-3"><el-icon>
+                              <StarFilled />
+                            </el-icon>
+                          </a>
+                        </el-col>
+                      </el-row>
 
-                    <el-row class="button-box">
-                      <el-col>
-                        <a href="Ripple-Frog-presale-details.html" class="link link-1">
-                          <el-icon>
-                            <View />
-                          </el-icon>
-                        </a>
-                      </el-col>
-                      <el-col>
-                        <a href="#0" class="link link-3"><el-icon>
-                            <StarFilled />
-                          </el-icon>
-                        </a>
-                      </el-col>
-                    </el-row>
+                    </el-col>
 
-                  </el-col>
+                  </el-row>
 
-                </el-row>
+                  <!-- 项目描述 -->
+                  <el-row class="launchpads-content">
 
-                <!-- 项目描述 -->
-                <el-row class="launchpads-content">
+                    <el-col>
 
-                  <el-col>
+                      <el-row>
+                        <el-col :span="24">
+                          <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
+                        </el-col>
+                      </el-row>
 
-                    <el-row>
-                      <el-col :span="24">
-                        <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
-                      </el-col>
-                    </el-row>
+                      <!-- 团队名称 -->
+                      <el-row class="text-review-change" justify="space-between" style="align-items: center;">
+                        <el-col class="text" :span="10">
+                          by <a href="" class="link">{{ item.teamName }}</a>
+                        </el-col>
 
-                    <!-- 团队名称 -->
-                    <el-row class="text-review-change" justify="space-between" style="align-items: center;">
-                      <el-col class="text" :span="10">
-                        by <a href="" class="link">{{ item.teamName }}</a>
-                      </el-col>
+                        <el-col class="review" :span="10">
+                          <el-rate v-model="item.star" size="large" />
+                        </el-col>
+                      </el-row>
 
-                      <el-col class="review" :span="10">
-                        <el-rate v-model="item.star" size="large" />
-                      </el-col>
-                    </el-row>
+                      <el-row class="row-bg soft-hard-cap" justify="space-between">
+                        <el-col :span="10">Soft / Hard</el-col>
+                        <el-col :span="2"></el-col>
+                        <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
+                      </el-row>
 
-                    <el-row class="row-bg soft-hard-cap" justify="space-between">
-                      <el-col :span="10">Soft / Hard</el-col>
-                      <el-col :span="2"></el-col>
-                      <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
-                    </el-row>
+                      <!-- 进度条 -->
+                      <el-row class="content-Progress">
+                        <el-col>
 
-                    <!-- 进度条 -->
-                    <el-row class="content-Progress">
-                      <el-col>
+                          <el-row class="title">Progress</el-row>
 
-                        <el-row class="title">Progress</el-row>
+                          <el-row class="Progress demo-progress" style="margin-bottom: 0;">
+                            <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
+                          </el-row>
 
-                        <el-row class="Progress demo-progress" style="margin-bottom: 0;">
-                          <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
-                        </el-row>
+                          <el-row class="row-bg sub-title" justify="space-between">
+                            <el-col :span="10" class="is-flex-grow-1"> 0 Mina</el-col>
+                            <el-col :span="4"></el-col>
+                            <el-col :span="6" class="is-flex-grow-1 has-text-right">50 Mina</el-col>
+                          </el-row>
 
-                        <el-row class="row-bg sub-title" justify="space-between">
-                          <el-col :span="10" class="is-flex-grow-1"> 0 Mina</el-col>
-                          <el-col :span="4"></el-col>
-                          <el-col :span="6" class="is-flex-grow-1 has-text-right">50 Mina</el-col>
-                        </el-row>
+                        </el-col>
+                      </el-row>
 
-                      </el-col>
-                    </el-row>
+                      <el-row class="row-bg liquidity-percent" justify="space-between">
+                        <el-col :span="10" class="is-flex-grow-1">Liquidity %:</el-col>
+                        <el-col :span="4"></el-col>
+                        <el-col :span="6" class="is-flex-grow-1 has-text-right time-text"> {{ item.liquidity }}</el-col>
+                      </el-row>
 
-                    <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10" class="is-flex-grow-1">Liquidity %:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6" class="is-flex-grow-1 has-text-right time-text"> {{ item.liquidity }}</el-col>
-                    </el-row>
+                      <el-row class="row-bg lockup-time" justify="space-between">
+                        <el-col :span="10" class="is-flex-grow-1">Lockup Time:</el-col>
+                        <el-col :span="4"></el-col>
+                        <el-col :span="6" class="is-flex-grow-1 has-text-right time-text">365 day</el-col>
+                      </el-row>
 
-                    <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10" class="is-flex-grow-1">Lockup Time:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6" class="is-flex-grow-1 has-text-right time-text">365 day</el-col>
-                    </el-row>
+                    </el-col>
 
-                  </el-col>
+                  </el-row>
 
-                </el-row>
+                </div>
 
-              </div>
+                <!-- </el-card> -->
 
-              <!-- </el-card> -->
+              </li>
+            </ul>
+          </el-row>
 
-            </li>
-          </ul>
+          <el-row style="margin-top: 20px">123</el-row>
+
         </el-col>
       </el-row>
 
@@ -364,9 +368,13 @@ reactive(obj);
       padding-bottom: 1px;
     }
 
-    .main-btn {
-      font-size: 16px;
-      color: #fff;
+    .link {
+      padding-top: 40px;
+
+      .main-btn {
+        font-size: 16px;
+        color: #fff;
+      }
 
     }
 
