@@ -64,7 +64,7 @@
 
 <style lang="less" scoped>
 .mainFunctionIntroduction {
-  margin-bottom: 150px;
+  margin-bottom: 100px;
   width: 100%;
   padding-top: 200px;
   height: 700px;
