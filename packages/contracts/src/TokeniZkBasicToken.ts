@@ -75,7 +75,17 @@ export class TokeniZkBasicToken extends SmartContract {
             access: Permissions.proofOrSignature(),
         });
     }
+    /**
+     * 
+     * @param newParams 
+     * @param presaleAddress 
+     * @param presaleVk 
+     */
+    @method
+    public createPresale(newParams: LauchpadPlatformParams,
+        presaleAddress: PublicKey, presaleVk: VerificationKey, presaleParams: PresaleParams){
 
+    }
     
 }
 
