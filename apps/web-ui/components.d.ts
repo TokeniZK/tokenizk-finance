@@ -34,6 +34,7 @@ declare module 'vue' {
     ElRo: typeof import('element-plus/es')['ElRo']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElRwo: typeof import('element-plus/es')['ElRwo']
+    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     Footer: typeof import('./src/components/footer.vue')['default']

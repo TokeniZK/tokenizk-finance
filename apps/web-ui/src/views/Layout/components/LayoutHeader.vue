@@ -11,6 +11,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 <template>
   <el-row class="LayoutHeader">
     <el-col :span="24">
+
       <el-menu :default-active="activeIndex" class="el-menu-demo LayoutHeader" mode="horizontal" :ellipsis="false"
         @select="handleSelect">
 
@@ -150,6 +151,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
         </el-menu-item>
 
       </el-menu>
+      
     </el-col>
   </el-row>
 </template>
