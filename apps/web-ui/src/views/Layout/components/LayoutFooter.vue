@@ -3,7 +3,7 @@
 
     <el-col :span="24">
 
-      <el-row justify="row-bg center">
+      <el-row class="row-bg center">
 
         <el-col :span="4"></el-col>
 
