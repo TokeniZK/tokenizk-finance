@@ -21,16 +21,16 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
         <div class="flex-grow" />
 
-        <el-menu-item index="1" style="font-size: 16px; color: #fff;">
+        <el-menu-item index="1" class="header-category">
           <router-link to="/">Home</router-link>
         </el-menu-item>
 
         <el-sub-menu index="2">
           <template #title>
-            <el-icon>
-              <i class="iconfont icon-fire"></i>
+            <el-icon class="header-category">
+              <HotWater />
             </el-icon>
-            Hot Sales
+            <span class="header-category">Hot Sales</span>
           </template>
           <el-menu-item index="2-1">
             <router-link to="/pre-Sales">Presales</router-link>
@@ -40,12 +40,14 @@ const handleSelect = (key: string, keyPath: string[]) => {
           </el-menu-item>
         </el-sub-menu>
 
-        <el-menu-item index="3" style="font-size: 16px; color: #fff;">
-          <router-link to="/airdrop-list">Airdrop</router-link>
+        <el-menu-item index="3">
+          <router-link to="/airdrop-list" class="header-category">Airdrop</router-link>
         </el-menu-item>
 
         <el-sub-menu index="4">
-          <template #title>Boot</template>
+          <template #title>
+            <span class="header-category">Boot</span>
+          </template>
           <el-menu-item index="2-1">
             <router-link to="/create-ZkToken">Create zkToken</router-link>
           </el-menu-item>
@@ -70,7 +72,9 @@ const handleSelect = (key: string, keyPath: string[]) => {
         </el-sub-menu>
 
         <el-sub-menu index="5">
-          <template #title>About</template>
+          <template #title>
+            <span class="header-category">About</span>
+          </template>
           <el-menu-item index="2-1">
             <router-link to="/services">Services</router-link>
 
@@ -88,7 +92,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
           <template #title>
             <el-badge :value="12" class="item">
-              <el-icon>
+              <el-icon class="header-category">
                 <Bell />
               </el-icon>
             </el-badge>
@@ -151,7 +155,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
         </el-menu-item>
 
       </el-menu>
-      
+
     </el-col>
   </el-row>
 </template>
@@ -171,6 +175,16 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
   color: #fff;
   background-color: #000;
+
+  .header-category {
+    color: #fff;
+    font-size: 16px;
+  }
+
+  .header-category:hover {
+    color: #00FFC2;
+  }
+
 
   .logo {
     width: 200px;
