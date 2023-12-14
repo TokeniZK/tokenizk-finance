@@ -1,6 +1,16 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import { useConnectState } from '@/stores/connectState'
+
+let connectState = useConnectState();
+
+// console.log(connectState);  // Proxy(Object) {$id: 'connectState', $onAction: ƒ, $patch: ƒ, $reset: ƒ, $subscribe: ƒ, …}
+
+let { cnState } = connectState;
+
+console.log(cnState);
+
 
 interface RuleForm {
   tokenType: string
@@ -10,8 +20,8 @@ interface RuleForm {
   totalSupply: string
 }
 
-const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
+
 const ruleForm = reactive<RuleForm>({
   tokenType: '',
   name: '',
@@ -20,6 +30,7 @@ const ruleForm = reactive<RuleForm>({
   totalSupply: '',
 })
 
+// 正则
 const rules = reactive<FormRules<RuleForm>>({
 
   tokenType: [
@@ -39,36 +50,46 @@ const rules = reactive<FormRules<RuleForm>>({
     {
       required: true,
       message: 'Please input symbols',
-      trigger: 'change',
+      trigger: 'blur'
     },
   ],
   decimals: [
     {
+      type: 'number',
       required: true,
-      message: 'Please input decimals (Number type)',
-      trigger: 'change',
+      message: 'decimals must be number type',
+      trigger: 'blur'
     },
   ],
   totalSupply: [
     {
+      type: 'number',
       required: true,
-      message: 'Please input totalSupply  (Number type)',
-      trigger: 'change',
+      message: 'totalSupply must be number type',
+      trigger: 'blur'
     },
   ],
 })
 
+// 提交
 const submitForm = async (formEl: FormInstance | undefined) => {
+
   if (!formEl) return
+
   await formEl.validate((valid, fields) => {
-    if (valid) {
+
+    // Auro Wallet 连接状态 为 已连接 才能 create
+    if (valid && cnState) {
       console.log('submit!')
     } else {
       console.log('error submit!', fields)
     }
+
   })
+
 }
 
+// 重置
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
@@ -88,29 +109,30 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
       <el-row>
         <el-col :span="24">
+
           <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm"
-            :size="formSize" status-icon label-position="top">
+            size="large" status-icon label-position="top">
 
             <el-form-item label="Token Type" prop="tokenType">
-              <el-select v-model="ruleForm.tokenType" placeholder="Basic ZkToken">
-                <el-option label="Basic ZkToken" />
+              <el-select v-model.trim="ruleForm.tokenType" placeholder="Basic ZkToken">
+                <el-option label="Basic ZkToken" value="Basic ZkToken" />
               </el-select>
             </el-form-item>
 
             <el-form-item label="Name" prop="name">
-              <el-input v-model="ruleForm.name" placeholder="Ex: Mina" />
+              <el-input v-model.trim="ruleForm.name" placeholder="Ex: Mina" />
             </el-form-item>
 
             <el-form-item label="symbols" prop="symbols">
-              <el-input v-model="ruleForm.symbols" placeholder="Ex: Mina" />
+              <el-input v-model.trim="ruleForm.symbols" placeholder="Ex: Mina" />
             </el-form-item>
 
             <el-form-item label="Decimals" prop="decimals">
-              <el-input v-model="ruleForm.decimals" placeholder="0" />
+              <el-input v-model.number.trim="ruleForm.decimals" placeholder="0" />
             </el-form-item>
 
             <el-form-item label="Total supply" prop="totalSupply">
-              <el-input v-model="ruleForm.totalSupply" placeholder="Ex: 100000000000" />
+              <el-input v-model.number.trim="ruleForm.totalSupply" placeholder="Ex: 100000000000" />
             </el-form-item>
 
             <el-form-item>
@@ -147,9 +169,9 @@ const resetForm = (formEl: FormInstance | undefined) => {
             <el-col :span="12">0xd550e943D6E7Cd1a425088a7C90b08738901CBfD</el-col>
           </el-row>
 
-          <el-button type="primary">View transaction</el-button>
-          <el-button type="primary">Create launchpad</el-button>
-          <el-button type="primary">Create Fairlaunch</el-button>
+          <el-button size="large" disabled>View transaction</el-button>
+          <el-button type="primary" size="large">Create launchpad</el-button>
+          <el-button type="primary" size="large">Create Fairlaunch</el-button>
 
         </el-col>
       </el-row>
