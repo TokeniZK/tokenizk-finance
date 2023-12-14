@@ -2,8 +2,10 @@
 import { getAllLaunchpadsAPI } from '@/apis/presaleAllLaunchpads'
 import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
+
 // 生成 唯一标识符
 import { nanoid } from 'nanoid'
+
 // 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
 const percentage = ref(20)
@@ -24,6 +26,7 @@ onMounted(() => {
 })
 
 const value = ref('')
+const value2 = ref('')
 const input = ref('')
 
 const options1 = [
@@ -55,28 +58,28 @@ const options1 = [
 
 const options2 = [
   {
-    value: 'No Filter',
-    label: 'No Filter',
+    value2: 'No Filter',
+    label2: 'No Filter',
   },
   {
-    value: 'Hard Cap',
-    label: 'Hard Cap',
+    value2: 'Hard Cap',
+    label2: 'Hard Cap',
   },
   {
-    value: 'Soft Cap',
-    label: 'Soft Cap',
+    value2: 'Soft Cap',
+    label2: 'Soft Cap',
   },
   {
-    value: 'LP percent',
-    label: 'LP percent',
+    value2: 'LP percent',
+    label2: 'LP percent',
   },
   {
-    value: 'Start time',
-    label: 'Start time',
+    value2: 'Start time',
+    label2: 'Start time',
   },
   {
-    value: 'End time',
-    label: 'End time',
+    value2: 'End time',
+    label2: 'End time',
   },
 ]
 
@@ -281,8 +284,8 @@ reactive(obj);
 
         <el-col :span="3">
           <div>Sort By</div>
-          <el-select v-model="value" class="m-2 pool-filter" placeholder="No Filter" size="large">
-            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select v-model="value2" class="m-2 pool-filter" placeholder="No Filter" size="large">
+            <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.value2" />
           </el-select>
         </el-col>
 
