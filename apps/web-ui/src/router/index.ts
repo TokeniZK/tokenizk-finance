@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
 import Home from '@/views/Home/index.vue'
-import Category from '@/views/Category/index.vue'
 import PreSales from '@/views/PreSales/pre-Sales.vue'
 import AllLaunchpads from '@/views/PreSales/components/AllLaunchpads.vue'
 import MyContributions from '@/views/PreSales/components/MyContributions.vue'
@@ -38,10 +37,6 @@ const router = createRouter({
         {
           path: '',
           component: Home
-        },
-        {
-          path: 'category',
-          component: Category
         },
         {
           path: '/pre-Sales',
