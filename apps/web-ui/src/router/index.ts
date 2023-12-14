@@ -10,7 +10,7 @@ import AllPrivateSales from '../views/PrivateSales/components/AllPrivateSales.vu
 import MyPrivateSalesContributions from '../views/PrivateSales/components/MyPrivateSalesContributions.vue'
 
 import AirdropList from '../views/AirDrop/airdrop-List.vue'
-import CreateZkToken from '../views/create-zkToken.vue'
+import CreateZkToken from '../views/Boot/create-ZkToken.vue'
 import CreateFairLaunch from '../views/create-fair-launch.vue'
 import CreateNormalLaunch from '../views/create-normal-launch.vue'
 import CreatePrivateSale from '../views/create-private-sale.vue'
