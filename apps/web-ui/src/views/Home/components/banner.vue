@@ -22,19 +22,17 @@ const { increment } = counterStore;
 <template>
   <el-row class="row-bg banner" justify="center">
 
-    <el-col :span="3"></el-col>
+    <el-col :span="2"></el-col>
 
-    <el-col :span="18">
+    <el-col :span="19">
 
       <!-- slogan  -->
       <el-row class="row-bg slogan" justify="center">
-        <!-- <el-col :span="1"></el-col> -->
         <el-col :span="24">
           <el-row class="header-span" justify="center">Tokenize Creative Ideas,</el-row>
           <el-row class="header-span" justify="center">Early Access to Crazy Thinking.</el-row>
           <el-row class="header-text" justify="center">The First Verifiable LaunchPad on Mina, with No-code.</el-row>
         </el-col>
-        <!-- <el-col :span="1"></el-col> -->
       </el-row>
 
       <!-- 特效盒子 -->
@@ -73,7 +71,7 @@ const { increment } = counterStore;
 
     </el-col>
 
-    <el-col :span="3"></el-col>
+    <el-col :span="2"></el-col>
 
   </el-row>
 </template>
@@ -103,7 +101,6 @@ const { increment } = counterStore;
       line-height: 28px;
       padding: 27px 0px 36px;
       font-family: Manrope;
-      text-indent: 10.5rem;
     }
 
   }
