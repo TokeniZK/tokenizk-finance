@@ -1,3 +1,7 @@
+<script lang="ts" >
+
+</script>
+
 <template>
   <el-row class="row-bg airdrop-list" justify="center">
     <el-col :span="24">

@@ -7,15 +7,15 @@
 
       <el-row class="row-bg" justify="space-between">
         <el-col :span="6" class="category-box">
-          <el-row justify="center"><img src="/src/assets/Customization.png" alt=""
+          <el-row justify="center"><img src="/src/assets/customization.png" alt=""
               style="background-color: #fff;"></el-row>
           <el-row justify="center">
-            <h4 class="lasthead">Customization </h4>
+            <h4 class="lasthead">customization </h4>
           </el-row>
           <el-row class="category-text">Easily customize your own tokens to create token sales</el-row>
         </el-col>
         <el-col :span="6" class="category-box">
-          <el-row justify="center"> <img src="/src/assets/Launchpad.png" alt="" style="background-color: #fff;"></el-row>
+          <el-row justify="center"> <img src="/src/assets/launchpad.png" alt="" style="background-color: #fff;"></el-row>
           <el-row justify="center">
             <h4 class="lasthead">Launchpad</h4>
           </el-row>
@@ -23,7 +23,7 @@
             cast</el-row>
         </el-col>
         <el-col :span="6" class="category-box">
-          <el-row justify="center"> <img src="/src/assets/Present-Presale.png" alt=""></el-row>
+          <el-row justify="center"> <img src="/src/assets/present-presale.png" alt=""></el-row>
           <el-row justify="center">
             <h4 class="lasthead">Present Presale</h4>
           </el-row>
@@ -33,21 +33,21 @@
 
       <el-row class="row-bg" justify="space-between">
         <el-col :span="6" class="category-box">
-          <el-row justify="center"><img src="/src/assets/AirdropAndLocker.png" alt=""></el-row>
+          <el-row justify="center"><img src="/src/assets/airdropAndLocker.png" alt=""></el-row>
           <el-row justify="center">
             <h4 class="lasthead">Airdrop and Locker</h4>
           </el-row>
           <el-row class="category-text">Easily customize your own tokens to create token sales</el-row>
         </el-col>
         <el-col :span="6" class="category-box">
-          <el-row justify="center"> <img src="/src/assets/ManagementManager.png" alt=""></el-row>
+          <el-row justify="center"> <img src="/src/assets/managementManager.png" alt=""></el-row>
           <el-row justify="center">
             <h4 class="lasthead">Management Manager</h4>
           </el-row>
           <el-row class="category-text">This portal helps you easily update the content of launchpad.</el-row>
         </el-col>
         <el-col :span="6" class="category-box">
-          <el-row justify="center"> <img src="/src/assets/BrandingBrandStrategy.png" alt=""></el-row>
+          <el-row justify="center"> <img src="/src/assets/brandingBrandStrategy.png" alt=""></el-row>
           <el-row justify="center">
             <h4 class="lasthead">Branding brand strategy</h4>
           </el-row>

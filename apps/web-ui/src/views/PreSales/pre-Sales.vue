@@ -14,11 +14,11 @@
         <el-col :span="8"></el-col>
 
         <el-col :span="6">
-          <router-link to="/pre-Sales">All launchpads</router-link>
+          <router-link to="/pre-sales">All launchpads</router-link>
         </el-col>
 
         <el-col :span="6">
-          <router-link to="/pre-Sales/my-contributions">My Contributions</router-link>
+          <router-link to="/pre-sales/my-contributions">My Contributions</router-link>
         </el-col>
 
         <el-col :span="4"></el-col>

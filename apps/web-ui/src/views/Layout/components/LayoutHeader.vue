@@ -33,10 +33,10 @@ const handleSelect = (key: string, keyPath: string[]) => {
             <span class="header-category">Hot Sales</span>
           </template>
           <el-menu-item index="2-1">
-            <router-link to="/pre-Sales">Presales</router-link>
+            <router-link to="/pre-sales">Presales</router-link>
           </el-menu-item>
           <el-menu-item index="2-2">
-            <router-link to="/private-Sales">Private Sales</router-link>
+            <router-link to="/private-sales">Private Sales</router-link>
           </el-menu-item>
         </el-sub-menu>
 
@@ -49,25 +49,25 @@ const handleSelect = (key: string, keyPath: string[]) => {
             <span class="header-category">Boot</span>
           </template>
           <el-menu-item index="2-1">
-            <router-link to="/create-ZkToken">Create zkToken</router-link>
+            <router-link to="/create-zk-token">Create zkToken</router-link>
           </el-menu-item>
           <el-menu-item index="2-2">
-            <router-link to="/create-Fair-Launch">Create Fair Launch</router-link>
+            <router-link to="/create-fair-launch">Create Fair Launch</router-link>
           </el-menu-item>
           <el-menu-item index="2-3">
-            <router-link to="/create-Normal-Launch">Create Normal Launch</router-link>
+            <router-link to="/create-normal-launch">Create Normal Launch</router-link>
           </el-menu-item>
           <el-menu-item index="2-4">
-            <router-link to="/create-Private-Sale">Create Private Sale</router-link>
+            <router-link to="/create-private-sale">Create Private Sale</router-link>
           </el-menu-item>
           <el-menu-item index="2-5">
-            <router-link to="/create-Airdrop">Create Airdrop</router-link>
+            <router-link to="/create-airdrop">Create Airdrop</router-link>
           </el-menu-item>
           <el-menu-item index="2-6">
-            <router-link to="/create-Lock"> Create Lock</router-link>
+            <router-link to="/create-lock"> Create Lock</router-link>
           </el-menu-item>
           <el-menu-item index="2-7">
-            <router-link to="/create-zkNFT"> Create zkNFT</router-link>
+            <router-link to="/create-zk-nft"> Create zkNFT</router-link>
           </el-menu-item>
         </el-sub-menu>
 

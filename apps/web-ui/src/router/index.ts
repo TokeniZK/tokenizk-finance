@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
 import Home from '@/views/Home/index.vue'
-import PreSales from '@/views/PreSales/pre-Sales.vue'
+import PreSales from '@/views/PreSales/pre-sales.vue'
 import AllLaunchpads from '@/views/PreSales/components/AllLaunchpads.vue'
 import MyContributions from '@/views/PreSales/components/MyContributions.vue'
+import PresaleDetails from '@/views/PreSales/presale-details.vue'
 
-import PrivateSales from '../views/PrivateSales/private-Sales.vue'
+import PrivateSales from '../views/PrivateSales/private-sales.vue'
 import AllPrivateSales from '../views/PrivateSales/components/AllPrivateSales.vue'
 import MyPrivateSalesContributions from '../views/PrivateSales/components/MyPrivateSalesContributions.vue'
 
@@ -39,7 +40,7 @@ const router = createRouter({
           component: Home
         },
         {
-          path: '/pre-Sales',
+          path: '/pre-sales',
           component: PreSales,
           children: [
             {
@@ -47,13 +48,17 @@ const router = createRouter({
               component: AllLaunchpads
             },
             {
-              path: '/pre-Sales/my-contributions',
+              path: '/pre-sales/my-contributions',
               component: MyContributions
             }
           ]
         },
         {
-          path: '/private-Sales',
+          path: '/presale-datails',
+          component: PresaleDetails
+        },
+        {
+          path: '/private-sales',
           component: PrivateSales,
           children: [
             {
@@ -61,7 +66,7 @@ const router = createRouter({
               component: AllPrivateSales
             },
             {
-              path: '/private-Sales/my-contributions',
+              path: '/private-sales/my-contributions',
               component: MyPrivateSalesContributions
             }
           ]
@@ -71,31 +76,31 @@ const router = createRouter({
           component: AirdropList
         },
         {
-          path: '/create-ZkToken',
+          path: '/create-zk-token',
           component: CreateZkToken
         },
         {
-          path: '/create-Fair-Launch',
+          path: 'create-fair-launch',
           component: CreateFairLaunch
         },
         {
-          path: '/create-Normal-Launch',
+          path: '/create-normal-launch',
           component: CreateNormalLaunch
         },
         {
-          path: '/create-Private-Sale',
+          path: '/create-private-sale',
           component: CreatePrivateSale
         },
         {
-          path: '/create-Airdrop',
+          path: '/create-airdrop',
           component: CreateAirdrop
         },
         {
-          path: '/create-Lock',
+          path: '/create-lock',
           component: CreateLock
         },
         {
-          path: '/create-zkNFT',
+          path: '/create-zk-nft',
           component: CreateZkNFT
         },
         {

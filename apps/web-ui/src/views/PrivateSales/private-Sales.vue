@@ -14,11 +14,11 @@
         <el-col :span="8"></el-col>
 
         <el-col :span="6">
-          <router-link to="/private-Sales">All Private Sales</router-link>
+          <router-link to="/private-sales">All Private Sales</router-link>
         </el-col>
 
         <el-col :span="6">
-          <router-link to="/private-Sales/my-contributions">My Contributions</router-link>
+          <router-link to="/private-sales/my-contributions">My Contributions</router-link>
         </el-col>
 
         <el-col :span="4"></el-col>
