@@ -24,6 +24,7 @@ onMounted(() => {
 })
 
 const value = ref('')
+const value2 = ref('')
 const input = ref('')
 
 const options1 = [
@@ -55,28 +56,28 @@ const options1 = [
 
 const options2 = [
   {
-    value: 'No Filter',
-    label: 'No Filter',
+    value2: 'No Filter',
+    label2: 'No Filter',
   },
   {
-    value: 'Hard Cap',
-    label: 'Hard Cap',
+    value2: 'Hard Cap',
+    label2: 'Hard Cap',
   },
   {
-    value: 'Soft Cap',
-    label: 'Soft Cap',
+    value2: 'Soft Cap',
+    label2: 'Soft Cap',
   },
   {
-    value: 'LP percent',
-    label: 'LP percent',
+    value2: 'LP percent',
+    label2: 'LP percent',
   },
   {
-    value: 'Start time',
-    label: 'Start time',
+    value2: 'Start time',
+    label2: 'Start time',
   },
   {
-    value: 'End time',
-    label: 'End time',
+    value2: 'End time',
+    label2: 'End time',
   },
 ]
 
@@ -89,16 +90,16 @@ let obj = [{
   star: '4',
   preSaleAddr: 'B62',
   softCap: '20',
-  HardCap: '50',
+  hardCap: '50',
   totalContributedMina: '40',
   progressStart: '0',
   progressEnd: '50',
   liquidity: '10%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
@@ -108,16 +109,16 @@ let obj = [{
   star: '2',
   preSaleAddr: 'B62',
   softCap: '10',
-  HardCap: '60',
+  hardCap: '60',
   totalContributedMina: '20',
   progressStart: '0',
   progressEnd: '60',
   liquidity: '30%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
@@ -127,16 +128,16 @@ let obj = [{
   star: '2',
   preSaleAddr: 'B62',
   softCap: '30',
-  HardCap: '45',
+  hardCap: '45',
   totalContributedMina: '60',
   progressStart: '0',
   progressEnd: '45',
   liquidity: '53%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
@@ -146,16 +147,16 @@ let obj = [{
   star: '5',
   preSaleAddr: 'B62',
   softCap: '10',
-  HardCap: '50',
+  hardCap: '50',
   totalContributedMina: '30',
   progressStart: '10',
   progressEnd: '50',
   liquidity: '40%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
@@ -165,16 +166,16 @@ let obj = [{
   star: '2',
   preSaleAddr: 'B62',
   softCap: '10',
-  HardCap: '50',
+  hardCap: '50',
   totalContributedMina: '50',
   progressStart: '0',
   progressEnd: '50',
   liquidity: '30%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
@@ -184,16 +185,16 @@ let obj = [{
   star: '2',
   preSaleAddr: 'B62',
   softCap: '10',
-  HardCap: '50',
+  hardCap: '50',
   totalContributedMina: '10',
   progressStart: '0',
   progressEnd: '50',
   liquidity: '30%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
@@ -203,16 +204,16 @@ let obj = [{
   star: '5',
   preSaleAddr: 'B62',
   softCap: '10',
-  HardCap: '50',
+  hardCap: '50',
   totalContributedMina: '13',
   progressStart: '23',
   progressEnd: '50',
   liquidity: '15%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
@@ -222,16 +223,16 @@ let obj = [{
   star: '2',
   preSaleAddr: 'B62',
   softCap: '10',
-  HardCap: '50',
+  hardCap: '50',
   totalContributedMina: '42',
   progressStart: '0',
   progressEnd: '50',
   liquidity: '23%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
@@ -241,16 +242,16 @@ let obj = [{
   star: '2',
   preSaleAddr: 'B62',
   softCap: '10',
-  HardCap: '50',
+  hardCap: '50',
   totalContributedMina: '23',
   progressStart: '0',
   progressEnd: '50',
   liquidity: '54%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  lockupTime: '365day',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 ]
 
@@ -281,8 +282,8 @@ reactive(obj);
 
         <el-col :span="3">
           <div>Sort By</div>
-          <el-select v-model="value" class="m-2 pool-filter" placeholder="No Filter" size="large">
-            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select v-model="value2" class="m-2 pool-filter" placeholder="No Filter" size="large">
+            <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.value2" />
           </el-select>
         </el-col>
 
@@ -353,7 +354,7 @@ reactive(obj);
                     <el-row class="row-bg soft-hard-cap" justify="space-between">
                       <el-col :span="10">Soft / Hard</el-col>
                       <el-col :span="2"></el-col>
-                      <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
+                      <el-col :span="10">{{ item.softCap }}Mina - {{ item.hardCap }}Mina</el-col>
                     </el-row>
 
                     <!-- 进度条 -->

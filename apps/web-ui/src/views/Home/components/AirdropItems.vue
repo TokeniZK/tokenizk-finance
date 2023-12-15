@@ -29,7 +29,7 @@ let obj = [{
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   teamName: 'Yoga',
-  star: '4',
+  state: 'Ongoing',
   preSaleAddr: 'B62',
   softCap: '20',
   HardCap: '50',
@@ -38,17 +38,17 @@ let obj = [{
   progressEnd: '50',
   liquidity: '10%',
   LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
   teamName: 'Yoga',
-  star: '2',
+  state: 'Upcoming',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '60',
@@ -57,17 +57,17 @@ let obj = [{
   progressEnd: '60',
   liquidity: '30%',
   LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
   photo: '/src/assets/images/3.png',
   name: 'Ripple Frog',
   teamName: 'Yoga',
-  star: '2',
+  state: 'Cancelled',
   preSaleAddr: 'B62',
   softCap: '30',
   HardCap: '45',
@@ -76,17 +76,17 @@ let obj = [{
   progressEnd: '45',
   liquidity: '53%',
   LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
   photo: '/src/assets/images/1.png',
   name: 'FastAI',
   teamName: 'Yoga',
-  star: '5',
+  state: 'Upcoming',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
@@ -95,17 +95,17 @@ let obj = [{
   progressEnd: '50',
   liquidity: '40%',
   LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
   photo: '/src/assets/images/2.png',
   name: 'Wrapped XRP',
   teamName: 'Yoga',
-  star: '2',
+  state: 'Cancelled',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
@@ -114,17 +114,17 @@ let obj = [{
   progressEnd: '50',
   liquidity: '30%',
   LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
   photo: '/src/assets/images/3.png',
   name: 'THREADS V2',
   teamName: 'Yoga',
-  star: '2',
+  state: 'Ongoing',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
@@ -133,68 +133,50 @@ let obj = [{
   progressEnd: '50',
   liquidity: '30%',
   LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/1.png',
-  name: 'Oggy Inu 2.0',
-  teamName: 'Yoga',
-  star: '5',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  HardCap: '50',
-  totalContributedMina: '13',
-  progressStart: '23',
-  progressEnd: '50',
-  liquidity: '15%',
-  LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
   photo: '/src/assets/images/2.png',
-  name: 'Wojak 2.69',
+  name: 'Wrapped XRP',
   teamName: 'Yoga',
-  star: '2',
+  state: 'Cancelled',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
-  totalContributedMina: '42',
+  totalContributedMina: '50',
   progressStart: '0',
   progressEnd: '50',
-  liquidity: '23%',
+  liquidity: '30%',
   LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
 {
   id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wojak 2.69',
+  photo: '/src/assets/images/3.png',
+  name: 'THREADS V2',
   teamName: 'Yoga',
-  star: '2',
+  state: 'Ongoing',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
-  totalContributedMina: '23',
+  totalContributedMina: '10',
   progressStart: '0',
   progressEnd: '50',
-  liquidity: '54%',
+  liquidity: '30%',
   LockupTime: '365day',
-  PresaleStartTime: '2023.12.15 19:37 (UTC)',
-  PresaleEndTime: '2024.01.12 19:38 (UTC)',
-  FirstReleaseForProject: '95%',
-  VestingForProject: '3% each 1 days',
+  presaleStartTime: '2023.12.15 19:37 (UTC)',
+  presaleEndTime: '2024.01.12 19:38 (UTC)',
+  firstReleaseForProject: '95%',
+  vestingForProject: '3% each 1 days',
 },
+
 ]
 
 reactive(obj);
@@ -287,13 +269,17 @@ reactive(obj);
 
                       <!-- 团队名称 -->
                       <el-row class="text-review-change" justify="space-between" style="align-items: center;">
-                        <el-col class="text" :span="10">
+
+                        <el-col class="text" :span="8">
                           by <a href="" class="link">{{ item.teamName }}</a>
                         </el-col>
 
-                        <el-col class="review" :span="10">
-                          <el-rate v-model="item.star" size="large" />
+                        <el-col :span="5"></el-col>
+
+                        <el-col class="review" :span="7">
+                          <el-button type="primary" round>{{ item.state }}</el-button>
                         </el-col>
+
                       </el-row>
 
                       <el-row class="row-bg soft-hard-cap" justify="space-between">
@@ -359,6 +345,8 @@ reactive(obj);
 .airdrop-items {
   width: 100%;
   height: 1080px;
+  overflow: hidden;
+  margin-bottom: 100px;
 
   .ongoing-presales-content {
     width: 100%;
@@ -385,11 +373,11 @@ reactive(obj);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    margin-top: 25px;
+    overflow: hidden;
 
     li {
-      margin-top: 0px;
-      margin-bottom: 30px;
+      margin-top: 25px;
+      margin-bottom: 25px;
       width: 349px;
       height: 416px;
       border-radius: 15px;
