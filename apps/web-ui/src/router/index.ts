@@ -11,8 +11,8 @@ import MyPrivateSalesContributions from '../views/PrivateSales/components/MyPriv
 
 import AirdropList from '../views/AirDrop/airdrop-List.vue'
 import CreateZkToken from '../views/Boot/create-ZkToken.vue'
-import CreateFairLaunch from '../views/create-fair-launch.vue'
-import CreateNormalLaunch from '../views/create-normal-launch.vue'
+import CreateFairLaunch from '../views/Boot/create-fair-launch.vue'
+import CreateNormalLaunch from '../views/Boot/create-normal-launch.vue'
 import CreatePrivateSale from '../views/create-private-sale.vue'
 import CreateAirdrop from '../views/create-airdrop.vue'
 import CreateLock from '../views/create-lock.vue'
