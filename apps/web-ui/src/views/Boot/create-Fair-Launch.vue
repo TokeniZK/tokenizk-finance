@@ -5,7 +5,6 @@ import { useConnectState } from '@/stores/connectState'
 
 // 判断钱包连接状态
 let connectState = useConnectState();
-// console.log(connectState);  
 let { cnState } = connectState;
 console.log(cnState);
 
@@ -23,8 +22,6 @@ const next = () => {
 const prev = () => {
   if (active.value-- <= 0) active.value = 0
 }
-
-
 
 
 interface RuleForm {
@@ -236,7 +233,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 
-
 <template>
   <el-row class="row-bg create-fair-launch" justify="center">
     <el-col :span="24">
@@ -434,11 +430,12 @@ const resetForm = (formEl: FormInstance | undefined) => {
                     </el-row>
                     <el-row>
                       <el-col :span="12">Token symbol</el-col>
-                      <el-col :span="12">{{ ruleForm.symbol }}</el-col>
+                      <el-col :span="12"><!-- {{ ruleForm.symbol }} --></el-col>
+
                     </el-row>
                     <el-row>
                       <el-col :span="12">Token decimals</el-col>
-                      <el-col :span="12">{{ ruleForm.decimals }}</el-col>
+                      <el-col :span="12"><!-- {{ ruleForm.decimals }} --></el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Softcap</el-col>
@@ -466,7 +463,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
                     </el-row>
                   </el-col>
                 </el-row>
-
 
 
                 <!-- 上一步、下一步 -->
@@ -554,7 +550,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
   .el-form-item {
     margin-bottom: 10px;
   }
-
 
 
   .el-row {
