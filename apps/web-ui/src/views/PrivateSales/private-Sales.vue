@@ -29,7 +29,9 @@
       <el-row>
         <el-col :span="24">
 
-          <router-view />
+          <keep-alive>
+            <router-view />
+          </keep-alive>
 
         </el-col>
       </el-row>
