@@ -7,6 +7,12 @@ let connectState = useConnectState();
 let { cnState } = connectState;
 // console.log(cnState);
 
+let flag = ref(true);
+
+let getFlag = () => {
+  flag.value = !(flag.value);
+}
+
 
 interface RuleForm {
   tokenType: string
@@ -24,7 +30,7 @@ const ruleForm = reactive<RuleForm>({
   symbols: '',
   decimals: '',
   totalSupply: '',
-})
+});
 
 // 正则
 const rules = reactive<FormRules<RuleForm>>({
@@ -74,18 +80,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
   await formEl.validate((valid, fields) => {
 
-    // Auro Wallet 连接状态 为 已连接 才能 create     
+    // Auro Wallet 连接状态 为 已连接 才能 create       valid && cnState
     if (valid && cnState) {
 
       console.log('submit!')
 
-      // flag = false;
-      // console.log(flag);
+      getFlag()
 
     } else {
       console.log('error submit!', fields)
-
-      // flag = true;
 
     }
 
@@ -98,10 +101,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
-
-let flag = true;
-
-ref(flag)
 
 
 </script>
@@ -155,8 +154,6 @@ ref(flag)
           </el-form>
         </el-col>
       </el-row>
-
-      <el-button @click="flag = !flag">显示/隐藏</el-button>
 
       <!-- 创建后 -->
       <el-row class="row-bg tokenTable" justify="center" v-show="!flag">
