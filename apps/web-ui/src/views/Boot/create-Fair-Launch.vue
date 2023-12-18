@@ -6,22 +6,55 @@ import { useConnectState } from '@/stores/connectState'
 // 判断钱包连接状态
 let connectState = useConnectState();
 let { cnState } = connectState;
-console.log(cnState);
+// console.log(cnState);
 
 
-const Timevalue = ref('');
+const flagX = ref(0);
+// console.log(flagX, flagX.value);
 
+const nextX = () => {
 
-// 上一步下一步
+  if (flagX.value >= 3) {
+    flagX.value = 3
+  } else {
+    flagX.value++
+  }
+}
+
+const prevX = () => {
+
+  if (flagX.value <= 0) {
+    flagX.value = 0
+  } else {
+    flagX.value--
+  }
+
+}
+
+// 步骤条 ：上一步、下一步
 const active = ref(0)
 
 const next = () => {
-  if (active.value++ > 2) active.value = 4
+
+  if (active.value >= 3) {
+    active.value = 3
+  } else {
+    active.value++
+    nextX()
+  }
 }
 
 const prev = () => {
-  if (active.value-- <= 0) active.value = 0
+
+  if (active.value <= 0) {
+    active.value = 0
+  } else {
+    active.value--
+    prevX()
+  }
+
 }
+
 
 
 interface RuleForm {
@@ -208,27 +241,18 @@ const rules = reactive<FormRules<RuleForm>>({
 
 // 提交
 const submitForm = async (formEl: FormInstance | undefined) => {
-
   if (!formEl) return
-
   await formEl.validate((valid, fields) => {
-
-    // Auro Wallet 连接状态 为 已连接 才能 create
-    if (valid && cnState) {
+    // Auro Wallet 连接状态 为 已连接 才能 create     valid && cnState
+    if (valid) {
       console.log('submit!')
     } else {
       console.log('error submit!', fields)
     }
-
   })
-
 }
 
-// 重置
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  formEl.resetFields()
-}
+// submitForm(ruleFormRef)
 
 </script>
 
@@ -246,7 +270,9 @@ const resetForm = (formEl: FormInstance | undefined) => {
       <!-- 步骤条 -->
       <el-row class="row-bg Step-Bar" justify="center">
         <el-col :span="24">
+
           <el-steps :active="active" finish-status="success" align-center>
+
 
             <el-step title="Verify Token" description="Enter the token address and verify" />
 
@@ -256,11 +282,14 @@ const resetForm = (formEl: FormInstance | undefined) => {
             <el-step title="Add Additional Info " description="Let people know who you are" />
 
             <el-step title="Finish" description="Review your information" />
+
           </el-steps>
+
         </el-col>
       </el-row>
 
-      <!-- 流程 -->
+
+      <!-- 步骤流程 -->
       <el-row class="row-bg" justify="center">
         <el-col :span="24">
 
@@ -270,155 +299,172 @@ const resetForm = (formEl: FormInstance | undefined) => {
               <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm"
                 size="large" status-icon label-position="top">
 
-                <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
-
                 <!-- 步骤1 -->
-                <el-row class="row-bg">
-                  <el-col :span="11">
-                    <el-form-item label="Token address" prop="tokenddress">
-                      <el-input v-model.trim="ruleForm.tokenddress" placeholder="Ex: Mina" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="1"></el-col>
+                <el-row class="row-bg formTable1" v-show="flagX === 0">
+                  <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
+                  <el-col :span="24">
+                    <el-row class="row-bg">
+                      <el-col :span="11">
+                        <el-form-item label="Token address" prop="tokenddress">
+                          <el-input v-model.trim="ruleForm.tokenddress" placeholder="Ex: Mina" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="1"></el-col>
 
-                  <el-col :span="12">
-                    <el-form-item label="Name" prop="name">
-                      <el-input v-model.trim="ruleForm.name" placeholder="name" />
+                      <el-col :span="12">
+                        <el-form-item label="Name" prop="name">
+                          <el-input v-model.trim="ruleForm.name" placeholder="name" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+
+                    <el-form-item label="Currency" prop="currency">
+                      <el-radio-group v-model="ruleForm.currency">
+                        <el-radio label="Mina" />
+                      </el-radio-group>
                     </el-form-item>
+
+                    <el-form-item label="Fee Options" prop="feeOptions">
+                      <el-radio-group v-model="ruleForm.feeOptions">
+                        <el-radio label="5% raised only (Recommended)" />
+                        <el-radio label="Other" />
+                      </el-radio-group>
+                    </el-form-item>
+
                   </el-col>
                 </el-row>
-
-                <el-form-item label="Currency" prop="currency">
-                  <el-radio-group v-model="ruleForm.currency">
-                    <el-radio label="Mina" />
-                  </el-radio-group>
-                </el-form-item>
-
-                <el-form-item label="Fee Options" prop="feeOptions">
-                  <el-radio-group v-model="ruleForm.feeOptions">
-                    <el-radio label="5% raised only (Recommended)" />
-                    <el-radio label="Other" />
-                  </el-radio-group>
-                </el-form-item>
 
                 <!-- 步骤2 -->
-                <el-form-item label="Total selling amount" prop="totalSellingAmount">
-                  <el-input v-model.number.trim="ruleForm.totalSellingAmount" placeholder="0" />
-                  <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
-                </el-form-item>
+                <el-row class="row-bg formTable1" v-show="flagX === 1">
+                  <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
 
-                <el-form-item label="Whitelist" prop="whiteList">
-                  <el-radio-group v-model="ruleForm.whiteList">
-                    <el-radio label="Disable" />
-                    <el-radio label="Enable" />
-                    <div class="form-notes">You can enable/disable whitelist anytime.</div>
-                  </el-radio-group>
-                </el-form-item>
-
-                <el-form-item label="SoftCap (Mina)" prop="softCap">
-                  <el-input v-model.number.trim="ruleForm.softCap" placeholder="0" />
-                  <div class="form-notes"> Setting max contribution?</div>
-                </el-form-item>
-
-                <el-form-item label="Liquidity (%)" prop="liquidity">
-                  <el-input v-model.number.trim="ruleForm.liquidity" placeholder="0" />
-                </el-form-item>
-
-                <el-row class="row-bg">
-                  <el-col :span="12">
-                    <el-form-item label="Start Time (UTC)" required style="width: 100%">
-                      <el-date-picker v-model="ruleForm.startTime" type="datetime" placeholder="Pick a Date"
-                        format="YYYY/MM/DD hh:mm:ss" value-format="x" />
+                  <el-col :span="24">
+                    <el-form-item label="Total selling amount" prop="totalSellingAmount">
+                      <el-input v-model.number.trim="ruleForm.totalSellingAmount" placeholder="0" />
+                      <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
                     </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="End Time (UTC)" required style="width: 100%">
-                      <el-date-picker v-model="ruleForm.endTime" type="datetime" placeholder="Pick a Date"
-                        format="YYYY/MM/DD hh:mm:ss" value-format="x" />
+
+                    <el-form-item label="Whitelist" prop="whiteList">
+                      <el-radio-group v-model="ruleForm.whiteList">
+                        <el-radio label="Disable" />
+                        <el-radio label="Enable" />
+                        <div class="form-notes">You can enable/disable whitelist anytime.</div>
+                      </el-radio-group>
+                    </el-form-item>
+
+                    <el-form-item label="SoftCap (Mina)" prop="softCap">
+                      <el-input v-model.number.trim="ruleForm.softCap" placeholder="0" />
+                      <div class="form-notes"> Setting max contribution?</div>
+                    </el-form-item>
+
+                    <el-form-item label="Liquidity (%)" prop="liquidity">
+                      <el-input v-model.number.trim="ruleForm.liquidity" placeholder="0" />
+                    </el-form-item>
+
+                    <el-row class="row-bg">
+                      <el-col :span="12">
+                        <el-form-item label="Start Time (UTC)" required style="width: 100%">
+                          <el-date-picker v-model="ruleForm.startTime" type="datetime" placeholder="Pick a Date"
+                            format="YYYY/MM/DD hh:mm:ss" value-format="x" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-form-item label="End Time (UTC)" required style="width: 100%">
+                          <el-date-picker v-model="ruleForm.endTime" type="datetime" placeholder="Pick a Date"
+                            format="YYYY/MM/DD hh:mm:ss" value-format="x" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+
+                    <el-form-item label="Liquidity lockup (minutes)" prop="liquidityLockup">
+                      <el-input v-model.number.trim="ruleForm.liquidityLockup" placeholder="0" />
                     </el-form-item>
                   </el-col>
                 </el-row>
-
-                <el-form-item label="Liquidity lockup (minutes)" prop="liquidityLockup">
-                  <el-input v-model.number.trim="ruleForm.liquidityLockup" placeholder="0" />
-                </el-form-item>
 
                 <!-- 步骤3 -->
-                <el-row class="row-bg">
-                  <el-col :span="11">
-                    <el-form-item label="Logo URL" prop="logoUrl">
-                      <el-input v-model.trim="ruleForm.logoUrl" placeholder="Ex: https://..." />
-                      <div class="form-notes">URL must end with a supported image extension png, jpg, jpeg or gif. You can
-                        upload your image at .</div>
+                <el-row class="row-bg formTable1" v-show="flagX === 2">
+                  <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
+
+                  <el-col :span="24">
+                    <el-row class="row-bg">
+                      <el-col :span="11">
+                        <el-form-item label="Logo URL" prop="logoUrl">
+                          <el-input v-model.trim="ruleForm.logoUrl" placeholder="Ex: https://..." />
+                          <div class="form-notes">URL must end with a supported image extension png, jpg, jpeg or
+                            gif.Youbcan upload your image at .</div>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :span="1"></el-col>
+
+                      <el-col :span="12">
+                        <el-form-item label="Website" prop="webSite">
+                          <el-input v-model.trim="ruleForm.webSite" placeholder="Ex: https://..." />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+
+                    <el-row class="row-bg">
+                      <el-col :span="11">
+                        <el-form-item label="Facebook" prop="facebook">
+                          <el-input v-model.trim="ruleForm.facebook" placeholder="Ex: https://facebook.com/..." />
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :span="1"></el-col>
+
+                      <el-col :span="12">
+                        <el-form-item label="Twitter" prop="twitter">
+                          <el-input v-model.trim="ruleForm.twitter" placeholder="Ex: https://twitter.com/..." />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+
+                    <el-row class="row-bg">
+                      <el-col :span="11">
+                        <el-form-item label="Github" prop="github">
+                          <el-input v-model.trim="ruleForm.github" placeholder="Ex: https://github.com/..." />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="1"></el-col>
+
+                      <el-col :span="12">
+                        <el-form-item label="Telegram" prop="telegram">
+                          <el-input v-model.trim="ruleForm.telegram" placeholder="Ex: https://t.me/..." />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+
+                    <el-row class="row-bg">
+                      <el-col :span="11">
+                        <el-form-item label="Instagram" prop="instagram">
+                          <el-input v-model.trim="ruleForm.instagram" placeholder="Ex: https://instagram.com/..." />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="1"></el-col>
+
+                      <el-col :span="12">
+                        <el-form-item label="Discord" prop="discord">
+                          <el-input v-model.trim="ruleForm.discord" placeholder="Ex: https://discord.com/" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+
+
+                    <el-form-item label="Reddit" prop="reddit">
+                      <el-input v-model.trim="ruleForm.reddit" placeholder="Ex: https://reddit.com/..." />
                     </el-form-item>
-                  </el-col>
 
-                  <el-col :span="1"></el-col>
-
-                  <el-col :span="12">
-                    <el-form-item label="Website" prop="webSite">
-                      <el-input v-model.trim="ruleForm.webSite" placeholder="Ex: https://..." />
+                    <el-form-item label="Description" prop="description">
+                      <el-input v-model.trim="ruleForm.description" type="textarea"
+                        placeholder="Ex: This is the best project..." />
                     </el-form-item>
                   </el-col>
                 </el-row>
-
-                <el-row class="row-bg">
-                  <el-col :span="11">
-                    <el-form-item label="Facebook" prop="facebook">
-                      <el-input v-model.trim="ruleForm.facebook" placeholder="Ex: https://facebook.com/..." />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="1"></el-col>
-
-                  <el-col :span="12">
-                    <el-form-item label="Twitter" prop="twitter">
-                      <el-input v-model.trim="ruleForm.twitter" placeholder="Ex: https://twitter.com/..." />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-
-                <el-row class="row-bg">
-                  <el-col :span="11">
-                    <el-form-item label="Github" prop="github">
-                      <el-input v-model.trim="ruleForm.github" placeholder="Ex: https://github.com/..." />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="1"></el-col>
-
-                  <el-col :span="12">
-                    <el-form-item label="Telegram" prop="telegram">
-                      <el-input v-model.trim="ruleForm.telegram" placeholder="Ex: https://t.me/..." />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-
-                <el-row class="row-bg">
-                  <el-col :span="11">
-                    <el-form-item label="Instagram" prop="instagram">
-                      <el-input v-model.trim="ruleForm.instagram" placeholder="Ex: https://instagram.com/..." />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="1"></el-col>
-
-                  <el-col :span="12">
-                    <el-form-item label="Discord" prop="discord">
-                      <el-input v-model.trim="ruleForm.discord" placeholder="Ex: https://discord.com/" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-
-
-                <el-form-item label="Reddit" prop="reddit">
-                  <el-input v-model.trim="ruleForm.reddit" placeholder="Ex: https://reddit.com/..." />
-                </el-form-item>
-
-                <el-form-item label="Description" prop="description">
-                  <el-input v-model.trim="ruleForm.description" type="textarea"
-                    placeholder="Ex: This is the best project..." />
-                </el-form-item>
 
                 <!-- 步骤4 -->
-                <el-row class="row-bg formTable">
+                <el-row class="row-bg formTable2" v-show="flagX === 3">
                   <el-col :span="24">
                     <el-row class="row-bg">
                       <el-col :span="12">Total token</el-col>
@@ -466,16 +512,23 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 
                 <!-- 上一步、下一步 -->
-                <el-form-item>
-                  <el-button class="steps-Bar" @click="prev" type="primary" size="large">back</el-button>
-                  <el-button class="steps-Bar" @click="next" type="primary" size="large">Next </el-button>
-                </el-form-item>
+                <el-row class="row-bg" justify="center">
+                  <el-col :span="8"></el-col>
+                  <el-col :span="6">
 
-                <!-- 提交、重置按钮 -->
-                <el-form-item>
-                  <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
-                  <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-                </el-form-item>
+                    <el-form-item>
+                      <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
+                      <!-- <el-button @click="resetForm(ruleFormRef)">Reset</el-button> -->
+                    </el-form-item>
+
+                    <el-form-item>
+                      <el-button class="steps-Bar" @click="prev" type="primary" size="large">back</el-button>
+                      <el-button class="steps-Bar" @click="next" type="primary" size="large">Next </el-button>
+                    </el-form-item>
+
+                  </el-col>
+                  <el-col :span="6"></el-col>
+                </el-row>
 
               </el-form>
             </el-col>
@@ -532,7 +585,12 @@ const resetForm = (formEl: FormInstance | undefined) => {
     margin-bottom: 20px;
   }
 
-  .formTable {
+  .formTable1 {
+    background-color: #fff;
+    padding: 20px;
+  }
+
+  .formTable2 {
     background-color: #fff;
     padding: 20px;
 
@@ -550,7 +608,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
   .el-form-item {
     margin-bottom: 30px;
   }
-
 
   .el-row {
     margin-bottom: 20px;
