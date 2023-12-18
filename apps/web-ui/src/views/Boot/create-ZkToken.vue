@@ -4,12 +4,8 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { useConnectState } from '@/stores/connectState'
 
 let connectState = useConnectState();
-
-// console.log(connectState);  // Proxy(Object) {$id: 'connectState', $onAction: ƒ, $patch: ƒ, $reset: ƒ, $subscribe: ƒ, …}
-
 let { cnState } = connectState;
-
-console.log(cnState);
+// console.log(cnState);
 
 
 interface RuleForm {
@@ -78,11 +74,19 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
   await formEl.validate((valid, fields) => {
 
-    // Auro Wallet 连接状态 为 已连接 才能 create
+    // Auro Wallet 连接状态 为 已连接 才能 create     
     if (valid && cnState) {
+
       console.log('submit!')
+
+      // flag = false;
+      // console.log(flag);
+
     } else {
       console.log('error submit!', fields)
+
+      // flag = true;
+
     }
 
   })
@@ -95,29 +99,37 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields()
 }
 
+let flag = true;
+
+ref(flag)
+
+
 </script>
 
 <template>
   <el-row class="row-bg create-ZkToken" justify="center">
     <el-col :span="24">
 
-      <el-row>
-        <div class="create-ZkToken-title">
-          <h1>Create ZkToken</h1>
-        </div>
-      </el-row>
-
-      <el-row>
+      <el-row v-show="flag">
         <el-col :span="24">
+
+          <el-row>
+            <div class="create-ZkToken-title">
+              <h1>Create ZkToken</h1>
+            </div>
+          </el-row>
 
           <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm"
             size="large" status-icon label-position="top">
 
+            <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
+
             <el-form-item label="Token Type" prop="tokenType">
               <el-select v-model.trim="ruleForm.tokenType" placeholder="Basic ZkToken">
-                <el-option label="Basic ZkToken" value="Basic ZkToken" />
+                <el-option label="Basic ZkToken" value="Basic-ZkToken" />
               </el-select>
             </el-form-item>
+
 
             <el-form-item label="Name" prop="name">
               <el-input v-model.trim="ruleForm.name" placeholder="Ex: Mina" />
@@ -144,24 +156,27 @@ const resetForm = (formEl: FormInstance | undefined) => {
         </el-col>
       </el-row>
 
-      <el-row>
+      <el-button @click="flag = !flag">显示/隐藏</el-button>
+
+      <!-- 创建后 -->
+      <el-row class="row-bg tokenTable" justify="center" v-show="!flag">
         <el-col :span="24">
 
           <el-row> Your token was created ! </el-row>
 
           <el-row>
             <el-col :span="4">Name</el-col>
-            <el-col :span="12">tokenizk</el-col>
+            <el-col :span="12">{{ ruleForm.name }}</el-col>
           </el-row>
 
           <el-row>
             <el-col :span="4">Symbol</el-col>
-            <el-col :span="12">tz</el-col>
+            <el-col :span="12">{{ ruleForm.symbols }}</el-col>
           </el-row>
 
           <el-row>
             <el-col :span="4">Total supply</el-col>
-            <el-col :span="12">100,000</el-col>
+            <el-col :span="12">{{ ruleForm.totalSupply }}</el-col>
           </el-row>
 
           <el-row>
@@ -184,6 +199,21 @@ const resetForm = (formEl: FormInstance | undefined) => {
 .create-ZkToken {
   width: 100%;
   padding: 150px;
+  padding-top: 200px;
+
+  .form-notes {
+    font-size: 12px;
+    color: #00c798;
+  }
+
+  .tokenTable {
+    background-color: #fff;
+    padding: 20px;
+  }
+
+  .el-form-item {
+    margin-bottom: 35px;
+  }
 
   .el-row {
     margin-bottom: 40px;
