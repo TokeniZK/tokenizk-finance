@@ -548,12 +548,12 @@ const resetForm = (formEl: FormInstance | undefined) => {
   }
 
   .el-form-item {
-    margin-bottom: 10px;
+    margin-bottom: 30px;
   }
 
 
   .el-row {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 
 }
