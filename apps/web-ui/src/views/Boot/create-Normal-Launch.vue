@@ -26,10 +26,13 @@ interface RuleForm {
   name: string
   currency: string
   feeOptions: string
-  totalSellingAmount: string
+  presaleRate: string
   whiteList: string
   softCap: string
-  liquidity: string
+  hardCap: string
+  minimumBuy: string
+  maximumBuy: string
+  refundType: string
   startTime: string
   endTime: string
   liquidityLockup: string
@@ -52,10 +55,13 @@ const ruleForm = reactive<RuleForm>({
   name: '',
   feeOptions: '',
   currency: '',
-  totalSellingAmount: '',
+  presaleRate: '',
   whiteList: '',
   softCap: '',
-  liquidity: '',
+  hardCap: '',
+  minimumBuy: '',
+  maximumBuy: '',
+  refundType: '',
   startTime: '',
   endTime: '',
   liquidityLockup: '',
@@ -99,11 +105,11 @@ const rules = reactive<FormRules<RuleForm>>({
 
 
   // 步骤2
-  totalSellingAmount: [
+  presaleRate: [
     {
       type: 'number',
       required: true,
-      message: 'totalSellingAmount must be number type',
+      message: 'presaleRate must be number type',
       trigger: 'blur'
     },
   ],
@@ -125,12 +131,38 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  liquidity: [
+  hardCap: [
     {
       type: 'number',
       required: true,
-      message: 'liquidity must be number type',
+      message: 'hardCap must be number type',
       trigger: 'blur'
+    },
+  ],
+
+  minimumBuy: [
+    {
+      type: 'number',
+      required: true,
+      message: 'minimumBuy must be number type',
+      trigger: 'blur'
+    },
+  ],
+
+  maximumBuy: [
+    {
+      type: 'number',
+      required: true,
+      message: 'maximumBuy must be number type',
+      trigger: 'blur'
+    },
+  ],
+
+  refundType: [
+    {
+      required: true,
+      message: 'Please select a Refund type',
+      trigger: 'change',
     },
   ],
 
@@ -299,8 +331,8 @@ const resetForm = (formEl: FormInstance | undefined) => {
                 </el-form-item>
 
                 <!-- 步骤2 -->
-                <el-form-item label="Total selling amount" prop="totalSellingAmount">
-                  <el-input v-model.number.trim="ruleForm.totalSellingAmount" placeholder="0" />
+                <el-form-item label="Presale rate" prop="presaleRate">
+                  <el-input v-model.number.trim="ruleForm.presaleRate" placeholder="0" />
                   <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
                 </el-form-item>
 
@@ -312,14 +344,49 @@ const resetForm = (formEl: FormInstance | undefined) => {
                   </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="SoftCap (Mina)" prop="softCap">
-                  <el-input v-model.number.trim="ruleForm.softCap" placeholder="0" />
-                  <div class="form-notes"> Setting max contribution?</div>
+
+                <el-row class="row-bg">
+                  <el-col :span="11">
+                    <el-form-item label="SoftCap (Mina)" prop="softCap">
+                      <el-input v-model.number.trim="ruleForm.softCap" placeholder="0" />
+                      <div class="form-notes"> Softcap must be >= 25% of Hardcap!</div>
+                    </el-form-item>
+                  </el-col>
+
+                  <el-col :span="1"></el-col>
+
+                  <el-col :span="12">
+                    <el-form-item label="HardCap (Mina)" prop="hardCap">
+                      <el-input v-model.number.trim="ruleForm.hardCap" placeholder="0" />
+                      <div class="form-notes"> Setting max contribution?</div>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+
+
+                <el-row class="row-bg">
+                  <el-col :span="11">
+                    <el-form-item label="Minimum buy (Mina)" prop="minimumBuy">
+                      <el-input v-model.number.trim="ruleForm.minimumBuy" placeholder="0" />
+                    </el-form-item>
+                  </el-col>
+
+                  <el-col :span="1"></el-col>
+
+                  <el-col :span="12">
+                    <el-form-item label="Maximum buy (Mina)" prop="maximumBuy">
+                      <el-input v-model.number.trim="ruleForm.maximumBuy" placeholder="0" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+
+                <el-form-item label="Refund type" prop="refundType">
+                  <el-select v-model="ruleForm.refundType" placeholder="Refund">
+                    <el-option label="Refund" value="Refund" />
+                    <el-option label="Burn" value="Burn" />
+                  </el-select>
                 </el-form-item>
 
-                <el-form-item label="Liquidity (%)" prop="liquidity">
-                  <el-input v-model.number.trim="ruleForm.liquidity" placeholder="0" />
-                </el-form-item>
 
                 <el-row class="row-bg">
                   <el-col :span="12">
@@ -419,7 +486,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
                   <el-col :span="24">
                     <el-row class="row-bg">
                       <el-col :span="12">Total token</el-col>
-                      <el-col :span="12">{{ ruleForm.totalSellingAmount }}</el-col>
+                      <el-col :span="12">{{ ruleForm.presaleRate }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Token name</el-col>
@@ -428,20 +495,57 @@ const resetForm = (formEl: FormInstance | undefined) => {
                     <el-row>
                       <el-col :span="12">Token symbol</el-col>
                       <el-col :span="12"><!-- {{ ruleForm.symbol }} --></el-col>
-
                     </el-row>
                     <el-row>
                       <el-col :span="12">Token decimals</el-col>
                       <el-col :span="12"><!-- {{ ruleForm.decimals }} --></el-col>
                     </el-row>
+                    <!-- 注意 下面两项 -->
+                    <el-row>
+                      <el-col :span="12">Presale rate</el-col>
+                      <el-col :span="12"><!-- {{ ruleForm.presaleRate }} --></el-col>
+                    </el-row>
+
+                    <el-row>
+                      <el-col :span="12">Listing rate</el-col>
+                      <el-col :span="12"><!-- {{ ruleForm.listingRate }} --></el-col>
+                    </el-row>
+
+                    <el-row>
+                      <el-col :span="12">Sale method</el-col>
+                      <el-col :span="12"><!-- {{ ruleForm.saleMethod }} --></el-col>
+                    </el-row>
+
                     <el-row>
                       <el-col :span="12">Softcap</el-col>
                       <el-col :span="12">{{ ruleForm.softCap }}</el-col>
                     </el-row>
+
+                    <el-row>
+                      <el-col :span="12">HardCap</el-col>
+                      <el-col :span="12">{{ ruleForm.hardCap }}</el-col>
+                    </el-row>
+
+                    <el-row>
+                      <el-col :span="12">Unsold tokens</el-col>
+                      <el-col :span="12"><!-- {{ ruleForm.unsoldTokens }} --></el-col>
+                    </el-row>
+
+                    <el-row>
+                      <el-col :span="12">Minimum buy</el-col>
+                      <el-col :span="12">{{ ruleForm.minimumBuy }}</el-col>
+                    </el-row>
+
+                    <el-row>
+                      <el-col :span="12">Maximum buy</el-col>
+                      <el-col :span="12">{{ ruleForm.maximumBuy }}</el-col>
+                    </el-row>
+
                     <el-row>
                       <el-col :span="12">Liquidity</el-col>
-                      <el-col :span="12">{{ ruleForm.liquidity }}</el-col>
+                      <el-col :span="12"> <!-- {{ ruleForm.liquidity }} --></el-col>
                     </el-row>
+
                     <el-row>
                       <el-col :span="12">Start Time</el-col>
                       <el-col :span="12">{{ ruleForm.startTime }}</el-col>
@@ -529,6 +633,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
     margin-bottom: 20px;
   }
 
+  // 步骤4
   .formTable {
     background-color: #fff;
     padding: 20px;
@@ -545,12 +650,12 @@ const resetForm = (formEl: FormInstance | undefined) => {
   }
 
   .el-form-item {
-    margin-bottom: 10px;
+    margin-bottom: 30px;
   }
 
 
   .el-row {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 
 }
