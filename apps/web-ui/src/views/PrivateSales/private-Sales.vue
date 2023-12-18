@@ -14,11 +14,11 @@
         <el-col :span="8"></el-col>
 
         <el-col :span="6">
-          <router-link to="/private-sales">All Private Sales</router-link>
+          <router-link to="/private-sales" class="bline">All Private Sales</router-link>
         </el-col>
 
         <el-col :span="6">
-          <router-link to="/private-sales/my-contributions">My Contributions</router-link>
+          <router-link to="/private-sales/my-contributions" class="bline">My Contributions</router-link>
         </el-col>
 
         <el-col :span="4"></el-col>
@@ -44,6 +44,10 @@
 .private-Sales {
   width: 100%;
   padding-top: 100px;
+
+  .bline {
+    border-bottom: 2px solid #00FFC2;
+  }
 }
 
 .el-row {

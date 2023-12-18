@@ -9,16 +9,16 @@
         </el-col>
       </el-row>
 
-      <el-row style="margin:50px auto ;" justify="center">
+      <el-row style="margin:50px auto;" justify="center">
 
         <el-col :span="8"></el-col>
 
         <el-col :span="6">
-          <router-link to="/pre-sales">All launchpads</router-link>
+          <router-link to="/pre-sales" class="bline">All launchpads</router-link>
         </el-col>
 
         <el-col :span="6">
-          <router-link to="/pre-sales/my-contributions">My Contributions</router-link>
+          <router-link to="/pre-sales/my-contributions" class="bline">My Contributions</router-link>
         </el-col>
 
         <el-col :span="4"></el-col>
@@ -42,6 +42,11 @@
 .pre-Sales {
   width: 100%;
   padding-top: 100px;
+
+  .bline {
+    border-bottom: 2px solid #00FFC2;
+  }
+
 }
 
 .el-row {
