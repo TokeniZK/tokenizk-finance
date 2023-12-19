@@ -3,6 +3,13 @@ import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useConnectState } from '@/stores/connectState'
 
+const goToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+};
+
 // 判断钱包连接状态
 let connectState = useConnectState();
 let { cnState } = connectState;
@@ -18,7 +25,9 @@ const nextX = () => {
     flagX.value = 3
   } else {
     flagX.value++
+    goToTop()
   }
+
 }
 
 const prevX = () => {
@@ -27,6 +36,7 @@ const prevX = () => {
     flagX.value = 0
   } else {
     flagX.value--
+    goToTop()
   }
 
 }
@@ -42,6 +52,7 @@ const next = () => {
     active.value++
     nextX()
   }
+
 }
 
 const prev = () => {
@@ -54,7 +65,6 @@ const prev = () => {
   }
 
 }
-
 
 
 interface RuleForm {
@@ -244,7 +254,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     // Auro Wallet 连接状态 为 已连接 才能 create     valid && cnState
-    if (valid) {
+    if (valid && cnState) {
       console.log('submit!')
     } else {
       console.log('error submit!', fields)
@@ -303,6 +313,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 <el-row class="row-bg formTable1" v-show="flagX === 0">
                   <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
                   <el-col :span="24">
+
                     <el-row class="row-bg">
                       <el-col :span="11">
                         <el-form-item label="Token address" prop="tokenddress">
@@ -385,8 +396,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 <!-- 步骤3 -->
                 <el-row class="row-bg formTable1" v-show="flagX === 2">
                   <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
-
                   <el-col :span="24">
+
                     <el-row class="row-bg">
                       <el-col :span="11">
                         <el-form-item label="Logo URL" prop="logoUrl">
@@ -466,6 +477,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 <!-- 步骤4 -->
                 <el-row class="row-bg formTable2" v-show="flagX === 3">
                   <el-col :span="24">
+
                     <el-row class="row-bg">
                       <el-col :span="12">Total token</el-col>
                       <el-col :span="12">{{ ruleForm.totalSellingAmount }}</el-col>
@@ -514,19 +526,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 <!-- 上一步、下一步 -->
                 <el-row class="row-bg" justify="center">
                   <el-col :span="8"></el-col>
+
                   <el-col :span="6">
-
-                    <el-form-item>
-                      <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
-                      <!-- <el-button @click="resetForm(ruleFormRef)">Reset</el-button> -->
-                    </el-form-item>
-
                     <el-form-item>
                       <el-button class="steps-Bar" @click="prev" type="primary" size="large">back</el-button>
                       <el-button class="steps-Bar" @click="next" type="primary" size="large">Next </el-button>
+                      <!-- <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button> -->
                     </el-form-item>
-
                   </el-col>
+
                   <el-col :span="6"></el-col>
                 </el-row>
 

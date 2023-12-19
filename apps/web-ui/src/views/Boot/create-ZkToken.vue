@@ -3,6 +3,13 @@ import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useConnectState } from '@/stores/connectState'
 
+const goToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+};
+
 let connectState = useConnectState();
 let { cnState } = connectState;
 // console.log(cnState);
@@ -81,11 +88,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
 
     // Auro Wallet 连接状态 为 已连接 才能 create       valid && cnState
-    if (valid && cnState) {
+    if (valid) {
 
       console.log('submit!')
 
       getFlag()
+
+      goToTop()
 
     } else {
       console.log('error submit!', fields)
@@ -195,8 +204,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 <style lang="less" scoped>
 .create-ZkToken {
   width: 100%;
-  padding: 150px;
-  padding-top: 200px;
+  padding: 120px;
 
   .form-notes {
     font-size: 12px;

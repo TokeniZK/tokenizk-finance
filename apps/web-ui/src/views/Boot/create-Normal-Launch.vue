@@ -3,6 +3,13 @@ import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useConnectState } from '@/stores/connectState'
 
+const goToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+};
+
 // 判断钱包连接状态
 let connectState = useConnectState();
 let { cnState } = connectState;
@@ -18,6 +25,7 @@ const nextX = () => {
     flagX.value = 3
   } else {
     flagX.value++
+    goToTop()
   }
 }
 
@@ -27,6 +35,7 @@ const prevX = () => {
     flagX.value = 0
   } else {
     flagX.value--
+    goToTop()
   }
 
 }
@@ -623,19 +632,15 @@ const resetForm = (formEl: FormInstance | undefined) => {
                 <!-- 上一步、下一步 -->
                 <el-row class="row-bg" justify="center">
                   <el-col :span="8"></el-col>
+
                   <el-col :span="6">
-
-                    <el-form-item>
-                      <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
-                      <!-- <el-button @click="resetForm(ruleFormRef)">Reset</el-button> -->
-                    </el-form-item>
-
                     <el-form-item>
                       <el-button class="steps-Bar" @click="prev" type="primary" size="large">back</el-button>
                       <el-button class="steps-Bar" @click="next" type="primary" size="large">Next </el-button>
+                      <!-- <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button> -->
                     </el-form-item>
-
                   </el-col>
+
                   <el-col :span="6"></el-col>
                 </el-row>
 
