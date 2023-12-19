@@ -45,7 +45,7 @@
   width: 100%;
   padding-top: 100px;
 
-  .bline {
+  .bline:hover {
     border-bottom: 2px solid #00FFC2;
   }
 }

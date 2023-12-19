@@ -28,9 +28,11 @@
       <!-- 三级路由出口组件 -->
       <el-row>
         <el-col :span="24">
+
           <keep-alive>
             <router-view />
           </keep-alive>
+
         </el-col>
       </el-row>
 
@@ -43,7 +45,7 @@
   width: 100%;
   padding-top: 100px;
 
-  .bline {
+  .bline:hover {
     border-bottom: 2px solid #00FFC2;
   }
 
