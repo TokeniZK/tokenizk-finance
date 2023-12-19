@@ -8,7 +8,7 @@ import PresaleDetails from '@/views/PreSales/presale-details.vue'
 
 import PrivateSales from '../views/PrivateSales/private-sales.vue'
 import AllPrivateSales from '../views/PrivateSales/components/AllPrivateSales.vue'
-import MyPrivateSalesContributions from '../views/PrivateSales/components/MyPrivateSalesContributions.vue'
+import PrivateSalesMyContributions from '../views/PrivateSales/components/PrivateSalesMyContributions.vue'
 
 import AirdropList from '../views/AirDrop/airdrop-List.vue'
 import CreateZkToken from '../views/Boot/create-ZkToken.vue'
@@ -67,7 +67,7 @@ const router = createRouter({
             },
             {
               path: '/private-sales/my-contributions',
-              component: MyPrivateSalesContributions
+              component: PrivateSalesMyContributions
             }
           ]
         },
