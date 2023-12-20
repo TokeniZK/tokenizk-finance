@@ -32,6 +32,48 @@ export const handler: RequestHandler<SaleReq, null> = async function (
 ): Promise<BaseResponse<PresaleDto[]>> {
     const saleReq = req.body
 
+    const saleReq = req.body
+
+    try {
+        const connection = getConnection();
+        const presaleRepo = connection.getRepository(Presale)
+
+        const queryBuilder = presaleRepo.createQueryBuilder('ps');
+
+        if (saleReq?.contributorAddress) {
+            //
+            const presaleRepo = connection.getRepository(UserTokenPresale)
+            const userPresaleList = await presaleRepo.find({
+                where: {
+                    userAddress: saleReq.contributorAddress
+                }
+            })??[]
+
+            if (userPresaleList.length > 0) {
+                queryBuilder.andWhereInIds(userPresaleList.map(p => p.saleId));
+            }
+        }
+
+        if (saleReq?.saleName) {
+            queryBuilder.andWhere(`ps.saleName like '%${saleReq.saleName}%'`);
+        }
+
+        
+
+        const presaleList = (await queryBuilder.orderBy({createdAt: 'DESC'}).getMany()) ?? [];
+
+        return {
+            code: 0,
+            data: presaleList as PresaleDto[],
+            msg: ''
+        };
+    } catch (err) {
+        logger.error(err);
+        console.error(err);
+
+        throw req.throwError(httpCodes.INTERNAL_SERVER_ERROR, "Internal server error")
+    }
+    
 }
 
 const schema = {
