@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { getAllLaunchpadsAPI } from '@/apis/presaleAllLaunchpads'
-import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
+import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
+import { onMounted, reactive } from 'vue'
+import { Search } from '@element-plus/icons-vue'
 
 // 生成 唯一标识符
 import { nanoid } from 'nanoid'
-
 // 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
+// 搜索获取项目
+import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
+
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
@@ -17,78 +20,93 @@ const getAllLaunchpads = async () => {
   const res = await getAllLaunchpadsAPI()
   console.log(res);
   allLaunchpadsList.value = res.data
-
 }
 
-// 组件挂载完成后执行的函数
+// 组件挂载完成后执行的函数    
 onMounted(() => {
   getAllLaunchpads()
 })
 
-const value = ref('')
-const value2 = ref('')
-const input = ref('')
 
-const options1 = [
+// 搜索
+let keyWord = ref('')
+
+const getSearchProjects = async () => {
+  let searchRes = getSearchProjectAPI(keyWord);
+  console.log(searchRes);
+  // allLaunchpadsList.value = searchRes.value
+}
+
+// 过滤器
+const filterBy = ref('')
+const sortBy = ref('')
+
+const filterByOptions = [
   {
-    value: 'All Status',
+    value: '0',
     label: 'All Status',
   },
   {
-    value: 'Upcoming',
+    value: '1',
     label: 'Upcoming',
   },
   {
-    value: 'Ongoing',
+    value: '2',
     label: 'Ongoing',
   },
   {
-    value: 'Filled',
+    value: '3',
     label: 'Filled',
   },
   {
-    value: 'Ended',
+    value: '4',
     label: 'Ended',
   },
   {
-    value: 'Canceled',
+    value: '5',
     label: 'Canceled',
   },
 ]
 
-const options2 = [
+const sortByOptions = [
   {
-    value2: 'No Filter',
-    label2: 'No Filter',
+    value: '0',
+    label: 'No Sort',
   },
   {
-    value2: 'Hard Cap',
-    label2: 'Hard Cap',
+    value: '1',
+    label: 'Hard Cap',
   },
   {
-    value2: 'Soft Cap',
-    label2: 'Soft Cap',
+    value: '2',
+    label: 'Soft Cap',
   },
   {
-    value2: 'LP percent',
-    label2: 'LP percent',
+    value: '3',
+    label: 'LP percent',
   },
   {
-    value2: 'Start time',
-    label2: 'Start time',
+    value: '4',
+    label: 'Start time',
   },
   {
-    value2: 'End time',
-    label2: 'End time',
+    value: '5',
+    label: 'End time',
   },
 ]
 
+const searchProjects = () => {
+  filterBy.value = '0'
+  sortBy.value = '0'
+}
 
-let obj = [{
+
+// 临时数据渲染
+let obj = reactive([{
   id: nanoid(),
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
-  state: 'Ongoing',
+  status: '3',
   teamName: 'Yoga',
   star: '4',
   preSaleAddr: 'B62',
@@ -108,6 +126,7 @@ let obj = [{
   id: nanoid(),
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
+  status: '2',
   teamName: 'Yoga',
   star: '2',
   preSaleAddr: 'B62',
@@ -127,6 +146,7 @@ let obj = [{
   id: nanoid(),
   photo: '/src/assets/images/3.png',
   name: 'Ripple Frog',
+  status: '1',
   teamName: 'Yoga',
   star: '2',
   preSaleAddr: 'B62',
@@ -146,8 +166,9 @@ let obj = [{
   id: nanoid(),
   photo: '/src/assets/images/1.png',
   name: 'FastAI',
+  status: '2',
   teamName: 'Yoga',
-  star: '5',
+  star: '4',
   preSaleAddr: 'B62',
   softCap: '10',
   hardCap: '50',
@@ -165,6 +186,7 @@ let obj = [{
   id: nanoid(),
   photo: '/src/assets/images/2.png',
   name: 'Wrapped XRP',
+  status: '5',
   teamName: 'Yoga',
   star: '2',
   preSaleAddr: 'B62',
@@ -184,6 +206,7 @@ let obj = [{
   id: nanoid(),
   photo: '/src/assets/images/3.png',
   name: 'THREADS V2',
+  status: '3',
   teamName: 'Yoga',
   star: '2',
   preSaleAddr: 'B62',
@@ -203,6 +226,7 @@ let obj = [{
   id: nanoid(),
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
+  status: '2',
   teamName: 'Yoga',
   star: '5',
   preSaleAddr: 'B62',
@@ -222,6 +246,7 @@ let obj = [{
   id: nanoid(),
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
+  status: '3',
   teamName: 'Yoga',
   star: '2',
   preSaleAddr: 'B62',
@@ -241,6 +266,7 @@ let obj = [{
   id: nanoid(),
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
+  status: '5',
   teamName: 'Yoga',
   star: '2',
   preSaleAddr: 'B62',
@@ -256,9 +282,26 @@ let obj = [{
   firstReleaseForProject: '95%',
   vestingForProject: '3% each 1 days',
 },
-]
+])
 
-reactive(obj);
+// 处理映射关系
+obj.map((item) => {
+  // console.log(item.status);
+  if (item.status === '0') {
+    item.status = 'All Status'
+  } else if (item.status === '1') {
+    item.status = 'Upcoming'
+  } else if (item.status === '2') {
+    item.status = 'Ongoing'
+  } else if (item.status === '3') {
+    item.status = 'Filled'
+  } else if (item.status === '4') {
+    item.status = 'Ended'
+  } else if (item.status === '5') {
+    item.status = 'Canceled'
+  }
+})
+
 
 </script>
 
@@ -272,21 +315,29 @@ reactive(obj);
 
         <el-col :span="13">
           <div style="height: 19.59px;"></div>
-          <el-input v-model="input" placeholder="Please input" size="large" />
+
+          <div class="mt-4">
+            <el-input v-model="keyWord" placeholder="Please input" class="input-with-select" size="large">
+              <template #append>
+                <el-button :icon="Search" @click="searchProjects" />
+              </template>
+            </el-input>
+          </div>
+
         </el-col>
 
         <!-- 过滤器 -->
         <el-col :span="3">
           <div>Filter By</div>
-          <el-select v-model="value" class="m-2 pool-filter" placeholder="All Status" size="large">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select v-model="filterBy" class="m-2 pool-filter" placeholer="Select" size="large">
+            <el-option v-for="item in filterByOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-col>
 
         <el-col :span="3">
           <div>Sort By</div>
-          <el-select v-model="value2" class="m-2 pool-filter" placeholder="No Filter" size="large">
-            <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.value2" />
+          <el-select v-model="sortBy" class="m-2 pool-filter" placeholder="Select" size="large">
+            <el-option v-for="item in sortByOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-col>
 
@@ -298,8 +349,6 @@ reactive(obj);
 
           <ul class="launchpads-ul">
             <li v-for="item in obj" :key="item.id">
-
-              <!-- <el-card shadow="hover"> -->
 
               <div class="launchpads-box">
 
@@ -335,11 +384,17 @@ reactive(obj);
                 <!-- 项目描述 -->
                 <el-row class="launchpads-content">
 
-                  <el-col>
+                  <el-col :span="24">
 
-                    <el-row>
-                      <el-col :span="24">
-                        <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
+                    <el-row class="row-bg" justify="space-between">
+                      <el-col :span="8">
+                        <h4><a href="#">{{ item.name }}</a></h4>
+                      </el-col>
+
+                      <el-col :span="5"></el-col>
+
+                      <el-col class="review" :span="7">
+                        <el-button type="primary" round>{{ item.status }}</el-button>
                       </el-col>
                     </el-row>
 
@@ -397,7 +452,6 @@ reactive(obj);
 
               </div>
 
-              <!-- </el-card> -->
 
             </li>
           </ul>
@@ -415,6 +469,10 @@ reactive(obj);
   height: 100%;
   padding-top: 20px;
   padding-bottom: 50px;
+
+  .input-with-select .el-input-group__prepend {
+    background-color: var(--el-fill-color-blank);
+  }
 
   .launchpads-ul {
     width: 100%;
