@@ -58,7 +58,13 @@ export const handler: RequestHandler<SaleReq, null> = async function (
             queryBuilder.andWhere(`ps.saleName like '%${saleReq.saleName}%'`);
         }
 
-        
+        if (saleReq?.saleAddress) {
+            queryBuilder.andWhere(`ps.saleAddress = '${saleReq.saleAddress}'`);
+        }
+
+        if (saleReq?.tokenAddress) {
+            queryBuilder.andWhere(`ps.tokenAddress = '${saleReq.tokenAddress}'`);
+        }
 
         const presaleList = (await queryBuilder.orderBy({createdAt: 'DESC'}).getMany()) ?? [];
 
