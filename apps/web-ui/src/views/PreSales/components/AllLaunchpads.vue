@@ -22,7 +22,7 @@ const getAllLaunchpads = async () => {
   allLaunchpadsList.value = res.data
 }
 
-// 组件挂载完成后执行的函数    
+// 组件挂载完成后执行的函数  请求数据  
 onMounted(() => {
   getAllLaunchpads()
 })
@@ -41,6 +41,7 @@ const getSearchProjects = async () => {
 const filterBy = ref('')
 const sortBy = ref('')
 
+// 渲染所需的数据
 const filterByOptions = [
   {
     value: '0',
@@ -62,10 +63,10 @@ const filterByOptions = [
     value: '4',
     label: 'Ended',
   },
-  {
-    value: '5',
-    label: 'Canceled',
-  },
+  // {
+  //   value: '5',
+  //   label: 'Canceled',
+  // },
 ]
 
 const sortByOptions = [
@@ -75,22 +76,22 @@ const sortByOptions = [
   },
   {
     value: '1',
-    label: 'Hard Cap',
-  },
-  {
-    value: '2',
     label: 'Soft Cap',
   },
   {
-    value: '3',
-    label: 'LP percent',
+    value: '2',
+    label: 'Hard Cap',
   },
+  // {
+  //   value: '3',
+  //   label: 'LP percent',
+  // },
   {
-    value: '4',
+    value: '3',
     label: 'Start time',
   },
   {
-    value: '5',
+    value: '4',
     label: 'End time',
   },
 ]
@@ -102,205 +103,237 @@ const searchProjects = () => {
 
 
 // 临时数据渲染
-let obj = reactive([{
-  id: nanoid(),
-  photo: '/src/assets/images/1.png',
-  name: 'Oggy Inu 2.0',
-  status: '3',
-  teamName: 'Yoga',
-  star: '4',
-  preSaleAddr: 'B62',
-  softCap: '20',
-  hardCap: '50',
-  totalContributedMina: '40',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '10%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wojak 2.69',
-  status: '2',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  hardCap: '60',
-  totalContributedMina: '20',
-  progressStart: '0',
-  progressEnd: '60',
-  liquidity: '30%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/3.png',
-  name: 'Ripple Frog',
-  status: '1',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '30',
-  hardCap: '45',
-  totalContributedMina: '60',
-  progressStart: '0',
-  progressEnd: '45',
-  liquidity: '53%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/1.png',
-  name: 'FastAI',
-  status: '2',
-  teamName: 'Yoga',
-  star: '4',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  hardCap: '50',
-  totalContributedMina: '30',
-  progressStart: '10',
-  progressEnd: '50',
-  liquidity: '40%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wrapped XRP',
-  status: '5',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  hardCap: '50',
-  totalContributedMina: '50',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '30%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/3.png',
-  name: 'THREADS V2',
-  status: '3',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  hardCap: '50',
-  totalContributedMina: '10',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '30%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/1.png',
-  name: 'Oggy Inu 2.0',
-  status: '2',
-  teamName: 'Yoga',
-  star: '5',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  hardCap: '50',
-  totalContributedMina: '13',
-  progressStart: '23',
-  progressEnd: '50',
-  liquidity: '15%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wojak 2.69',
-  status: '3',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  hardCap: '50',
-  totalContributedMina: '42',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '23%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wojak 2.69',
-  status: '5',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  hardCap: '50',
-  totalContributedMina: '23',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '54%',
-  lockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
+let obj = reactive([
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/1.png',
+    name: 'Oggy Inu 2.0',
+    status: '',
+    teamName: 'Yoga',
+    star: '4',
+    preSaleAddr: 'B62',
+    softCap: '20',
+    hardCap: '50',
+    totalContributedMina: '40',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '10%',
+    lockupTime: '365day',
+    presaleStartTime: 1704083125572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'Yoga',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '60',
+    totalContributedMina: '20',
+    progressStart: '0',
+    progressEnd: '60',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1703082115572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/3.png',
+    name: 'Ripple Frog',
+    status: '',
+    teamName: 'Yoga',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '30',
+    hardCap: '45',
+    totalContributedMina: '60',
+    progressStart: '0',
+    progressEnd: '45',
+    liquidity: '53%',
+    lockupTime: '365day',
+    presaleStartTime: 1703003135572,
+    presaleEndTime: 1703003115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/1.png',
+    name: 'FastAI',
+    status: '',
+    teamName: 'Yoga',
+    star: '4',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '50',
+    totalContributedMina: '30',
+    progressStart: '10',
+    progressEnd: '50',
+    liquidity: '40%',
+    lockupTime: '365day',
+    presaleStartTime: 1703003135572,
+    presaleEndTime: 1703003115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Wrapped XRP',
+    status: '',
+    teamName: 'Yoga',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '50',
+    totalContributedMina: '50',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1702083115572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/3.png',
+    name: 'THREADS V2',
+    status: '',
+    teamName: 'Yoga',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '50',
+    totalContributedMina: '10',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1704083125572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/1.png',
+    name: 'Oggy Inu 2.0',
+    status: '',
+    teamName: 'Yoga',
+    star: '5',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '50',
+    totalContributedMina: '13',
+    progressStart: '23',
+    progressEnd: '50',
+    liquidity: '15%',
+    lockupTime: '365day',
+    presaleStartTime: 1704083125572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'Yoga',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '50',
+    totalContributedMina: '42',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '23%',
+    lockupTime: '365day',
+    presaleStartTime: 1703083145572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'Yoga',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '50',
+    totalContributedMina: '23',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '54%',
+    lockupTime: '365day',
+    presaleStartTime: 1703083115572,
+    presaleEndTime: 1706093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+  },
 ])
 
 // 处理映射关系
-obj.map((item) => {
-  // console.log(item.status);
-  if (item.status === '0') {
-    item.status = 'All Status'
-  } else if (item.status === '1') {
+// obj.map((item) => {
+//   // console.log(item.status);
+//   if (item.status === '0') {
+//     item.status = 'All Status'
+//   } else if (item.status === '1') {
+//     item.status = 'Upcoming'
+//   } else if (item.status === '2') {
+//     item.status = 'Ongoing'
+//   } else if (item.status === '3') {
+//     item.status = 'Filled'
+//   } else if (item.status === '4') {
+//     item.status = 'Ended'
+//   }
+// })
+
+// 判断项目的状态
+let currentTime = new Date().getTime();
+
+obj.filter(item => {
+  if (item.presaleStartTime > currentTime) {
     item.status = 'Upcoming'
-  } else if (item.status === '2') {
+  } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
     item.status = 'Ongoing'
-  } else if (item.status === '3') {
-    item.status = 'Filled'
-  } else if (item.status === '4') {
+  } else if (item.presaleEndTime < currentTime) {
     item.status = 'Ended'
-  } else if (item.status === '5') {
-    item.status = 'Canceled'
+  } else {
+    item.status = 'All Status'
   }
 })
+
+const filterOption = (option: string) => {
+
+  const filterProjects = obj.filter(item => { 
+    if (item.status === option) {
+      return item
+    }
+  })
+
+}
+
+
+
+// sort排序 由近到远
+// obj.sort()
+
+
+
 
 
 </script>
@@ -329,14 +362,15 @@ obj.map((item) => {
         <!-- 过滤器 -->
         <el-col :span="3">
           <div>Filter By</div>
-          <el-select v-model="filterBy" class="m-2 pool-filter" placeholer="Select" size="large">
-            <el-option v-for="item in filterByOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select v-model="filterBy" class="m-2 filterBy" placeholer="Select" size="large">
+            <el-option v-for="item in filterByOptions" :key="item.value" :label="item.label" :value="item.value"
+              @click="filterOption(item.value)" />
           </el-select>
         </el-col>
 
         <el-col :span="3">
           <div>Sort By</div>
-          <el-select v-model="sortBy" class="m-2 pool-filter" placeholder="Select" size="large">
+          <el-select v-model="sortBy" class="m-2 sortBy" placeholder="Select" size="large">
             <el-option v-for="item in sortByOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-col>
