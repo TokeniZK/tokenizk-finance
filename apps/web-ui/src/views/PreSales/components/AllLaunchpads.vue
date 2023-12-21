@@ -380,9 +380,6 @@ const filterOption = (option: string) => {
 
 // 根据 用户选择 sortBy的选项 sort排序 由近到远
 const sortOption = (option: string) => {
-
-  console.log(option);
-
   // sort
   if (sortBy.value == '1') {
     renderSaleBlock.sort((a, b) => {
@@ -453,13 +450,17 @@ const sortOption = (option: string) => {
         <el-col :span="20">
 
           <ul class="launchpads-ul">
+
             <li v-for="item in obj.saleList" :key="item.id">
 
               <div class="launchpads-box">
 
                 <!-- photo -->
                 <el-row class="thumb">
-                  <el-image :src="item.photo" :alt="item.name" loading="lazy" :fit="contain" />
+                  <router-link to="/presale-datails">
+                    <!-- <img :src="item.photo" :alt="item.name"> -->
+                    <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
+                  </router-link>
                 </el-row>
 
                 <!-- 项目描述 -->
@@ -547,7 +548,6 @@ const sortOption = (option: string) => {
 <style lang="less" scoped>
 .all-launchpads {
   width: 100%;
-  height: 100%;
   padding-top: 20px;
   padding-bottom: 50px;
 
