@@ -88,8 +88,22 @@ try {
 
                         await queryRunner.manager.save(user);
 
+                    } else if (e.type == 'claimTokens') {
+                        const claimTokenEvent: ClaimTokenEvent = e.event.data;
+
+                        const user = (await queryRunner.manager.find(UserTokenPresale, { saleAddress: presale.saleAddress }))![0];
+                        user.claimBlockHeight = blockHeight;
+                        user.claimAmount = claimTokenEvent.presaleContribution.minaAmount.toString();
+                        await queryRunner.manager.save(user);
+
+                        // save to nullifier_record
+                        const saleEventFetchRecord = new SaleEventFetchRecord();
+                        saleEventFetchRecord.address = user.contributorAddress;
+                        saleEventFetchRecord.blockHeight = blockHeight;
+                        await queryRunner.manager.save(saleEventFetchRecord);
+
+                        ifNotifySyncNullifier = true;
                     }
-		
         return true;
     } catch (error) {
         console.error(error);
