@@ -360,24 +360,24 @@ let obj = reactive({ saleList: renderSaleBlock });
                         </el-row>
 
                         <el-row class="row-bg sub-title" justify="space-between">
-                          <el-col :span="10" class="is-flex-grow-1"> 0 Mina</el-col>
+                          <el-col :span="10"> 0 Mina</el-col>
                           <el-col :span="4"></el-col>
-                          <el-col :span="6" class="is-flex-grow-1 has-text-right">50 Mina</el-col>
+                          <el-col :span="6">50 Mina</el-col>
                         </el-row>
 
                       </el-col>
                     </el-row>
 
                     <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10" class="is-flex-grow-1">Liquidity %:</el-col>
+                      <el-col :span="10">Liquidity %:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6" class="is-flex-grow-1 has-text-right time-text"> {{ item.liquidity }}</el-col>
+                      <el-col :span="6"> {{ item.liquidity }}</el-col>
                     </el-row>
 
                     <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10" class="is-flex-grow-1">Lockup Time:</el-col>
+                      <el-col :span="10">Lockup Time:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6" class="is-flex-grow-1 has-text-right time-text">365 day</el-col>
+                      <el-col :span="6">365 day</el-col>
                     </el-row>
 
                   </el-col>

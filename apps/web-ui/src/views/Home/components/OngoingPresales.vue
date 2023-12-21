@@ -24,180 +24,236 @@ onMounted(() => {
 })
 
 
-let obj = [{
-  id: nanoid(),
-  photo: '/src/assets/images/1.png',
-  name: 'Oggy Inu 2.0',
-  teamName: 'Yoga',
-  star: '4',
-  preSaleAddr: 'B62',
-  softCap: '20',
-  HardCap: '50',
-  totalContributedMina: '40',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '10%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wojak 2.69',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  HardCap: '60',
-  totalContributedMina: '20',
-  progressStart: '0',
-  progressEnd: '60',
-  liquidity: '30%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/3.png',
-  name: 'Ripple Frog',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '30',
-  HardCap: '45',
-  totalContributedMina: '60',
-  progressStart: '0',
-  progressEnd: '45',
-  liquidity: '53%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/1.png',
-  name: 'FastAI',
-  teamName: 'Yoga',
-  star: '5',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  HardCap: '50',
-  totalContributedMina: '30',
-  progressStart: '10',
-  progressEnd: '50',
-  liquidity: '40%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wrapped XRP',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  HardCap: '50',
-  totalContributedMina: '50',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '30%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/3.png',
-  name: 'THREADS V2',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  HardCap: '50',
-  totalContributedMina: '10',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '30%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/1.png',
-  name: 'Oggy Inu 2.0',
-  teamName: 'Yoga',
-  star: '5',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  HardCap: '50',
-  totalContributedMina: '13',
-  progressStart: '23',
-  progressEnd: '50',
-  liquidity: '15%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wojak 2.69',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  HardCap: '50',
-  totalContributedMina: '42',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '23%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-{
-  id: nanoid(),
-  photo: '/src/assets/images/2.png',
-  name: 'Wojak 2.69',
-  teamName: 'Yoga',
-  star: '2',
-  preSaleAddr: 'B62',
-  softCap: '10',
-  HardCap: '50',
-  totalContributedMina: '23',
-  progressStart: '0',
-  progressEnd: '50',
-  liquidity: '54%',
-  LockupTime: '365day',
-  presaleStartTime: '2023.12.15 19:37 (UTC)',
-  presaleEndTime: '2024.01.12 19:38 (UTC)',
-  firstReleaseForProject: '95%',
-  vestingForProject: '3% each 1 days',
-},
-]
+// 切换路由地址时，请求响应回来的数据  渲染出每个项目
+const fetchResult = [
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/1.png',
+    name: 'Oggy Inu 2.0',
+    status: '',
+    teamName: 'Yoga',
+    star: '4',
+    preSaleAddr: 'B62',
+    softCap: '21',
+    hardCap: '60',
+    totalContributedMina: '40',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '10%',
+    lockupTime: '365day',
+    presaleStartTime: 1704081125572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 4,
+    contributedMinaAmount: 1000,
+    recievedTokenAmount: 4000,
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'walking',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '60',
+    totalContributedMina: '20',
+    progressStart: '0',
+    progressEnd: '60',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1702082115572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 3,
+    contributedMinaAmount: 2000,
+    recievedTokenAmount: 6000,
 
-reactive(obj);
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/3.png',
+    name: 'Ripple Frog',
+    status: '',
+    teamName: 'cherry',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '30',
+    hardCap: '45',
+    totalContributedMina: '60',
+    progressStart: '0',
+    progressEnd: '45',
+    liquidity: '53%',
+    lockupTime: '365day',
+    presaleStartTime: 1703003135572,
+    presaleEndTime: 1703003115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 2,
+    contributedMinaAmount: 500,
+    recievedTokenAmount: 1000,
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/3.png',
+    name: 'FastAI',
+    status: '',
+    teamName: 'Tang',
+    star: '4',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '55',
+    totalContributedMina: '30',
+    progressStart: '10',
+    progressEnd: '50',
+    liquidity: '40%',
+    lockupTime: '365day',
+    presaleStartTime: 1703003135572,
+    presaleEndTime: 1703003115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 3,
+    contributedMinaAmount: 5000,
+    recievedTokenAmount: 15000,
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Wrapped XRP',
+    status: '',
+    teamName: 'mina',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '9',
+    hardCap: '50',
+    totalContributedMina: '50',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1702083115572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 6,
+    contributedMinaAmount: 1500,
+    recievedTokenAmount: 9000,
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/1.png',
+    name: 'THREADS V2',
+    status: '',
+    teamName: 'BTC',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '12',
+    hardCap: '50',
+    totalContributedMina: '10',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1704083125572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 8,
+    contributedMinaAmount: 3000,
+    recievedTokenAmount: 24000,
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Oggy Inu 2.0',
+    status: '',
+    teamName: 'Yoga',
+    star: '5',
+    preSaleAddr: 'B62',
+    softCap: '11',
+    hardCap: '50',
+    totalContributedMina: '13',
+    progressStart: '23',
+    progressEnd: '50',
+    liquidity: '15%',
+    lockupTime: '365day',
+    presaleStartTime: 1704083125572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 3,
+    contributedMinaAmount: 4000,
+    recievedTokenAmount: 12000,
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'Yoga',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '20',
+    hardCap: '50',
+    totalContributedMina: '42',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '23%',
+    lockupTime: '365day',
+    presaleStartTime: 1703083145572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 5,
+    contributedMinaAmount: 6000,
+    recievedTokenAmount: 30000,
+  },
+  {
+    id: nanoid(),
+    photo: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'Yoga',
+    star: '2',
+    preSaleAddr: 'B62',
+    softCap: '10',
+    hardCap: '50',
+    totalContributedMina: '23',
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '54%',
+    lockupTime: '365day',
+    presaleStartTime: 1703083115572,
+    presaleEndTime: 1706093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 10,
+    contributedMinaAmount: 300,
+    recievedTokenAmount: 3000,
+  },
+];
+
+// 判断项目的状态
+let currentTime = new Date().getTime();
+fetchResult.forEach(item => {
+  if (item.presaleStartTime > currentTime) {
+    item.status = 'Upcoming'
+  } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
+    item.status = 'Ongoing'
+  } else if (item.presaleEndTime < currentTime) {
+    item.status = 'Ended'
+  } else {
+    item.status = 'All Status'
+  }
+});
+
+
+let renderSaleBlock = fetchResult;
+// 临时数据
+let obj = reactive({ saleList: renderSaleBlock });
 
 </script>
 
@@ -246,7 +302,7 @@ reactive(obj);
           <ul class="launchpads-ul" style="width:100%;">
             <el-carousel :interval="3000" type="card" height="500px" style="width:100%;">
               <el-carousel-item v-for="item in 3" :key="item" style="width:100%;">
-                <li v-for="item in obj" :key="item.id">
+                <li v-for="item in obj.saleList" :key="item.id">
 
                   <!-- <el-card shadow="hover"> -->
 
@@ -255,40 +311,26 @@ reactive(obj);
                     <!-- photo -->
                     <el-row class="thumb">
 
-                      <el-col>
 
-                        <el-row>
-                          <img :src="item.photo" :alt="item.name" style="width: 349px; height: 160px;">
-                        </el-row>
+                      <img :src="item.photo" :alt="item.name" style="width: 349px; height: 160px;">
 
-                        <el-row class="button-box">
-                          <el-col>
-                            <a href="Ripple-Frog-presale-details.html" class="link link-1">
-                              <el-icon>
-                                <View />
-                              </el-icon>
-                            </a>
-                          </el-col>
-                          <el-col>
-                            <a href="#0" class="link link-3"><el-icon>
-                                <StarFilled />
-                              </el-icon>
-                            </a>
-                          </el-col>
-                        </el-row>
-
-                      </el-col>
 
                     </el-row>
 
                     <!-- 项目描述 -->
                     <el-row class="launchpads-content">
 
-                      <el-col>
+                      <el-col :span="24">
 
-                        <el-row>
-                          <el-col :span="24">
-                            <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
+                        <el-row class="row-bg" justify="space-between">
+                          <el-col :span="8">
+                            <h4><a href="#">{{ item.name }}</a></h4>
+                          </el-col>
+
+                          <el-col :span="5"></el-col>
+
+                          <el-col class="review" :span="7">
+                            <el-button type="primary" round class="statusColor" to="">{{ item.status }}</el-button>
                           </el-col>
                         </el-row>
 
@@ -322,24 +364,24 @@ reactive(obj);
                             </el-row>
 
                             <el-row class="row-bg sub-title" justify="space-between">
-                              <el-col :span="10" class="is-flex-grow-1"> 0 Mina</el-col>
+                              <el-col :span="10"> 0 Mina</el-col>
                               <el-col :span="4"></el-col>
-                              <el-col :span="6" class="is-flex-grow-1 has-text-right">50 Mina</el-col>
+                              <el-col :span="6">50 Mina</el-col>
                             </el-row>
 
                           </el-col>
                         </el-row>
 
                         <el-row class="row-bg liquidity-percent" justify="space-between">
-                          <el-col :span="10" class="is-flex-grow-1">Liquidity %:</el-col>
+                          <el-col :span="10">Liquidity %:</el-col>
                           <el-col :span="4"></el-col>
-                          <el-col :span="6" class="is-flex-grow-1 has-text-right time-text"> {{ item.liquidity }}</el-col>
+                          <el-col :span="6"> {{ item.liquidity }}</el-col>
                         </el-row>
 
                         <el-row class="row-bg lockup-time" justify="space-between">
-                          <el-col :span="10" class="is-flex-grow-1">Lockup Time:</el-col>
+                          <el-col :span="10">Lockup Time:</el-col>
                           <el-col :span="4"></el-col>
-                          <el-col :span="6" class="is-flex-grow-1 has-text-right time-text">365 day</el-col>
+                          <el-col :span="6">365 day</el-col>
                         </el-row>
 
                       </el-col>

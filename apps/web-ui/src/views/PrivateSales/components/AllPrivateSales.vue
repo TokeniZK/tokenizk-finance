@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import { getAllLaunchpadsAPI } from '@/apis/presaleAllLaunchpads'
-import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
+import { getAllPrivateSalesAPI } from '@/apis/privateSalesAll'
+import { onMounted, reactive } from 'vue'
+import { Search } from '@element-plus/icons-vue'
+
 // 生成 唯一标识符
 import { nanoid } from 'nanoid'
 // 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
+// 搜索获取项目
+import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
+
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
 const allLaunchpadsList = ref([])
 
-const getAllLaunchpads = async () => {
-  const res = await getAllLaunchpadsAPI()
+const getAllPrivateSales = async () => {
+  const res = await getAllPrivateSalesAPI()
   console.log(res);
   allLaunchpadsList.value = res.data
 
@@ -20,72 +25,83 @@ const getAllLaunchpads = async () => {
 
 // 组件挂载完成后执行的函数
 onMounted(() => {
-  getAllLaunchpads()
+  getAllPrivateSales()
 })
 
+// 搜索
+let keyWord = ref('')
+
+const getSearchProjects = async () => {
+  let searchRes = getSearchProjectAPI(keyWord);
+  console.log(searchRes);
+  // allLaunchpadsList.value = searchRes.value
+}
+
+// 过滤器
 const value = ref('')
 const value2 = ref('')
-const input = ref('')
 
 const options1 = [
   {
-    value: 'All Status',
+    value: '0',
     label: 'All Status',
   },
   {
-    value: 'Upcoming',
+    value: '1',
     label: 'Upcoming',
   },
   {
-    value: 'Ongoing',
+    value: '2',
     label: 'Ongoing',
   },
   {
-    value: 'Filled',
+    value: '3',
     label: 'Filled',
   },
   {
-    value: 'Ended',
+    value: '4',
     label: 'Ended',
   },
   {
-    value: 'Canceled',
+    value: '5',
     label: 'Canceled',
   },
 ]
 
 const options2 = [
   {
-    value2: 'No Filter',
+    value2: '0',
     label2: 'No Filter',
   },
   {
-    value2: 'Hard Cap',
+    value2: '1',
     label2: 'Hard Cap',
   },
   {
-    value2: 'Soft Cap',
+    value2: '2',
     label2: 'Soft Cap',
   },
   {
-    value2: 'LP percent',
+    value2: '3',
     label2: 'LP percent',
   },
   {
-    value2: 'Start time',
+    value2: '4',
     label2: 'Start time',
   },
   {
-    value2: 'End time',
+    value2: '5',
     label2: 'End time',
   },
 ]
 
 
-let obj = [{
+// 临时数据渲染
+let obj = reactive([{
   id: nanoid(),
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
+  state: 'Ongoing',
   teamName: 'Yoga',
   star: '4',
   preSaleAddr: 'B62',
@@ -253,9 +269,8 @@ let obj = [{
   firstReleaseForProject: '95%',
   vestingForProject: '3% each 1 days',
 },
-]
+])
 
-reactive(obj);
 
 </script>
 
@@ -269,7 +284,15 @@ reactive(obj);
 
         <el-col :span="13">
           <div style="height: 19.59px;"></div>
-          <el-input v-model="input" placeholder="Please input" size="large" />
+
+          <div class="mt-4">
+            <el-input v-model="keyWord" placeholder="Please input" class="input-with-select" size="large">
+              <template #append>
+                <el-button :icon="Search" click="searchProjects" />
+              </template>
+            </el-input>
+          </div>
+
         </el-col>
 
         <!-- 过滤器 -->
@@ -368,24 +391,24 @@ reactive(obj);
                         </el-row>
 
                         <el-row class="row-bg sub-title" justify="space-between">
-                          <el-col :span="10" class="is-flex-grow-1"> 0 Mina</el-col>
+                          <el-col :span="10"> 0 Mina</el-col>
                           <el-col :span="4"></el-col>
-                          <el-col :span="6" class="is-flex-grow-1 has-text-right">50 Mina</el-col>
+                          <el-col :span="6">50 Mina</el-col>
                         </el-row>
 
                       </el-col>
                     </el-row>
 
                     <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10" class="is-flex-grow-1">Liquidity %:</el-col>
+                      <el-col :span="10">Liquidity %:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6" class="is-flex-grow-1 has-text-right time-text"> {{ item.liquidity }}</el-col>
+                      <el-col :span="6"> {{ item.liquidity }}</el-col>
                     </el-row>
 
                     <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10" class="is-flex-grow-1">Lockup Time:</el-col>
+                      <el-col :span="10">Lockup Time:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6" class="is-flex-grow-1 has-text-right time-text">365 day</el-col>
+                      <el-col :span="6">365 day</el-col>
                     </el-row>
 
                   </el-col>
