@@ -73,7 +73,7 @@ try {
                         presale.whitelistTreeRoot = presaleParams.whitelistTreeRoot.toString();
                         presale.softCap = Number(presaleParams.softCap.toString());
                         presale.hardCap = Number(presaleParams.hardCap.toString());
-                        presale.minimumBuy = Number(presalePara
+                        
 		
 		
         return true;
