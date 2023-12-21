@@ -4,7 +4,7 @@ import Home from '@/views/Home/index.vue'
 import PreSales from '@/views/PreSales/pre-sales.vue'
 import AllLaunchpads from '@/views/PreSales/components/AllLaunchpads.vue'
 import MyContributions from '@/views/PreSales/components/MyContributions.vue'
-import PresaleDetails from '@/views/PreSales/presale-details.vue'
+import PresaleDetails from '@/views/PreSales/components/presale-details.vue'
 
 import PrivateSales from '../views/PrivateSales/private-sales.vue'
 import AllPrivateSales from '../views/PrivateSales/components/AllPrivateSales.vue'
