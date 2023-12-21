@@ -74,7 +74,21 @@ try {
                         presale.softCap = Number(presaleParams.softCap.toString());
                         presale.hardCap = Number(presaleParams.hardCap.toString());
                         
-		
+                   } else if (e.type == 'contribute') {
+                        const contributionEvent: ContributionEvent = e.event.data;
+
+                        const user = new UserTokenPresale();
+                        user.txHash = e.event.transactionInfo.transactionHash;
+                        user.contributorAddress = contributionEvent.address.toBase58();
+                        user.saleId = presale.id;
+                        user.saleAddress = presale.saleAddress;
+                        user.tokenAddress = presale.tokenAddress;
+                        user.contributeBlockHeight = blockHeight;
+                        user.contributedCurrencyAmount = contributionEvent.minaAmount.toString();
+
+                        await queryRunner.manager.save(user);
+
+                    }
 		
         return true;
     } catch (error) {
