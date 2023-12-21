@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getAllLaunchpadsAPI } from '@/apis/presaleAllLaunchpads'
+import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
 import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
 // 生成 唯一标识符
@@ -29,7 +29,7 @@ let obj = [{
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   teamName: 'Yoga',
-  state: 'Ongoing',
+  status: '2',
   preSaleAddr: 'B62',
   softCap: '20',
   HardCap: '50',
@@ -48,7 +48,7 @@ let obj = [{
   photo: '/src/assets/images/2.png',
   name: 'Wojak 2.69',
   teamName: 'Yoga',
-  state: 'Upcoming',
+  status: '1',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '60',
@@ -67,7 +67,7 @@ let obj = [{
   photo: '/src/assets/images/3.png',
   name: 'Ripple Frog',
   teamName: 'Yoga',
-  state: 'Cancelled',
+  status: '4',
   preSaleAddr: 'B62',
   softCap: '30',
   HardCap: '45',
@@ -86,7 +86,7 @@ let obj = [{
   photo: '/src/assets/images/1.png',
   name: 'FastAI',
   teamName: 'Yoga',
-  state: 'Upcoming',
+  status: '2',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
@@ -105,7 +105,7 @@ let obj = [{
   photo: '/src/assets/images/2.png',
   name: 'Wrapped XRP',
   teamName: 'Yoga',
-  state: 'Cancelled',
+  status: '5',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
@@ -124,7 +124,7 @@ let obj = [{
   photo: '/src/assets/images/3.png',
   name: 'THREADS V2',
   teamName: 'Yoga',
-  state: 'Ongoing',
+  status: '1',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
@@ -143,7 +143,7 @@ let obj = [{
   photo: '/src/assets/images/2.png',
   name: 'Wrapped XRP',
   teamName: 'Yoga',
-  state: 'Cancelled',
+  status: '3',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
@@ -162,7 +162,7 @@ let obj = [{
   photo: '/src/assets/images/3.png',
   name: 'THREADS V2',
   teamName: 'Yoga',
-  state: 'Ongoing',
+  status: '4',
   preSaleAddr: 'B62',
   softCap: '10',
   HardCap: '50',
@@ -277,7 +277,7 @@ reactive(obj);
                         <el-col :span="5"></el-col>
 
                         <el-col class="review" :span="7">
-                          <el-button type="primary" round>{{ item.state }}</el-button>
+                          <el-button type="primary" round>{{ item.status }}</el-button>
                         </el-col>
 
                       </el-row>

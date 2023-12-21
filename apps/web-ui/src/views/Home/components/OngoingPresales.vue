@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getAllLaunchpadsAPI } from '@/apis/presaleAllLaunchpads'
+import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
 import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
 // 生成 唯一标识符
