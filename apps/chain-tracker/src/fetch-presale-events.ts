@@ -28,4 +28,28 @@ const logger = getLogger('standardFetchPresaleEvents');
 export async function standardFetchPresaleEvents() {
     logger.info('start standardFetchPresaleEvents by Standard...');
 
+try {
+        let ifNotifySyncNullifier = false;
+
+        const connection = getConnection();
+
+        const presaleRepo = connection.getRepository(Presale);
+        const presaleList = (await presaleRepo.find()) ?? [];
+        
+		
+		//
+		
+		
+		
+        return true;
+    } catch (error) {
+        console.error(error);
+        logger.error(error);
+
+        return false;
+    } finally {
+        logger.info('end.');
+    }
+
+    
 }
