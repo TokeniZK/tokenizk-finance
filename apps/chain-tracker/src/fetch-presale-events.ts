@@ -38,7 +38,42 @@ try {
         
 		
 		//
-		
+		for (let i = 0; i < presaleList.length; i++) {
+            const presale = presaleList[i];
+
+            const queryRunner = connection.createQueryRunner();
+
+
+
+                let saleEventFetchRecord = await queryRunner.manager.findOne(SaleEventFetchRecord, { address: presale.saleAddress });
+
+                let startBlock = 0;
+                if (saleEventFetchRecord) {
+                    startBlock = saleEventFetchRecord.blockHeight + 1;
+                } else {
+                    saleEventFetchRecord = new SaleEventFetchRecord();
+                    saleEventFetchRecord.address = presale.saleAddress;
+                }
+
+                // fetch events
+                const tokenizkPresale = new TokeniZkPresale(PublicKey.fromBase58(presale.saleAddress), TokenId.derive(PublicKey.fromBase58(presale.tokenAddress)));
+                const eventList: EventsStandardResponse[] = await tokenizkPresale.fetchEvents(new UInt32(startBlock));
+
+                for (let i = 0; i < eventList.length; i++) {
+                    const e = eventList[i];
+                    const blockHeight = Number(e.blockHeight.toBigint());
+
+                    if (e.type == 'configurePresaleParams') {
+                        const presaleParamsConfigurationEvent: PresaleParamsConfigurationEvent = e.event.data;
+                        const presaleParams = presaleParamsConfigurationEvent.presaleParams;
+
+                        presale.tokenAddress = presaleParams.tokeniZkBasicTokenAddress.toBase58();
+                        presale.totalSaleSupply = Number(presaleParams.totalPresaleSupply.toString());
+                        presale.saleRate = Number(presaleParams.presaleRate.toString());
+                        presale.whitelistTreeRoot = presaleParams.whitelistTreeRoot.toString();
+                        presale.softCap = Number(presaleParams.softCap.toString());
+                        presale.hardCap = Number(presaleParams.hardCap.toString());
+                        presale.minimumBuy = Number(presalePara
 		
 		
         return true;
