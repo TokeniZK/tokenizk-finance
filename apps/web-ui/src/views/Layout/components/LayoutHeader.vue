@@ -162,17 +162,12 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
 <style lang="less" scoped>
 .el-menu-demo {
-  width: 100%;
-  height: 80px;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 999;
-  // 此处为关键样式!!!
-  // 状态一：往上平移自身高度 + 完全透明
-  // transform: translateY(-100%);
-  // opacity: 0;
-
+  width: 100%;
+  height: 80px;
   color: #fff;
   background-color: #000;
 

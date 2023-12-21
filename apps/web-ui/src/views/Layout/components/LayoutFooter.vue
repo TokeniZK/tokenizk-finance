@@ -1,9 +1,9 @@
 <template>
-  <el-row class="row-bg LayoutFooter" justify="center">
+  <el-row class="LayoutFooter">
 
     <el-col :span="24">
 
-      <el-row class="row-bg center">
+      <el-row class="row-bg">
 
         <el-col :span="4"></el-col>
 
@@ -74,8 +74,6 @@
           </el-row>
         </el-col>
 
-        <!-- <el-col :span="3"></el-col> -->
-
       </el-row>
 
       <!-- Copyright Notice -->
@@ -110,13 +108,12 @@
 
 <style lang="less" scoped>
 .LayoutFooter {
+  // position: fixed;
+  // bottom: 0;
   width: 100%;
   padding-top: 100px;
   color: #fff;
   background-color: #03142c;
-  bottom: 0;
-  left: 0;
-
 
   .footer-logo {
     width: 180px;

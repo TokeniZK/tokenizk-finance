@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <el-row>
+  <el-row class="row-bg">
     <el-col :span="24">
 
       <el-row>
@@ -15,5 +15,3 @@
     </el-col>
   </el-row>
 </template>
-
-<style lang="less" scoped></style>
