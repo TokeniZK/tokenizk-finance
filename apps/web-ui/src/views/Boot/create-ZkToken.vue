@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { useConnectState } from '@/stores/connectState'
+import { useConnectStatus } from '@/stores/connectStatus'
 
 const goToTop = () => {
   window.scrollTo({
@@ -10,9 +10,8 @@ const goToTop = () => {
   });
 };
 
-let connectState = useConnectState();
-let { cnState } = connectState;
-// console.log(cnState);
+let connectStatus = useConnectStatus();
+let { cnState } = connectStatus;
 
 let flag = ref(true);
 

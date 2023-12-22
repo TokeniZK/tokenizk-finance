@@ -1,17 +1,29 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-// 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { Calendar } from '@element-plus/icons-vue'
+import { useConnectStatus } from '@/stores/connectStatus'
 
 
+
+// 进度条
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
+// 倒计时
 const timeValue = ref(dayjs().add(1, 'month').startOf('month'))
 
 const tokenInput = ref('')
+
+// 钱包连接状态判断
+let connectStatus = useConnectStatus();
+let { cnState } = connectStatus;
+
+const projectStatus = ref('Buy with Mina')
+
+// if()
+
 
 </script>
 
@@ -54,31 +66,31 @@ const tokenInput = ref('')
                 <el-col :span="12">Presale Address</el-col>
                 <el-col :span="12">B6273Af06B601b1493C4400E01225cA4C992182b31</el-col>
               </el-row>
-              <el-row class="row-bg">
+              <el-row class="row-bg" justify="space-between">
                 <el-col :span="12">Soft Cap</el-col>
-                <el-col :span="12">100 Mina</el-col>
+                <el-col :span="10">100 Mina</el-col>
               </el-row>
-              <el-row>
+              <el-row class="row-bg" justify="space-between">
                 <el-col :span="12">Hard Cap</el-col>
-                <el-col :span="12">200 Mina</el-col>
+                <el-col :span="10">200 Mina</el-col>
               </el-row>
-              <el-row>
+              <el-row class="row-bg" justify="space-between">
                 <el-col :span="12">Presale Start Time</el-col>
-                <el-col :span="12">2023.07.03 19:37 (UTC)</el-col>
+                <el-col :span="10">2023.07.03 19:37 (UTC)</el-col>
               </el-row>
-              <el-row>
+              <el-row class="row-bg" justify="space-between">
                 <el-col :span="12">Presale End Timee</el-col>
-                <el-col :span="12">2023.07.10 19:38 (UTC)</el-col>
+                <el-col :span="10">2023.07.10 19:38 (UTC)</el-col>
               </el-row>
 
-              <el-row>
+              <el-row class="row-bg" justify="space-between">
                 <el-col :span="12">First Release For Project</el-col>
-                <el-col :span="12">95%</el-col>
+                <el-col :span="10">95%</el-col>
               </el-row>
 
-              <el-row>
+              <el-row class="row-bg" justify="space-between">
                 <el-col :span="12">Vesting For Project</el-col>
-                <el-col :span="12">3% each 1 days</el-col>
+                <el-col :span="10">3% each 1 days</el-col>
               </el-row>
 
             </el-col>
@@ -130,17 +142,16 @@ const tokenInput = ref('')
         <el-input v-model="tokenInput" placeholder="Please input" size="large" clearable />
       </el-row>
 
-      <el-button type="primary">Buy with Mina</el-button>
-
+      <el-button type="primary">{{ projectStatus }}</el-button>
 
       <!-- 项目表格 -->
       <el-row class="row-bg formTable">
         <el-col :span="24">
 
-          <el-row class="row-bg">
+          <el-row class="row-bg" justify="space-between">
             <el-col :span="6">Status</el-col>
-            <el-col :span="12"></el-col>
-            <el-col :span="6">Ongoing</el-col>
+            <el-col :span="6"></el-col>
+            <el-col :span="7">Ongoing</el-col>
           </el-row>
           <el-row class="row-bg" justify="space-between">
             <el-col :span="8">Sale Type</el-col>
@@ -148,13 +159,13 @@ const tokenInput = ref('')
             <el-col :span="8">Public</el-col>
           </el-row>
           <el-row class="row-bg" justify="space-between">
-            <el-col :span="8">Minimum Buy</el-col>
+            <el-col :span="10">Minimum Buy</el-col>
             <el-col :span="6"></el-col>
             <el-col :span="6">0.03 Mina</el-col>
           </el-row>
           <el-row class="row-bg" justify="space-between">
             <el-col :span="10">Maximum Buy</el-col>
-            <el-col :span="5"></el-col>
+            <el-col :span="6"></el-col>
             <el-col :span="8">5 Mina</el-col>
           </el-row>
           <el-row class="row-bg" justify="space-between">
