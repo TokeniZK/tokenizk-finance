@@ -1,7 +1,19 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useConnectStatus } from '@/stores/connectStatus'
+
+
+// 组件挂载完成后执行的函数
+onMounted(() => {
+
+  // 进入当前组件都会回到顶部
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+
+})
 
 const goToTop = () => {
   window.scrollTo({
