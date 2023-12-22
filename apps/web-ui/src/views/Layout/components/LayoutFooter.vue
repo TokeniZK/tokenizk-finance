@@ -42,33 +42,34 @@
 
             <el-col :span="12">
               <div class="grid-content ep-bg-purple-light" />
-              <div class="footer-box">
-                <h3 style="padding-bottom: 20px; font-size: 20px; font-family: math;">Contact US</h3>
-                <div class="footer-list">
-                  <ul>
-                    <li class="active"><a href="#0"> About Us </a></li>
-                    <li><a href="#0"> Terms </a></li>
-                    <li><a href="#0"> Licenses </a></li>
-                    <li><a href="#0"> Privacy &amp; Policy </a></li>
-                  </ul>
-                </div>
+
+              <h3 style="padding-bottom: 20px; font-size: 20px; font-family: math;">Contact US</h3>
+
+              <div class="footer-list">
+                <ul>
+                  <li class="active"><a href="#0"> About Us </a></li>
+                  <li><a href="#0"> Terms </a></li>
+                  <li><a href="#0"> Licenses </a></li>
+                  <li><a href="#0"> Privacy &amp; Policy </a></li>
+                </ul>
               </div>
+
             </el-col>
 
             <el-col :span="12">
               <div class="grid-content ep-bg-purple" />
-              <div class="footer-box">
-                <h3 style="padding-bottom: 20px; font-size: 20px; font-family: math;">Quick Resources</h3>
-                <div class="footer-list">
-                  <ul>
-                    <li class="active"><a href="#0"> Community </a></li>
-                    <li><a href="#0"> Blog </a></li>
-                    <li><a href="#0"> Forums </a></li>
-                    <li><a href="#0"> Meetups </a></li>
-                    <li><a href="#0"> Events </a></li>
-                  </ul>
-                </div>
+
+              <h3 style="padding-bottom: 20px; font-size: 20px; font-family: math;">Quick Resources</h3>
+              <div class="footer-list">
+                <ul>
+                  <li class="active"><a href="#0"> Community </a></li>
+                  <li><a href="#0"> Blog </a></li>
+                  <li><a href="#0"> Forums </a></li>
+                  <li><a href="#0"> Meetups </a></li>
+                  <li><a href="#0"> Events </a></li>
+                </ul>
               </div>
+
             </el-col>
 
           </el-row>
@@ -83,7 +84,7 @@
         </div>
       </el-row>
 
-      <el-row style="height: 60px; background-color: #011025;"></el-row>
+      <el-row style="height: 60px; background-color: #011025; margin-bottom: 0;"></el-row>
 
       <!-- Back to top -->
       <el-backtop :bottom="100">
@@ -141,14 +142,15 @@
   .footer-list {
     ul {
       li {
-        padding-top: 8px;
+        padding-top: 15px;
+
+        a {
+          color: #ffffffa7;
+        }
       }
     }
   }
 
-  .footer-list li:active {
-    color: #ffffff;
-  }
 
   .copyright {
     margin: 100px auto 0;
