@@ -2,9 +2,7 @@
 import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
 import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
-// 生成 唯一标识符
 import { nanoid } from 'nanoid'
-// 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
@@ -310,11 +308,11 @@ let obj = reactive({ saleList: renderSaleBlock });
 
                     <!-- photo -->
                     <el-row class="thumb">
-
-
-                      <img :src="item.photo" :alt="item.name" style="width: 349px; height: 160px;">
-
-
+                      <router-link to="/presale-datails">
+                        <!-- <img :src="item.photo" :alt="item.name"> -->
+                        <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name"
+                          loading="lazy" />
+                      </router-link>
                     </el-row>
 
                     <!-- 项目描述 -->

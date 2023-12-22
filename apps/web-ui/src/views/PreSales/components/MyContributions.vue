@@ -3,25 +3,30 @@ import { ref } from 'vue'
 import { getMyContributionsAPI } from '@/apis/presaleMyContributions'
 import { onMounted, reactive } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-// 生成 唯一标识符
 import { nanoid } from 'nanoid'
-// 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
 
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
-const myContributionsList = ref([])
 
+const myContributionsList = ref([])
 const getMyContributions = async () => {
   const res = await getMyContributionsAPI()
   console.log(res);
-  myContributionsList.value = res.data
+  myContributionsList.value = res.result
 }
 
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(() => {
   getMyContributions()
+
+  // 进入当前组件都会回到顶部
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+
 })
 
 // 切换路由地址时，请求响应回来的数据  渲染出每个项目
@@ -253,7 +258,7 @@ fetchResult.forEach(item => {
 
 let renderSaleBlock = fetchResult;
 // 临时数据
-let obj = reactive({ saleList: renderSaleBlock });
+let presaleProjects = reactive({ saleList: renderSaleBlock });
 
 
 
@@ -303,7 +308,7 @@ let obj = reactive({ saleList: renderSaleBlock });
         <el-col :span="20">
 
           <ul class="launchpads-ul">
-            <li v-for="item in obj.saleList" :key="item.id">
+            <li v-for="item in presaleProjects.saleList" :key="item.id">
 
               <div class="launchpads-box">
 
@@ -328,8 +333,15 @@ let obj = reactive({ saleList: renderSaleBlock });
                       <el-col :span="5"></el-col>
 
                       <el-col class="review" :span="7">
-                        <el-button type="primary" round class="statusColor" to="">{{ item.status }}</el-button>
+                        <el-button type="primary" round class="statusColor" to="/presale-datails">{{
+                          item.status }}</el-button>
                       </el-col>
+                    </el-row>
+
+                    <!-- 投资Mina数量 -->
+                    <el-row class="row-bg liquidity-percent" justify="space-between">
+                      <el-col :span="15">contributed Mina Amount :</el-col>
+                      <el-col :span="6"> {{ item.contributedMinaAmount }}</el-col>
                     </el-row>
 
                     <!-- 团队名称 -->
@@ -339,7 +351,7 @@ let obj = reactive({ saleList: renderSaleBlock });
                       </el-col>
 
                       <el-col class="review" :span="10">
-                        <el-rate v-model="item.star" size="large" />
+                        <el-rate v-model="item.star" size="default" />
                       </el-col>
                     </el-row>
 
@@ -353,7 +365,7 @@ let obj = reactive({ saleList: renderSaleBlock });
                     <el-row class="content-Progress">
                       <el-col>
 
-                        <el-row class="title">Progress</el-row>
+                        <el-row class="title">Progress :</el-row>
 
                         <el-row class="Progress demo-progress" style="margin-bottom: 0;">
                           <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
@@ -369,13 +381,13 @@ let obj = reactive({ saleList: renderSaleBlock });
                     </el-row>
 
                     <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10">Liquidity %:</el-col>
+                      <el-col :span="10">Liquidity % :</el-col>
                       <el-col :span="4"></el-col>
                       <el-col :span="6"> {{ item.liquidity }}</el-col>
                     </el-row>
 
                     <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10">Lockup Time:</el-col>
+                      <el-col :span="10">Lockup Time :</el-col>
                       <el-col :span="4"></el-col>
                       <el-col :span="6">365 day</el-col>
                     </el-row>
@@ -412,7 +424,7 @@ let obj = reactive({ saleList: renderSaleBlock });
       margin-top: 0px;
       margin-bottom: 30px;
       width: 349px;
-      height: 416px;
+      height: 430px;
       border-radius: 15px;
 
       .launchpads-box {
@@ -423,7 +435,7 @@ let obj = reactive({ saleList: renderSaleBlock });
 
         .thumb {
           width: 349px;
-          height: 160px;
+          height: 130px;
           overflow: hidden;
         }
 
@@ -432,7 +444,7 @@ let obj = reactive({ saleList: renderSaleBlock });
           padding: 12px 20px;
 
           .demo-progress .el-progress--line {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             width: 300px;
           }
 
@@ -444,7 +456,7 @@ let obj = reactive({ saleList: renderSaleBlock });
 }
 
 .el-row {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 </style>
 

@@ -3,29 +3,29 @@ import { computed, ref } from 'vue'
 import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
 import { onMounted, reactive } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-
-// 生成 唯一标识符
 import { nanoid } from 'nanoid'
-// 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
-// 搜索获取项目
 import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
-import { el } from 'element-plus/es/locale'
 
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
 const allLaunchpadsList = ref([])
-
 const getAllLaunchpads = async () => {
   const res = await getAllLaunchpadsAPI()
-  console.log(res);
-  allLaunchpadsList.value = res.data
+  allLaunchpadsList.value = res.result
 }
 
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(() => {
   getAllLaunchpads()
+
+  // 进入当前组件都会回到顶部
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+
 })
 
 // 切换路由地址时，请求响应回来的数据  渲染出每个项目
@@ -313,14 +313,14 @@ if (sortBy.value == '1') {
 
 let renderSaleBlock = fetchResult;
 // 临时数据
-let obj = reactive({ saleList: renderSaleBlock });
+let presaleProjects = reactive({ saleList: renderSaleBlock });
 
 // 根据 用户选择 filterBy的选项  过滤数据
 const filterOption = (option: string) => {
 
   // console.log(option);
 
-  currentTime = new Date().getTime();
+  let currentTime = new Date().getTime();
   fetchResult.forEach(item => {
     if (item.presaleStartTime > currentTime) {
       item.status = 'Upcoming'
@@ -372,7 +372,7 @@ const filterOption = (option: string) => {
       });
     }
 
-    obj.saleList = renderSaleBlock;
+    presaleProjects.saleList = renderSaleBlock;
   }
 
 }
@@ -451,7 +451,7 @@ const sortOption = (option: string) => {
 
           <ul class="launchpads-ul">
 
-            <li v-for="item in obj.saleList" :key="item.id">
+            <li v-for="item in presaleProjects.saleList" :key="item.id">
 
               <div class="launchpads-box">
 

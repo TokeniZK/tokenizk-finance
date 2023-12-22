@@ -1,3 +1,17 @@
+<script lang="ts" setup>
+import { onMounted } from 'vue'
+// 组件挂载完成后执行的函数
+onMounted(() => {
+
+  // 进入当前组件都会回到顶部
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+  
+})
+</script>
+
 <template>
   <el-row class="pre-Sales">
 
@@ -18,7 +32,7 @@
         </el-col>
 
         <el-col :span="6">
-          <router-link to="/pre-sales/my-contributions" class="active bline">My Contributions</router-link>
+          <router-link to="/pre-sales/my-contributions" class="bline">My Contributions</router-link>
         </el-col>
 
         <el-col :span="4"></el-col>
