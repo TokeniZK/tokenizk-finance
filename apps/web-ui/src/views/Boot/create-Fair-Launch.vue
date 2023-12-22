@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { useConnectStatus } from '@/stores/connectStatus'
+import { useConnectStatusStore } from '@/stores/connectStatus'
 
 // 组件挂载完成后执行的函数
 onMounted(() => {
@@ -22,7 +22,7 @@ const goToTop = () => {
 };
 
 // 判断钱包连接状态
-let connectStatus = useConnectStatus();
+let connectStatus = useConnectStatusStore();
 let { cnState } = connectStatus;
 
 const flagX = ref(0);
