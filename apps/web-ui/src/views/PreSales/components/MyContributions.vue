@@ -399,7 +399,7 @@ let obj = reactive({ saleList: renderSaleBlock });
 <style lang="less" scoped>
 .my-contributions {
   width: 100%;
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 50px;
 
   .launchpads-ul {

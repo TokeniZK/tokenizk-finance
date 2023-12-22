@@ -548,7 +548,7 @@ const sortOption = (option: string) => {
 <style lang="less" scoped>
 .all-launchpads {
   width: 100%;
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 50px;
 
   .input-with-select .el-input-group__prepend {
@@ -565,7 +565,7 @@ const sortOption = (option: string) => {
       margin-top: 0px;
       margin-bottom: 30px;
       width: 349px;
-      height: 416px;
+      height: 430px;
       border-radius: 15px;
 
       .launchpads-box {
