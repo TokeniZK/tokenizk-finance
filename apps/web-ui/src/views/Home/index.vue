@@ -1,9 +1,9 @@
 <script  setup lang="ts">
 import { onMounted } from 'vue'
-import Banner from './components/banner.vue'
-import MainFunctionIntroduction from './components/mainFunctionIntroduction.vue'
-import OngoingPresales from './components/ongoingPresales.vue'
-import AirdropItems from './components/AirdropItems.vue';
+import HomeBanner from './components/homeBanner.vue'
+import HomeMainFunctionIntroduction from './components/homeMainFunctionIntroduction.vue'
+import HomeOngoingPresales from './components/homeOngoingPresales.vue'
+import HomeAirdropItems from './components/homeAirdropItems.vue'
 
 // 组件挂载完成后执行的函数  
 onMounted(() => {
@@ -23,13 +23,13 @@ onMounted(() => {
 
     <el-col :span="24">
 
-      <Banner />
+      <HomeBanner />
 
-      <MainFunctionIntroduction />
+      <HomeMainFunctionIntroduction />
 
-      <OngoingPresales />
+      <HomeOngoingPresales />
 
-      <AirdropItems />
+      <HomeAirdropItems />
 
     </el-col>
 
