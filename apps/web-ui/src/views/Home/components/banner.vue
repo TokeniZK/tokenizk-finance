@@ -1,24 +1,3 @@
-<script setup lang="ts">
-// 1、按需导入 useCounterStore 的方法
-import { useCounterStore } from '@/stores/counter'
-import { storeToRefs } from 'pinia';
-// 2、执行 方法 得到 store 实例对象
-const counterStore = useCounterStore();
-console.log(counterStore);
-
-// 4、直接解构赋值（会响应式丢失）
-// const { count, doubleCount } = counterStore
-// console.log(count,doubleCount);  0 0
-
-// 5、使用storeToRefs()包裹 （保持响应式更新）, 且它只处理 数据相关的数据，不管 方法
-const { count, doubleCount } = storeToRefs(counterStore)
-console.log(count, doubleCount); // RefImpl{} , ComputedRefImpl{}
-
-// 6、方法 直接从原来的 counterStore中 解构赋值
-const { increment } = counterStore;
-
-</script>
-
 <template>
   <el-row class="row-bg banner" justify="center">
 
