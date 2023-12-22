@@ -25,16 +25,18 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
     req,
     res
 ): Promise<BaseResponse<string>> {
-    const { taskType, index, payload } = req.body;
+     const { taskType, index, payload } = req.body
 
-    (process as any).send(req.body);
+    if ([ProofTaskType.PRESALE_BATCH_MERGE, ProofTaskType.PRESALE_CONTRACT_CALL].includes(taskType)) {
+        // parentPort?.postMessage(payload);
+        (process as any).send(req.body)
+    }
 
-
-    return {
-        code: 1,
-        data: '',
-        msg: ''
-    };
+    return {
+        code: 0,
+        data: '',
+        msg: ''
+    };
 }
 
 const schema = {
