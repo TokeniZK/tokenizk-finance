@@ -33,5 +33,36 @@ const filterStep = (openTasks: ProofPayload<any>[]) => {
         proofPayLoadList = await Promise.all(promises);
         return proofPayLoadList;
     };
+    if (proofPayloads.length >= 2) {
 
+        let queue = new TaskStack<ProofPayload<any>>(filterStep, reducerStep);
+
+        logger.info(`beginning work of ${proofPayloads.length} presaleRollupBatchAndMerge cases`);
+
+        queue.prepare(
+            ...proofPayloads
+        );
+        let totalComputationalSeconds = Date.now();
+
+        logger.info('starting work, generating proofs in parallel');
+
+        console.time('duration');
+        let res = await queue.work();
+        console.timeEnd('duration');
+
+        logger.info('result: ', res);
+        fs.writeFileSync(`./presaleRollupBatchAndMerge_final_proofJson_${getDateString()}.json`, JSON.stringify(res));
+
+        logger.info(
+            'totalComputationalSeconds',
+            (Date.now() - totalComputationalSeconds) / 1000
+        );
+
+        // send back to presale-processor
+        if (sendCallBack) {
+            await sendCallBack(res.payload);
+            logger.info('presaleRollupBatchAndMerge done!');
+        }
+
+    }
 }
