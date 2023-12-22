@@ -64,5 +64,7 @@ const filterStep = (openTasks: ProofPayload<any>[]) => {
             logger.info('presaleRollupBatchAndMerge done!');
         }
 
+    } else {
+        subProcessCordinator.presaleContributorsBatch(proofPayloads[0], sendCallBack);
     }
 }
