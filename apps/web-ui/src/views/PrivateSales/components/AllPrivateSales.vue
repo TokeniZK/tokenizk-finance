@@ -3,23 +3,19 @@ import { ref } from 'vue'
 import { getAllPrivateSalesAPI } from '@/apis/privateSalesAll'
 import { onMounted, reactive } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-
-// 生成 唯一标识符
 import { nanoid } from 'nanoid'
-// 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
-// 搜索获取项目
 import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
-
+    
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
-const allLaunchpadsList = ref([])
+const allPrivateSalsesList = ref([])
 
 const getAllPrivateSales = async () => {
   const res = await getAllPrivateSalesAPI()
   console.log(res);
-  allLaunchpadsList.value = res.data
+  allPrivateSalsesList.value = res.result
 
 }
 
