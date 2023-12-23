@@ -1,26 +1,25 @@
 <script setup lang="ts">
-import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
-import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
-// 生成 唯一标识符
+import { getAirdropItemsAPI } from '@/apis/homeAirdropItems'
+import { onMounted, reactive } from 'vue'
+
 import { nanoid } from 'nanoid'
-// 进度条
 import { Minus, Plus } from '@element-plus/icons-vue'
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
-const allLaunchpadsList = ref([])
+const AirdropItemsList = ref([])
 
-const getAllLaunchpads = async () => {
-  const res = await getAllLaunchpadsAPI()
-  console.log(res);
-  allLaunchpadsList.value = res.data
+const getAirdropItems = async () => {
+  const res = await getAirdropItemsAPI()
+  console.log(res, 'homeAirdropItems');
+  AirdropItemsList.value = res.data
 
 }
 
 // 组件挂载完成后执行的函数
 onMounted(() => {
-  getAllLaunchpads()
+  getAirdropItems()
 })
 
 
