@@ -39,7 +39,7 @@ const getSearchProjects = async () => {
 const filterBy = ref('')
 const sortBy = ref('')
 
-const options1 = [
+const filterByOptions = [
   {
     value: '0',
     label: 'All Status',
@@ -66,30 +66,30 @@ const options1 = [
   },
 ]
 
-const options2 = [
+const sortByOptions = [
   {
-    value2: '0',
-    label2: 'No Filter',
+    value: '0',
+    label: 'No Filter',
   },
   {
-    value2: '1',
-    label2: 'Hard Cap',
+    value: '1',
+    label: 'Hard Cap',
   },
   {
-    value2: '2',
-    label2: 'Soft Cap',
+    value: '2',
+    label: 'Soft Cap',
   },
   {
-    value2: '3',
-    label2: 'LP percent',
+    value: '3',
+    label: 'LP percent',
   },
   {
-    value2: '4',
-    label2: 'Start time',
+    value: '4',
+    label: 'Start time',
   },
   {
-    value2: '5',
-    label2: 'End time',
+    value: '5',
+    label: 'End time',
   },
 ]
 
@@ -296,15 +296,15 @@ let obj = reactive([{
         <!-- 过滤器 -->
         <el-col :span="3">
           <div>Filter By</div>
-          <el-select v-model="value" class="m-2 pool-filter" placeholder="All Status" size="large">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select v-model="filterBy" class="m-2 pool-filter" placeholder="All Status" size="large">
+            <el-option v-for="item in filterByOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-col>
 
         <el-col :span="3">
           <div>Sort By</div>
-          <el-select v-model="value2" class="m-2 pool-filter" placeholder="No Filter" size="large">
-            <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.value2" />
+          <el-select v-model="sortBy" class="m-2 pool-filter" placeholder="No Filter" size="large">
+            <el-option v-for="item in sortByOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-col>
 
