@@ -138,4 +138,44 @@ export class TokeniZkFactory extends SmartContract {
         createPrivateSale: CreatePrivateSaleEvent,
         createRedeemAccount: CreateRedeemAccount
     }
+
+
+    /**
+     * the address for receiving lauchpad fee
+     */
+    @state(PublicKey)
+    public platfromFeeAddress = State<PublicKey>();
+
+    /**
+     * the Hash of lauchpad Platform Params
+     */
+    @state(Field)
+    public lauchpadPlatformParamsHash = State<Field>();
+
+    @method
+    public getPlatfromFeeAddress() {
+        return this.platfromFeeAddress.getAndRequireEquals();
+    }
+
+    /**
+     * only by signature
+     * @param address 
+     */
+    @method
+    public setPlatfromFeeAddress(address: PublicKey) {
+        // const currentAddr = this.platfromFeeAddress.getAndRequireEquals();// TODO no need this??
+
+        this.platfromFeeAddress.set(address);
+
+        this.emitEvent('configPlatfromFeeAddress', new ConfigPlatfromFeeAddressEvent({
+            platfromFeeAddress: address
+        }));
+    }
+
+    @method
+    public getLauchpadPlatformParamsHash() {
+        return this.lauchpadPlatformParamsHash.getAndRequireEquals();
+    }
+
+    
 }
