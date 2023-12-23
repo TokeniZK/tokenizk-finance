@@ -1,28 +1,29 @@
 <script setup lang="ts">
-import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
+import { getOngoingPresaleAPI } from '@/apis/homeOngingPresale'
 import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
+import { log } from 'console'
+
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
-const allLaunchpadsList = ref([])
+const OngoingPresaleList = ref([])
 
-const getAllLaunchpads = async () => {
-  const res = await getAllLaunchpadsAPI()
-  console.log(res);
-  allLaunchpadsList.value = res.data
-
+const getOngoingPresale = async () => {
+  const res = await getOngoingPresaleAPI()
+  console.log(res, 'OngoingPresale');
+  OngoingPresaleList.value = res.result
 }
 
 // 组件挂载完成后执行的函数
 onMounted(() => {
-  getAllLaunchpads()
+  getOngoingPresale()
 })
 
 
-// 切换路由地址时，请求响应回来的数据  渲染出每个项目
+// 临时数据
 const fetchResult = [
   {
     id: nanoid(),
@@ -30,7 +31,7 @@ const fetchResult = [
     name: 'Oggy Inu 2.0',
     status: '',
     teamName: 'Yoga',
-    star: '4',
+    star: 4,
     preSaleAddr: 'B62',
     softCap: '21',
     hardCap: '60',
@@ -39,8 +40,8 @@ const fetchResult = [
     progressEnd: '50',
     liquidity: '10%',
     lockupTime: '365day',
-    presaleStartTime: 1704081125572,
-    presaleEndTime: 1703093115572,
+    presaleStartTime: 1703081125572,
+    presaleEndTime: 1705093115572,
     firstReleaseForProject: '95%',
     vestingForProject: '3% each 1 days',
     rate: 4,
@@ -251,7 +252,7 @@ fetchResult.forEach(item => {
 
 let renderSaleBlock = fetchResult;
 // 临时数据
-let obj = reactive({ saleList: renderSaleBlock });
+let presaleProjects = reactive({ saleList: renderSaleBlock });
 
 </script>
 
@@ -298,18 +299,15 @@ let obj = reactive({ saleList: renderSaleBlock });
         <el-col :span="20">
 
           <ul class="launchpads-ul" style="width:100%;">
-            <el-carousel :interval="3000" type="card" height="500px" style="width:100%;">
-              <el-carousel-item v-for="item in 3" :key="item" style="width:100%;">
-                <li v-for="item in obj.saleList" :key="item.id">
 
-                  <!-- <el-card shadow="hover"> -->
+            <el-carousel :interval="3000" type="card" height="500px">
+              <el-carousel-item v-for="items in 4" :key="items">
 
+                <li v-for="item in presaleProjects.saleList" :key="item.id">
                   <div class="launchpads-box">
-
                     <!-- photo -->
                     <el-row class="thumb">
                       <router-link to="/presale-datails">
-                        <!-- <img :src="item.photo" :alt="item.name"> -->
                         <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name"
                           loading="lazy" />
                       </router-link>
@@ -333,9 +331,9 @@ let obj = reactive({ saleList: renderSaleBlock });
                         </el-row>
 
                         <!-- 团队名称 -->
-                        <el-row class="text-review-change" justify="space-between" style="align-items: center;">
+                        <el-row class="text-review-change" justify="space-between">
                           <el-col class="text" :span="10">
-                            by <a href="" class="link">{{ item.teamName }}</a>
+                            by {{ item.teamName }}
                           </el-col>
 
                           <el-col class="review" :span="10">
@@ -356,7 +354,7 @@ let obj = reactive({ saleList: renderSaleBlock });
 
                             <el-row class="title">Progress</el-row>
 
-                            <el-row class="Progress demo-progress" style="margin-bottom: 0;">
+                            <el-row class="Progress demo-progress" >
                               <el-progress :text-inside="true" :stroke-width="14"
                                 :percentage="item.totalContributedMina" />
                             </el-row>
@@ -385,14 +383,13 @@ let obj = reactive({ saleList: renderSaleBlock });
                       </el-col>
 
                     </el-row>
-
                   </div>
-
                 </li>
+
               </el-carousel-item>
             </el-carousel>
-          </ul>
 
+          </ul>
 
         </el-col>
 
