@@ -7,7 +7,7 @@ import {
     fetchLastBlock,
     UInt32,
     Reducer,
-} from 'snarkyjs';
+} from 'o1js';
 
 export async function activeMinaInstance() {
     const isLocalBlockChain = false;    // TODO get it from config here
@@ -23,16 +23,18 @@ export async function activeMinaInstance() {
              archive: 'https://api.minascan.io/archive/berkeley/v1/graphql',
          });
          */
-    /* 
-        const Blockchain = isLocalBlockChain ? Mina.LocalBlockchain({ proofsEnabled: true }) : Mina.Network({
-            mina: 'https://berkeley.minascan.io/graphql',
-            archive: 'https://archive-node-api.p42.xyz/',
-        });
-     */
+
+    const Blockchain = isLocalBlockChain ? Mina.LocalBlockchain({ proofsEnabled: true }) : Mina.Network({
+        mina: 'https://berkeley.minascan.io/graphql',
+        archive: 'https://archive-node-api.p42.xyz/',
+    });
+
+    /*
     const Blockchain = isLocalBlockChain ? Mina.LocalBlockchain({ proofsEnabled: true }) : Mina.Network({
         mina: 'https://berkeley.minascan.io/graphql',
         archive: 'https://archive.berkeley.minaexplorer.com',
     });
+    */
 
     Mina.setActiveInstance(Blockchain);
 }
@@ -45,13 +47,13 @@ export async function activeMinaInstance() {
  * @param startActionHash 
  * @param isLocalBlockChain 
  */
-export async function syncActions(targetAddr: PublicKey, startActionHash: Field, isLocalBlockChain?: boolean) {
+export async function syncActions(targetAddr: PublicKey, startActionHash: Field, tokenId: Field, isLocalBlockChain?: boolean) {
     if (!isLocalBlockChain) {
         for (let i = 0; i < 5; i++) {// just for 4 iterations for 4 blocks, enough
             let actionsList;
             try {
                 // get the length of actions list, and compare later to confirm the tx is done!
-                actionsList = await Mina.fetchActions(targetAddr, { fromActionState: startActionHash });// will throw error if duplicate actions issue.
+                actionsList = await Mina.fetchActions(targetAddr, { fromActionState: startActionHash }, tokenId);// will throw error if duplicate actions issue.
             } catch (error) {// exisitng issue: duplicate actions 
                 console.log(`error: await fetchActions({ publicKey: ${targetAddr.toBase58()} }): `, JSON.stringify(error));
                 console.error(error);

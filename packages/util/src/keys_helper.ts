@@ -1,4 +1,4 @@
-import { Field, Poseidon, PrivateKey, PublicKey, Signature } from "snarkyjs";
+import { Field, Poseidon, PrivateKey, PublicKey, Signature } from "o1js";
 import { int256ToBuffer } from "./binary";
 import { HDKey } from "@scure/bip32";
 import { Buffer } from "buffer";

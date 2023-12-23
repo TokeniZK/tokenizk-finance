@@ -5,7 +5,7 @@ import {
     PrivateKey,
     Scalar,
     Signature,
-} from "snarkyjs";
+} from "o1js";
 import { genNewKeyPairBySignature, getHDpath, reverse } from "./keys_helper";
 //import * as bip32 from "bip32";
 import { HDKey } from "@scure/bip32";

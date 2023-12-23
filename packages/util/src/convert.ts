@@ -1,4 +1,4 @@
-import { Field, Scalar, Signature } from 'snarkyjs';
+import { Field, Scalar, Signature } from 'o1js';
 import { ProviderSignature } from './mina_provider';
 
 
