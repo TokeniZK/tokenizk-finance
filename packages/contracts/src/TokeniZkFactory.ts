@@ -177,5 +177,26 @@ export class TokeniZkFactory extends SmartContract {
         return this.lauchpadPlatformParamsHash.getAndRequireEquals();
     }
 
-    
+        /**
+     * only by signature
+     * @param newParams 
+     */
+    @method
+    public configLauchpadPlatformParams(newParams: LauchpadPlatformParams) {
+
+        newParams.basicTokenCreationFee.assertGreaterThan(UInt64.from(0));
+        newParams.presaleCreationFee.assertGreaterThan(UInt64.from(0));
+        newParams.presaleServiceFeeRate.assertGreaterThan(UInt64.from(0));
+        newParams.fairSaleCreationFee.assertGreaterThan(UInt64.from(0));
+        newParams.fairSaleServiceFeeRate.assertGreaterThan(UInt64.from(0));
+        newParams.privateSaleCreationFee.assertGreaterThan(UInt64.from(0));
+        newParams.privateSaleServiceFeeRate.assertGreaterThan(UInt64.from(0));
+
+        // this.lauchpadPlatformParamsHash.getAndRequireEquals();
+        this.lauchpadPlatformParamsHash.set(newParams.hash());
+
+        this.emitEvent('configLauchpadPlatformParams', new ConfigLauchpadPlatformParamsEvent({
+            newLauchpadPlatformParams: newParams
+        }));
+    }
 }
