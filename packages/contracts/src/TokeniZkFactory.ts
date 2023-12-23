@@ -199,4 +199,37 @@ export class TokeniZkFactory extends SmartContract {
             newLauchpadPlatformParams: newParams
         }));
     }
+
+    
+    @method
+    public createBasicToken(newParams: LauchpadPlatformParams, tokenAddr: PublicKey, basicTokenVk: VerificationKey, totalSupply: Field) {
+        const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
+
+        const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
+        const newParamsHash = newParams.hash();
+        lauchpadPlatformParamsHash.assertEquals(newParamsHash, 'newParamsHash is not equaled to existing lauchpadPlatformParamsHash');
+
+        newParams.basicTokenVk.assertEquals(basicTokenVk.hash, 'new basicTokenVk.hash is not equaled to existing basicTokenVk.hash');
+
+        let zkapp = AccountUpdate.defaultAccountUpdate(tokenAddr);
+        zkapp.account.isNew.requireEquals(Bool(true));
+        zkapp.account.permissions.set({
+            ...Permissions.default(),
+            editState: Permissions.proof(),
+            access: Permissions.proofOrSignature(),
+        });
+        zkapp.account.verificationKey.set(basicTokenVk);
+        AccountUpdate.setValue(zkapp.body.update.appState[0], totalSupply);//totalSupply
+        AccountUpdate.setValue(zkapp.body.update.appState[1], Field(0));//totalAmountInCirculation
+        // AccountUpdate.attachToTransaction(zkapp);//!!!
+
+        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feeReceiverAU = AccountUpdate.create(platfromFeeAddress);
+        feePayer.send({ to: feeReceiverAU, amount: newParams.basicTokenCreationFee });
+
+        this.emitEvent('createBasicToken', new CreateBasicTokenEvent({
+            basicTokenAddress: tokenAddr,
+            fee: newParams.basicTokenCreationFee
+        }));
+    }
 }
