@@ -28,7 +28,7 @@ onMounted(() => {
 
 })
 
-// 切换路由地址时，请求响应回来的数据  渲染出每个项目
+// 临时数据 本尊
 const fetchResult = [
   {
     id: nanoid(),
@@ -307,7 +307,7 @@ if (sortBy.value == '1') {
   });
 } else if (sortBy.value == '4') {
   fetchResult.sort((a, b) => {
-    return b.presaleEndTime - a.presaleEndTime;
+    return Number(b.presaleEndTime) - Number(a.presaleEndTime);
   });
 }
 
@@ -317,8 +317,6 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
 // 根据 用户选择 filterBy的选项  过滤数据
 const filterOption = (option: string) => {
-
-  // console.log(option);
 
   let currentTime = new Date().getTime();
   fetchResult.forEach(item => {
@@ -373,6 +371,7 @@ const filterOption = (option: string) => {
     }
 
     presaleProjects.saleList = renderSaleBlock;
+
   }
 
 }
@@ -395,7 +394,7 @@ const sortOption = (option: string) => {
     });
   } else if (sortBy.value == '4') {
     renderSaleBlock.sort((a, b) => {
-      return b.presaleEndTime - a.presaleEndTime;
+      return Number(b.presaleEndTime) - Number(a.presaleEndTime);
     });
   }
   renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock))
