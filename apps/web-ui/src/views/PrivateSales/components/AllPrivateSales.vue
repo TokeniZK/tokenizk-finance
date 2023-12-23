@@ -10,21 +10,23 @@ import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
-const allPrivateSalsesList = ref([])
+const allPrivateSalesList = ref([])
 
 const getAllPrivateSales = async () => {
   const res = await getAllPrivateSalesAPI()
-  console.log(res);
   allPrivateSalsesList.value = res.result
 
 }
-
-// 组件挂载完成后执行的函数
+    
 onMounted(() => {
   getAllPrivateSales()
+    
+  window.srcollTo({
+      top:0,
+      behavior:'smooth'
+  })
 })
 
-// 搜索
 let keyWord = ref('')
 
 const getSearchProjects = async () => {
@@ -34,8 +36,8 @@ const getSearchProjects = async () => {
 }
 
 // 过滤器
-const value = ref('')
-const value2 = ref('')
+const filterBy = ref('')
+const sortBy = ref('')
 
 const options1 = [
   {
