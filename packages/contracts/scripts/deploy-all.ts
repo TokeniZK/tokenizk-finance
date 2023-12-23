@@ -29,7 +29,7 @@ const ctx = getTestContext();
 await ctx.initMinaNetwork();
 
 // let feePayerKey = Local.testAccounts[0].privateKey;
-let feePayerKey = process.env.TEST_ON_BERKELEY === 'true'? PrivateKey.fromBase58('EKDzUnQJhC8Fsojn7ndQrbCfT5VogS7BfK98Lt34UV424sySrG5N'):(await ctx.getFundedAccountForTest(BigInt(1000*(10**9)), '' ));
+let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKDzUnQJhC8FsorfT5VogS7BfK98Lt34G5N') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
 let feePayer = feePayerKey.toPublicKey();
 
 let tokenFactoryZkAppKey = PrivateKey.random() //Local.testAccounts[1].privateKey;
@@ -192,7 +192,7 @@ tx = await Mina.transaction(
     }
 );
 
-console.log('generated tx: '+tx.toJSON());
+console.log('generated tx: ' + tx.toJSON());
 
 await ctx.submitTx(tx, {
     feePayerKey: feePayerKey,
