@@ -99,3 +99,43 @@ export class CreateRedeemAccount extends Struct({
     redeemAccountAddress: PublicKey,
     nullifierRoot: Field
 }) { }
+
+
+export class TokeniZkFactory extends SmartContract {
+    static tokeniZkFactoryAddress: PublicKey;// TODO
+
+    static platfromFeeAddress: PublicKey;// TODO 
+    static basicTokenVk: VerificationKey;// TODO 
+
+    static presaleContractVk: VerificationKey;// TODO 
+    static presaleMinaFundHolderVk: VerificationKey;// TODO 
+
+    static fairSaleContractVk: VerificationKey;// TODO 
+
+    static privateSaleContractVk: VerificationKey;// TODO 
+    static privateSaleMinaFundHolderVk: VerificationKey;// TODO 
+
+    static redeemAccountVk: VerificationKey;// TODO
+
+    deployZkApp(lauchpadPlatformParams: LauchpadPlatformParams) {
+        super.deploy();
+
+        this.platfromFeeAddress.set(TokeniZkFactory.platfromFeeAddress);
+        this.lauchpadPlatformParamsHash.set(lauchpadPlatformParams.hash());
+
+        this.account.permissions.set({
+            ...Permissions.default(),
+            // editState: Permissions.signature(),// !!
+            // access: Permissions.proofOrSignature(),
+        });
+    }
+    events = {
+        configPlatfromFeeAddress: ConfigPlatfromFeeAddressEvent,
+        configLauchpadPlatformParams: ConfigLauchpadPlatformParamsEvent,
+        createBasicToken: CreateBasicTokenEvent,
+        createPresale: CreatePresaleEvent,
+        createFairsale: CreateFairSaleEvent,
+        createPrivateSale: CreatePrivateSaleEvent,
+        createRedeemAccount: CreateRedeemAccount
+    }
+}
