@@ -1,6 +1,6 @@
 export enum ProofTaskType {
-    LOCK_TOKEN_CLAIM,
-    AIRDROP_TOKEN_CLAIM
+    PRESALE_BATCH_MERGE = 0,
+    PRESALE_CONTRACT_CALL = 1,
 }
 
 export interface ProofTaskDto<S, T> {

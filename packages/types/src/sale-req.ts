@@ -1,10 +1,11 @@
+
 export interface SaleReq {
-    status: number,
+    status: number,
 
-    saleAddress,
-    tokenAddress,
+    saleAddress,
+    tokenAddress,
 
-    saleName,
+    saleName,
 
-    contributorAddress
+    contributorAddress
 }
