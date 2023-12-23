@@ -171,6 +171,7 @@ await ctx.submitTx(tx, {
 
 console.log('deploy TokeniZkBasicToken');
 
+/////////////////////////
 tx = await Mina.transaction(feePayer, () => {
     AccountUpdate.fundNewAccount(feePayer);
     tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams0, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
@@ -178,8 +179,9 @@ tx = await Mina.transaction(feePayer, () => {
 await tx.prove();
 tx.sign([feePayerKey, basicTokenZkAppKey]);
 await tx.send();
+/////////////////////////
 
-
+/*
 tx = await Mina.transaction(
     {
         sender: feePayer,
@@ -191,7 +193,7 @@ tx = await Mina.transaction(
         tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams0, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
     }
 );
-
+*/
 console.log('generated tx: ' + tx.toJSON());
 
 await ctx.submitTx(tx, {
