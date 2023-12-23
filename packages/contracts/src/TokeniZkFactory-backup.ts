@@ -285,7 +285,7 @@ export class TokeniZkFactory extends SmartContract {
     }
 
     @method
-    public createPrivateSale(lauchpadPlatformParams: LauchpadPlatformParams, privateSaleAddress: PublicKey, privateSaleVk: VerificationKey, privateSaleParams: SaleParams, privateSaleMinaFundHolderVk: VerificationKey) {
+    public createPrivateSale(lauchpadPlatformParams: LauchpadPlatformParams, privateSaleAddress: PublicKey, privateSaleVk: VerificationKey, privateSaleParams:SaleParams, privateSaleMinaFundHolderVk: VerificationKey) {
         const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
 
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();

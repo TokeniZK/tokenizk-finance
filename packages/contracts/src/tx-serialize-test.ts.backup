@@ -1,4 +1,4 @@
-import { method, state, State, SmartContract, AccountUpdate, isReady, Mina, PrivateKey, shutdown, UInt64, Proof, Struct, Provable, Field, Poseidon, PublicKey } from 'snarkyjs';
+import { method, state, State, SmartContract, AccountUpdate, isReady, Mina, PrivateKey, shutdown, UInt64, Proof, Struct, Provable, Field, Poseidon, PublicKey } from 'o1js';
 
 await isReady;
 

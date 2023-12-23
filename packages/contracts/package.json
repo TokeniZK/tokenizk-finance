@@ -16,7 +16,8 @@
   "scripts": {
     "state": "tsc -p tsconfig.json --module esnext && cross-env TEST_ON_BERKELEY=true node --experimental-specifier-resolution=node ./dist/scripts/token_state.js",
     "genkeys": "tsc -p tsconfig.json --module esnext && node --experimental-specifier-resolution=node ./dist/scripts/genkeys.js",
-    "token": "tsc -p tsconfig.json && node --experimental-specifier-resolution=node ./dist/scripts/token.js",
+    "deploy-all": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --experimental-specifier-resolution=node ./dist/scripts/deploy-all.js",
+    "deploy-all-escow": "tsc -p tsconfig.json && node --experimental-specifier-resolution=node ./dist/scripts/deploy-all-escow.js",
     "encrypt": "tsc -p tsconfig.json && node --experimental-specifier-resolution=node ./dist/scripts/encrypt.js",
     "lib:dev": "tsc --build tsconfig.json --watch",
     "lib:build": "tsc --build tsconfig.json",
@@ -52,7 +53,7 @@
     "typescript": "^4.7.2"
   },
   "peerDependencies": {
-    "snarkyjs": "0.12.*"
+    "o1js": "0.15.1"
   },
   "dependencies": {
     "@tokenizk/types": "^0.0.1",
