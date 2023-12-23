@@ -65,3 +65,37 @@ export class LauchpadPlatformParams extends Struct({
 
 }
 
+export class ConfigLauchpadPlatformParamsEvent extends Struct({
+    newLauchpadPlatformParams: LauchpadPlatformParams
+}) { }
+
+export class ConfigPlatfromFeeAddressEvent extends Struct({
+    platfromFeeAddress: PublicKey
+}) { }
+
+export class CreateBasicTokenEvent extends Struct({
+    basicTokenAddress: PublicKey,
+    fee: UInt64
+}) { }
+
+export class CreatePresaleEvent extends Struct({
+    basicTokenAddress: PublicKey,
+    presaleContractAddress: PublicKey,
+    fee: UInt64
+}) { }
+
+export class CreateFairSaleEvent extends Struct({
+    basicTokenAddress: PublicKey,
+    fairsaleContractAddress: PublicKey,
+    fee: UInt64
+}) { }
+
+export class CreatePrivateSaleEvent extends Struct({
+    privateSaleContractAddress: PublicKey,
+    fee: UInt64
+}) { }
+
+export class CreateRedeemAccount extends Struct({
+    redeemAccountAddress: PublicKey,
+    nullifierRoot: Field
+}) { }
