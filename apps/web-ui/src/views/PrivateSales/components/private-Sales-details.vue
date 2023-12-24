@@ -60,7 +60,7 @@ const customColor = ref('#00FFC2')
 let currentTime = new Date().getTime();
 const timeValue = ref(dayjs().add(originalResult.presaleEndTime - currentTime, 'millisecond'))
 
-const tokenInput = ref('')
+const tokenInput = ref(0)
 
 const contributionInputDisabled = ref(false);
 const contributionBtnDisabled = ref(false);

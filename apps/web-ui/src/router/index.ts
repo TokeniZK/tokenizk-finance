@@ -4,19 +4,19 @@ import Layout from '@/views/Layout/index.vue'
 import Home from '@/views/Home/index.vue'
 
 import PreSales from '@/views/PreSales/pre-sales.vue'
-import AllLaunchpads from '@/views/PreSales/components/AllLaunchpads.vue'
-import MyContributions from '@/views/PreSales/components/MyContributions.vue'
+import AllLaunchpads from '@/views/PreSales/components/all-launchpads.vue'
+import MyContributions from '@/views/PreSales/components/my-contributions.vue'
 import PresaleDetails from '@/views/PreSales/components/presale-details.vue'
 
-import PrivateSales from '@/views/PrivateSales/private-Sales.vue'
-import AllPrivateSales from '@/views/PrivateSales/components/AllPrivateSales.vue'
-import PrivateSalesMyContributions from '@/views/PrivateSales/components/PrivateSalesMyContributions.vue'
-import PrivateSalesDetails from '@/views/PrivateSales/components/private-Sales-details.vue'
+import PrivateSales from '@/views/PrivateSales/private-sales.vue'
+import AllPrivateSales from '@/views/PrivateSales/components/all-private-sales.vue'
+import PrivateSalesMyContributions from '@/views/PrivateSales/components/private-sales-my-contributions.vue'
+import PrivateSalesDetails from '@/views/PrivateSales/components/private-sales-details.vue'
 
-import AirdropList from '@/views/AirDrop/airdrop-List.vue'
-import AllAirdrops from '@/views/AirDrop/components/allAirdrops.vue'
-import MyAirdrops from '@/views/AirDrop/components/myAirdrops.vue'
-import AirdropsCreatedByYou from '@/views/AirDrop/components/airdropsCreatedByYou.vue'
+import AirdropList from '@/views/AirDrop/airdrop-list.vue'
+import AllAirdrops from '@/views/AirDrop/components/all-airdrops.vue'
+import MyAirdrops from '@/views/AirDrop/components/my-airdrops.vue'
+import CreatedByYouAirdrops from '@/views/AirDrop/components/created-by-you-airdrops.vue'
 
 import CreateZkToken from '@/views/Boot/create-ZkToken.vue'
 import CreateFairLaunch from '@/views/Boot/create-fair-launch.vue'
@@ -95,8 +95,8 @@ const router = createRouter({
               component: MyAirdrops
             },
             {
-              path: '/airdrop-list/created-by-you',
-              component: AirdropsCreatedByYou
+              path: '/airdrop-list/created-by-you-airdrop',
+              component: CreatedByYouAirdrops
             }
           ]
         },

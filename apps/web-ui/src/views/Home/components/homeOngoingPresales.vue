@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { getOngoingPresaleAPI } from '@/apis/homeOngingPresale'
+import { getOngoingPresaleAPI } from '@/apis/presaleAll'
 import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
-import { log } from 'console'
 
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
@@ -344,7 +343,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                         <el-row class="row-bg soft-hard-cap" justify="space-between">
                           <el-col :span="10">Soft / Hard</el-col>
                           <el-col :span="2"></el-col>
-                          <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
+                          <el-col :span="10">{{ item.softCap }}Mina - {{ item.hardCap }}Mina</el-col>
                         </el-row>
 
 

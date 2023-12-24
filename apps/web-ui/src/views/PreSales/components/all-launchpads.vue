@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup >
 import { ref, onMounted, reactive } from 'vue'
 import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
 import { Search } from '@element-plus/icons-vue'
@@ -12,7 +12,7 @@ const customColor = ref('#00FFC2')
 const allLaunchpadsList = ref([])
 const getAllLaunchpads = async () => {
   const res = await getAllLaunchpadsAPI()
-  allLaunchpadsList.value = res.result
+  allLaunchpadsList.value = res.data
 }
 
 // 组件挂载完成后执行的函数  请求数据  
@@ -207,7 +207,7 @@ const fetchResult = [
 let keyWord = ref('')
 const getSearchProjects = async () => {
   let searchRes = getSearchProjectAPI(keyWord)
-  allLaunchpadsList.value = searchRes.value
+  allLaunchpadsList.value = searchRes.data
 }
 
 // 过滤器

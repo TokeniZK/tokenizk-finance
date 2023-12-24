@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { getPrivateSalesMyContributionsAPI } from '@/apis/privateSalesMyContributions'
+import { getMyContributionsAPI } from '@/apis/presaleAll'
 import { Search } from '@element-plus/icons-vue'
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
-import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
 
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
-const privateSalesMyContributionsList = ref([])
-const getPrivateSalesMyContributions = async () => {
-  const res = await getPrivateSalesMyContributionsAPI()
-  privateSalesMyContributionsList.value = res.result
+const myContributionsList = ref([])
+const getMyContributions = async () => {
+  const res = await getMyContributionsAPI()
+  console.log(res);
+  myContributionsList.value = res.result
 }
 
-// 组件挂载完成后执行的函数
+// 组件挂载完成后执行的函数  请求数据  
 onMounted(() => {
-  getPrivateSalesMyContributions()
+  getMyContributions()
 
   // 进入当前组件都会回到顶部
   window.scrollTo({
@@ -221,10 +221,12 @@ let renderSaleBlock = fetchResult;
 // 临时数据
 let presaleProjects = reactive({ saleList: renderSaleBlock });
 
+
+
 </script>
 
 <template>
-  <el-row class="my-Private-Sales-contributions">
+  <el-row class="my-contributions">
 
     <el-col>
 
@@ -269,13 +271,11 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
           <ul class="launchpads-ul">
             <li v-for="item in presaleProjects.saleList" :key="item.id">
 
-              <!-- <el-card shadow="hover"> -->
-
               <div class="launchpads-box">
 
                 <!-- photo -->
                 <el-row class="thumb">
-                  <router-link to="/private-sales-datails">
+                  <router-link to="/presale-datails">
                     <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
                   </router-link>
                 </el-row>
@@ -283,22 +283,35 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                 <!-- 项目描述 -->
                 <el-row class="launchpads-content">
 
-                  <el-col>
+                  <el-col :span="24">
 
-                    <el-row>
-                      <el-col :span="24">
-                        <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
+                    <el-row class="row-bg" justify="space-between">
+                      <el-col :span="8">
+                        <h4><a href="#">{{ item.name }}</a></h4>
+                      </el-col>
+
+                      <el-col :span="5"></el-col>
+
+                      <el-col class="review" :span="7">
+                        <el-button type="primary" round class="statusColor" to="/presale-datails">{{
+                          item.status }}</el-button>
                       </el-col>
                     </el-row>
 
+                    <!-- 投资Mina数量 -->
+                    <el-row class="row-bg liquidity-percent" justify="space-between">
+                      <el-col :span="15">contributed Mina Amount :</el-col>
+                      <el-col :span="6"> {{ item.contributedMinaAmount }}</el-col>
+                    </el-row>
+
                     <!-- 团队名称 -->
-                    <el-row class="text-review-change" justify="space-between" style="align-items: center;">
+                    <el-row class="text-review-change" justify="space-between">
                       <el-col class="text" :span="10">
                         by <a href="" class="link">{{ item.teamName }}</a>
                       </el-col>
 
                       <el-col class="review" :span="10">
-                        <el-rate v-model="item.star" size="large" />
+                        <el-rate v-model="item.star" size="default" />
                       </el-col>
                     </el-row>
 
@@ -312,7 +325,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                     <el-row class="content-Progress">
                       <el-col>
 
-                        <el-row class="title">Progress</el-row>
+                        <el-row class="title">Progress :</el-row>
 
                         <el-row class="Progress demo-progress" style="margin-bottom: 0;">
                           <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
@@ -328,13 +341,13 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                     </el-row>
 
                     <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10">Liquidity %:</el-col>
+                      <el-col :span="10">Liquidity % :</el-col>
                       <el-col :span="4"></el-col>
                       <el-col :span="6"> {{ item.liquidity }}</el-col>
                     </el-row>
 
                     <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10">Lockup Time:</el-col>
+                      <el-col :span="10">Lockup Time :</el-col>
                       <el-col :span="4"></el-col>
                       <el-col :span="6">365 day</el-col>
                     </el-row>
@@ -344,8 +357,6 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                 </el-row>
 
               </div>
-
-              <!-- </el-card> -->
 
             </li>
           </ul>
@@ -358,7 +369,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 </template>
 
 <style lang="less" scoped>
-.my-Private-Sales-contributions {
+.my-contributions {
   width: 100%;
   padding-top: 10px;
   padding-bottom: 50px;
@@ -393,10 +404,12 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
           padding: 12px 20px;
 
           .demo-progress .el-progress--line {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             width: 300px;
           }
+
         }
+
       }
     }
   }

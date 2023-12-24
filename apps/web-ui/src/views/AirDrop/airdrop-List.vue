@@ -12,12 +12,33 @@ onMounted(() => {
 })
 </script>
 <template>
-  <el-row class="row-bg airdrop-list">
+  <el-row class="row-bg airdrop-list" justify="center">
     <el-col :span="24">
 
       <el-row class="row-bg" justify="center">
         <el-col :span="18">
           <h1>AirDrop</h1>
+        </el-col>
+      </el-row>
+
+      <el-row class="row-bg " justify="center">
+        <el-col :span="18" class="airdropBoard">
+          <el-row class="row-bg" justify="center">
+            <el-col :span="8">
+              <el-row class="row-bg" justify="center">Airdrop Launched</el-row>
+              <el-row class="row-bg" justify="center">
+                <h3>294</h3>
+              </el-row>
+            </el-col>
+
+            <el-col :span="8">
+              <el-row class="row-bg" justify="center">Participants in All-time</el-row>
+              <el-row class="row-bg" justify="center">
+                <h3>16790</h3>
+              </el-row>
+            </el-col>
+          </el-row>
+
         </el-col>
       </el-row>
 
@@ -35,7 +56,7 @@ onMounted(() => {
         </el-col>
 
         <el-col :span="6">
-          <router-link to="/airdrop-list/created-by-you" class="bline">Created By You</router-link>
+          <router-link to="/airdrop-list/created-by-you-airdrop" class="bline">Created By You</router-link>
         </el-col>
 
       </el-row>
@@ -58,6 +79,13 @@ onMounted(() => {
 .airdrop-list {
   width: 100%;
   padding-top: 120px;
+
+  .airdropBoard {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 30px !important;
+    text-align: center;
+  }
 
   .bline:hover {
     border-bottom: 2px solid #00FFC2;

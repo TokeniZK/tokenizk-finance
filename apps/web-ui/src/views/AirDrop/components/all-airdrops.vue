@@ -1,23 +1,20 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { getMyContributionsAPI } from '@/apis/presaleMyContributions'
+import { getAllAirdropListAPI } from '@/apis/airdropAll'
 import { Search } from '@element-plus/icons-vue'
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
+import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
 
-const percentage = ref(20)
-const customColor = ref('#00FFC2')
-
-const myContributionsList = ref([])
-const getMyContributions = async () => {
-  const res = await getMyContributionsAPI()
-  console.log(res);
-  myContributionsList.value = res.result
+const allAirdropList = ref([])
+const getAllAirdropList = async () => {
+  const res = await getAllAirdropListAPI()
+  allAirdropList.value = res.data
 }
 
-// 组件挂载完成后执行的函数  请求数据  
+// 组件挂载完成后执行的函数 
 onMounted(() => {
-  getMyContributions()
+  getAllAirdropList()
 
   // 进入当前组件都会回到顶部
   window.scrollTo({
@@ -32,8 +29,10 @@ const fetchResult = [
   {
     id: nanoid(),
     photo: '/src/assets/images/1.png',
-    name: 'Oggy Inu 2.0',
+    name: 'Favoom ',
+    tokenName: 'FM',
     teamName: 'Yoga',
+    participants: 100,
     star: 4,
     preSaleAddr: 'B62',
     softCap: 21,
@@ -51,8 +50,10 @@ const fetchResult = [
   {
     id: nanoid(),
     photo: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
+    name: 'BabyAmple ',
+    tokenName: 'BA',
     teamName: 'walking',
+    participants: 200,
     star: 2,
     preSaleAddr: 'B62',
     softCap: 10,
@@ -70,7 +71,9 @@ const fetchResult = [
   {
     id: nanoid(),
     photo: '/src/assets/images/3.png',
-    name: 'Ripple Frog',
+    name: 'Versa',
+    tokenName: 'VA',
+    participants: 300,
     teamName: 'cherry',
     star: 2,
     preSaleAddr: 'B62',
@@ -90,6 +93,8 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/3.png',
     name: 'FastAI',
+    tokenName: 'BA',
+    participants: 400,
     teamName: 'Tang',
     star: 4,
     preSaleAddr: 'B62',
@@ -108,7 +113,9 @@ const fetchResult = [
   {
     id: nanoid(),
     photo: '/src/assets/images/2.png',
-    name: 'Wrapped XRP',
+    name: 'Wrapped',
+    tokenName: 'VA',
+    participants: 500,
     teamName: 'mina',
     star: 2,
     preSaleAddr: 'B62',
@@ -128,6 +135,8 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/1.png',
     name: 'THREADS V2',
+    tokenName: 'VA',
+    participants: 200,
     teamName: 'BTC',
     star: 2,
     preSaleAddr: 'B62',
@@ -147,6 +156,8 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/2.png',
     name: 'Oggy Inu 2.0',
+    tokenName: 'OI',
+    participants: 100,
     teamName: 'Yoga',
     star: 5,
     preSaleAddr: 'B62',
@@ -166,6 +177,8 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
+    tokenName: 'WK',
+    participants: 200,
     teamName: 'Yoga',
     star: 2,
     preSaleAddr: 'B62',
@@ -185,6 +198,8 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
+    tokenName: 'WK',
+    participants: 100,
     teamName: 'Yoga',
     star: 2,
     preSaleAddr: 'B62',
@@ -202,6 +217,68 @@ const fetchResult = [
   },
 ];
 
+
+// 获取 用户输入的关键字 进行搜索
+let keyWord = ref('')
+const getSearchProjects = async () => {
+  let searchRes = getSearchProjectAPI(keyWord)
+  allAirdropList.value = searchRes.data
+}
+
+// 过滤器
+const filterBy = ref('')
+const sortBy = ref('')
+
+// fitlerBy 下拉菜单 渲染所需的数据
+const filterByOptions = [
+  {
+    value: '0',
+    label: 'All Status',
+  },
+  {
+    value: '1',
+    label: 'Upcoming',
+  },
+  {
+    value: '2',
+    label: 'Ongoing',
+  },
+  {
+    value: '3',
+    label: 'Ended',
+  },
+  // {
+  //   value: '4',
+  //   label: 'Canceled',
+  // },
+]
+
+// sortBy 下拉菜单 渲染所需的数据
+const sortByOptions = [
+  {
+    value: '0',
+    label: 'No Sort',
+  },
+  {
+    value: '1',
+    label: 'Start time',
+  },
+  {
+    value: '2',
+    label: 'End time',
+  },
+  // {
+  //   value: '5',
+  //   label: 'LP percent',
+  // },
+]
+
+// 每次点击 搜索按钮 时，重置 过滤选项 和 排序选项
+const searchProjects = () => {
+  filterBy.value = '0'
+  sortBy.value = '0'
+}
+
 // 判断项目的状态
 let currentTime = new Date().getTime();
 fetchResult.forEach(item => {
@@ -216,24 +293,103 @@ fetchResult.forEach(item => {
   }
 });
 
+// sort   
+if (sortBy.value == '1') {
+  fetchResult.sort((a, b) => {
+    return Number(b.presaleStartTime) - Number(a.presaleStartTime);
+  });
+} else if (sortBy.value == '2') {
+  fetchResult.sort((a, b) => {
+    return Number(b.presaleEndTime) - Number(a.presaleEndTime);
+  });
+}
 
+// 临时数据 副本
 let renderSaleBlock = fetchResult;
-// 临时数据
 let presaleProjects = reactive({ saleList: renderSaleBlock });
 
+// 根据 用户选择 filterBy的选项  过滤数据
+const filterOption = (option: string) => {
+
+  let currentTime = new Date().getTime();
+  fetchResult.forEach(item => {
+    if (item.presaleStartTime > currentTime) {
+      item.status = 'Upcoming'
+    } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
+      item.status = 'Ongoing'
+    } else if (item.presaleEndTime < currentTime) {
+      item.status = 'Ended'
+    } else {
+      item.status = 'All Status'
+    }
+  });
+
+
+  if (option === '3') {
+    // TODO 
+    fetchResult.filter(item => {
+      return item.status === 'All Status'
+    })
+
+  } else if (option === '0') {
+    renderSaleBlock = fetchResult
+  } else {
+    renderSaleBlock = fetchResult.filter(item => {
+      if (option == '1') {
+        return item.status === 'Upcoming'
+      } else if (option == '2') {
+        return item.status === 'Ongoing'
+      } else if (option == '3') {
+        return item.status === 'Ended'
+      }
+    });
+
+    // sort
+    if (sortBy.value == '1') {
+      renderSaleBlock.sort((a, b) => {
+        return Number(b.presaleStartTime) - Number(a.presaleStartTime);
+      });
+    } else if (sortBy.value == '2') {
+      renderSaleBlock.sort((a, b) => {
+        return Number(b.presaleEndTime) - Number(a.presaleEndTime);
+      });
+    }
+
+    presaleProjects.saleList = renderSaleBlock;
+
+  }
+
+}
+
+
+// 根据 用户选择 sortBy的选项 sort排序 由近到远
+const sortOption = (option: string) => {
+  // sort
+  if (sortBy.value == '1') {
+    renderSaleBlock.sort((a, b) => {
+      return Number(b.presaleStartTime) - Number(a.presaleStartTime);
+    });
+  } else if (sortBy.value == '2') {
+    renderSaleBlock.sort((a, b) => {
+      return Number(b.presaleEndTime) - Number(a.presaleEndTime);
+    });
+  }
+  renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock))
+  presaleProjects.saleList = renderSaleBlock;
+}
 
 
 </script>
 
 <template>
-  <el-row class="my-contributions">
+  <el-row class="row-bg all-airdrop">
 
-    <el-col>
+    <el-col :span="24">
 
       <!-- 搜索、过滤器 -->
       <el-row class="row-bg" justify="center" style="margin-bottom:50px;" :gutter="20">
 
-        <!-- <el-col :span="13">
+        <el-col :span="13">
           <div style="height: 19.59px;"></div>
 
           <div class="mt-4">
@@ -246,6 +402,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
         </el-col>
 
+        <!-- 过滤器 -->
         <el-col :span="3">
           <div>Filter By</div>
           <el-select v-model="filterBy" class="m-2 filterBy" placeholer="Select" size="large">
@@ -260,7 +417,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
             <el-option v-for="item in sortByOptions" :key="item.value" :label="item.label" :value="item.value"
               @click="sortOption(item.value)" />
           </el-select>
-        </el-col> -->
+        </el-col>
 
       </el-row>
 
@@ -269,6 +426,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
         <el-col :span="20">
 
           <ul class="launchpads-ul">
+
             <li v-for="item in presaleProjects.saleList" :key="item.id">
 
               <div class="launchpads-box">
@@ -286,70 +444,36 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                   <el-col :span="24">
 
                     <el-row class="row-bg" justify="space-between">
-                      <el-col :span="8">
-                        <h4><a href="#">{{ item.name }}</a></h4>
-                      </el-col>
-
-                      <el-col :span="5"></el-col>
-
-                      <el-col class="review" :span="7">
-                        <el-button type="primary" round class="statusColor" to="/presale-datails">{{
-                          item.status }}</el-button>
-                      </el-col>
-                    </el-row>
-
-                    <!-- 投资Mina数量 -->
-                    <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="15">contributed Mina Amount :</el-col>
-                      <el-col :span="6"> {{ item.contributedMinaAmount }}</el-col>
-                    </el-row>
-
-                    <!-- 团队名称 -->
-                    <el-row class="text-review-change" justify="space-between">
-                      <el-col class="text" :span="10">
-                        by <a href="" class="link">{{ item.teamName }}</a>
-                      </el-col>
-
-                      <el-col class="review" :span="10">
-                        <el-rate v-model="item.star" size="default" />
+                      <el-col :span="24">
+                        <h3><a href="#">{{ item.name }}</a></h3>
                       </el-col>
                     </el-row>
 
                     <el-row class="row-bg soft-hard-cap" justify="space-between">
-                      <el-col :span="10">Soft / Hard</el-col>
-                      <el-col :span="2"></el-col>
-                      <el-col :span="10">{{ item.softCap }}Mina - {{ item.hardCap }}Mina</el-col>
-                    </el-row>
-
-                    <!-- 进度条 -->
-                    <el-row class="content-Progress">
-                      <el-col>
-
-                        <el-row class="title">Progress :</el-row>
-
-                        <el-row class="Progress demo-progress" style="margin-bottom: 0;">
-                          <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
-                        </el-row>
-
-                        <el-row class="row-bg sub-title" justify="space-between">
-                          <el-col :span="10"> 0 Mina</el-col>
-                          <el-col :span="4"></el-col>
-                          <el-col :span="6">50 Mina</el-col>
-                        </el-row>
-
-                      </el-col>
+                      <el-col :span="10">Token</el-col>
+                      <el-col :span="8"></el-col>
+                      <el-col :span="6">{{ item.tokenName }}</el-col>
                     </el-row>
 
                     <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10">Liquidity % :</el-col>
+                      <el-col :span="10">Total Token:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6"> {{ item.liquidity }}</el-col>
+                      <el-col :span="6"> {{ item.totalContributedMina }}</el-col>
                     </el-row>
 
                     <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10">Lockup Time :</el-col>
+                      <el-col :span="10">Participants:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6">365 day</el-col>
+                      <el-col :span="6">{{ item.participants }}</el-col>
+                    </el-row>
+
+                    <el-row class="row-bg" justify="space-between">
+                      <el-col :span="6">Begin at :</el-col>
+                      <el-col :span="14"> {{ new Date(item.presaleStartTime).toISOString() }}</el-col>
+                    </el-row>
+
+                    <el-row class="row-bg" justify="end">
+                      <el-button type="primary" round class="statusColor"> View Airdrop</el-button>
                     </el-row>
 
                   </el-col>
@@ -357,6 +481,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                 </el-row>
 
               </div>
+
 
             </li>
           </ul>
@@ -369,10 +494,14 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 </template>
 
 <style lang="less" scoped>
-.my-contributions {
+.all-airdrop {
   width: 100%;
   padding-top: 10px;
   padding-bottom: 50px;
+
+  .input-with-select .el-input-group__prepend {
+    background-color: var(--el-fill-color-blank);
+  }
 
   .launchpads-ul {
     width: 100%;
@@ -384,7 +513,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
       margin-top: 0px;
       margin-bottom: 30px;
       width: 349px;
-      height: 430px;
+      height: 400px;
       border-radius: 15px;
 
       .launchpads-box {
@@ -395,7 +524,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
         .thumb {
           width: 349px;
-          height: 130px;
+          height: 160px;
           overflow: hidden;
         }
 
@@ -404,7 +533,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
           padding: 12px 20px;
 
           .demo-progress .el-progress--line {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             width: 300px;
           }
 
@@ -416,7 +545,6 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 }
 
 .el-row {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 </style>
-

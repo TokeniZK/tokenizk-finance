@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { getAirdropItemsAPI } from '@/apis/homeAirdropItems'
+import { getAirdropItemsAPI } from '@/apis/airdropAll'
 import { onMounted, reactive } from 'vue'
 
 import { nanoid } from 'nanoid'
