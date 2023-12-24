@@ -23,7 +23,7 @@ const originalResult = {
   photo: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   teamName: 'Yoga',
-  star: '4',
+  star: 4,
   preSaleAddr: 'B62',
   softCap: 300,
   hardCap: 600,
@@ -33,7 +33,7 @@ const originalResult = {
   liquidity: '10%',
   lockupTime: '365day',
   presaleStartTime: 1702083125572,
-  presaleEndTime: 1703312210497,
+  presaleEndTime: 1703336201440,
   firstReleaseForProject: '95%',
   vestingForProject: '3% each 1 days',
   projectDes: 'TokeniZK Finance is a decentralized launchpad where you could launch your own zk-Token and create your own initial token sale. It provides secure smart contract templates with flexible configuration and complete tool suits for token management, where you could finish all operations simply in several clicks, without knowledge requirement about code & zkp. ',
@@ -95,6 +95,7 @@ const checkPresale = () => {
 
     // presaleEndTime 已结束
     if (cnState === true) {
+
       // 已投资
       if (fetchResult.contributedMinaAmount > 0) {
 
@@ -131,10 +132,10 @@ const checkPresale = () => {
 
       if (fetchResult.contributedMinaAmount > 0) {
         // 禁用input、按钮
-        contributionInputDisabled.value = true
-        contributionBtnDisabled.value = true
+        contributionInputDisabled.value = false
+        contributionBtnDisabled.value = false
         flagBtn.value = 1
-        flagSpan.value = 1
+        // flagSpan.value = 1
       }
 
     } else {

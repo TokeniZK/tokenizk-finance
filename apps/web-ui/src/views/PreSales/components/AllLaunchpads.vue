@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { getAllLaunchpadsAPI } from '@/apis/presaleAll'
-import { onMounted, reactive } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
@@ -35,11 +34,11 @@ const fetchResult = [
     photo: '/src/assets/images/1.png',
     name: 'Oggy Inu 2.0',
     teamName: 'Yoga',
-    star: '4',
+    star: 4,
     preSaleAddr: 'B62',
     softCap: 21,
     hardCap: 60,
-    totalContributedMina: '40',
+    totalContributedMina: 40,
     progressStart: '0',
     progressEnd: '50',
     liquidity: '10%',
@@ -54,11 +53,11 @@ const fetchResult = [
     photo: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     teamName: 'walking',
-    star: '2',
+    star: 2,
     preSaleAddr: 'B62',
     softCap: 10,
     hardCap: 60,
-    totalContributedMina: '20',
+    totalContributedMina: 20,
     progressStart: '0',
     progressEnd: '60',
     liquidity: '30%',
@@ -73,11 +72,11 @@ const fetchResult = [
     photo: '/src/assets/images/3.png',
     name: 'Ripple Frog',
     teamName: 'cherry',
-    star: '2',
+    star: 2,
     preSaleAddr: 'B62',
     softCap: 30,
     hardCap: 45,
-    totalContributedMina: '60',
+    totalContributedMina: 60,
     progressStart: '0',
     progressEnd: '45',
     liquidity: '53%',
@@ -92,11 +91,11 @@ const fetchResult = [
     photo: '/src/assets/images/3.png',
     name: 'FastAI',
     teamName: 'Tang',
-    star: '4',
+    star: 4,
     preSaleAddr: 'B62',
     softCap: 10,
     hardCap: 55,
-    totalContributedMina: '30',
+    totalContributedMina: 30,
     progressStart: '10',
     progressEnd: '50',
     liquidity: '40%',
@@ -111,11 +110,11 @@ const fetchResult = [
     photo: '/src/assets/images/2.png',
     name: 'Wrapped XRP',
     teamName: 'mina',
-    star: '2',
+    star: 2,
     preSaleAddr: 'B62',
     softCap: 9,
     hardCap: 50,
-    totalContributedMina: '50',
+    totalContributedMina: 50,
     progressStart: '0',
     progressEnd: '50',
     liquidity: '30%',
@@ -130,11 +129,11 @@ const fetchResult = [
     photo: '/src/assets/images/1.png',
     name: 'THREADS V2',
     teamName: 'BTC',
-    star: '2',
+    star: 2,
     preSaleAddr: 'B62',
     softCap: 12,
     hardCap: 50,
-    totalContributedMina: '10',
+    totalContributedMina: 10,
     progressStart: '0',
     progressEnd: '50',
     liquidity: '30%',
@@ -149,11 +148,11 @@ const fetchResult = [
     photo: '/src/assets/images/2.png',
     name: 'Oggy Inu 2.0',
     teamName: 'Yoga',
-    star: '5',
+    star: 5,
     preSaleAddr: 'B62',
     softCap: 11,
     hardCap: 50,
-    totalContributedMina: '13',
+    totalContributedMina: 13,
     progressStart: '23',
     progressEnd: '50',
     liquidity: '15%',
@@ -168,11 +167,11 @@ const fetchResult = [
     photo: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     teamName: 'Yoga',
-    star: '2',
+    star: 2,
     preSaleAddr: 'B62',
     softCap: 20,
     hardCap: 50,
-    totalContributedMina: '42',
+    totalContributedMina: 42,
     progressStart: '0',
     progressEnd: '50',
     liquidity: '23%',
@@ -187,11 +186,11 @@ const fetchResult = [
     photo: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     teamName: 'Yoga',
-    star: '2',
+    star: 2,
     preSaleAddr: 'B62',
     softCap: 10,
     hardCap: 50,
-    totalContributedMina: '23',
+    totalContributedMina: 23,
     progressStart: '0',
     progressEnd: '50',
     liquidity: '54%',
@@ -207,9 +206,8 @@ const fetchResult = [
 // 获取 用户输入的关键字 进行搜索
 let keyWord = ref('')
 const getSearchProjects = async () => {
-  let searchRes = getSearchProjectAPI(keyWord);
-  console.log(searchRes);
-  // allLaunchpadsList.value = searchRes.value;
+  let searchRes = getSearchProjectAPI(keyWord)
+  allLaunchpadsList.value = searchRes.value
 }
 
 // 过滤器
@@ -457,7 +455,6 @@ const sortOption = (option: string) => {
                 <!-- photo -->
                 <el-row class="thumb">
                   <router-link to="/presale-datails">
-                    <!-- <img :src="item.photo" :alt="item.name"> -->
                     <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
                   </router-link>
                 </el-row>
