@@ -1,19 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
+
 import Home from '@/views/Home/index.vue'
+
 import PreSales from '@/views/PreSales/pre-sales.vue'
 import AllLaunchpads from '@/views/PreSales/components/AllLaunchpads.vue'
 import MyContributions from '@/views/PreSales/components/MyContributions.vue'
 import PresaleDetails from '@/views/PreSales/components/presale-details.vue'
 
-import PrivateSales from '../views/PrivateSales/private-sales.vue'
-import AllPrivateSales from '../views/PrivateSales/components/AllPrivateSales.vue'
-import PrivateSalesMyContributions from '../views/PrivateSales/components/PrivateSalesMyContributions.vue'
+import PrivateSales from '@/views/PrivateSales/private-Sales.vue'
+import AllPrivateSales from '@/views/PrivateSales/components/AllPrivateSales.vue'
+import PrivateSalesMyContributions from '@/views/PrivateSales/components/PrivateSalesMyContributions.vue'
+import PrivateSalesDetails from '@/views/PrivateSales/components/private-Sales-details.vue'
 
-import AirdropList from '../views/AirDrop/airdrop-List.vue'
-import CreateZkToken from '../views/Boot/create-ZkToken.vue'
-import CreateFairLaunch from '../views/Boot/create-fair-launch.vue'
-import CreateNormalLaunch from '../views/Boot/create-normal-launch.vue'
+import AirdropList from '@/views/AirDrop/airdrop-List.vue'
+import AllAirdrops from '@/views/AirDrop/components/allAirdrops.vue'
+import MyAirdrops from '@/views/AirDrop/components/myAirdrops.vue'
+import AirdropsCreatedByYou from '@/views/AirDrop/components/airdropsCreatedByYou.vue'
+
+import CreateZkToken from '@/views/Boot/create-ZkToken.vue'
+import CreateFairLaunch from '@/views/Boot/create-fair-launch.vue'
+import CreateNormalLaunch from '@/views/Boot/create-normal-launch.vue'
 import CreatePrivateSale from '../views/create-private-sale.vue'
 import CreateAirdrop from '../views/create-airdrop.vue'
 import CreateLock from '../views/create-lock.vue'
@@ -72,8 +79,26 @@ const router = createRouter({
           ]
         },
         {
+          path: '/private-sales-datails',
+          component: PrivateSalesDetails
+        },
+        {
           path: '/airdrop-list',
-          component: AirdropList
+          component: AirdropList,
+          children: [
+            {
+              path: '',
+              component: AllAirdrops
+            },
+            {
+              path: '/airdrop-list/my-airdrop',
+              component: MyAirdrops
+            },
+            {
+              path: '/airdrop-list/created-by-you',
+              component: AirdropsCreatedByYou
+            }
+          ]
         },
         {
           path: '/create-zk-token',
