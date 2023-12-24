@@ -46,10 +46,11 @@ export class Escrow extends SmartContract {
         });
         zkapp.account.verificationKey.set(simpleAVk);
         AccountUpdate.setValue(zkapp.body.update.appState[0], totalSupply);//totalSupply
-            
-        const feePayer = AccountUpdate.createSigned(this.sender);
-        const feeReceiverAU = AccountUpdate.create(this.address);
-        feePayer.send({ to: feeReceiverAU, amount: UInt64.from(totalSupply) });
+    
+        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feeReceiverAU = AccountUpdate.create(this.address);// CAN WORK
+        //const feeReceiverAU = AccountUpdate.create(thirdpartyFeeReciverAddress);// !!! can NOT work!!!
+        feePayer.send({ to: feeReceiverAU, amount: UInt64.from(totalSupply) });
 
     }
 }
@@ -70,6 +71,11 @@ const simpleAZkAppKey = PrivateKey.random();
 const simpleAZkAppAddress = simpleAZkAppKey.toPublicKey();
 console.log('simpleAZkAppKey: ', simpleAZkAppKey.toBase58());
 console.log('simpleAZkAppAddress: ', simpleAZkAppAddress.toBase58());
+
+const thirdpartyFeeReciverKey = PrivateKey.random();
+const thirdpartyFeeReciverAddress = thirdpartyFeeReciverKey.toPublicKey();
+console.log('thirdpartyFeeReciverKey: ', thirdpartyFeeReciverKey.toBase58());
+console.log('thirdpartyFeeReciverAddress: ', thirdpartyFeeReciverAddress.toBase58());
 
 
 console.log('-------------------------------------------');
@@ -96,6 +102,9 @@ tx = await Local.transaction(feePayer, () => {
 });
 await tx.prove();
 tx.sign([feePayerKey, simpleAZkAppKey]);
+
+console.log(tx.toPretty());
+
 await tx.send();
 console.log('escrow.createSimpleA(feePayer) ended.');
 
@@ -106,5 +115,8 @@ tx = await Local.transaction(feePayer, () => {
 });
 await tx.prove();
 tx.sign([feePayerKey]);
+
+console.log(tx.toPretty());
+
 await tx.send();
 console.log('SimpleA.setTotalSupply ended.');
