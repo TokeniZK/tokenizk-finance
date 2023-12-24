@@ -9,3 +9,9 @@ export function getAllPrivateSalesAPI() {
     url: '/home/category/head'
   })
 }
+
+export function getPrivateSalesMyContributionsAPI() {
+  return httpInstance({
+    url: '/home/category/head'
+  })
+}
