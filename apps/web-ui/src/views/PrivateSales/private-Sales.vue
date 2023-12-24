@@ -1,6 +1,18 @@
+<script lang="ts" setup>
+import { onMounted } from 'vue'
+// 组件挂载完成后执行的函数
+onMounted(() => {
+
+  // 进入当前组件都会回到顶部
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+
+})
+</script>
 <template>
   <el-row class="private-Sales">
-
     <el-col :span="24">
 
       <el-row class="row-bg" justify="center">
@@ -29,9 +41,7 @@
       <el-row>
         <el-col :span="24">
 
-          <keep-alive>
-            <router-view />
-          </keep-alive>
+          <router-view />
 
         </el-col>
       </el-row>
