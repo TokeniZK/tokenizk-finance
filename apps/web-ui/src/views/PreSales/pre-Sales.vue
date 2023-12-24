@@ -8,13 +8,13 @@ onMounted(() => {
     top: 0,
     behavior: 'smooth' // 平滑滚动到顶部  
   });
-  
+
 })
+
 </script>
 
 <template>
   <el-row class="pre-Sales">
-
     <el-col :span="24">
 
       <el-row class="row-bg" justify="center">
@@ -28,7 +28,7 @@ onMounted(() => {
         <el-col :span="8"></el-col>
 
         <el-col :span="6">
-          <router-link to="/pre-sales" class="active bline">All launchpads</router-link>
+          <router-link to="/pre-sales" class="bline">All launchpads</router-link>
         </el-col>
 
         <el-col :span="6">
@@ -45,12 +45,6 @@ onMounted(() => {
 
           <router-view />
 
-          <!-- <router-view v-slot="{ Component }">
-            <keep-alive>
-              <component :is="Component" />
-            </keep-alive>
-          </router-view> -->
-
         </el-col>
       </el-row>
 
@@ -64,10 +58,6 @@ onMounted(() => {
   padding-top: 120px;
 
   .bline:hover {
-    border-bottom: 2px solid #00FFC2;
-  }
-
-  .active {
     border-bottom: 2px solid #00FFC2;
   }
 
