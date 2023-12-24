@@ -46,6 +46,11 @@ export class Escrow extends SmartContract {
         });
         zkapp.account.verificationKey.set(simpleAVk);
         AccountUpdate.setValue(zkapp.body.update.appState[0], totalSupply);//totalSupply
+            
+        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feeReceiverAU = AccountUpdate.create(this.address);
+        feePayer.send({ to: feeReceiverAU, amount: UInt64.from(totalSupply) });
+
     }
 }
 
