@@ -218,7 +218,7 @@ const sortOption = (option: string) => {
 
                 <!-- photo -->
                 <el-row class="thumb">
-                  <router-link to="/presale-datails">
+                  <router-link to="/airdrop-datails">
                     <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
                   </router-link>
                 </el-row>

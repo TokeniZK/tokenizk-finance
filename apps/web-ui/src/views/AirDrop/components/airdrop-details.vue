@@ -21,13 +21,20 @@ onMounted(() => {
 const originalResult = {
   id: nanoid(),
   photo: '/src/assets/images/1.png',
-  name: 'Oggy Inu 2.0',
+  name: 'TokeniZK - Airdrop',
   teamName: 'Yoga',
   star: 4,
-  preSaleAddr: 'B62',
+  airdropAddress: 'B6273Af06B601b1493C4400E01225cA4C992182b31',
+  tokenAddress: 'B6273Af06B601b1493C4400E01225cA4C992182b32',
+  tokenName: 'TZ',
+  symbol: 'CDV2',
+  totalTokens: 3000000,
+  TGEReleasePercent: '90%',
+  cycle: '15 days',
+  cycleReleasePercent: '10%',
+  totalContributedMina: 40,
   softCap: 300,
   hardCap: 600,
-  totalContributedMina: 40,
   progressStart: 0,
   progressEnd: 50,
   liquidity: '10%',
@@ -178,9 +185,7 @@ const countdownFinishCallback = () => {
 <style scoped></style>
 
 <template>
-  <el-row class="row-bg presale-details" justify="center">
-
-    <!-- <el-col :span="1"></el-col> -->
+  <el-row class="row-bg airdrop-details" justify="center">
 
     <!-- 项目描述 -->
     <el-col :span="12" class="project-description">
@@ -195,6 +200,7 @@ const countdownFinishCallback = () => {
             <el-col :span="20">
               <el-row>
                 <h1>{{ fetchResult.name }}</h1>
+
               </el-row>
 
               <el-row>
@@ -207,35 +213,58 @@ const countdownFinishCallback = () => {
           <el-row class="row-bg formTable">
             <el-col :span="24">
               <el-row class="row-bg" justify="center">
-                <el-col :span="12">Presale Address</el-col>
-                <el-col :span="12">B6273Af06B601b1493C4400E01225cA4C992182b31</el-col>
+                <el-col :span="12">Airdrop Address</el-col>
+                <el-col :span="12">{{ fetchResult.airdropAddress }}</el-col>
+              </el-row>
+              <el-row class="row-bg" justify="center">
+                <el-col :span="12">Token Address</el-col>
+                <el-col :span="12">{{ fetchResult.tokenAddress }}</el-col>
               </el-row>
               <el-row class="row-bg" justify="space-between">
-                <el-col :span="12">Soft Cap</el-col>
-                <el-col :span="12"> {{ fetchResult.softCap }}</el-col>
+                <el-col :span="12">Token Name</el-col>
+                <el-col :span="12"> {{ fetchResult.tokenName }}</el-col>
               </el-row>
               <el-row class="row-bg" justify="space-between">
-                <el-col :span="12">Hard Cap</el-col>
-                <el-col :span="12"> {{ fetchResult.hardCap }}</el-col>
+                <el-col :span="12">Symbol</el-col>
+                <el-col :span="12"> {{ fetchResult.symbol }}</el-col>
               </el-row>
               <el-row class="row-bg" justify="space-between">
-                <el-col :span="11">Presale Start Time</el-col>
-                <el-col :span="13">{{ new Date(fetchResult.presaleStartTime) }}</el-col>
+                <el-col :span="12">Total Tokens</el-col>
+                <el-col :span="12">{{ fetchResult.totalTokens }}</el-col>
               </el-row>
               <el-row class="row-bg" justify="space-between">
-                <el-col :span="11">Presale End Time</el-col>
-                <el-col :span="13">{{ new Date(fetchResult.presaleEndTime) }}</el-col>
+                <el-col :span="12">TGE Release Percent</el-col>
+                <el-col :span="12">{{ fetchResult.TGEReleasePercent }}</el-col>
               </el-row>
 
               <el-row class="row-bg" justify="space-between">
-                <el-col :span="12">First Release For Project</el-col>
-                <el-col :span="12">{{ fetchResult.firstReleaseForProject }}</el-col>
+                <el-col :span="12">Cycle</el-col>
+                <el-col :span="12">{{ fetchResult.cycle }}</el-col>
               </el-row>
 
               <el-row class="row-bg" justify="space-between">
-                <el-col :span="12">Vesting For Project</el-col>
-                <el-col :span="12">{{ fetchResult.vestingForProject }}</el-col>
+                <el-col :span="12">Cycle Release Percent</el-col>
+                <el-col :span="12">{{ fetchResult.cycleReleasePercent }}</el-col>
               </el-row>
+
+              <el-row>
+                <h3 style="font-family: math; margin-top: 40px;">Allocations(313)</h3>
+              </el-row>
+
+              <el-row class="row-bg" justify="space-between">
+                <el-col :span="12">{{ fetchResult.airdropAddress }}</el-col>
+                <el-col :span="8">4,000 CDV2</el-col>
+              </el-row>
+              <el-row class="row-bg" justify="space-between">
+                <el-col :span="12">{{ fetchResult.airdropAddress }}</el-col>
+                <el-col :span="8">4,000 CDV2</el-col>
+              </el-row>
+              <el-row class="row-bg" justify="space-between">
+                <el-col :span="12">{{ fetchResult.airdropAddress }}</el-col>
+                <el-col :span="8">4,000 CDV2</el-col>
+              </el-row>
+
+              <el-pagination background layout="prev, pager, next" :total="10" />
 
             </el-col>
           </el-row>
@@ -283,7 +312,7 @@ const countdownFinishCallback = () => {
 
         <el-row>
           <el-input v-model="tokenInput" placeholder="Please input" size="large" clearable
-            :disabled="contributionInputDisabled" />
+            :disabled="contributionInputDisabled" class="tokenInput" />
         </el-row>
 
         <el-row>
@@ -336,7 +365,7 @@ const countdownFinishCallback = () => {
 </template>
 
 <style lang="less" scoped>
-.presale-details {
+.airdrop-details {
   width: 100%;
   padding-top: 120px;
   padding-bottom: 120px;
@@ -386,6 +415,10 @@ const countdownFinishCallback = () => {
   .demo-progress .el-progress--line {
     margin-bottom: 15px;
     width: 350px;
+  }
+
+  .tokenInput {
+    border-radius: 15px !important;
   }
 
   .el-row {

@@ -17,6 +17,7 @@ import AirdropList from '@/views/AirDrop/airdrop-list.vue'
 import AllAirdrops from '@/views/AirDrop/components/all-airdrops.vue'
 import MyAirdrops from '@/views/AirDrop/components/my-airdrops.vue'
 import CreatedByYouAirdrops from '@/views/AirDrop/components/created-by-you-airdrops.vue'
+import AirdropDetails from '@/views/AirDrop/components/airdrop-details.vue'
 
 import CreateZkToken from '@/views/Boot/create-ZkToken.vue'
 import CreateFairLaunch from '@/views/Boot/create-fair-launch.vue'
@@ -99,6 +100,10 @@ const router = createRouter({
               component: CreatedByYouAirdrops
             }
           ]
+        },
+        {
+          path: '/airdrop-datails',
+          component: AirdropDetails
         },
         {
           path: '/create-zk-token',
