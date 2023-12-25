@@ -74,7 +74,12 @@ const prev = () => {
 
 }
 
+// 模态框
+// const fillWhiteList = () => {}
+// const dialogFormVisible = ref(false)
+// const formLabelWidth = '140px'
 
+// 表单
 interface RuleForm {
   tokenAddress: string
   name: string
@@ -82,6 +87,7 @@ interface RuleForm {
   feeOptions: string
   totalSellingAmount: string
   whiteList: string
+  // whiteListUser: string
   softCap: string
   liquidity: string
   startTime: string
@@ -108,6 +114,7 @@ const ruleForm = reactive<RuleForm>({
   currency: '',
   totalSellingAmount: '',
   whiteList: '',
+  // whiteListUser: '',
   softCap: '',
   liquidity: '',
   startTime: '',
@@ -165,10 +172,18 @@ const rules = reactive<FormRules<RuleForm>>({
   whiteList: [
     {
       required: true,
-      message: 'Please select at least one',
-      trigger: 'change',
+      message: 'Please input whiteList address',
+      trigger: 'blur',
     },
   ],
+
+  // whiteListUser: [
+  //   {
+  //     required: true,
+  //     message: 'Please input whiteList UserName',
+  //     trigger: 'blur',
+  //   },
+  // ],
 
   softCap: [
     {
@@ -358,18 +373,37 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                   <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
                   <el-col :span="24">
+
                     <el-form-item label="Total selling amount" prop="totalSellingAmount">
                       <el-input v-model.number.trim="ruleForm.totalSellingAmount" placeholder="0" />
                       <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
                     </el-form-item>
 
+                    <!-- 模态框 -->
                     <el-form-item label="Whitelist" prop="whiteList">
-                      <el-radio-group v-model="ruleForm.whiteList">
-                        <el-radio label="Disable" />
-                        <el-radio label="Enable" />
-                        <div class="form-notes">You can enable/disable whitelist anytime.</div>
-                      </el-radio-group>
+                      <el-input v-model.trim="ruleForm.whiteList" placeholder="" />
                     </el-form-item>
+
+                    <!-- <el-radio-group v-model="ruleForm.whiteList">
+                        <el-radio label="Disable" />
+                        <el-radio label="Enable" @change="dialogFormVisible = true" />
+
+                        <el-dialog v-model="dialogFormVisible" title="Add users to whitelist">
+                          <el-form-item label="whiteListUser" :label-width="formLabelWidth">
+                            <el-input v-model="ruleForm.whiteListUser" type="textarea" />
+                          </el-form-item>
+                          <template #footer>
+                            <span class="dialog-footer">
+                              <el-button @click="dialogFormVisible = false">Cancel whitelist</el-button>
+                              <el-button type="primary" @click="dialogFormVisible = false">
+                                Complete whitelist
+                              </el-button>
+                            </span>
+                          </template>
+                        </el-dialog>
+                        <div class="form-notes">You can enable/disable whitelist anytime.</div>
+                      </el-radio-group> -->
+
 
                     <el-form-item label="SoftCap (Mina)" prop="softCap">
                       <el-input v-model.number.trim="ruleForm.softCap" placeholder="0" />
@@ -532,7 +566,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 
                 <!-- 上一步、下一步 -->
-                <el-row class="row-bg" justify="center">
+                <el-row class="row-bg" justify="center" style="margin-top: 50px;">
                   <el-col :span="8"></el-col>
 
                   <el-col :span="6">
@@ -560,7 +594,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 <style lang="less" scoped>
 .create-fair-launch {
   width: 100%;
-  padding: 120px;
+  padding: 200px 200px 100px 200px;
 
   .form-notes {
     font-size: 12px;

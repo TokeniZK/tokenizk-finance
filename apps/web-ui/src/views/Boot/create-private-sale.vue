@@ -73,27 +73,24 @@ const prev = () => {
 
 }
 
-const fillWhiteList = () => {
+// 模态框
+// const fillWhiteList = () => {}
+// const dialogFormVisible = ref(false)
+// const formLabelWidth = '140px'
 
-}
-
-
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
-
+// 表单
 interface RuleForm {
   privateSaleName: string
-  whiteListUser: string
   name: string
   currency: string
   feeOptions: string
   privateSaleRate: string
   whiteList: string
+  // whiteListUser: string
   softCap: string
   hardCap: string
   minimumBuy: string
   maximumBuy: string
-  // refundType: string
   startTime: string
   endTime: string
   firstFundReleaseForProject: string
@@ -115,17 +112,16 @@ const ruleFormRef = ref<FormInstance>()
 
 const ruleForm = reactive<RuleForm>({
   privateSaleName: '',
-  whiteListUser: '',
   name: '',
   feeOptions: '',
   currency: '',
   privateSaleRate: '',
   whiteList: '',
+  // whiteListUser: '',
   softCap: '',
   hardCap: '',
   minimumBuy: '',
   maximumBuy: '',
-  // refundType: '',
   startTime: '',
   endTime: '',
   firstFundReleaseForProject: '',
@@ -183,18 +179,18 @@ const rules = reactive<FormRules<RuleForm>>({
   whiteList: [
     {
       required: true,
-      message: 'Please select at least one',
-      trigger: 'change',
-    },
-  ],
-
-  whiteListUser: [
-    {
-      required: true,
-      message: 'Please input whiteList UserName',
+      message: 'Please input whiteList address',
       trigger: 'blur',
     },
   ],
+
+  // whiteListUser: [
+  //   {
+  //     required: true,
+  //     message: 'Please input whiteList UserName',
+  //     trigger: 'blur',
+  //   },
+  // ],
 
   softCap: [
     {
@@ -231,14 +227,6 @@ const rules = reactive<FormRules<RuleForm>>({
       trigger: 'blur'
     },
   ],
-
-  // refundType: [
-  //   {
-  //     required: true,
-  //     message: 'Please select a Refund type',
-  //     trigger: 'change',
-  //   },
-  // ],
 
   startTime: [
     {
@@ -444,6 +432,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
                     <!-- 模态框 -->
                     <el-form-item label="Whitelist" prop="whiteList">
+                      <el-input v-model.trim="ruleForm.whiteList" placeholder="" />
+                    </el-form-item>
+
+                    <!-- <el-form-item label="Whitelist" prop="whiteList">
                       <el-radio-group v-model="ruleForm.whiteList">
                         <el-radio label="Disable" />
                         <el-radio label="Enable" @change="dialogFormVisible = true" />
@@ -451,7 +443,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
                         <el-dialog v-model="dialogFormVisible" title="Add users to whitelist">
 
                           <el-form-item label="whiteListUser" :label-width="formLabelWidth">
-                            <el-input v-model="ruleForm.whiteListUser" autocomplete="off" />
+                            <el-input v-model="ruleForm.whiteListUser" type="textarea" />
                           </el-form-item>
 
                           <template #footer>
@@ -467,7 +459,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
                         <div class="form-notes">You can enable/disable whitelist anytime.</div>
                       </el-radio-group>
-                    </el-form-item>
+                    </el-form-item> -->
 
 
                     <el-row class="row-bg">
@@ -640,6 +632,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
                 <!-- 步骤4 -->
                 <el-row class="row-bg formTable2" v-show="flagX === 3">
                   <el-col :span="24">
+
                     <el-row class="row-bg">
                       <el-col :span="12">Private Sale Name</el-col>
                       <el-col :span="12">{{ ruleForm.privateSaleName }}</el-col>
@@ -706,7 +699,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 
                 <!-- 上一步、下一步 -->
-                <el-row class="row-bg" justify="center">
+                <el-row class="row-bg" justify="center" style="margin-top: 50px;">
                   <el-col :span="8"></el-col>
 
                   <el-col :span="6">
@@ -734,7 +727,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 <style lang="less" scoped>
 .create-private-sale {
   width: 100%;
-  padding: 120px;
+  padding: 200px 200px 100px 200px;
 
   .form-notes {
     font-size: 12px;
