@@ -6,12 +6,12 @@ import httpInstance from '@/utils/http'
  */
 export function getAllPrivateSalesAPI() {
   return httpInstance({
-    url: '/home/category/head'
+    url: '/private-sale/all-private-sales'
   })
 }
 
 export function getPrivateSalesMyContributionsAPI() {
   return httpInstance({
-    url: '/home/category/head'
+    url: '/private-sale/private-sales-my-contributions'
   })
 }
