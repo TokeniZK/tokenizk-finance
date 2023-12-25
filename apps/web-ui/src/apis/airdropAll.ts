@@ -2,24 +2,24 @@ import httpInstance from '@/utils/http'
 
 export function getAllAirdropListAPI() {
   return httpInstance({
-    url: '/home/airdrop'
+    url: '/airdrop/airdrop'
   })
 }
 
 export function getMyAirdropListAPI() {
   return httpInstance({
-    url: '/home/airdrop'
+    url: '/airdrop/my-airdrop'
   })
 }
 
 export function getCreatedByYouAirdropsAPI() {
   return httpInstance({
-    url: '/home/airdrop'
+    url: '/airdrop/create-by-you-airdrop'
   })
 }
 
 export function getAirdropItemsAPI() {
   return httpInstance({
-    url: '/home/banner'
+    url: '/airdrop/airdrop-items'
   })
 }
