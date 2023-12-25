@@ -22,8 +22,9 @@ import AirdropDetails from '@/views/AirDrop/components/airdrop-details.vue'
 import CreateZkToken from '@/views/Boot/create-ZkToken.vue'
 import CreateFairLaunch from '@/views/Boot/create-fair-launch.vue'
 import CreateNormalLaunch from '@/views/Boot/create-normal-launch.vue'
-import CreatePrivateSale from '../views/Boot/create-private-sale.vue'
-import CreateAirdrop from '../views/create-airdrop.vue'
+import CreatePrivateSale from '@/views/Boot/create-private-sale.vue'
+import CreateAirdrop from '@/views/Boot/create-new-airdrop.vue'
+
 import CreateLock from '../views/create-lock.vue'
 import CreateZkNFT from '../views/create-zkNFT.vue'
 import Services from '../views/Services.vue'
@@ -122,7 +123,7 @@ const router = createRouter({
           component: CreatePrivateSale
         },
         {
-          path: '/create-airdrop',
+          path: '/create-new-airdrop',
           component: CreateAirdrop
         },
         {

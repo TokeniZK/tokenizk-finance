@@ -61,7 +61,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
             <router-link to="/create-private-sale">Create Private Sale</router-link>
           </el-menu-item>
           <el-menu-item index="2-5">
-            <router-link to="/create-airdrop">Create Airdrop</router-link>
+            <router-link to="/create-new-airdrop">Create Airdrop</router-link>
           </el-menu-item>
           <el-menu-item index="2-6">
             <router-link to="/create-lock"> Create Lock</router-link>
