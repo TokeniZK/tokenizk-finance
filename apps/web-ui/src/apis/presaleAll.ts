@@ -2,18 +2,18 @@ import httpInstance from '@/utils/http'
 
 export function getOngoingPresaleAPI() {
   return httpInstance({
-    url: '/home/banner'
+    url: '/presale/ongoing-presale'
   })
 }
 
 export function getAllLaunchpadsAPI() {
   return httpInstance({
-    url: '/home/category/head'
+    url: '/presale/all-launchpads'
   })
 }
 
 export function getMyContributionsAPI() {
   return httpInstance({
-    url: '/home/category/head'
+    url: '/presale/my-contribution'
   })
 }
