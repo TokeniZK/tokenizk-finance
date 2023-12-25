@@ -221,7 +221,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 <style lang="less" scoped>
 .create-ZkToken {
   width: 100%;
-  padding: 120px;
+  padding: 200px 200px 100px 200px;
 
   .form-notes {
     font-size: 12px;

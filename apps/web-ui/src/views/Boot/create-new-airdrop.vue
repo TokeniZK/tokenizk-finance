@@ -546,7 +546,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
                 </el-row>
 
                 <!-- 上一步、下一步 -->
-                <el-row class="row-bg" justify="center">
+                <el-row class="row-bg" justify="center" style="margin-top: 50px;">
                   <el-col :span="8"></el-col>
 
                   <el-col :span="6">
@@ -574,7 +574,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 <style lang="less" scoped>
 .create-normal-launch {
   width: 100%;
-  padding: 120px;
+  padding: 200px 200px 100px 200px;
 
   .form-notes {
     font-size: 12px;
