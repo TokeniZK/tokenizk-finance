@@ -73,7 +73,7 @@ const prev = () => {
 }
 
 interface RuleForm {
-  tokenddress: string
+  tokenAddress: string
   name: string
   currency: string
   feeOptions: string
@@ -102,7 +102,7 @@ interface RuleForm {
 const ruleFormRef = ref<FormInstance>()
 
 const ruleForm = reactive<RuleForm>({
-  tokenddress: '',
+  tokenAddress: '',
   name: '',
   feeOptions: '',
   currency: '',
@@ -132,7 +132,7 @@ const ruleForm = reactive<RuleForm>({
 const rules = reactive<FormRules<RuleForm>>({
 
   // 步骤1
-  tokenddress: [
+  tokenAddress: [
     { required: true, message: 'Please input Token address', trigger: 'blur' },
     { min: 3, max: 10, message: 'Length should be 3 to 10', trigger: 'blur' },
   ],
@@ -353,13 +353,13 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
                 <!-- 步骤1 -->
                 <el-row class="row-bg formTable1" v-show="flagX === 0">
-                  <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
+                  <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
                   <el-col :span="24">
 
                     <el-row class="row-bg">
                       <el-col :span="11">
-                        <el-form-item label="Token address" prop="tokenddress">
-                          <el-input v-model.trim="ruleForm.tokenddress" placeholder="Ex: Mina" />
+                        <el-form-item label="Token address" prop="tokenAddress">
+                          <el-input v-model.trim="ruleForm.tokenAddress" placeholder="Ex: Mina" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="1"></el-col>
@@ -388,7 +388,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
                 <!-- 步骤2 -->
                 <el-row class="row-bg formTable1" v-show="flagX === 1">
-                  <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
+                  <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
                   <el-col :span="24">
                     <el-form-item label="Presale rate" prop="presaleRate">
@@ -472,16 +472,15 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
                 <!-- 步骤3 -->
                 <el-row class="row-bg formTable1" v-show="flagX === 2">
-                  <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
+                  <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
                   <el-col :span="24">
 
                     <el-row class="row-bg">
                       <el-col :span="11">
                         <el-form-item label="Logo URL" prop="logoUrl">
                           <el-input v-model.trim="ruleForm.logoUrl" placeholder="Ex: https://..." />
-                          <div class="form-notes">URL must end with a supported image extension png, jpg, jpeg or gif. You
-                            can
-                            upload your image at .</div>
+                          <div class="form-notes" style="margin-bottom: 0;">URL must end with a supported image extension
+                            png, jpg, jpeg or gif.You can upload your image at </div>
                         </el-form-item>
                       </el-col>
 

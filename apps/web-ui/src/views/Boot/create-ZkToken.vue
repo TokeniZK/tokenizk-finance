@@ -141,7 +141,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
           <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm"
             size="large" status-icon label-position="top">
 
-            <div class="form-notes" style="margin-bottom: 10px;">(*) is required field.</div>
+            <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
             <el-form-item label="Token Type" prop="tokenType">
               <el-select v-model.trim="ruleForm.tokenType" placeholder="Basic ZkToken">
@@ -202,8 +202,14 @@ const resetForm = (formEl: FormInstance | undefined) => {
           </el-row>
 
           <el-button size="large" disabled>View transaction</el-button>
-          <el-button type="primary" size="large">Create launchpad</el-button>
-          <el-button type="primary" size="large">Create Fairlaunch</el-button>
+
+          <el-button type="primary" size="large">
+            <router-link to="/create-normal-launch" style="color: #fff;"> Create launchpad</router-link>
+          </el-button>
+
+          <el-button type="primary" size="large">
+            <router-link to="/create-normal-launch" style="color: #fff;"> Create Fairlaunch</router-link>
+          </el-button>
 
         </el-col>
       </el-row>
