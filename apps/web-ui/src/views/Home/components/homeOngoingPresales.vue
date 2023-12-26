@@ -280,112 +280,114 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
       </el-row>
 
-      <!-- 轮播图 -->
-      <!-- 每个项目 -->
-      <el-row class="row-bg ongoing-presales-carousel">
+      
+      <!-- 轮播图 -->
+      <!-- 每个项目 -->
+      <el-row class="row-bg ongoing-presales-carousel">
 
-        <el-col :span="2"></el-col>
+        <el-col :span="2"></el-col>
 
-        <el-col :span="20">
+        <el-col :span="20">
 
-          <ul class="launchpads-ul" style="width:100%;">
+          <ul class="launchpads-ul">
 
-            <el-carousel :interval="3000" type="card" height="500px">
-              <el-carousel-item v-for="items in 4" :key="items">
+            <el-carousel :interval="4000" type="card" height="500px">
+              <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
 
-                <li v-for="item in presaleProjects.saleList" :key="item.id">
-                  <div class="launchpads-box">
-                    <!-- photo -->
-                    <el-row class="thumb">
-                      <router-link to="/presale-datails">
-                        <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name"
-                          loading="lazy" />
-                      </router-link>
-                    </el-row>
+                <!-- <li v-for="item in presaleProjects.saleList" :key="item.id"> -->
 
-                    <!-- 项目描述 -->
-                    <el-row class="launchpads-content">
+                <div class="launchpads-box" object-fit="cover">
 
-                      <el-col :span="24">
+                  <!-- photo -->
+                  <el-row class="thumb">
+                    <router-link to="/presale-datails">
+                      <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
+                    </router-link>
+                  </el-row>
 
-                        <el-row class="row-bg" justify="space-between">
-                          <el-col :span="8">
-                            <h4><a href="#">{{ item.name }}</a></h4>
-                          </el-col>
+                  <!-- 项目描述 -->
+                  <el-row class="launchpads-content">
 
-                          <el-col :span="5"></el-col>
+                    <el-col :span="24">
 
-                          <el-col class="review" :span="7">
-                            <el-button type="primary" round class="statusColor" to="">{{ item.status }}</el-button>
-                          </el-col>
-                        </el-row>
+                      <el-row class="row-bg" justify="space-between">
+                        <el-col :span="8">
+                          <h4><a href=" ">{{ item.name }}</a ></h4>
+                        </el-col>
 
-                        <!-- 团队名称 -->
-                        <el-row class="text-review-change" justify="space-between">
-                          <el-col class="text" :span="10">
-                            by {{ item.teamName }}
-                          </el-col>
+                        <el-col :span="5"></el-col>
 
-                          <el-col class="review" :span="10">
-                            <el-rate v-model="item.star" size="large" />
-                          </el-col>
-                        </el-row>
+                        <el-col class="review" :span="7">
+                          <el-button type="primary" round class="statusColor" to="">{{ item.status }}</el-button>
+                        </el-col>
+                      </el-row>
 
-                        <el-row class="row-bg soft-hard-cap" justify="space-between">
-                          <el-col :span="10">Soft / Hard</el-col>
-                          <el-col :span="2"></el-col>
-                          <el-col :span="10">{{ item.softCap }}Mina - {{ item.hardCap }}Mina</el-col>
-                        </el-row>
+                      <!-- 团队名称 -->
+                      <el-row class="text-review-change" justify="space-between">
+                        <el-col class="text" :span="10">
+                          by {{ item.teamName }}
+                        </el-col>
+
+                        <el-col class="review" :span="10">
+                          <el-rate v-model="item.star" size="large" />
+                        </el-col>
+                      </el-row>
+
+                      <el-row class="row-bg soft-hard-cap" justify="space-between">
+                        <el-col :span="10">Soft / Hard</el-col>
+                        <el-col :span="2"></el-col>
+                        <el-col :span="10">{{ item.softCap }}Mina - {{ item.hardCap }}Mina</el-col>
+                      </el-row>
 
 
-                        <!-- 进度条 -->
-                        <el-row class="content-Progress">
-                          <el-col>
+                      <!-- 进度条 -->
+                      <el-row class="content-Progress">
+                        <el-col>
 
-                            <el-row class="title">Progress</el-row>
+                          <el-row class="title">Progress</el-row>
 
-                            <el-row class="Progress demo-progress">
-                              <el-progress :text-inside="true" :stroke-width="14"
-                                :percentage="item.totalContributedMina" />
-                            </el-row>
+                          <el-row class="Progress demo-progress">
+                            <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
+                          </el-row>
 
-                            <el-row class="row-bg sub-title" justify="space-between">
-                              <el-col :span="10"> 0 Mina</el-col>
-                              <el-col :span="4"></el-col>
-                              <el-col :span="6">50 Mina</el-col>
-                            </el-row>
+                          <el-row class="row-bg sub-title" justify="space-between">
+                            <el-col :span="10"> 0 Mina</el-col>
+                            <el-col :span="4"></el-col>
+                            <el-col :span="6">50 Mina</el-col>
+                          </el-row>
 
-                          </el-col>
-                        </el-row>
+                        </el-col>
+                      </el-row>
 
-                        <el-row class="row-bg liquidity-percent" justify="space-between">
-                          <el-col :span="10">Liquidity %:</el-col>
-                          <el-col :span="4"></el-col>
-                          <el-col :span="6"> {{ item.liquidity }}</el-col>
-                        </el-row>
+                      <el-row class="row-bg liquidity-percent" justify="space-between">
+                        <el-col :span="10">Liquidity %:</el-col>
+                        <el-col :span="4"></el-col>
+                        <el-col :span="6"> {{ item.liquidity }}</el-col>
+                      </el-row>
 
-                        <el-row class="row-bg lockup-time" justify="space-between">
-                          <el-col :span="10">Lockup Time:</el-col>
-                          <el-col :span="4"></el-col>
-                          <el-col :span="6">365 day</el-col>
-                        </el-row>
+                      <el-row class="row-bg lockup-time" justify="space-between">
+                        <el-col :span="10">Lockup Time:</el-col>
+                        <el-col :span="4"></el-col>
+                        <el-col :span="6">365 day</el-col>
+                      </el-row>
 
-                      </el-col>
+                    </el-col>
 
-                    </el-row>
-                  </div>
-                </li>
+                  </el-row>
+                </div>
+                <!-- </li> -->
 
-              </el-carousel-item>
-            </el-carousel>
+              </el-carousel-item>
+            </el-carousel>
 
-          </ul>
+          </ul>
 
-        </el-col>
+        </el-col>
 
-        <el-col :span="2"></el-col>
+        <el-col :span="2"></el-col>
 
-      </el-row>
+      </el-row>
+                                                       
 
     </el-col>
   </el-row>
