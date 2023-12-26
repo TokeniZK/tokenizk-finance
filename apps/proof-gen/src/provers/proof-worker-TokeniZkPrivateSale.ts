@@ -12,7 +12,54 @@ export { initWorker };
 let privateSaleContractCallTimes = 0;
 
 function processMsgFromMaster() {
-    
+    process.on('message', async (message: { type: string; payload: any }) => {
+
+        logger.info(`[WORKER ${process.pid}] running ${message.type}`);
+
+        switch (message.type) {
+
+            case `CONTRACT_CALL`:
+                await execCircuit(message, async () => {
+                    const params = {
+                        feePayer: PublicKey.fromBase58(message.payload.feePayer),
+                        fee: message.payload.fee,
+                        tokenAddress: PublicKey.fromBase58(message.payload.tokenAddress),
+                        contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
+                        methodParams: {
+                            saleParams: SaleParams.fromJSON(message.payload.methodParams.presaleParams) as SaleParams,//??? rm 'as SaleParams'?
+                            saleRollupProof: SaleRollupProof.fromJSON(message.payload.methodParams.presaleRollupProof)
+                        }
+                    }
+
+                    logger.info(`currentActionsHash0: ${params.methodParams.saleRollupProof.publicOutput.source.currentActionsHash}`);
+                    logger.info(`currentIndex0: ${params.methodParams.saleRollupProof.publicOutput.source.currentIndex}`);
+                    logger.info(`depositRoot0: ${params.methodParams.saleRollupProof.publicOutput.source.membershipTreeRoot}`);
+
+                    logger.info(`currentActionsHash1: ${params.methodParams.saleRollupProof.publicOutput.target.currentActionsHash}`);
+                    logger.info(`currentIndex1: ${params.methodParams.saleRollupProof.publicOutput.target.currentIndex}`);
+                    logger.info(`depositRoot1: ${params.methodParams.saleRollupProof.publicOutput.target.membershipTreeRoot}`);
+
+                    await syncAcctInfo(params.contractAddress);// fetch account.
+                    const saleContract = new TokeniZkPrivateSale(params.contractAddress, TokenId.derive(params.tokenAddress));
+
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
+                        saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
+                    });
+                    await tx.prove();
+
+                    return tx;
+                });
+                break;
+
+            default:
+                throw Error(`Unknown message ${message}`);
+        }
+        logger.info(`[WORKER ${process.pid}] completed ${message.type}`);
+
+        if (++privateSaleContractCallTimes > 6) {// TODO set 6 temporarily
+            process.exit(0);
+        }
+    });
 }
 
 const execCircuit = async (message: any, func: () => Promise<any>) => {
