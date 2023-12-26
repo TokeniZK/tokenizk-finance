@@ -28,7 +28,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/1.png',
     name: 'Oggy Inu 2.0',
-    status: '',
     teamName: 'Yoga',
     star: 4,
     preSaleAddr: 'B62',
@@ -51,7 +50,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
-    status: '',
     teamName: 'walking',
     star: 2,
     preSaleAddr: 'B62',
@@ -75,7 +73,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/3.png',
     name: 'Ripple Frog',
-    status: '',
     teamName: 'cherry',
     star: 2,
     preSaleAddr: 'B62',
@@ -98,7 +95,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/3.png',
     name: 'FastAI',
-    status: '',
     teamName: 'Tang',
     star: 4,
     preSaleAddr: 'B62',
@@ -121,7 +117,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/2.png',
     name: 'Wrapped XRP',
-    status: '',
     teamName: 'mina',
     star: 2,
     preSaleAddr: 'B62',
@@ -144,7 +139,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/1.png',
     name: 'THREADS V2',
-    status: '',
     teamName: 'BTC',
     star: 2,
     preSaleAddr: 'B62',
@@ -167,7 +161,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/2.png',
     name: 'Oggy Inu 2.0',
-    status: '',
     teamName: 'Yoga',
     star: 5,
     preSaleAddr: 'B62',
@@ -190,7 +183,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
-    status: '',
     teamName: 'Yoga',
     star: 2,
     preSaleAddr: 'B62',
@@ -213,7 +205,6 @@ const fetchResult = [
     id: nanoid(),
     photo: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
-    status: '',
     teamName: 'Yoga',
     star: 2,
     preSaleAddr: 'B62',
@@ -261,7 +252,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
     <el-col :span="24">
 
       <el-row class="row-bg" justify="center">
-        <!-- <el-col :span="1"></el-col> -->
+        <!-- <el-col :span="1"></el-col> --> 
 
         <el-col :span="18">
 
