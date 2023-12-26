@@ -73,14 +73,14 @@
   .category-box {
     margin-bottom: 50px;
     padding: 30px 20px;
-    width: 380px;
-    height: 200px;
+    width: 400px;
+    height: 220px;
     text-align: center;
     background-color: #fff;
     // border-radius: 180px;
 
     .category-text {
-      font-size: 13px;
+      font-size: 14px;
     }
   }
 
