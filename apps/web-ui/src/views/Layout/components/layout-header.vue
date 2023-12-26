@@ -22,70 +22,109 @@ const handleSelect = (key: string, keyPath: string[]) => {
         <div class="flex-grow" />
 
         <el-menu-item index="1" class="header-category">
-          <router-link to="/">Home</router-link>
+          <router-link to="/">Home </router-link>
         </el-menu-item>
 
-        <el-sub-menu index="2">
+        <el-sub-menu index="2" class="header-category">
+
           <template #title>
             <el-icon class="header-category">
               <HotWater />
             </el-icon>
             <span class="header-category">Hot Sales</span>
           </template>
-          <el-menu-item index="2-1">
-            <router-link to="/pre-sales">Presales</router-link>
-          </el-menu-item>
-          <el-menu-item index="2-2">
-            <router-link to="/private-sales">Private Sales</router-link>
-          </el-menu-item>
+
+          <router-link to="/pre-sales">
+            <el-menu-item index="2-1">
+              Presales
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/private-sales">
+            <el-menu-item index="2-2">
+              Private Sales
+            </el-menu-item>
+          </router-link>
+
         </el-sub-menu>
 
-        <el-menu-item index="3">
-          <router-link to="/airdrop-list" class="header-category">Airdrop</router-link>
+        <el-menu-item index="3" class="header-category">
+          <router-link to="/airdrop-list">Airdrop</router-link>
         </el-menu-item>
 
         <el-sub-menu index="4">
+
           <template #title>
             <span class="header-category">Boot</span>
           </template>
-          <el-menu-item index="2-1">
-            <router-link to="/create-zk-token">Create zkToken</router-link>
-          </el-menu-item>
-          <el-menu-item index="2-2">
-            <router-link to="/create-fair-launch">Create Fair Launch</router-link>
-          </el-menu-item>
-          <el-menu-item index="2-3">
-            <router-link to="/create-normal-launch">Create Normal Launch</router-link>
-          </el-menu-item>
-          <el-menu-item index="2-4">
-            <router-link to="/create-private-sale">Create Private Sale</router-link>
-          </el-menu-item>
-          <el-menu-item index="2-5">
-            <router-link to="/create-new-airdrop">Create Airdrop</router-link>
-          </el-menu-item>
-          <el-menu-item index="2-6">
-            <router-link to="/create-lock"> Create Lock</router-link>
-          </el-menu-item>
-          <el-menu-item index="2-7">
-            <router-link to="/create-zk-nft"> Create zkNFT</router-link>
-          </el-menu-item>
+
+          <router-link to="/create-zk-token">
+            <el-menu-item index="4-1">
+              Create zkToken
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/create-fair-launch">
+            <el-menu-item index="4-2">
+              Create Fair Launch
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/create-normal-launch">
+            <el-menu-item index="4-3">
+              Create Normal Launch
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/create-private-sale">
+            <el-menu-item index="4-4">
+              Create Private Sale
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/create-new-airdrop">
+            <el-menu-item index="4-5">
+              Create Airdrop
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/create-lock">
+            <el-menu-item index="4-6">
+              Create Lock
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/create-zk-nft">
+            <el-menu-item index="4-7">
+              Create zkNFT
+            </el-menu-item>
+          </router-link>
+
         </el-sub-menu>
 
         <el-sub-menu index="5">
           <template #title>
             <span class="header-category">About</span>
           </template>
-          <el-menu-item index="2-1">
-            <router-link to="/services">Services</router-link>
 
-          </el-menu-item>
-          <el-menu-item index="2-2">
-            <router-link to="/team">Team</router-link>
+          <router-link to="/services">
+            <el-menu-item index="5-1">
+              Services
+            </el-menu-item>
+          </router-link>
 
-          </el-menu-item>
-          <el-menu-item index="2-3">
-            <router-link to="/faq">FAQ</router-link>
-          </el-menu-item>
+          <router-link to="/team">
+            <el-menu-item index="5-2">
+              team
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/faq">
+            <el-menu-item index="5-3">
+              FAQ
+            </el-menu-item>
+          </router-link>
+
         </el-sub-menu>
 
         <el-sub-menu index="6">
@@ -98,53 +137,53 @@ const handleSelect = (key: string, keyPath: string[]) => {
             </el-badge>
           </template>
 
-          <el-menu-item index="2-1">
-            <router-link to="/comments">
+          <router-link to="/comments">
+            <el-menu-item index="6-1">
               <el-badge :value="21" class="item">
                 Comments and @
               </el-badge>
-            </router-link>
-          </el-menu-item>
+            </el-menu-item>
+          </router-link>
 
-          <el-menu-item index="2-2">
-            <router-link to="/add-fans">
+          <router-link to="/add-fans">
+            <el-menu-item index="6-2">
               <el-badge :value="6" class="item">
                 Add Fans
               </el-badge>
-            </router-link>
-          </el-menu-item>
+            </el-menu-item>
+          </router-link>
 
-          <el-menu-item index="2-3">
-            <router-link to="/praise-and-collection">
+          <router-link to="/praise-and-collection">
+            <el-menu-item index="6-3">
               <el-badge :value="4" class="item">
                 Praise and Collection
               </el-badge>
-            </router-link>
-          </el-menu-item>
+            </el-menu-item>
+          </router-link>
 
-          <el-menu-item index="2-4">
-            <router-link to="/private-message">
+          <router-link to="/private-message">
+            <el-menu-item index="6-4">
               <el-badge :value="3" class="item">
                 Private Message
               </el-badge>
-            </router-link>
-          </el-menu-item>
+            </el-menu-item>
+          </router-link>
 
-          <el-menu-item index="2-5">
-            <router-link to="/system-notifications">
+          <router-link to="/system-notifications">
+            <el-menu-item index="6-5">
               <el-badge :value="9" class="item">
                 System Notifications
               </el-badge>
-            </router-link>
-          </el-menu-item>
+            </el-menu-item>
+          </router-link>
 
-          <el-menu-item index="2-6">
-            <router-link to="/message-settings">
+          <router-link to="/message-settings">
+            <el-menu-item index="6-6">
               <el-badge :value="14" class="item">
                 Message Settings
               </el-badge>
-            </router-link>
-          </el-menu-item>
+            </el-menu-item>
+          </router-link>
 
         </el-sub-menu>
 
@@ -177,6 +216,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
   }
 
   .header-category:hover {
+    color: #fff;
     color: #00FFC2;
   }
 
@@ -202,6 +242,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
   }
 
   .ConnectBtn {
+    font-size: 16px;
     background-color: #00FFC2;
   }
 }
