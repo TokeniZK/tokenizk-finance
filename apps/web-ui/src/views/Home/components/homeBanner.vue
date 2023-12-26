@@ -32,18 +32,20 @@
         </el-col>
 
         <el-col class="box-right" :span="12">
-          <el-row style="margin: 10px 0 0;">
+
+          <el-row style="margin: 30px 25px;">
             <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
             <p class="text"> Create your own tokens and sales quickly, easily and cheaply</p>
           </el-row>
-          <el-row style="margin: 10px 0 0;">
+          <el-row style="margin: 30px 25px;">
             <h4 class="lasthead">No mental burden</h4>
             <p class="text">No need to understand complex zero knowledge proof, code knowledge</p>
           </el-row>
-          <el-row style="margin: 10px 0 0;">
+          <el-row style="margin: 30px 25px;">
             <h4 class="lasthead">Verifiable Security Platform</h4>
             <p class="text">Cryptography guarantees data consistency</p>
           </el-row>
+
         </el-col>
 
       </el-row>
@@ -87,7 +89,6 @@
   // 特效盒子
   .banner-box {
     width: 100%;
-    // width: 1140px;
     z-index: 2;
     border-radius: 15px;
     background-color: #161616;
@@ -98,19 +99,18 @@
     height: 415px;
 
     .box-left {
-      padding-bottom: 10px;
+      padding-top: 30px;
 
       h2.title {
-        padding-bottom: 11px;
         color: #f7f7f7;
         font-size: 35px;
         font-family: Manrope;
+        margin-bottom: 20px;
       }
 
       .text {
-        font: size 13px;
-        ;
         color: #f7f7f7;
+        margin-bottom: 5px;
       }
 
     }
