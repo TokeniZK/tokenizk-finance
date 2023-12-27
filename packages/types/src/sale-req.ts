@@ -2,10 +2,10 @@
 export interface SaleReq {
     status: number,
 
-    saleAddress,
-    tokenAddress,
+    saleAddress: string,
+    tokenAddress: string,
 
-    saleName,
+    saleName: string,
 
-    contributorAddress
+    contributorAddress: string
 }
