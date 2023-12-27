@@ -102,32 +102,36 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
         </el-sub-menu>
 
-        <el-sub-menu index="5">
+        <el-menu-item index="5" class="header-category">
+          <router-link to="/wallet">Wallet</router-link>
+        </el-menu-item>
+
+        <el-sub-menu index="6">
           <template #title>
             <span class="header-category">About</span>
           </template>
 
           <router-link to="/services">
-            <el-menu-item index="5-1">
+            <el-menu-item index="6-1">
               Services
             </el-menu-item>
           </router-link>
 
           <router-link to="/team">
-            <el-menu-item index="5-2">
+            <el-menu-item index="6-2">
               team
             </el-menu-item>
           </router-link>
 
           <router-link to="/faq">
-            <el-menu-item index="5-3">
+            <el-menu-item index="6-3">
               FAQ
             </el-menu-item>
           </router-link>
 
         </el-sub-menu>
 
-        <el-sub-menu index="6">
+        <el-sub-menu index="7">
 
           <template #title>
             <el-badge :value="12" class="item">
@@ -138,7 +142,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
           </template>
 
           <router-link to="/comments">
-            <el-menu-item index="6-1">
+            <el-menu-item index="7-1">
               <el-badge :value="21" class="item">
                 Comments and @
               </el-badge>
@@ -146,7 +150,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
           </router-link>
 
           <router-link to="/add-fans">
-            <el-menu-item index="6-2">
+            <el-menu-item index="7-2">
               <el-badge :value="6" class="item">
                 Add Fans
               </el-badge>
@@ -154,7 +158,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
           </router-link>
 
           <router-link to="/praise-and-collection">
-            <el-menu-item index="6-3">
+            <el-menu-item index="7-3">
               <el-badge :value="4" class="item">
                 Praise and Collection
               </el-badge>
@@ -162,7 +166,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
           </router-link>
 
           <router-link to="/private-message">
-            <el-menu-item index="6-4">
+            <el-menu-item index="7-4">
               <el-badge :value="3" class="item">
                 Private Message
               </el-badge>
@@ -170,7 +174,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
           </router-link>
 
           <router-link to="/system-notifications">
-            <el-menu-item index="6-5">
+            <el-menu-item index="7-5">
               <el-badge :value="9" class="item">
                 System Notifications
               </el-badge>
@@ -178,7 +182,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
           </router-link>
 
           <router-link to="/message-settings">
-            <el-menu-item index="6-6">
+            <el-menu-item index="7-6">
               <el-badge :value="14" class="item">
                 Message Settings
               </el-badge>
@@ -187,7 +191,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
         </el-sub-menu>
 
-        <el-menu-item index="7">
+        <el-menu-item index="8">
           <el-row class="mb-4">
             <el-button type="success" class="ConnectBtn">Connect</el-button>
           </el-row>

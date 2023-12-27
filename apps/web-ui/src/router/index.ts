@@ -25,6 +25,8 @@ import CreateNormalLaunch from '@/views/Boot/create-normal-launch.vue'
 import CreatePrivateSale from '@/views/Boot/create-private-sale.vue'
 import CreateAirdrop from '@/views/Boot/create-new-airdrop.vue'
 
+import Wallet from '@/views/Wallet/wallet.vue'
+
 import CreateLock from '../views/create-lock.vue'
 import CreateZkNFT from '../views/create-zkNFT.vue'
 import Services from '../views/Services.vue'
@@ -105,6 +107,10 @@ const router = createRouter({
         {
           path: '/airdrop-datails',
           component: AirdropDetails
+        },
+        {
+          path: '/wallet',
+          component: Wallet
         },
         {
           path: '/create-zk-token',
