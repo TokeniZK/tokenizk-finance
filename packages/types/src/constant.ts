@@ -17,3 +17,18 @@ export enum SaleStatus {
         CANCELLED
     */
 }
+
+export enum SaleType {
+    PRESALE ,
+    FAIRSALE,
+    PRIVATESALE
+}
+
+
+/**
+ * Defines the  Merkle tree IDs.
+ */
+export enum MerkleTreeId {
+    CONTRIBUTORS_TREE,
+    USER_NULLIFIER_TREE
+}
