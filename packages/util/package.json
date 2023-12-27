@@ -15,7 +15,7 @@
     "lib:lint": "eslint \"src/**/*.ts\" --fix"
   },
   "peerDependencies": {
-    "snarkyjs": "0.12.*"
+    "o1js": "0.15.1"
   },
   "dependencies": {
     "@scure/base": "^1.1.3",
