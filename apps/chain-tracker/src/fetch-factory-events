@@ -1,0 +1,36 @@
+import { PublicKey, UInt32 } from 'o1js';
+import { getConnection } from 'typeorm';
+import { BasiceToken, FactoryEventFetchRecord, Sale, TokenFactory, User } from '@tokenizk/entities';
+import { ConfigLauchpadPlatformParamsEvent, CreateBasicTokenEvent, CreateSaleEvent, CreateRedeemAccount, TokeniZkFactory } from '@tokenizk/contracts';
+import { EventsStandardResponse } from "@tokenizk/types";
+import { getLogger } from "@/lib/logUtils";
+import { initORM } from "./lib/orm";
+
+const logger = getLogger('standardFetchFactoryEvents');
+
+await initORM();
+
+export async function standardFetchFactoryEvents() {
+    logger.info('start fetch factory events by Standard...');
+
+    try {
+        const connection = getConnection();
+
+        const factoryRepo = connection.getRepository(TokenFactory);
+        const factory = (((await factoryRepo.find()) ?? []).sort((f0, f1) => f1.id - f0.id))[0];
+
+        const queryRunner = connection.createQueryRunner();
+
+        return true;
+
+    } catch (error) {
+        console.error(error);
+        logger.error(error);
+
+        return false;
+    } finally {
+        logger.info('end.');
+    }
+
+}
+
