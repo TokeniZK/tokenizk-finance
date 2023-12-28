@@ -138,7 +138,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
             </div>
           </el-row>
 
-          <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm"
+          <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm tokenTable"
             size="large" status-icon label-position="top">
 
             <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
