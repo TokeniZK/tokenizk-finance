@@ -20,11 +20,11 @@ onMounted(() => {
 // 临时数据本尊
 const originalResult = {
   id: nanoid(),
-  photo: '/src/assets/images/1.png',
+  logoUrl: '/src/assets/images/1.png',
   name: 'Oggy Inu 2.0',
   teamName: 'Yoga',
   star: 4,
-  preSaleAddr: 'B62',
+  saleAddress: 'B62',
   softCap: 300,
   hardCap: 600,
   totalContributedMina: 40,
@@ -198,6 +198,12 @@ const countdownFinishCallback = () => {
               </el-row>
 
               <el-row>
+                <i class="iconfont icon-birdxiaoniao"></i>
+                <i class="iconfont icon-discord"></i>
+                <i class="iconfont icon-telegram"></i>
+              </el-row>
+
+              <el-row>
                 {{ fetchResult.projectDes }}
               </el-row>
             </el-col>
@@ -264,7 +270,7 @@ const countdownFinishCallback = () => {
           </el-col>
         </el-row>
 
-        <!-- 进度条 -->
+        <!-- 注意  进度条 -->
         <el-row>
           <el-col>
             <el-row class="Progress demo-progress" style="margin-bottom: 0;">
@@ -341,6 +347,14 @@ const countdownFinishCallback = () => {
   padding-top: 120px;
   padding-bottom: 120px;
   background: #f7f7f7;
+
+  .icon-discord,
+  .icon-birdxiaoniao,
+  .icon-telegram {
+    margin-right: 20px;
+    font-size: 20px;
+    color: #00FFC2;
+  }
 
   .project-description {
     background-color: #fff;

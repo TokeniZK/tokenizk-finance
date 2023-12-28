@@ -28,9 +28,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
         <el-sub-menu index="2" class="header-category">
 
           <template #title>
-            <el-icon class="header-category">
-              <HotWater />
-            </el-icon>
+            <i class="iconfont icon-fire"></i>
             <span class="header-category">Hot Sales</span>
           </template>
 
@@ -222,6 +220,11 @@ const handleSelect = (key: string, keyPath: string[]) => {
   .header-category:hover {
     color: #fff;
     color: #00FFC2;
+  }
+
+  .icon-fire {
+    color: #F2B535;
+    margin-right: 8px;
   }
 
 
