@@ -5,6 +5,7 @@ import { Search } from '@element-plus/icons-vue'
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
 import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
+import { type SaleDto } from '@tokenizk/types'
 
 const allAirdropList = ref([])
 const getAllAirdropList = async () => {
@@ -25,197 +26,69 @@ onMounted(() => {
 })
 
 // 临时数据 本尊
-const fetchResult = [
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/1.png',
-    name: 'Favoom ',
-    tokenName: 'FM',
-    teamName: 'Yoga',
-    participants: 100,
-    star: 4,
-    preSaleAddr: 'B62',
-    softCap: 21,
-    hardCap: 60,
-    totalContributedMina: 40,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '10%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'BabyAmple ',
-    tokenName: 'BA',
-    teamName: 'walking',
-    participants: 200,
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 10,
-    hardCap: 60,
-    totalContributedMina: 20,
-    progressStart: '0',
-    progressEnd: '60',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1703082115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/3.png',
-    name: 'Versa',
-    tokenName: 'VA',
-    participants: 300,
-    teamName: 'cherry',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 30,
-    hardCap: 45,
-    totalContributedMina: 60,
-    progressStart: '0',
-    progressEnd: '45',
-    liquidity: '53%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/3.png',
-    name: 'FastAI',
-    tokenName: 'BA',
-    participants: 400,
-    teamName: 'Tang',
-    star: 4,
-    preSaleAddr: 'B62',
-    softCap: 10,
-    hardCap: 55,
-    totalContributedMina: 30,
-    progressStart: '10',
-    progressEnd: '50',
-    liquidity: '40%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Wrapped',
-    tokenName: 'VA',
-    participants: 500,
-    teamName: 'mina',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 9,
-    hardCap: 50,
-    totalContributedMina: 50,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1702083115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/1.png',
-    name: 'THREADS V2',
-    tokenName: 'VA',
-    participants: 200,
-    teamName: 'BTC',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 12,
-    hardCap: 50,
-    totalContributedMina: 10,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Oggy Inu 2.0',
-    tokenName: 'OI',
-    participants: 100,
-    teamName: 'Yoga',
-    star: 5,
-    preSaleAddr: 'B62',
-    softCap: 11,
-    hardCap: 50,
-    totalContributedMina: 13,
-    progressStart: '23',
-    progressEnd: '50',
-    liquidity: '15%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    tokenName: 'WK',
-    participants: 200,
-    teamName: 'Yoga',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 20,
-    hardCap: 50,
-    totalContributedMina: 42,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '23%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083145572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    tokenName: 'WK',
-    participants: 100,
-    teamName: 'Yoga',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 10,
-    hardCap: 50,
-    totalContributedMina: 23,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '54%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083115572,
-    presaleEndTime: 1706093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-];
+const fetchResult: SaleDto[] = [{
+  id: 0,
+  saleType: 1,
+  txHash: '0x123456789',
+  status: 1,
+
+  tokenName: 'TZ',
+
+  saleName: 'Oggy Inu 2.0',
+
+  teamName: 'Yoga',
+
+  tokenAddress: 'B62xxxt',
+  saleAddress: 'B62xxs',
+
+  star: 4,
+
+  totalSaleSupply: 20,
+  currency: 'Mina',
+  feeRate: '5%',
+  saleRate: 10,
+  whitelistTreeRoot: '45678ityuioghjk',
+  whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+
+  softCap: 21,
+  hardCap: 60,
+  minimumBuy: 0.1,
+  maximumBuy: 1,
+  startTimestamp: 1704083125572,
+  endTimestamp: 1703093115572,
+
+  cliffTime: 300,
+  cliffAmountRate: 3,
+  vestingPeriod: 1704527581215,
+  vestingIncrement: 0,
+  contributorsFetchFlag: 0,
+  contributorsTreeRoot: '',
+  contributorsMaintainFlag: 0,
+
+  logoUrl: '/src/assets/images/1.png',
+  website: 'https://tokenizk.finance/',
+  facebook: 'https://tokenizk.finance/',
+  github: 'https://tokenizk.finance/',
+  twitter: 'https://tokenizk.finance/',
+  telegram: 'https://tokenizk.finance/',
+  discord: 'https://tokenizk.finance/',
+  reddit: 'https://tokenizk.finance/',
+  description: 'The Launchpad focusing on ZK-Token for Everyone!',
+  updatedAt: 1703691515995,
+  createdAt: 1703691251595,
+
+  // totalContributedMina: 40, // 请求Mina网络获取/hardcap
+
+  // progressStart: '0',
+
+  // progressEnd: '50',    // hardcap
+
+  // liquidity: '10%',
+  // lockupTime: '365day',  // cliffTime  * 5 / 60  >
+  // firstReleaseForProject: '95%',
+  // vestingForProject: '3% each 1 days',
+
+},];
 
 
 // 获取 用户输入的关键字 进行搜索
@@ -282,14 +155,14 @@ const searchProjects = () => {
 // 判断项目的状态
 let currentTime = new Date().getTime();
 fetchResult.forEach(item => {
-  if (item.presaleStartTime > currentTime) {
-    item.status = 'Upcoming'
-  } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-    item.status = 'Ongoing'
-  } else if (item.presaleEndTime < currentTime) {
-    item.status = 'Ended'
+  if (item.startTimestamp > currentTime) {
+    item.projectStatus = 'Upcoming'
+  } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
+    item.projectStatus = 'Ongoing'
+  } else if (item.endTimestamp < currentTime) {
+    item.projectStatus = 'Ended'
   } else {
-    item.status = 'All Status'
+    item.projectStatus = 'All Status'
   }
 });
 
@@ -313,14 +186,14 @@ const filterOption = (option: string) => {
 
   let currentTime = new Date().getTime();
   fetchResult.forEach(item => {
-    if (item.presaleStartTime > currentTime) {
-      item.status = 'Upcoming'
-    } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-      item.status = 'Ongoing'
-    } else if (item.presaleEndTime < currentTime) {
-      item.status = 'Ended'
+    if (item.startTimestamp > currentTime) {
+      item.projectStatus = 'Upcoming'
+    } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
+      item.projectStatus = 'Ongoing'
+    } else if (item.endTimestamp < currentTime) {
+      item.projectStatus = 'Ended'
     } else {
-      item.status = 'All Status'
+      item.projectStatus = 'All Status'
     }
   });
 
@@ -328,7 +201,7 @@ const filterOption = (option: string) => {
   if (option === '3') {
     // TODO 
     fetchResult.filter(item => {
-      return item.status === 'All Status'
+      return item.projectStatus === 'All Status'
     })
 
   } else if (option === '0') {
@@ -336,11 +209,11 @@ const filterOption = (option: string) => {
   } else {
     renderSaleBlock = fetchResult.filter(item => {
       if (option == '1') {
-        return item.status === 'Upcoming'
+        return item.projectStatus === 'Upcoming'
       } else if (option == '2') {
-        return item.status === 'Ongoing'
+        return item.projectStatus === 'Ongoing'
       } else if (option == '3') {
-        return item.status === 'Ended'
+        return item.projectStatus === 'Ended'
       }
     });
 
@@ -434,7 +307,7 @@ const sortOption = (option: string) => {
                 <!-- photo -->
                 <el-row class="thumb">
                   <router-link to="/airdrop-datails">
-                    <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
+                    <el-image style="width: 349px; height: 130px;" :src="item.logoUrl" :alt="item.name" loading="lazy" />
                   </router-link>
                 </el-row>
 
@@ -450,7 +323,7 @@ const sortOption = (option: string) => {
                     </el-row>
 
                     <el-row class="row-bg soft-hard-cap" justify="space-between">
-                      <el-col :span="10">Token</el-col>
+                      <el-col :span="10">Token:</el-col>
                       <el-col :span="8"></el-col>
                       <el-col :span="6">{{ item.tokenName }}</el-col>
                     </el-row>
@@ -458,18 +331,18 @@ const sortOption = (option: string) => {
                     <el-row class="row-bg liquidity-percent" justify="space-between">
                       <el-col :span="10">Total Token:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6"> {{ item.totalContributedMina }}</el-col>
+                      <el-col :span="6"> {{ item.hardCap }}</el-col>
                     </el-row>
 
                     <el-row class="row-bg lockup-time" justify="space-between">
                       <el-col :span="10">Participants:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6">{{ item.participants }}</el-col>
+                      <el-col :span="6">0</el-col>
                     </el-row>
 
                     <el-row class="row-bg" justify="space-between">
                       <el-col :span="6">Begin at :</el-col>
-                      <el-col :span="14"> {{ new Date(item.presaleStartTime).toISOString() }}</el-col>
+                      <el-col :span="14"> {{ new Date(item.startTimestamp).toISOString() }}</el-col>
                     </el-row>
 
                     <el-row class="row-bg" justify="end">
@@ -513,7 +386,7 @@ const sortOption = (option: string) => {
       margin-top: 0px;
       margin-bottom: 30px;
       width: 349px;
-      height: 400px;
+      height: 360px;
       border-radius: 15px;
 
       .launchpads-box {
@@ -524,7 +397,7 @@ const sortOption = (option: string) => {
 
         .thumb {
           width: 349px;
-          height: 160px;
+          height: 130px;
           overflow: hidden;
         }
 
