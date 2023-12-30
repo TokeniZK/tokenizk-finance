@@ -181,8 +181,13 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                         <el-col :span="5"></el-col>
 
                         <el-col class="review" :span="7">
-                          <el-button type="primary" round class="statusColor" to="">{{ item.projectStatus }}</el-button>
+                          <router-link to="/presale-datails" class="statusColor">
+                            <el-button type="primary" round>
+                              {{ item.projectStatus }}
+                            </el-button>
+                          </router-link>
                         </el-col>
+
                       </el-row>
 
                       <!-- 团队名称 -->
@@ -317,6 +322,10 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
           .launchpads-content {
             width: 100%;
             padding: 12px 20px;
+
+            .statusColor {
+              color: #fff;
+            }
 
             .content-Progress {
               margin: 6px auto 4px;

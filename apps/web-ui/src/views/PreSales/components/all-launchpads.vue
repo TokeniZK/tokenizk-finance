@@ -534,6 +534,7 @@ const sortOption = (option: string) => {
                   <el-col :span="24">
 
                     <el-row class="row-bg" justify="space-between">
+
                       <el-col :span="8">
                         <h4><a href="#">{{ item.saleName }}</a></h4>
                       </el-col>
@@ -541,8 +542,13 @@ const sortOption = (option: string) => {
                       <el-col :span="5"></el-col>
 
                       <el-col class="review" :span="7">
-                        <el-button type="primary" round class="statusColor">{{ item.projectStatus }}</el-button>
+                        <router-link to="/presale-datails" class="statusColor">
+                          <el-button type="primary" round>
+                            {{ item.projectStatus }}
+                          </el-button>
+                        </router-link>
                       </el-col>
+
                     </el-row>
 
                     <!-- 团队名称 -->
@@ -655,6 +661,10 @@ const sortOption = (option: string) => {
         .launchpads-content {
           width: 100%;
           padding: 12px 20px;
+
+          .statusColor {
+            color: #fff;
+          }
 
           .demo-progress .el-progress--line {
             margin-bottom: 15px;
