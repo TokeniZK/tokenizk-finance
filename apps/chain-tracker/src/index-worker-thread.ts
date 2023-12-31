@@ -72,3 +72,19 @@ function bootSaleContributorActionsFetchThread() {
 
     workerMap.set('SaleContributorActionsFetch', worker);
 }
+
+
+// init Mina tool
+await activeMinaInstance();// TODO improve it to configure graphyQL endpoint
+
+bootTaskTracerThread();
+
+bootSaleContributorActionsFetchThread();
+
+bootFactoryEventFetchThread();
+
+bootSaleEventFetchThread();
+
+const app = new FastifyCore();
+app.server.decorate('workerMap', workerMap);
+await app.listen();
