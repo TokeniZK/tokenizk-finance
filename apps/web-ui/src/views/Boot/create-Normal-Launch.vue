@@ -82,27 +82,27 @@ const formLabelWidth = '140px'
 // 表单
 interface RuleForm {
   tokenAddress: string
-  name: string
+  tokenName: string
+  saleName: string
   currency: string
-  feeOptions: string
-  presaleRate: string
-  whiteList: string
-  whiteListUser: string
+  feeRate: string
+  saleRate: string
+  whitelistMembers: string
   softCap: string
   hardCap: string
   minimumBuy: string
   maximumBuy: string
-  refundType: string
-  startTime: string
-  endTime: string
-  liquidityLockup: string
+  startTimestamp: string
+  endTimestamp: string
+
+  cliffTime: string
+
   logoUrl: string
-  webSite: string
+  website: string
   facebook: string
-  twitter: string
   github: string
+  twitter: string
   telegram: string
-  instagram: string
   discord: string
   reddit: string
   description: string
@@ -112,27 +112,25 @@ const ruleFormRef = ref<FormInstance>()
 
 const ruleForm = reactive<RuleForm>({
   tokenAddress: '',
-  name: '',
-  feeOptions: '',
+  tokenName: '',
+  saleName: '',
+  feeRate: '',
   currency: '',
-  presaleRate: '',
-  whiteList: '',
-  whiteListUser: '',
+  saleRate: '',
+  whitelistMembers: '',
   softCap: '',
   hardCap: '',
   minimumBuy: '',
   maximumBuy: '',
-  refundType: '',
-  startTime: '',
-  endTime: '',
-  liquidityLockup: '',
+  startTimestamp: '',
+  endTimestamp: '',
+  cliffTime: '',
   logoUrl: '',
-  webSite: '',
+  website: '',
   facebook: '',
   twitter: '',
   github: '',
   telegram: '',
-  instagram: '',
   discord: '',
   reddit: '',
   description: '',
@@ -146,6 +144,14 @@ const rules = reactive<FormRules<RuleForm>>({
     { required: true, message: 'Please input Token address', trigger: 'blur' },
   ],
 
+  // tokenName: [
+  //   {
+  //     required: true,
+  //     message: 'Please input Token name',
+  //     trigger: 'blur',
+  //   },
+  // ],
+
   currency: [
     {
       required: true,
@@ -155,40 +161,32 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
 
 
-  feeOptions: [
+  feeRate: [
     {
       required: true,
-      message: 'Please select any feeOptions',
+      message: 'Please select any feeRate',
       trigger: 'change',
     },
   ],
 
 
   // 步骤2
-  presaleRate: [
+  saleRate: [
     {
       type: 'number',
       required: true,
-      message: 'presaleRate must be number type',
+      message: 'saleRate must be number type',
       trigger: 'blur'
     },
   ],
 
-  whiteList: [
+  whitelistMembers: [
     {
       required: true,
-      message: 'Please input whiteList address',
+      message: 'Please input whitelistMembers address',
       trigger: 'blur',
     },
   ],
-
-  // whiteListUser: [
-  //   {
-  //     required: true,
-  //     message: 'Please input whiteList UserName',
-  //     trigger: 'blur',
-  //   },
-  // ],
 
   softCap: [
     {
@@ -226,15 +224,7 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  refundType: [
-    {
-      required: true,
-      message: 'Please select a Refund type',
-      trigger: 'change',
-    },
-  ],
-
-  startTime: [
+  startTimestamp: [
     {
       type: 'date',
       required: true,
@@ -243,7 +233,7 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  endTime: [
+  endTimestamp: [
     {
       type: 'date',
       required: true,
@@ -252,11 +242,11 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  liquidityLockup: [
+  cliffTime: [
     {
       type: 'number',
       required: true,
-      message: 'liquidityLockup must be number type',
+      message: 'cliffTime must be number type',
       trigger: 'blur'
     },
   ],
@@ -265,8 +255,8 @@ const rules = reactive<FormRules<RuleForm>>({
     { required: true, message: 'Please input logoUrl', trigger: 'blur' },
   ],
 
-  webSite: [
-    { required: true, message: 'Please input webSite address', trigger: 'blur' },
+  website: [
+    { required: true, message: 'Please input website address', trigger: 'blur' },
   ],
 
   facebook: [
@@ -283,10 +273,6 @@ const rules = reactive<FormRules<RuleForm>>({
 
   telegram: [
     { required: true, message: 'Please input telegram address', trigger: 'blur' },
-  ],
-
-  instagram: [
-    { required: true, message: 'Please input instagram address', trigger: 'blur' },
   ],
 
   discord: [
@@ -382,8 +368,8 @@ const resetForm = (formEl: FormInstance | undefined) => {
                       <el-col :span="1"></el-col>
 
                       <el-col :span="12">
-                        <el-form-item label="Name" prop="name">
-                          <el-input v-model.trim="ruleForm.name" placeholder="name" />
+                        <el-form-item label="Name" prop="tokenName">
+                          <el-input v-model.trim="ruleForm.tokenName" placeholder="token Name" />
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -394,8 +380,8 @@ const resetForm = (formEl: FormInstance | undefined) => {
                       </el-radio-group>
                     </el-form-item>
 
-                    <el-form-item label="Fee Options" prop="feeOptions">
-                      <el-radio-group v-model="ruleForm.feeOptions">
+                    <el-form-item label="Fee Options" prop="feeRate">
+                      <el-radio-group v-model="ruleForm.feeRate">
                         <el-radio label="5% raised only (Recommended)" />
                         <el-radio label="Other" />
                       </el-radio-group>
@@ -408,18 +394,18 @@ const resetForm = (formEl: FormInstance | undefined) => {
                   <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
                   <el-col :span="24">
-                    <el-form-item label="Presale rate" prop="presaleRate">
-                      <el-input v-model.number.trim="ruleForm.presaleRate" placeholder="0" />
+                    <el-form-item label="Presale rate" prop="saleRate">
+                      <el-input v-model.number.trim="ruleForm.saleRate" placeholder="0" />
                       <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
                     </el-form-item>
 
                     <!-- 模态框 -->
-                    <el-form-item label="Whitelist" prop="whiteList">
-                      <el-input v-model.trim="ruleForm.whiteList" placeholder="" />
+                    <el-form-item label="Whitelist" prop="whitelistMembers">
+                      <el-input v-model.trim="ruleForm.whitelistMembers" placeholder="" />
                     </el-form-item>
 
-                    <!-- <el-form-item label="Whitelist" prop="whiteList">
-                      <el-radio-group v-model="ruleForm.whiteList">
+                    <!-- <el-form-item label="Whitelist" prop="whitelistMembers">
+                      <el-radio-group v-model="ruleForm.whitelistMembers">
                         <el-radio label="Disable" />
                         <el-radio label="Enable" @change="dialogFormVisible = true" />
 
@@ -480,31 +466,24 @@ const resetForm = (formEl: FormInstance | undefined) => {
                       </el-col>
                     </el-row>
 
-                    <el-form-item label="Refund type" prop="refundType">
-                      <el-select v-model="ruleForm.refundType" placeholder="Refund">
-                        <el-option label="Refund" value="Refund" />
-                        <el-option label="Burn" value="Burn" />
-                      </el-select>
-                    </el-form-item>
-
 
                     <el-row class="row-bg">
                       <el-col :span="12">
                         <el-form-item label="Start Time (UTC)" required style="width: 100%">
-                          <el-date-picker v-model="ruleForm.startTime" type="datetime" placeholder="Pick a Date"
+                          <el-date-picker v-model="ruleForm.startTimestamp" type="datetime" placeholder="Pick a Date"
                             format="YYYY/MM/DD hh:mm:ss" value-format="x" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
                         <el-form-item label="End Time (UTC)" required style="width: 100%">
-                          <el-date-picker v-model="ruleForm.endTime" type="datetime" placeholder="Pick a Date"
+                          <el-date-picker v-model="ruleForm.endTimestamp" type="datetime" placeholder="Pick a Date"
                             format="YYYY/MM/DD hh:mm:ss" value-format="x" />
                         </el-form-item>
                       </el-col>
                     </el-row>
 
-                    <el-form-item label="Liquidity lockup (minutes)" prop="liquidityLockup">
-                      <el-input v-model.number.trim="ruleForm.liquidityLockup" placeholder="0" />
+                    <el-form-item label="Liquidity lockup (minutes)" prop="cliffTime">
+                      <el-input v-model.number.trim="ruleForm.cliffTime" placeholder="0" />
                     </el-form-item>
 
                   </el-col>
@@ -527,8 +506,8 @@ const resetForm = (formEl: FormInstance | undefined) => {
                       <el-col :span="1"></el-col>
 
                       <el-col :span="12">
-                        <el-form-item label="Website" prop="webSite">
-                          <el-input v-model.trim="ruleForm.webSite" placeholder="Ex: https://..." />
+                        <el-form-item label="Website" prop="website">
+                          <el-input v-model.trim="ruleForm.website" placeholder="Ex: https://..." />
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -565,23 +544,19 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
                     <el-row class="row-bg">
                       <el-col :span="11">
-                        <el-form-item label="Instagram" prop="instagram">
-                          <el-input v-model.trim="ruleForm.instagram" placeholder="Ex: https://instagram.com/..." />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="1"></el-col>
-
-                      <el-col :span="12">
                         <el-form-item label="Discord" prop="discord">
                           <el-input v-model.trim="ruleForm.discord" placeholder="Ex: https://discord.com/" />
                         </el-form-item>
                       </el-col>
+
+                      <el-col :span="1"></el-col>
+
+                      <el-col :span="12">
+                        <el-form-item label="Reddit" prop="reddit">
+                          <el-input v-model.trim="ruleForm.reddit" placeholder="Ex: https://reddit.com/..." />
+                        </el-form-item>
+                      </el-col>
                     </el-row>
-
-
-                    <el-form-item label="Reddit" prop="reddit">
-                      <el-input v-model.trim="ruleForm.reddit" placeholder="Ex: https://reddit.com/..." />
-                    </el-form-item>
 
                     <el-form-item label="Description" prop="description">
                       <el-input v-model.trim="ruleForm.description" type="textarea"
@@ -596,11 +571,11 @@ const resetForm = (formEl: FormInstance | undefined) => {
                   <el-col :span="24">
                     <el-row class="row-bg">
                       <el-col :span="12">Total token</el-col>
-                      <el-col :span="12">{{ ruleForm.presaleRate }}</el-col>
+                      <el-col :span="12">{{ ruleForm.saleRate }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Token name</el-col>
-                      <el-col :span="12">{{ ruleForm.name }}</el-col>
+                      <el-col :span="12">{{ ruleForm.tokenName }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Token symbol</el-col>
@@ -613,7 +588,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
                     <!-- 注意 下面两项 -->
                     <el-row>
                       <el-col :span="12">Presale rate</el-col>
-                      <el-col :span="12"><!-- {{ ruleForm.presaleRate }} --></el-col>
+                      <el-col :span="12"><!-- {{ ruleForm.saleRate }} --></el-col>
                     </el-row>
 
                     <el-row>
@@ -658,19 +633,19 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
                     <el-row>
                       <el-col :span="12">Start Time</el-col>
-                      <el-col :span="12">{{ ruleForm.startTime }}</el-col>
+                      <el-col :span="12">{{ ruleForm.startTimestamp }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">End Time</el-col>
-                      <el-col :span="12">{{ ruleForm.endTime }}</el-col>
+                      <el-col :span="12">{{ ruleForm.endTimestamp }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Liquidity lockup time</el-col>
-                      <el-col :span="12">{{ ruleForm.liquidityLockup }}</el-col>
+                      <el-col :span="12">{{ ruleForm.cliffTime }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Website</el-col>
-                      <el-col :span="12">{{ ruleForm.webSite }}</el-col>
+                      <el-col :span="12">{{ ruleForm.website }}</el-col>
                     </el-row>
                   </el-col>
                 </el-row>
