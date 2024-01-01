@@ -14,6 +14,7 @@ import 'element-plus/dist/index.css'
 
 // 3、 导入 Icon 图标
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import '@/styles/icon/iconfont/iconfont.css'
 
 import App from './App.vue'
 import router from './router'

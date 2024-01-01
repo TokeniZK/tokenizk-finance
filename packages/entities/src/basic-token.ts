@@ -9,62 +9,50 @@ import {
 /**
  * 
  */
-@Entity("tb_user_token_sale")
-export class UserTokenSale {
+@Entity("tb_basic_token")
+export class BasiceToken {
     @PrimaryGeneratedColumn("increment")
     id: number
 
-    @Column()
-    contributorAddress: string
-
-    @Column()
-    saleId: number
-
-    @Column()
-    saleAddress: string
-
-    @Column()
-    tokenAddress: string
-
-    @Column()
-    tokenId: string
-
     /**
-     * contribution TxHash
+     * L1TxHash
      */
     @Column()
-    contributeTxHash: string
+    txHash: string
 
     @Column()
-    contributeBlockHeight: number
-
-    @Column()
-    contributeCurrencyAmount: string
-
-    @Column()
-    contributeActionIndex: number
+    type: number
 
     /**
-     * redeem TxHash
+     * 0: unconfirmed
+     * 1: confirmed
      */
     @Column()
-    redeemTxHash: string
+    status: number
 
     @Column()
-    redeemBlockHeight: number
+    address: string
+
+    @Column()
+    fee: string
+
+    @Column()
+    name: string
+
+    @Column()
+    symbol: string
+
+    @Column()
+    zkappUri: string
 
     /**
-     * claim TxHash
+     * current batch's starting actionIndex
      */
     @Column()
-    claimTxHash: string
+    totalSupply: string
 
     @Column()
-    claimBlockHeight: number
-
-    @Column()
-    claimAmount: string
-
+    totalAmountInCirculation: string
 
     /**
      * just record

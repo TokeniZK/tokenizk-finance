@@ -1,21 +1,19 @@
-import axios from "axios";
+import { $httpInstance } from "@/utils";
+import type { BaseResponse, SaleDto } from "@tokenizk/types";
 
-export function getSearchProjectAPI(keyWord: any) {
+export async function getSearchProjectAPI(saleType: number, keyWord?: string) {
+    try {
+        const saleReq = {
+            saleType,
+            saleName: keyWord
+        }
+        const rs = await $httpInstance.post<BaseResponse<SaleDto[]>>(`/presale/list`, saleReq).then(r => {
+            return r.data.data
+        });
 
-  axios.get(`https://api.github.com/search/users?q=${keyWord}`).then(
-
-    response => {
-      console.log('请求成功了');
-      // 请求成功后更新List的数据
-
-    },
-
-    error => {
-      console.log('请求失败了', error.message);
-      // 请求失败后更新List的数据
-
+        return rs;
+    } catch (error) {
+        console.error(error);
     }
-
-  )
 
 }

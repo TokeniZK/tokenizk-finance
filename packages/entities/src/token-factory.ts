@@ -21,11 +21,13 @@ export class TokenFactory {
     status: number
 
     @Column()
+    factoryAddress: string
+
+    @Column()
     platfromFeeAddress: string
 
     @Column()
     lauchpadPlatformParamsHash: string
-
 
 
 
@@ -73,17 +75,14 @@ export class TokenFactory {
     privateSaleServiceFeeRate: string
 
 
-    /**
-     * just record
-     */
+    @Column()
+    redeemAccountVk: string
+
     @UpdateDateColumn({
         default: () => 'CURRENT_TIMESTAMP',
     })
     updatedAt: Date
 
-    /**
-     * the timestamp when L2Block is created at Layer2
-     */
     @CreateDateColumn({
         default: () => 'CURRENT_TIMESTAMP',
     })

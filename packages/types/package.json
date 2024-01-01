@@ -9,12 +9,13 @@
   "license": "MIT",
   "scripts": {
     "lib:dev": "npm run lib:build && (concurrently \"tsc --build tsconfig.json --watch\" \"tsc-alias -w\")",
-    "lib:gen-schema": "npm run gen-schema-sale-req  && npm run gen-schema-sale-dto && npm run gen-schema-sale-user-dto && npm run gen-schema-user-redeem-claim-witness-dto",
+    "lib:gen-schema": "npm run gen-schema-sale-req  && npm run gen-schema-sale-dto && npm run gen-schema-token-dto && npm run gen-schema-sale-user-dto && npm run gen-schema-user-redeem-claim-witness-dto",
     "lib:build": "npm run lib:clean && npm run lib:gen-schema && tsc --build tsconfig.json && tsc-alias",
     "lib:clean": "rimraf ./dist ./dist_es ./tsconfig.es.tsbuildinfo ./tsconfig.tsbuildinfo",
     "lib:lint": "eslint \"src/**/*.ts\" --fix",
     "gen-schema-sale-req": "npx typescript-json-schema --refs false ./src/sale-req.ts SaleReq -o ./src/sale-req-schema.json",
     "gen-schema-sale-dto": "npx typescript-json-schema --refs false ./src/sale-dto.ts SaleDto -o ./src/sale-dto-schema.json",
+    "gen-schema-token-dto": "npx typescript-json-schema --refs false ./src/token-dto.ts TokenDto -o ./src/token-dto-schema.json",
     "gen-schema-sale-user-dto": "npx typescript-json-schema --refs false ./src/sale-user-dto.ts SaleUserDto -o ./src/sale-user-dto-schema.json",
     "gen-schema-user-redeem-claim-witness-dto": "npx typescript-json-schema --refs false ./src/user-redeem-claim-witness-dto.ts UserRedeemClaimWitnessDto -o ./src/user-redeem-claim-witness-dto-schema.json"
   },

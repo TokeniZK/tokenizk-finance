@@ -1,29 +1,44 @@
+import pinoDebug from "pino-debug";
 import pino, { Logger } from 'pino';
-import { isMainThread, threadId } from 'worker_threads';
-import config from './config';
+import * as dotenv from "dotenv"
+dotenv.config({ path: '../../.env' })
 
-const logLevelData = { '*': 'info' };
-const logLevels = new Map<string, string>(Object.entries(logLevelData));
+const loggerFlag = process.argv[2] ?? 'Main';
 
-function getLogLevel(logger: string): string {
-    return logLevels.get(logger) || logLevels.get('*') || 'info';
-}
+const pinoObj = pino({
+    name: loggerFlag,
+    timestamp: pino.stdTimeFunctions.isoTime,
+    transport: {
+        targets: [
+            {
+                target: 'pino/file',
+                level: 'info',
+                options: { destination: <string>process.env.PINO_LOG_FILE_PATH!.concat(`/rollup-sequencer-${loggerFlag}.log`) }
+            },
+            { target: 'pino-pretty', level: 'info', options: { destination: '/dev/stdout' } }
+        ]
+    }
+});
+
+pinoDebug(pinoObj, {
+    auto: true,
+    map: {
+        'anomix:*': 'info'
+    }
+});
+
+const childLoggerMap = new Map<string, Logger>();
 
 // TODO need configure file storage, pattern, etc.
-export function getLogger(name: string): Logger {
-    return pino({
-        name,
-        level: getLogLevel(name.concat(isMainThread ? '-main-' : '-worker-').concat(`${threadId}`)),
-        transport: {
-            targets: [
-                {
-                    target: 'pino/file',
-                    level: 'info',
-                    options: { destination: config.pinoLogFilePath.concat('/api-gateway-log.log') }
-                },
-                { target: 'pino-pretty', level: 'info', options: { destination: '/dev/stdout' } }
-            ]
-        }
-    });
+export function getLogger(childSegment: string): Logger {
+    if (!childSegment) {
+        return pinoObj;
+    }
+    if (!childLoggerMap.get(childSegment)) {
+        childLoggerMap.set(childSegment, pinoObj.child({ segment: childSegment }));
+    }
+
+    return childLoggerMap.get(childSegment)!;
 }
+
 

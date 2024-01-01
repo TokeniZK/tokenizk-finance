@@ -1,5 +1,19 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue'
+import { useStatusStore, type AppState } from "@/stores";
+import { ElMessage } from 'element-plus';
+
+const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
+
+const checkConnectedWallet = () => {
+  ElMessage({
+    showClose: true,
+    type: 'warning',
+    message: `Please connect wallet first.`,
+  });
+
+}
+
 // 组件挂载完成后执行的函数
 onMounted(() => {
 
@@ -12,6 +26,7 @@ onMounted(() => {
 })
 
 </script>
+
 
 <template>
   <el-row class="pre-Sales">
@@ -32,7 +47,12 @@ onMounted(() => {
         </el-col>
 
         <el-col :span="6">
-          <router-link to="/pre-sales/my-contributions" class="bline">My Contributions</router-link>
+          <router-link to="/pre-sales/my-contributions" class="bline"
+            v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">My
+            Contributions</router-link>
+          <div v-else @click="checkConnectedWallet">
+            <span>My Contributions</span>
+          </div>
         </el-col>
 
         <el-col :span="4"></el-col>

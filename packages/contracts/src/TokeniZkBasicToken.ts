@@ -24,27 +24,8 @@ import {
 } from 'o1js';
 import { LauchpadPlatformParams, TokeniZkFactory } from './TokeniZkFactory';
 import { STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
-import { SaleParams } from './sale-models';
+import { SaleParams, VestingParams } from './sale-models';
 
-export class VestingParams extends Struct({
-    cliffTime: UInt32,
-    cliffAmountRate: UInt64,
-    vestingPeriod: UInt32, // 0 is not allowed, default value is 1
-    vestingIncrement: UInt64
-}) {
-    hash() {
-        return Poseidon.hash(this.toFields());
-    }
-
-    toFields() {
-        return [
-            ...this.cliffTime.toFields(),
-            ...this.cliffAmountRate.toFields(),
-            ...this.vestingPeriod.toFields(),
-            ...this.vestingIncrement.toFields()
-        ];
-    }
-}
 
 const SUPPLY = UInt64.from(10n ** 18n);
 
@@ -73,7 +54,7 @@ export class TokeniZkBasicToken extends SmartContract {
         this.account.permissions.set({
             ...Permissions.default(),
             editState: Permissions.proof(),
-            access: Permissions.proofOrSignature(),
+            access: Permissions.proofOrSignature(),// !!! need it
         });
 
     }
@@ -135,127 +116,97 @@ export class TokeniZkBasicToken extends SmartContract {
     /**
      * 
      * @param lauchpadPlatformParams 
-     * @param presaleAddress 
-     * @param presaleVk 
+     * @param saleAddress 
+     * @param saleContractVk 
      */
     @method
     public createPresale(lauchpadPlatformParams: LauchpadPlatformParams,
-        presaleAddress: PublicKey, presaleVk: VerificationKey, presaleParams: SaleParams,
-        privateSaleMinaFundHolderVk: VerificationKey) {
+        saleAddress: PublicKey, saleContractVk: VerificationKey, saleParams: SaleParams,
+        presaleMinaFundHolderVk: VerificationKey) {
 
-        let totalAmountInCirculation = this.totalAmountInCirculation.getAndRequireEquals();
-
-
-        const tokeniZkFactory = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
-        tokeniZkFactory.createPresale(lauchpadPlatformParams, this.address, presaleAddress, presaleVk, privateSaleMinaFundHolderVk);
+        const tokeniZkFactory = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);// TODO!!!
+        tokeniZkFactory.createPresale(lauchpadPlatformParams, saleParams, this.address, saleAddress, saleContractVk, presaleMinaFundHolderVk);
 
         let tokenId = this.token.id;
         const zkapp = Experimental.createChildAccountUpdate(
             this.self,
-            presaleAddress,
+            saleAddress,
             tokenId
         );
         zkapp.account.isNew.assertEquals(Bool(true));
 
-        /* as a sample here
-        const presaleParams = new SaleParams({
-            tokeniZkBasicTokenAddress: this.address,
-            totalPresaleSupply: UInt64.from(0),
-            presaleRate: UInt64.from(0),
-            whitelistTreeRoot: Field(0),
-            softCap: UInt64.from(0),
-            hardCap: UInt64.from(0),
-            minimumBuy: UInt64.from(0),
-            maximumBuy: UInt64.from(0),
-            startTime: UInt64.from(0),
-            endTime: UInt64.from(0),
-            cliffTime: UInt32.from(0),
-            cliffAmountRate: UInt64.from(0),
-            vestingPeriod: UInt32.from(1), // 0 is not allowed, default value is 1
-            vestingIncrement: UInt64.from(0)
-        });
-        */
+        saleParams.tokenAddress.assertEquals(this.address);
+        saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
+        saleParams.softCap.mul(4).assertGreaterThanOrEqual(saleParams.hardCap);
+        saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
+        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 5 * 60 * 1000)); // at least last for 10 blocks
+        saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
 
-        presaleParams.tokenAddress.assertEquals(this.address);
-        presaleParams.whitelistTreeRoot.equals(0).or(presaleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
-        presaleParams.softCap.mul(4).assertGreaterThanOrEqual(presaleParams.hardCap);
-        presaleParams.minimumBuy.assertLessThanOrEqual(presaleParams.maximumBuy);
-        presaleParams.startTime.assertLessThan(presaleParams.endTime.sub(10 * 5 * 60 * 1000)); // at least last for 10 blocks
-        presaleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
-
-        AccountUpdate.setValue(zkapp.body.update.appState[0], presaleParams.hash());
-        AccountUpdate.setValue(zkapp.body.update.appState[1], presaleParams.vestingParamsHash());
-        AccountUpdate.setValue(zkapp.body.update.appState[2], Field(0));// totalDistributed
-        AccountUpdate.setValue(zkapp.body.update.appState[3], STANDARD_TREE_INIT_ROOT_16);// contributorTreeRoot
-        AccountUpdate.setValue(zkapp.body.update.appState[4], Field(0));//totalContributedMina
-        AccountUpdate.setValue(zkapp.body.update.appState[5], Reducer.initialActionState);//fromActionState
+        AccountUpdate.setValue(zkapp.body.update.appState[0], saleParams.hash());
+        AccountUpdate.setValue(zkapp.body.update.appState[1], saleParams.vestingParamsHash());
+        AccountUpdate.setValue(zkapp.body.update.appState[2], STANDARD_TREE_INIT_ROOT_16);// contributorTreeRoot
+        AccountUpdate.setValue(zkapp.body.update.appState[3], Reducer.initialActionState);//fromActionState
+        AccountUpdate.setValue(zkapp.body.update.appState[4], Field(0));// totalDistributed
+        AccountUpdate.setValue(zkapp.body.update.appState[5], Field(0));//totalContributedMina
 
         zkapp.account.permissions.set({
             ...Permissions.default(),
             editState: Permissions.proof(),
             send: Permissions.proof(),
-            access: Permissions.proofOrSignature(),
         });
-        zkapp.account.verificationKey.set(presaleVk);
+        zkapp.account.verificationKey.set(saleContractVk);
         zkapp.requireSignature();
         this.approve(zkapp);
 
-        this.mint(presaleAddress, presaleParams.totalSaleSupply);
+        this.mintToken(saleAddress, saleParams.totalSaleSupply);
     }
 
     /**
      * 
      * @param newParams 
-     * @param fairsaleAddress 
-     * @param verificationKey 
+     * @param saleAddress 
+     * @param saleContractVk 
      */
     @method
-    public createFairSale(newParams: LauchpadPlatformParams, fairsaleAddress: PublicKey, verificationKey: VerificationKey, fairsaleParams: SaleParams) {
+    public createFairSale(newParams: LauchpadPlatformParams,
+        saleAddress: PublicKey, saleContractVk: VerificationKey, saleParams: SaleParams) {
+
         const tokeniZkFactory = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
-        tokeniZkFactory.createFairSale(newParams, this.address, fairsaleAddress, verificationKey);
+        tokeniZkFactory.createFairSale(newParams, saleParams, this.address, saleAddress, saleContractVk);
 
         let tokenId = this.token.id;
-        let zkapp = AccountUpdate.defaultAccountUpdate(fairsaleAddress, tokenId);
+        const zkapp = Experimental.createChildAccountUpdate(
+            this.self,
+            saleAddress,
+            tokenId
+        );
+        zkapp.account.isNew.assertEquals(Bool(true));
 
-        /* as a sample here
-        const fairsaleParams = new FairSaleParams({
-            tokeniZkBasicTokenAddress: this.address,//!!
-            totalPresaleSupply: UInt64.from(0),
-            Rate: UInt64.from(0),
-            whitelistTreeRoot: Field(0),
-            minimumBuy: UInt64.from(0),
-            maximumBuy: UInt64.from(0),
-            startTime: UInt64.from(0),
-            endTime: UInt64.from(0),
-            cliffTime: UInt32.from(0),
-            cliffAmountRate: UInt64.from(0),
-            vestingPeriod: UInt32.from(0),
-            vestingIncrement: UInt64.from(0)
-        });
-        */
+        saleParams.tokenAddress.assertEquals(this.address);
+        saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
+        saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
+        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 5 * 60 * 1000)); // at least last for 10 blocks
+        saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
+        saleParams.saleRate.assertEquals(UInt64.from(0));// !
+        saleParams.softCap.assertEquals(UInt64.from(0));// !
+        saleParams.hardCap.assertEquals(UInt64.from(0));// !
 
-        fairsaleParams.tokenAddress.assertEquals(this.address);
-        fairsaleParams.whitelistTreeRoot.assertGreaterThanOrEqual(0);
-        // TODO do I need add 'assertGreaterThanOrEqual(0)' for other fields of 'UInt64'?
-
-        AccountUpdate.setValue(zkapp.body.update.appState[0], fairsaleParams.hash());//  fairsaleParamsHash
-        AccountUpdate.setValue(zkapp.body.update.appState[1], fairsaleParams.vestingParamsHash());//vestingParamsHash
+        AccountUpdate.setValue(zkapp.body.update.appState[0], saleParams.hash());//  fairsaleParamsHash
+        AccountUpdate.setValue(zkapp.body.update.appState[1], saleParams.vestingParamsHash());//vestingParamsHash
         AccountUpdate.setValue(zkapp.body.update.appState[2], STANDARD_TREE_INIT_ROOT_16);// contributorTreeRoot
-        AccountUpdate.setValue(zkapp.body.update.appState[3], Field(0));// totalContributedMina TODO ‘UInt64.from(0).toFields()[0]’ check if UInt64 is composed of only one Field !!!
-        AccountUpdate.setValue(zkapp.body.update.appState[4], Reducer.initialActionState);// fromActionState
+        AccountUpdate.setValue(zkapp.body.update.appState[3], Reducer.initialActionState);// fromActionState
+        AccountUpdate.setValue(zkapp.body.update.appState[4], Field(0));// totalContributedMina TODO ‘UInt64.from(0).toFields()[0]’ check if UInt64 is composed of only one Field !!!
 
         zkapp.account.permissions.set({
             ...Permissions.default(),
             editState: Permissions.proof(),
             send: Permissions.proof(),
-            access: Permissions.proofOrSignature(),
         });
-        zkapp.account.verificationKey.set(verificationKey);
+        zkapp.account.verificationKey.set(saleContractVk);
         zkapp.requireSignature();
-
         this.approve(zkapp);
-        this.mint(fairsaleAddress, fairsaleParams.totalSaleSupply);
 
+        this.mintToken(saleAddress, saleParams.totalSaleSupply);
     }
 
     /**
@@ -263,7 +214,7 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param receiverAddress - address of the receiver
      * @param amount 
      */
-    mint(receiverAddress: PublicKey, amount: UInt64) {
+    mintToken(receiverAddress: PublicKey, amount: UInt64) {
         let totalAmountInCirculation = this.totalAmountInCirculation.getAndRequireEquals();
         let totalSupply = this.totalSupply.getAndRequireEquals();
 
@@ -288,7 +239,7 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param receiverAddress - address of the receiver
      * @param amount 
      */
-    burn(receiverAddress: PublicKey, amount: UInt64) {
+    burnToken(receiverAddress: PublicKey, amount: UInt64) {
         let totalAmountInCirculation = this.totalAmountInCirculation.get();
         this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
 
@@ -308,20 +259,31 @@ export class TokeniZkBasicToken extends SmartContract {
     }
 
     /**
+     * for narmal transfer (require from's signature underly)
+     * @param from 
+     * @param to 
+     * @param value 
+     */
+    @method
+    transferToken(from: PublicKey, to: PublicKey, value: UInt64) {
+        this.token.send({ from, to, amount: value });
+    }
+
+    /**
      * 
      * @param senderAddress - address of the sender
      * @param receiverAddress 
      * @param amount 
      * @param callback 
      */
-    @method approveTransferCallback(
-        senderAddress: PublicKey,
+    @method
+    approveTransferCallback(
+        zkappUpdate: AccountUpdate,
         receiverAddress: PublicKey,
         amount: UInt64,
-        callback: Experimental.Callback<any>
     ) {
         let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
-        let senderAccountUpdate = this.approve(callback, layout);
+        let senderAccountUpdate = this.approve(zkappUpdate, layout);
 
         let negativeAmount = Int64.fromObject(
             senderAccountUpdate.body.balanceChange
@@ -330,8 +292,6 @@ export class TokeniZkBasicToken extends SmartContract {
 
         let tokenId = this.token.id;
         senderAccountUpdate.body.tokenId.assertEquals(tokenId);
-
-        senderAccountUpdate.body.publicKey.assertEquals(senderAddress);
 
         // TODO !!!! check this approach is ok for new addresses !!!!
         let receiverAccountUpdate = Experimental.createChildAccountUpdate(
@@ -349,15 +309,15 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param amount 
      * @param callback 
      */
-    @method approveTransferCallbackWithVesting(
-        senderAddress: PublicKey,
+    @method
+    approveTransferCallbackWithVesting(
+        zkappUpdate: AccountUpdate,
         receiverAddress: PublicKey,
         amount: UInt64,
-        callback: Experimental.Callback<any>,
         vestingParams: VestingParams
     ) {
         let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
-        let senderAccountUpdate = this.approve(callback, layout);
+        let senderAccountUpdate = this.approve(zkappUpdate, layout);
 
         let negativeAmount = Int64.fromObject(
             senderAccountUpdate.body.balanceChange
@@ -366,8 +326,6 @@ export class TokeniZkBasicToken extends SmartContract {
 
         let tokenId = this.token.id;
         senderAccountUpdate.body.tokenId.assertEquals(tokenId);
-
-        senderAccountUpdate.body.publicKey.assertEquals(senderAddress);
 
         // check vestingParams
         AccountUpdate.assertEquals(

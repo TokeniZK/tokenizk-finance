@@ -24,7 +24,8 @@
     "jsonwebtoken": "^8.5.1",
     "mysql2": "2.3.3",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.45"
+    "typeorm": "^0.2.45",
+    "o1js": "0.15.1"
   },
   "devDependencies": {},
   "scripts": {

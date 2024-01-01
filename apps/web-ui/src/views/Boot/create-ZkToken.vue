@@ -33,21 +33,26 @@ let getFlag = () => {
 
 
 interface RuleForm {
+
   tokenType: string
-  name: string
-  symbols: string
-  decimals: string
-  totalSupply: string
+
+  tokenName: string
+
+  symbol: string
+
+  // decimals: string
+
+  totalSaleSupply: string
 }
 
 const ruleFormRef = ref<FormInstance>()
 
 const ruleForm = reactive<RuleForm>({
   tokenType: '',
-  name: '',
-  symbols: '',
-  decimals: '',
-  totalSupply: '',
+  tokenName: '',
+  symbol: '',
+  // decimals: '',
+  totalSaleSupply: '',
 });
 
 // 正则
@@ -61,31 +66,33 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  name: [
+  tokenName: [
     { required: true, message: 'Please input Token name', trigger: 'blur' },
     { min: 3, max: 10, message: 'Length should be 3 to 10', trigger: 'blur' },
   ],
 
-  symbols: [
+  symbol: [
     {
       required: true,
-      message: 'Please input symbols',
+      message: 'Please input symbol',
       trigger: 'blur'
     },
   ],
-  decimals: [
+
+  // decimals: [
+  //   {
+  //     type: 'number',
+  //     required: true,
+  //     message: 'decimals must be number type',
+  //     trigger: 'blur'
+  //   },
+  // ],
+
+  totalSaleSupply: [
     {
       type: 'number',
       required: true,
-      message: 'decimals must be number type',
-      trigger: 'blur'
-    },
-  ],
-  totalSupply: [
-    {
-      type: 'number',
-      required: true,
-      message: 'totalSupply must be number type',
+      message: 'Total Sale Supply must be number type',
       trigger: 'blur'
     },
   ],
@@ -138,7 +145,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
             </div>
           </el-row>
 
-          <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm"
+          <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm tokenTable"
             size="large" status-icon label-position="top">
 
             <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
@@ -149,21 +156,20 @@ const resetForm = (formEl: FormInstance | undefined) => {
               </el-select>
             </el-form-item>
 
-
-            <el-form-item label="Name" prop="name">
-              <el-input v-model.trim="ruleForm.name" placeholder="Ex: Mina" />
+            <el-form-item label="Token Name" prop="tokenName">
+              <el-input v-model.trim="ruleForm.tokenName" placeholder="Ex: Mina" />
             </el-form-item>
 
-            <el-form-item label="symbols" prop="symbols">
-              <el-input v-model.trim="ruleForm.symbols" placeholder="Ex: Mina" />
+            <el-form-item label="Symbol" prop="symbol">
+              <el-input v-model.trim="ruleForm.symbol" placeholder="Ex: Mina" />
             </el-form-item>
 
-            <el-form-item label="Decimals" prop="decimals">
+            <!-- <el-form-item label="Decimals" prop="decimals">
               <el-input v-model.number.trim="ruleForm.decimals" placeholder="0" />
-            </el-form-item>
+            </el-form-item> -->
 
-            <el-form-item label="Total supply" prop="totalSupply">
-              <el-input v-model.number.trim="ruleForm.totalSupply" placeholder="Ex: 100000000000" />
+            <el-form-item label="Total Sale Supply" prop="totalSaleSupply">
+              <el-input v-model.number.trim="ruleForm.totalSaleSupply" placeholder="Ex: 100000000000" />
             </el-form-item>
 
             <el-form-item>
@@ -182,22 +188,22 @@ const resetForm = (formEl: FormInstance | undefined) => {
           <el-row> Your token was created ! </el-row>
 
           <el-row>
-            <el-col :span="4">Name</el-col>
-            <el-col :span="12">{{ ruleForm.name }}</el-col>
+            <el-col :span="4">Token Name</el-col>
+            <el-col :span="12">{{ ruleForm.tokenName }}</el-col>
           </el-row>
 
           <el-row>
             <el-col :span="4">Symbol</el-col>
-            <el-col :span="12">{{ ruleForm.symbols }}</el-col>
+            <el-col :span="12">{{ ruleForm.symbol }}</el-col>
           </el-row>
 
           <el-row>
-            <el-col :span="4">Total supply</el-col>
-            <el-col :span="12">{{ ruleForm.totalSupply }}</el-col>
+            <el-col :span="4">Total Sale Supply</el-col>
+            <el-col :span="12">{{ ruleForm.totalSaleSupply }}</el-col>
           </el-row>
 
           <el-row>
-            <el-col :span="4">Address</el-col>
+            <el-col :span="4">Token Address</el-col>
             <el-col :span="12">0xd550e943D6E7Cd1a425088a7C90b08738901CBfD</el-col>
           </el-row>
 
@@ -221,7 +227,8 @@ const resetForm = (formEl: FormInstance | undefined) => {
 <style lang="less" scoped>
 .create-ZkToken {
   width: 100%;
-  padding: 200px 200px 100px 200px;
+  // padding: 200px 200px 100px 200px;
+  padding: 12% 20%;
 
   .form-notes {
     font-size: 12px;

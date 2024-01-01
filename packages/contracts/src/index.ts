@@ -7,4 +7,4 @@ export * from './TokeniZkPrivateSale'
 export * from './TokeniZkUser'
 export * from './sale-models';
 export * from './sale-rollup-prover'
-export * from './merkle_witness'
+export * from './test_utils'

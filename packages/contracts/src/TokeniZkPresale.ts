@@ -17,14 +17,12 @@ import {
     TokenId,
     Bool,
 } from 'o1js';
-import { MembershipMerkleWitness } from '@tokenizk/types';
+import { ContributorsMembershipMerkleWitness, WhitelistMembershipMerkleWitness } from './merkle_witness';
 
-import { STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleRollupProof } from './sale-rollup-prover';
-import { SaleContribution,SaleParams, SaleParamsConfigurationEvent, ContributionEvent } from './sale-models';
+import { SaleContribution, SaleParams, SaleParamsConfigurationEvent, ContributionEvent, RedeemEvent } from './sale-models';
 import { SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './merkle_witness';
 import { RedeemAccount } from './TokeniZkUser';
-
 
 
 export class ClaimTokenEvent extends Struct({
@@ -55,7 +53,7 @@ export class TokeniZkPresale extends SmartContract {
             vestingIncrement: UInt64.from(0)
         });
         */
-        this.presaleParamsHash.set(presaleParams.hash());
+        this.saleParamsHash.set(presaleParams.hash());
         this.vestingParamsHash.set(presaleParams.vestingParamsHash());
         this.fromActionState.set(Reducer.initialActionState);
         // this.contributorTreeRoot.set(STANDARD_TREE_INIT_ROOT_16);
@@ -73,8 +71,8 @@ export class TokeniZkPresale extends SmartContract {
     reducer = Reducer({ actionType: SaleContribution });
 
     events = {
-        contribute: ContributionEvent,
         configureSaleParams: SaleParamsConfigurationEvent,
+        contribute: ContributionEvent,
         claimToken: ClaimTokenEvent,
     }
 
@@ -82,7 +80,7 @@ export class TokeniZkPresale extends SmartContract {
      * the hash of configured presale parameters
      */
     @state(Field)
-    public presaleParamsHash = State<Field>();
+    public saleParamsHash = State<Field>();
 
     /**
      * the hash of configured presale vesting parameters
@@ -91,22 +89,10 @@ export class TokeniZkPresale extends SmartContract {
     public vestingParamsHash = State<Field>();
 
     /**
-     * Total distributed tokens
-     */
-    @state(UInt64)
-    public totalDistributed = State<UInt64>();
-
-    /**
      * contributors Tree Root: default empty merkle tree root
      */
     @state(Field)
     public contributorTreeRoot = State<Field>();
-
-    /**
-     * Total amount of Mina contributed
-     */
-    @state(UInt64)
-    public totalContributedMina = State<UInt64>();
 
     /**
      * The state of the previously processed actions
@@ -114,21 +100,33 @@ export class TokeniZkPresale extends SmartContract {
     @state(Field)
     public fromActionState = State<Field>();
 
+    /**
+     * Total distributed tokens
+     */
+    @state(UInt64)
+    public totalDistributed = State<UInt64>();
+
+    /**
+     * Total amount of Mina contributed
+     */
+    @state(UInt64)
+    public totalContributedMina = State<UInt64>();
+
     @method
-    configureSaleParams(presaleParams0: SaleParams, presaleParams1: SaleParams, adminSignature: Signature) {
+    configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
         // cannot be changed after ('startTime' - 60 * 60 * 1000)
-        this.network.timestamp.assertBetween(presaleParams0.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
+        this.network.timestamp.assertBetween(saleParams0.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
 
         // check if presale params is aligned with the existing ones
-        const hash0 = presaleParams0.hash();
-        const hash1 = presaleParams1.hash();
+        const hash0 = saleParams0.hash();
+        const hash1 = saleParams1.hash();
 
-        presaleParams0.tokenAddress.assertEquals(presaleParams1.tokenAddress);
-        presaleParams0.totalSaleSupply.assertEquals(presaleParams1.totalSaleSupply);
+        saleParams0.tokenAddress.assertEquals(saleParams1.tokenAddress);
+        saleParams0.totalSaleSupply.assertEquals(saleParams1.totalSaleSupply);
 
-        this.network.timestamp.assertBetween(presaleParams1.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
+        this.network.timestamp.assertBetween(saleParams1.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
 
-        this.presaleParamsHash.getAndRequireEquals().assertEquals(hash0);
+        this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         const nonce = this.account.nonce.getAndRequireEquals();
         // verify signature of admin
@@ -138,10 +136,10 @@ export class TokeniZkPresale extends SmartContract {
 
         // TODO With all parameters of Unsigned Integer type, do we still need check if they are greater than 0?
 
-        presaleParams1.softCap.mul(4).assertGreaterThanOrEqual(presaleParams1.hardCap);
-        presaleParams1.minimumBuy.assertLessThanOrEqual(presaleParams1.maximumBuy);
-        presaleParams1.startTime.assertLessThan(presaleParams1.endTime.sub(5 * 10 * 60 * 1000));
-        presaleParams1.cliffTime.assertGreaterThanOrEqual(UInt32.from(1));
+        saleParams1.softCap.mul(4).assertGreaterThanOrEqual(saleParams1.hardCap);
+        saleParams1.minimumBuy.assertLessThanOrEqual(saleParams1.maximumBuy);
+        saleParams1.startTime.assertLessThan(saleParams1.endTime.sub(5 * 10 * 60 * 1000));
+        saleParams1.cliffTime.assertGreaterThanOrEqual(UInt32.from(1));
 
         // check totalPresaleSupply is always lessThan Or EqualTo the balance of 'token account'
         /*
@@ -154,13 +152,13 @@ export class TokeniZkPresale extends SmartContract {
         this.self.balance.addInPlace(valueChangeX);// TODO for simplify, check if this method could accept negative value?
         this.self.balance.subInPlace(valueChangeY);
         */
-        this.self.account.balance.assertBetween(presaleParams1.totalSaleSupply, UInt64.MAXINT());
+        this.self.account.balance.assertBetween(saleParams1.totalSaleSupply, UInt64.MAXINT());
 
-        this.presaleParamsHash.set(hash1);
-        this.vestingParamsHash.set(presaleParams1.vestingParamsHash());
+        this.saleParamsHash.set(hash1);
+        this.vestingParamsHash.set(saleParams1.vestingParamsHash());
 
         this.emitEvent('configureSaleParams', new SaleParamsConfigurationEvent({
-            saleParams: presaleParams1,
+            saleParams: saleParams1,
             tokenId: this.tokenId
         }));
     }
@@ -171,29 +169,30 @@ export class TokeniZkPresale extends SmartContract {
      * @param minaAmount MINA amount
      */
     @method
-    contribute(presaleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64, membershipMerkleWitness: MembershipMerkleWitness, leafIndex: Field) {
+    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
+        membershipMerkleWitness: WhitelistMembershipMerkleWitness, leafIndex: Field) {
         // check presale params
-        this.presaleParamsHash.getAndRequireEquals().assertEquals(
-            presaleParams.hash()
+        this.saleParamsHash.getAndRequireEquals().assertEquals(
+            saleParams.hash()
         );
         // check network timestamp
-        this.network.timestamp.assertBetween(presaleParams.startTime, presaleParams.endTime);
+        this.network.timestamp.assertBetween(saleParams.startTime, saleParams.endTime);
 
         // check [minimumBuy, maximumBuy]
-        minaAmount.assertGreaterThanOrEqual(presaleParams.minimumBuy);
-        minaAmount.assertLessThanOrEqual(presaleParams.maximumBuy);
+        minaAmount.assertGreaterThanOrEqual(saleParams.minimumBuy);
+        minaAmount.assertLessThanOrEqual(saleParams.maximumBuy);
 
         // check if exceed presale_token_account balance
-        const toPurchaseTokenAmount = minaAmount.mul(presaleParams.saleRate);
+        const toPurchaseTokenAmount = minaAmount.div(10 ** 9).mul(saleParams.saleRate);
         // TODO do we really need this check ?? or indirectly check it by 'this.balance.subInPlace' ?
         this.account.balance.assertBetween(toPurchaseTokenAmount, UInt64.MAXINT());
 
         // check whitelist
         const leaf = Provable.if(
-            presaleParams.whitelistTreeRoot.equals(Field(0n)),
+            saleParams.whitelistTreeRoot.equals(Field(0n)),
             Field(0),
             Poseidon.hash(contributorAddress.toFields()))
-        membershipMerkleWitness.calculateRoot(leaf, leafIndex).assertEquals(presaleParams.whitelistTreeRoot);
+        membershipMerkleWitness.calculateRoot(leaf, leafIndex).assertEquals(saleParams.whitelistTreeRoot);
 
         const contributorMinaAU = AccountUpdate.createSigned(contributorAddress);
         contributorMinaAU.balance.subInPlace(minaAmount);
@@ -201,18 +200,21 @@ export class TokeniZkPresale extends SmartContract {
         presaleMinaAU.balance.addInPlace(minaAmount);
 
         // emit actions
-        const privateSaleContribution = new SaleContribution({
+        const saleContribution = new SaleContribution({
+            tokenAddress: saleParams.tokenAddress,
+            tokenId: this.tokenId,
             saleContractAddress: this.address,
             contributorAddress: contributorAddress,
-            tokenId: this.tokenId,
             minaAmount: minaAmount
         });
-        this.reducer.dispatch(privateSaleContribution);
+        this.reducer.dispatch(saleContribution);
 
         // emit events
         this.emitEvent('contribute', new ContributionEvent({
-            address: contributorAddress,
+            tokenAddress: saleParams.tokenAddress,
             tokenId: this.tokenId,
+            saleContractAddress: this.address,
+            contributorAddress: contributorAddress,
             minaAmount: minaAmount,
             tokenAmount: toPurchaseTokenAmount
         }));
@@ -220,37 +222,32 @@ export class TokeniZkPresale extends SmartContract {
 
     /**
      * 
-     * @param presaleParams 
+     * @param saleParams 
      * @param adminSignature 
      */
     @method
-    maintainContributors(presaleParams: SaleParams, presaleRollupProof: SaleRollupProof) {
+    maintainContributors(saleParams: SaleParams, saleRollupProof: SaleRollupProof) {
         // check if presale params is aligned with the existing ones
-        const hash0 = presaleParams.hash();
-        this.presaleParamsHash.getAndRequireEquals().assertEquals(hash0);
+        const hash0 = saleParams.hash();
+        this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        this.network.timestamp.assertBetween(presaleParams.endTime, UInt64.MAXINT());
-
+        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
         // check actionState
         this.account.actionState.assertEquals(
-            presaleRollupProof.publicOutput.target.currentActionsHash
+            saleRollupProof.publicOutput.target.currentActionsHash
         );
-
-        // check softCap
-        presaleRollupProof.publicOutput.target.currentMinaAmount.assertGreaterThanOrEqual(presaleParams.softCap);
-
         // check proof
-        presaleRollupProof.verify();
+        saleRollupProof.verify();
 
         // check source is aligned with zkApp onchain states
-        presaleRollupProof.publicOutput.source.currentActionsHash.assertEquals(this.fromActionState.getAndRequireEquals());
-        presaleRollupProof.publicOutput.source.membershipTreeRoot.assertEquals(this.contributorTreeRoot.getAndRequireEquals());
-        presaleRollupProof.publicOutput.source.currentMinaAmount.assertEquals(this.totalContributedMina.getAndRequireEquals());
+        saleRollupProof.publicOutput.source.currentActionsHash.assertEquals(this.fromActionState.getAndRequireEquals());
+        saleRollupProof.publicOutput.source.membershipTreeRoot.assertEquals(this.contributorTreeRoot.getAndRequireEquals());
+        saleRollupProof.publicOutput.source.currentMinaAmount.assertEquals(this.totalContributedMina.getAndRequireEquals());
 
-        this.fromActionState.set(presaleRollupProof.publicOutput.target.currentActionsHash);
-        this.contributorTreeRoot.set(presaleRollupProof.publicOutput.target.membershipTreeRoot);
-        this.totalContributedMina.set(presaleRollupProof.publicOutput.target.currentMinaAmount);
+        this.fromActionState.set(saleRollupProof.publicOutput.target.currentActionsHash);
+        this.contributorTreeRoot.set(saleRollupProof.publicOutput.target.membershipTreeRoot);
+        this.totalContributedMina.set(saleRollupProof.publicOutput.target.currentMinaAmount);
 
         ///////////////////////////////////////////////////////
         // transfer partial MINA-fee to TokeniZK platform
@@ -260,66 +257,62 @@ export class TokeniZkPresale extends SmartContract {
 
     /**
      * need go back to 'TokeniZkPrivateSale.approveTransferCallbackWithVesting()' for approval and transfer, which means each address could contribute only once.
-     * @param presaleParams 
-     * @param presaleContribution 
+     * @param saleParams 
+     * @param saleContribution 
      * @param contributorMerkleWitness 
      * @param leafIndex 
      */
     @method
-    claimTokens(presaleParams: SaleParams, presaleContribution: SaleContribution, contributorMerkleWitness: MembershipMerkleWitness, leafIndex: Field) {
+    claimTokens(saleParams: SaleParams, saleContribution: SaleContribution, contributorMerkleWitness: ContributorsMembershipMerkleWitness, leafIndex: Field) {
         // check if presale params is aligned with the existing ones
-        const hash0 = presaleParams.hash();
-        this.presaleParamsHash.getAndRequireEquals().assertEquals(hash0);
+        const hash0 = saleParams.hash();
+        this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        this.network.timestamp.assertBetween(presaleParams.endTime, UInt64.MAXINT());
+        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
 
         // check softcap
         const totalMina = this.totalContributedMina.getAndRequireEquals();
-        totalMina.assertGreaterThanOrEqual(presaleParams.softCap);
+        totalMina.assertGreaterThanOrEqual(saleParams.softCap);
 
         // check contributorMerkleWitness
-        const hash = presaleContribution.hash();
+        const hash = saleContribution.hash();
         const root = contributorMerkleWitness.calculateRoot(hash, leafIndex);
         this.contributorTreeRoot.getAndRequireEquals().assertEquals(root);
 
-        this.self.balance.subInPlace(presaleContribution.minaAmount.mul(presaleParams.saleRate));
+        this.self.balance.subInPlace(saleContribution.minaAmount.div(10 ** 9).mul(saleParams.saleRate));
 
         this.emitEvent('claimToken', new ClaimTokenEvent({
-            presaleContribution: presaleContribution
+            presaleContribution: saleContribution
         }));
     }
 
     /**
      * if the contributed MINA amount is less than softcap.
-     * @param presaleParams 
+     * @param saleParams 
      * @param contributorAddress 
      * @param minaAmount 
      * @param contributorMerkleWitness witness based on the 'contributor' tree root
      * @param leafIndex 
      */
     @method
-    redeemCheck(presaleParams: SaleParams,
-        presaleContributorMembershipWitnessData: SaleContributorMembershipWitnessData) {
+    redeemCheck(saleParams: SaleParams,
+        saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData) {
 
         // check if presale params is aligned with the existing ones
-        const hash0 = presaleParams.hash();
-        this.presaleParamsHash.getAndRequireEquals().assertEquals(hash0);
+        const hash0 = saleParams.hash();
+        this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
-        this.network.timestamp.assertBetween(presaleParams.endTime, UInt64.MAXINT());
+        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
 
         // check softcap
         const totalContributedMina = this.totalContributedMina.getAndRequireEquals();
-        totalContributedMina.assertLessThan(presaleParams.softCap); // sub 10 ** -9 MINA, i.e. lessThan softCap
+        totalContributedMina.assertLessThan(saleParams.softCap); // sub 10 ** -9 MINA, i.e. lessThan softCap
 
-        // check whitelist
-        presaleContributorMembershipWitnessData.checkMembershipAndAssert(presaleParams.whitelistTreeRoot);
+        // check membership in contributor tree
+        saleContributorMembershipWitnessData.checkMembershipAndAssert(saleParams.whitelistTreeRoot);
     }
 }
-
-export class RedeemEvent extends Struct({
-    presaleContribution: SaleContribution
-}) { }
 
 export class PresaleMinaFundHolder extends SmartContract {
 
@@ -345,22 +338,22 @@ export class PresaleMinaFundHolder extends SmartContract {
 
     /**
      * redeem MINA back from sale contract account
-     * @param presaleParams 
-     * @param presaleContributorMembershipWitnessData 
+     * @param saleParams 
+     * @param saleContributorMembershipWitnessData 
      * @param lowLeafWitness 
      * @param oldNullWitness 
      */
     @method
-    redeem(presaleParams: SaleParams,
-        presaleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
+    redeem(saleParams: SaleParams,
+        saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
         lowLeafWitness: UserLowLeafWitnessData,
         oldNullWitness: UserNullifierMerkleWitness) {
 
         const saleContract = new TokeniZkPresale(this.address, TokenId.derive(this.tokenContractAddress.getAndRequireEquals()));
         // check if meet redeeming conditions
-        saleContract.redeemCheck(presaleParams, presaleContributorMembershipWitnessData);
+        saleContract.redeemCheck(saleParams, saleContributorMembershipWitnessData);
 
-        const presaleContribution = presaleContributorMembershipWitnessData.leafData;
+        const presaleContribution = saleContributorMembershipWitnessData.leafData;
         const contributorAddress = presaleContribution.contributorAddress;
         const minaAmount = presaleContribution.minaAmount;
 
@@ -374,7 +367,7 @@ export class PresaleMinaFundHolder extends SmartContract {
         this.send({ to: contributorAddress, amount: minaAmount });
 
         this.emitEvent('redeem', new RedeemEvent({
-            presaleContribution
+            saleContribution: presaleContribution
         }));
     }
 }

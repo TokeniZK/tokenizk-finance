@@ -1,5 +1,4 @@
 import type { AxiosResponse } from 'axios';
-import { timeout } from '@tokenizk/util';
 import { $axiosCoreService } from './client';
 import type { ResponseError } from './response-error';
 
@@ -25,13 +24,14 @@ $axiosCoreService.interceptors.response.use(
     async (error: ResponseError) => {
         if (error.response && error.response.status !== 0) {
             error.isNetworkError = false;
-            if (callbackTrigger.responseError) callbackTrigger.responseError(error);
-            return Promise.reject(error);
         } else {
             error.isNetworkError = true;
-            if (callbackTrigger.responseError) callbackTrigger.responseError(error);
-            return Promise.reject(error);
         }
+
+        if (callbackTrigger.responseError) {
+            callbackTrigger.responseError(error);
+        }
+        return Promise.reject(error);
     }
 );
 

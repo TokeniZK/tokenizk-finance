@@ -10,7 +10,10 @@ import ProofTaskDtoSchema from "./proof-task-dto-schema.json" assert { type: "js
 
 import UserRedeemClaimWitnessDtoSchema from "./user-redeem-claim-witness-dto-schema.json" assert { type: "json" };
 
-export { MerkleProofDtoSchema, SaleDtoSchema, SaleReqSchema, SaleUserDtoSchema, ProofTaskDtoSchema, UserRedeemClaimWitnessDtoSchema }
+import TokenDtoSchema from './token-dto-schema.json' assert { type: "json" };
+
+
+export { MerkleProofDtoSchema, SaleDtoSchema, SaleReqSchema, SaleUserDtoSchema, ProofTaskDtoSchema, UserRedeemClaimWitnessDtoSchema, TokenDtoSchema }
 
 
 export * from './fetch-events-standard-response'
@@ -33,3 +36,5 @@ export * from './sale-req'
 export * from './proof-task-dto'
 
 export * from './user-redeem-claim-witness-dto'
+
+export * from './token-dto'

@@ -33,6 +33,15 @@ export class SimpleA extends SmartContract {
 }
 
 export class Escrow extends SmartContract {
+
+    @state(PublicKey)
+    public saleParamsHash = State<PublicKey>();
+
+    deployZkApp(saleParamsHash: PublicKey) {
+        super.deploy();
+        this.saleParamsHash.set(saleParamsHash);
+    }
+
     @method
     createSimpleA(simpleAaddr: PublicKey, simpleAVk: VerificationKey, totalSupply: Field) {
         totalSupply.assertGreaterThan(Field(0));
@@ -46,7 +55,7 @@ export class Escrow extends SmartContract {
         });
         zkapp.account.verificationKey.set(simpleAVk);
         AccountUpdate.setValue(zkapp.body.update.appState[0], totalSupply);//totalSupply
-    
+
         const feePayer = AccountUpdate.createSigned(this.sender);
         const feeReceiverAU = AccountUpdate.create(this.address);// CAN WORK
         //const feeReceiverAU = AccountUpdate.create(thirdpartyFeeReciverAddress);// !!! can NOT work!!!
@@ -87,12 +96,26 @@ console.time('compile (Escrow)');
 await Escrow.compile();
 console.timeEnd('compile (Escrow)');
 
+const escrowZkAppAddressGroup = escrowZkAppAddress.toGroup();
+console.log('escrowZkAppAddressGroup: ', escrowZkAppAddressGroup.toJSON());
+console.log('escrowZkAppAddressGroup.x: '+escrowZkAppAddressGroup.x.toString());
+console.log('escrowZkAppAddressGroup.y: '+escrowZkAppAddressGroup.y.toString());
+
+const escrowZkAppAddressFields = escrowZkAppAddress.toFields();
+console.log('escrowZkAppAddressFields length: ' + escrowZkAppAddressFields.length);
+for (let i = 0; i < escrowZkAppAddressFields.length; i++) {
+    console.log('escrowZkAppAddressFields[' + i + ']: ' + escrowZkAppAddressFields[i].toString());
+}
+
 const escrow = new Escrow(escrowZkAppAddress);
 let tx = await Local.transaction(feePayer, () => {
     AccountUpdate.fundNewAccount(feePayer);
-    escrow.deploy();
+    escrow.deployZkApp(escrowZkAppAddress);
 });
 tx.sign([feePayerKey, escrowZkAppKey]);
+
+console.log(tx.toJSON());
+
 await tx.send();
 
 console.log('escrow.createSimpleA(feePayer)...');

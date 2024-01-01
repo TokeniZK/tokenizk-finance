@@ -1,5 +1,5 @@
 import type { AxiosResponse } from 'axios';
-import { $axiosCoordinator } from './client';
+import { $axiosProofGenerator} from './client';
 import type { ResponseError } from './response-error';
 
 type ResponseSuccessCallback = (response: AxiosResponse) => void;
@@ -15,7 +15,7 @@ const callbackTrigger: CallbackTrigger = {
     responseError: (null as any) as ResponseErrorCallback
 };
 
-$axiosCoordinator.interceptors.response.use(
+$axiosProofGenerator.interceptors.response.use(
     (response: AxiosResponse) => {
         if (callbackTrigger.responseSuccess) callbackTrigger.responseSuccess(response);
         return response;
@@ -34,6 +34,7 @@ $axiosCoordinator.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
 export function onResponseSuccess(callback: ResponseSuccessCallback): void {
     callbackTrigger.responseSuccess = callback;
 }

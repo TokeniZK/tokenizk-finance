@@ -9,6 +9,8 @@ const logger = getLogger(`pWorker-TokeniZkFairSale`);
 
 export { initWorker };
 
+let fairSaleContractCallTimes = 0;
+
 function processMsgFromMaster() {
     process.on('message', async (message: { type: string; payload: any }) => {
 
@@ -54,7 +56,9 @@ function processMsgFromMaster() {
         }
         logger.info(`[WORKER ${process.pid}] completed ${message.type}`);
 
-        process.exit(0);
+        if (++fairSaleContractCallTimes > 6) {// TODO set 6 temporarily
+            process.exit(0);
+        }
     });
 }
 
@@ -106,7 +110,7 @@ const initWorker = async () => {
     await SaleRollupProver.compile();
     console.timeEnd('SaleRollupProver.compile');
 
-    console.time('SaleRollupProver.compile');
+    console.time('TokeniZkFairSale.compile');
     await TokeniZkFairSale.compile();
     console.timeEnd('TokeniZkFairSale.compile');
 

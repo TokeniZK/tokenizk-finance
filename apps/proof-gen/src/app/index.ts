@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import "./augmentations/fastify"
+import "../augmentations/fastify"
 import fastify, { FastifyInstance } from "fastify"
 import fastifyCors from "fastify-cors"
 import helmet from "fastify-helmet"
@@ -61,7 +61,8 @@ export class FastifyCore {
 
     async listen(): Promise<unknown> {
         try {
-            return this.server.listen(config.port, "0.0.0.0")
+            //return this.server.listen(config.port, "0.0.0.0")
+            return this.server.listen(process.argv[3], "0.0.0.0")
         } catch (err) {
             this.server.log.error(err)
             process.exit(1)

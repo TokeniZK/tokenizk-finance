@@ -1,6 +1,5 @@
 import { FastifyPlugin } from "fastify"
-
-import { networkEndpoint } from "./network";
+import { health } from '../plugins'
 
 
 export const routes: FastifyPlugin = async function (
@@ -8,5 +7,6 @@ export const routes: FastifyPlugin = async function (
     options,
     done
 ): Promise<void> {
-    instance.register(networkEndpoint)
+    instance.register(health)
+
 }

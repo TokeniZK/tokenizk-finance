@@ -7,11 +7,10 @@ export function throwError(
     thrownError?: Error
 ): FastifyError {
     if (thrownError) {
-        pino.log("met error!");
         this.log.error(thrownError)
     }
-    const error = new Error() as FastifyError
-    error.statusCode = statusCode;
-    error.message = message
-    return error
+    const err = new Error() as FastifyError
+    err.statusCode = statusCode;
+    err.message = message
+    return err
 }

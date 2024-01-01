@@ -13,64 +13,40 @@ export interface SaleDto {
      * L1TxHash
      */
     txHash: string
+    status: number    
 
-    status: number
+    tokenName: string
+    tokenAddress: string
+    tokenSymbol: string
 
     saleName: string
-
     saleAddress: string
 
+    star: number
 
-    tokenAddress: string
-
-
+    // private no
     totalSaleSupply: number
-
-
     currency: string
-
-
     feeRate: string
-
-
+    // fair/private no
     saleRate: number
-
-
     whitelistTreeRoot: string
-
     /**
      * comma separated list of addresses
      */
     whitelistMembers: string
 
-
+    // fair no
     softCap: number
-
-
+    // fair no
     hardCap: number
-
-
     minimumBuy: number
-
-
     maximumBuy: number
-
-
     startTimestamp: number
-
-
     endTimestamp: number
-
-
     cliffTime: number
-
-
     cliffAmountRate: number
-
-
     vestingPeriod: number
-
-
     vestingIncrement: number
 
     /**
@@ -87,7 +63,10 @@ export interface SaleDto {
      * 
      */
     contributorsMaintainFlag: number
+    
+    totalContributedMina: number
 
+    teamName: string
 
     logoUrl: string
 
@@ -116,9 +95,9 @@ export interface SaleDto {
     description: string
 
 
-    updatedAt: Date
+    updatedAt: number
 
 
-    createdAt: Date
+    createdAt: number
 
 }
