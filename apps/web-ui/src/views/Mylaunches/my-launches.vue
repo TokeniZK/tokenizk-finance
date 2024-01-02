@@ -40,8 +40,15 @@ onMounted(() => {
 
       <el-row style="margin:50px auto;" justify="center">
 
+        <el-col :span="6"></el-col>
+
         <el-col :span="6">
-          <router-link to="/my-launches" class="bline">Tokens</router-link>
+          <router-link to="/my-launches" class="bline"
+            v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">Tokens</router-link>
+
+          <div v-else @click="checkConnectedWallet">
+            <span>Tokens</span>
+          </div>
         </el-col>
 
         <el-col :span="6">
