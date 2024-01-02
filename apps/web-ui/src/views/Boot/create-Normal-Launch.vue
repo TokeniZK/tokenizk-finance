@@ -72,17 +72,12 @@ const prev = () => {
 
 }
 
-// 模态框
-const fillWhiteList = () => {
-
-}
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
 
 // 表单
 interface RuleForm {
   tokenAddress: string
   tokenName: string
+  tokenSymbol: string
   saleName: string
   currency: string
   feeRate: string
@@ -113,6 +108,7 @@ const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive<RuleForm>({
   tokenAddress: '',
   tokenName: '',
+  tokenSymbol: '',
   saleName: '',
   feeRate: '',
   currency: '',
@@ -399,11 +395,11 @@ const resetForm = (formEl: FormInstance | undefined) => {
                       <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
                     </el-form-item>
 
-                    <!-- 模态框 -->
                     <el-form-item label="Whitelist" prop="whitelistMembers">
                       <el-input v-model.trim="ruleForm.whitelistMembers" placeholder="" />
                     </el-form-item>
 
+                    <!-- 模态框 -->
                     <!-- <el-form-item label="Whitelist" prop="whitelistMembers">
                       <el-radio-group v-model="ruleForm.whitelistMembers">
                         <el-radio label="Disable" />
