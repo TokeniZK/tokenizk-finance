@@ -36,6 +36,8 @@ const fetchResult: SaleDto[] = [{
   status: 1,
 
   tokenName: 'TZ',
+  tokenSymbol: 'tzk',
+  totalContributedMina: 20,
 
   saleName: 'Oggy Inu 2.0',
 
