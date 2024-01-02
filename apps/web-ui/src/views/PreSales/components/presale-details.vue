@@ -16,47 +16,47 @@ onMounted(() => {
     behavior: 'smooth' // 平滑滚动到顶部  
   });
 
-  if (!walletListenerSetted.value) {
-    walletChannel = new BroadcastChannel(CHANNEL_MINA);
-    walletChannel.onmessage = async (e: any) => {
-      const event = e.data as WalletEvent;
-      console.log('claim - walletChannel.onmessage: ', event);
-      if (event.eventType === WalletEventType.ACCOUNTS_CHANGED) {
+  // if (!walletListenerSetted.value) {
+  //   walletChannel = new BroadcastChannel(CHANNEL_MINA);
+  //   walletChannel.onmessage = async (e: any) => {
+  //     const event = e.data as WalletEvent;
+  //     console.log('claim - walletChannel.onmessage: ', event);
+  //     if (event.eventType === WalletEventType.ACCOUNTS_CHANGED) {
 
-        if (event.connectedAddress) {
-          /*
-          if (event.connectedAddress !== withdrawNote.value?.ownerAddress) {
-            message.error('The owner of the claim note is inconsistent with the current wallet. Please switch to the correct wallet', {
-              closable: true,
-              duration: 0
-            });
+  //       if (event.connectedAddress) {
+  //         /*
+  //         if (event.connectedAddress !== withdrawNote.value?.ownerAddress) {
+  //           message.error('The owner of the claim note is inconsistent with the current wallet. Please switch to the correct wallet', {
+  //             closable: true,
+  //             duration: 0
+  //           });
 
-            return;
-          }
-          showLoadingMask({ text: 'Loading...', id: maskId, closable: false });
-          setConnectedWallet(event.connectedAddress);
-          await loadAccountInfoByConnectedWallet();
-          */
+  //           return;
+  //         }
+  //         showLoadingMask({ text: 'Loading...', id: maskId, closable: false });
+  //         setConnectedWallet(event.connectedAddress);
+  //         await loadAccountInfoByConnectedWallet();
+  //         */
 
-        } else {
-          ElMessage({
-            showClose: true,
-            message: `Please connect your wallet`,
-          })
+  //       } else {
+  //         ElMessage({
+  //           showClose: true,
+  //           message: `Please connect your wallet`,
+  //         })
 
-          setConnectedWallet(null);
-        }
+  //         setConnectedWallet(null);
+  //       }
 
-      } else if (event.eventType === WalletEventType.NETWORK_INCORRECT) {
-        message.error(`Please switch to ${appState.minaNetwork} network`, {
-          closable: true,
-          duration: 3000
-        });
-      }
-    };
+  //     } else if (event.eventType === WalletEventType.NETWORK_INCORRECT) {
+  //       message.error(`Please switch to ${appState.minaNetwork} network`, {
+  //         closable: true,
+  //         duration: 3000
+  //       });
+  //     }
+  //   };
 
-    walletListenerSetted.value = true;
-  }
+  //   walletListenerSetted.value = true;
+  // }
 })
 
 // 临时数据本尊
@@ -67,7 +67,8 @@ const originalResult: SaleDto[] = [{
   status: 1,
 
   tokenName: 'TZ',
-
+  tokenSymbol: 'tzk',
+  totalContributedMina: 20,
   saleName: 'Oggy Inu 2.0',
 
   teamName: 'Yoga',
