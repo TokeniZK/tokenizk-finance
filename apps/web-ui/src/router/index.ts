@@ -27,6 +27,11 @@ import CreateAirdrop from '@/views/Boot/create-new-airdrop.vue'
 
 import Wallet from '@/views/Wallet/wallet.vue'
 
+import MyLaunches from '@/views/Mylaunches/my-launches.vue'
+import MyLaunchesTokens from '@/views/Mylaunches/components/my-launches-tokens.vue'
+import MyLaunchesSales from '@/views/Mylaunches/components/my-launches-sales.vue'
+import MyLaunchesAirdrops from '@/views/Mylaunches/components/my-launches-airdrops.vue'
+
 import CreateLock from '../views/create-lock.vue'
 import CreateZkNFT from '../views/create-zkNFT.vue'
 import Services from '../views/Services.vue'
@@ -111,6 +116,24 @@ const router = createRouter({
         {
           path: '/wallet',
           component: Wallet
+        },
+        {
+          path: '/my-launches',
+          component: MyLaunches,
+          children: [
+            {
+              path: '',
+              component: MyLaunchesTokens
+            },
+            {
+              path: '/my-launches/sales',
+              component: MyLaunchesSales
+            },
+            {
+              path: '/my-launches/airdrops',
+              component: MyLaunchesAirdrops
+            }
+          ]
         },
         {
           path: '/create-zk-token',

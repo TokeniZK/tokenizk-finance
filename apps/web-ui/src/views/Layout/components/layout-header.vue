@@ -233,10 +233,13 @@ const disconnect = async () => {
 
         <el-menu-item index="8">
           <el-row class="mb-4">
+
             <div v-if="appState.connectedWallet58 == null">
               <el-button type="success" class="ConnectBtn" @click="connectWallet">Connect</el-button>
             </div>
+
             <div v-if="appState.connectedWallet58 != null">
+
               <el-dropdown>
                 <span class="el-dropdown-link">
                   {{ omitAddress(appState.connectedWallet58) }}
@@ -244,15 +247,27 @@ const disconnect = async () => {
                     <arrow-down />
                   </el-icon>
                 </span>
+
                 <template #dropdown>
                   <el-dropdown-menu>
+
                     <el-dropdown-item>
                       <el-button @click="disconnect">Disconnect</el-button>
                     </el-dropdown-item>
+
+                    <router-link to="/my-launches">
+                      <el-dropdown-item>
+                        <el-button>my launches</el-button>
+                      </el-dropdown-item>
+                    </router-link>
+                    
                   </el-dropdown-menu>
                 </template>
+
               </el-dropdown>
+
             </div>
+
           </el-row>
         </el-menu-item>
 
