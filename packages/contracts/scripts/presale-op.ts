@@ -26,7 +26,7 @@ import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHo
 import { getTestContext } from '../src/test_utils';
 import { PoseidonHasher, StandardTree, newTree } from '@tokenizk/merkle-tree';
 import { Level } from 'level';
-import { WhitelistMembershipMerkleWitness } from '../src/merkle_witness';
+import { WhitelistMembershipMerkleWitness } from '../src';
 
 // ================
 const ctx = getTestContext();

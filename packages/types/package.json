@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "lib:dev": "npm run lib:build && (concurrently \"tsc --build tsconfig.json --watch\" \"tsc-alias -w\")",
-    "lib:gen-schema": "npm run gen-schema-sale-req  && npm run gen-schema-sale-dto && npm run gen-schema-token-dto && npm run gen-schema-sale-user-dto && npm run gen-schema-user-redeem-claim-witness-dto",
+    "lib:gen-schema": "npm run gen-schema-user-contribution-dto && npm run gen-schema-sale-req && npm run gen-schema-sale-contribution-dto  && npm run gen-schema-sale-dto && npm run gen-schema-token-dto && npm run gen-schema-sale-user-dto && npm run gen-schema-user-redeem-claim-witness-dto && npm run gen-schema-merkle-proof-dto && npm run gen-schema-proof-task-dto ",
     "lib:build": "npm run lib:clean && npm run lib:gen-schema && tsc --build tsconfig.json && tsc-alias",
     "lib:clean": "rimraf ./dist ./dist_es ./tsconfig.es.tsbuildinfo ./tsconfig.tsbuildinfo",
     "lib:lint": "eslint \"src/**/*.ts\" --fix",
@@ -17,7 +17,11 @@
     "gen-schema-sale-dto": "npx typescript-json-schema --refs false ./src/sale-dto.ts SaleDto -o ./src/sale-dto-schema.json",
     "gen-schema-token-dto": "npx typescript-json-schema --refs false ./src/token-dto.ts TokenDto -o ./src/token-dto-schema.json",
     "gen-schema-sale-user-dto": "npx typescript-json-schema --refs false ./src/sale-user-dto.ts SaleUserDto -o ./src/sale-user-dto-schema.json",
-    "gen-schema-user-redeem-claim-witness-dto": "npx typescript-json-schema --refs false ./src/user-redeem-claim-witness-dto.ts UserRedeemClaimWitnessDto -o ./src/user-redeem-claim-witness-dto-schema.json"
+    "gen-schema-sale-contribution-dto": "npx typescript-json-schema --refs false ./src/sale-contributors-detail-dto.ts SaleContributorsDetailDto -o ./src/sale-contributors-detail-dto-schema.json",
+    "gen-schema-user-redeem-claim-witness-dto": "npx typescript-json-schema --refs false ./src/user-redeem-claim-witness-dto.ts UserRedeemClaimWitnessDto -o ./src/user-redeem-claim-witness-dto-schema.json",
+    "gen-schema-merkle-proof-dto": "npx typescript-json-schema --refs false ./src/merkle-proof-dto.ts MerkleProofDto -o ./src/merkle-proof-dto-schema.json",
+    "gen-schema-proof-task-dto": "npx typescript-json-schema --refs false ./src/proof-task-dto.ts ProofTaskDto -o ./src/proof-task-dto-schema.json",
+    "gen-schema-user-contribution-dto": "npx typescript-json-schema --refs false ./src/user-contribution-dto.ts UserContributionDto -o ./src/user-contribution-dto-schema.json"
   },
   "peerDependencies": {
     "o1js": "0.15.1"

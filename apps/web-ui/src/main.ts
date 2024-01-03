@@ -14,16 +14,15 @@ import 'element-plus/dist/index.css'
 
 // 3、 导入 Icon 图标
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import '@/styles/icon/iconfont/iconfont.css'
 
 import App from './App.vue'
 import router from './router'
 
-// 5、测试 axios 请求
-// import { getCategory } from '@/apis/testAPI'
-// getCategory().then(result => {
-//   console.log(result);   // {code: '1', msg: '操作成功', result: Array(9)}
-// })
+import * as buffer from "buffer";
+
+if (typeof (window as any).Buffer === "undefined") {
+    (window as any).Buffer = buffer.Buffer;
+}
 
 const app = createApp(App)
 

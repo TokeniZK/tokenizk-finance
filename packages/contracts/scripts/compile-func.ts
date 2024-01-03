@@ -138,7 +138,6 @@ const lauchpadPlatformParams0 = new LauchpadPlatformParams({
     privateSaleContractVk: Field(0),// TokeniZkFactory.privateSaleContractVk.hash, // TODO 
     privateSaleCreationFee: UInt64.from(200 * (10 ** 9)),
     privateSaleServiceFeeRate: UInt64.from(10 * (10 ** 9)),
-    privateSaleMinaFundHolderVk: Field(0), // TokeniZkFactory.privateSaleMinaFundHolderVk.hash // TODO 
 
     redeemAccountVk: TokeniZkFactory.redeemAccountVk.hash,
 });

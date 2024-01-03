@@ -28,11 +28,9 @@ let { cnState } = connectStatus;
 const flagX = ref(0);
 
 const nextX = () => {
-
   if (flagX.value >= 3) {
     flagX.value = 3
   } else {
-
     flagX.value++
     goToTop()
   }
@@ -75,12 +73,15 @@ const prev = () => {
 
 }
 
+// 模态框
+// const fillWhiteList = () => {}
+// const dialogFormVisible = ref(false)
+// const formLabelWidth = '140px'
 
 // 表单
 interface RuleForm {
   tokenAddress: string
   tokenName: string
-  tokenSymbol: string
   saleName: string
   currency: string
   feeRate: string
@@ -90,6 +91,9 @@ interface RuleForm {
   totalSaleSupply: string
 
   // softCap: string
+
+  // symbol: string
+
   // liquidity: string
 
   startTimestamp: string
@@ -113,7 +117,6 @@ const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive<RuleForm>({
   tokenAddress: '',
   tokenName: '',
-  tokenSymbol: '',
   saleName: '',
   feeRate: '',
   currency: '',
@@ -380,11 +383,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                       <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
                     </el-form-item>
 
+                    <!-- 模态框 -->
                     <el-form-item label="whitelist Members" prop="whitelistMembers">
                       <el-input v-model.trim="ruleForm.whitelistMembers" placeholder="" />
                     </el-form-item>
 
-                    <!-- 模态框 -->
                     <!-- <el-radio-group v-model="ruleForm.whiteList">
                         <el-radio label="Disable" />
                         <el-radio label="Enable" @change="dialogFormVisible = true" />
@@ -530,10 +533,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                       <el-col :span="12"><!-- {{ ruleForm.symbol }} --></el-col>
                     </el-row>
 
-                    <!-- <el-row>
+                    <el-row>
                       <el-col :span="12">Token decimals</el-col>
-                      <el-col :span="12"> {{ ruleForm.decimals }} </el-col>
-                    </el-row> -->
+                      <el-col :span="12"><!-- {{ ruleForm.decimals }} --></el-col>
+                    </el-row>
 
                     <!-- <el-row>
                       <el-col :span="12">Softcap</el-col>

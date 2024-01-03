@@ -4,7 +4,7 @@ export interface SaleUserDto {
     saleDto: SaleDto
     userContribute: {
         txHash: string,
-        contributeTimestamp: string,
+        contributeBlockHeight: number,
         contributedCurrencyAmount: string
     }
 }

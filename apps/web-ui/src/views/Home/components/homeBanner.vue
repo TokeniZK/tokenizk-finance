@@ -34,30 +34,16 @@
         <el-col class="box-right" :span="12">
 
           <el-row style="margin: 30px 25px;">
-            <div>
-              <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
-            </div>
-            <div>
-              <p class="text"> Create your own tokens and sales quickly, easily and cheaply</p>
-            </div>
+            <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
+            <p class="text"> Create your own tokens and sales quickly, easily and cheaply</p>
           </el-row>
-
           <el-row style="margin: 30px 25px;">
-            <div>
-              <h4 class="lasthead">No mental burden</h4>
-            </div>
-            <div>
-              <p class="text">No need to understand complex zero knowledge proof, code knowledge</p>
-            </div>
+            <h4 class="lasthead">No mental burden</h4>
+            <p class="text">No need to understand complex zero knowledge proof, code knowledge</p>
           </el-row>
-
           <el-row style="margin: 30px 25px;">
-            <div>
-              <h4 class="lasthead">Verifiable Security Platform</h4>
-            </div>
-            <div>
-              <p class="text">Cryptography guarantees data consistency</p>
-            </div>
+            <h4 class="lasthead">Verifiable Security Platform</h4>
+            <p class="text">Cryptography guarantees data consistency</p>
           </el-row>
 
         </el-col>

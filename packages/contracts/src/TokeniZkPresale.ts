@@ -17,11 +17,9 @@ import {
     TokenId,
     Bool,
 } from 'o1js';
-import { ContributorsMembershipMerkleWitness, WhitelistMembershipMerkleWitness } from './merkle_witness';
-
 import { SaleRollupProof } from './sale-rollup-prover';
 import { SaleContribution, SaleParams, SaleParamsConfigurationEvent, ContributionEvent, RedeemEvent } from './sale-models';
-import { SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './merkle_witness';
+import { WhitelistMembershipMerkleWitness, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
 import { RedeemAccount } from './TokeniZkUser';
 
 
@@ -263,7 +261,10 @@ export class TokeniZkPresale extends SmartContract {
      * @param leafIndex 
      */
     @method
-    claimTokens(saleParams: SaleParams, saleContribution: SaleContribution, contributorMerkleWitness: ContributorsMembershipMerkleWitness, leafIndex: Field) {
+    claimTokens(saleParams: SaleParams,
+        saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
+        lowLeafWitness: UserLowLeafWitnessData,
+        oldNullWitness: UserNullifierMerkleWitness) {
         // check if presale params is aligned with the existing ones
         const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
@@ -276,11 +277,19 @@ export class TokeniZkPresale extends SmartContract {
         totalMina.assertGreaterThanOrEqual(saleParams.softCap);
 
         // check contributorMerkleWitness
-        const hash = saleContribution.hash();
-        const root = contributorMerkleWitness.calculateRoot(hash, leafIndex);
-        this.contributorTreeRoot.getAndRequireEquals().assertEquals(root);
+        saleContributorMembershipWitnessData.checkMembershipAndAssert(this.contributorTreeRoot.getAndRequireEquals());
+
+        const saleContribution = saleContributorMembershipWitnessData.leafData;
+        const contributorAddress = saleContribution.contributorAddress;
 
         this.self.balance.subInPlace(saleContribution.minaAmount.div(10 ** 9).mul(saleParams.saleRate));
+
+        const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
+        redeemAccount.updateState(
+            saleContribution.hash(),
+            lowLeafWitness,
+            oldNullWitness
+        );
 
         this.emitEvent('claimToken', new ClaimTokenEvent({
             presaleContribution: saleContribution
@@ -296,7 +305,7 @@ export class TokeniZkPresale extends SmartContract {
      * @param leafIndex 
      */
     @method
-    redeemCheck(saleParams: SaleParams,
+    claimRedeemCheck(saleParams: SaleParams,
         saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData) {
 
         // check if presale params is aligned with the existing ones
@@ -310,7 +319,7 @@ export class TokeniZkPresale extends SmartContract {
         totalContributedMina.assertLessThan(saleParams.softCap); // sub 10 ** -9 MINA, i.e. lessThan softCap
 
         // check membership in contributor tree
-        saleContributorMembershipWitnessData.checkMembershipAndAssert(saleParams.whitelistTreeRoot);
+        saleContributorMembershipWitnessData.checkMembershipAndAssert(this.contributorTreeRoot.getAndRequireEquals());
     }
 }
 
@@ -351,7 +360,7 @@ export class PresaleMinaFundHolder extends SmartContract {
 
         const saleContract = new TokeniZkPresale(this.address, TokenId.derive(this.tokenContractAddress.getAndRequireEquals()));
         // check if meet redeeming conditions
-        saleContract.redeemCheck(saleParams, saleContributorMembershipWitnessData);
+        saleContract.claimRedeemCheck(saleParams, saleContributorMembershipWitnessData);
 
         const presaleContribution = saleContributorMembershipWitnessData.leafData;
         const contributorAddress = presaleContribution.contributorAddress;

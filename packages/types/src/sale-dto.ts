@@ -64,6 +64,7 @@ export interface SaleDto {
      */
     contributorsMaintainFlag: number
     
+    totalContributorNum: number
     totalContributedMina: number
 
     teamName: string

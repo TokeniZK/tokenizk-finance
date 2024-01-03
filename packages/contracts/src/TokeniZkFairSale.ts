@@ -16,10 +16,11 @@ import {
     Reducer,
     Bool,
 } from 'o1js';
-import { ContributorsMembershipMerkleWitness } from './merkle_witness';
 import { STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleRollupProof } from './sale-rollup-prover';
-import { ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent } from './sale-models';
+import { ContributorsMembershipMerkleWitness, ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
+import { ClaimTokenEvent } from './TokeniZkPresale';
+import { RedeemAccount } from './TokeniZkUser';
 
 
 export class TokeniZkFairSale extends SmartContract {
@@ -61,8 +62,10 @@ export class TokeniZkFairSale extends SmartContract {
     reducer = Reducer({ actionType: SaleContribution });
 
     events = {
+        configureSaleParams: SaleParamsConfigurationEvent,
         contribute: ContributionEvent,
-        configureSaleParams: SaleParamsConfigurationEvent
+        claimToken: ClaimTokenEvent,
+
     }
 
     /**
@@ -222,30 +225,49 @@ export class TokeniZkFairSale extends SmartContract {
         // TODO at next version TODO
         ///////////////////////////////////////////////////////
     }
-
+   
     /**
-     * need go back to 'TokeniZkPrivateSale.approveTransferCallbackWithVesting()' for approval and transfer
+     * need go back to 'TokeniZkPrivateSale.approveTransferCallbackWithVesting()' for approval and transfer, which means each address could contribute only once.
      * @param saleParams 
      * @param saleContribution 
-     * @param membershipMerkleWitness 
+     * @param contributorMerkleWitness 
      * @param leafIndex 
      */
     @method
-    claimTokens(saleParams: SaleParams, saleContribution: SaleContribution, membershipMerkleWitness: ContributorsMembershipMerkleWitness, leafIndex: Field) {
-        // check if  params is aligned with the existing ones
+    claimTokens(saleParams: SaleParams,
+        saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
+        lowLeafWitness: UserLowLeafWitnessData,
+        oldNullWitness: UserNullifierMerkleWitness) {
+        // check if presale params is aligned with the existing ones
         const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
+        // check endTime
         this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
 
-        const hash = saleContribution.hash();
-        const root = membershipMerkleWitness.calculateRoot(hash, leafIndex);
-        this.contributorTreeRoot.getAndRequireEquals().assertEquals(root);
-
+        // check softcap
         const totalMina = this.totalContributedMina.getAndRequireEquals();
-        const totalSupply = saleParams.totalSaleSupply;
+        totalMina.assertGreaterThanOrEqual(saleParams.softCap);
 
-        this.self.balance.subInPlace(totalSupply.div(totalMina).mul(saleContribution.minaAmount.div(10 ** 9)));
+        // check contributorMerkleWitness
+        saleContributorMembershipWitnessData.checkMembershipAndAssert(this.contributorTreeRoot.getAndRequireEquals());
+
+        const saleContribution = saleContributorMembershipWitnessData.leafData;
+        const contributorAddress = saleContribution.contributorAddress;
+
+        this.self.balance.subInPlace(saleContribution.minaAmount.div(10 ** 9).mul(saleParams.saleRate));
+
+        const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
+        redeemAccount.updateState(
+            saleContribution.hash(),
+            lowLeafWitness,
+            oldNullWitness
+        );
+
+        this.emitEvent('claimToken', new ClaimTokenEvent({
+            presaleContribution: saleContribution
+        }));
     }
+
 }
 

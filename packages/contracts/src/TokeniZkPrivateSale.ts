@@ -20,8 +20,7 @@ import {
 import { STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleRollupProof } from './sale-rollup-prover';
 import { ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent } from './sale-models';
-
-import { ContributorsMembershipMerkleWitness, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './merkle_witness';
+import { ContributorsMembershipMerkleWitness, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
 import { RedeemAccount } from './TokeniZkUser';
 import { RedeemEvent } from './sale-models';
 

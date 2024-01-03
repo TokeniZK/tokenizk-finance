@@ -9,6 +9,7 @@ import {
     fetchAccount,
 } from 'o1js';
 import {
+    UserLowLeafWitnessData, SaleContributorMembershipWitnessData, UserNullifierMerkleWitness,
     ContributorsMembershipMerkleWitness,
     TokeniZkFactory, TokeniZkBasicToken,
     SaleRollupProver, TokeniZkPresale, TokeniZkFairSale, TokeniZkPrivateSale, LauchpadPlatformParams, SaleParams, PresaleMinaFundHolder, SaleContribution
@@ -23,6 +24,9 @@ let presaleMinaFundHolderCompiled = false;
 
 let tokeniZkFairSaleCompiled = false;
 let tokeniZkPrivateSaleCompiled = false;
+
+TokeniZkFactory.tokeniZkFactoryAddress = PublicKey.fromBase58(import.meta.env.VITE_TOKENIZK_FACTORY_ADDR);
+console.log('TokeniZkFactory.tokeniZkFactoryAddress: ' + TokeniZkFactory.tokeniZkFactoryAddress);
 
 const lauchpadPlatformParams0 = new LauchpadPlatformParams(
     /*
@@ -49,7 +53,7 @@ const lauchpadPlatformParams0 = new LauchpadPlatformParams(
 );
 
 const compileTokeniZkBasicToken = async () => {
-    console.log('hi, compileTokeniZkBasicToken.....');
+    console.log('hi, compile TokeniZkBasicToken.....');
     try {
         if (!tokeniZkFactoryCompiled) {
             console.time('compile (TokeniZkFactory)');
@@ -73,6 +77,8 @@ const compileTokeniZkBasicToken = async () => {
 }
 
 const compileSaleRollupProver = async () => {
+    console.log('hi, compile SaleRollupProver.....');
+
     try {
         if (!saleRollupProverCompiled) {
             console.time('compile (SaleRollupProver)');
@@ -89,6 +95,8 @@ const compileSaleRollupProver = async () => {
 const compileTokeniZkPresale = async () => {
     try {
         await compileSaleRollupProver();
+
+        console.log('hi, compile TokeniZkPresale.....');
 
         if (!tokeniZkPresaleCompiled) {
             console.time('compile (TokeniZkPresale)');
@@ -161,7 +169,7 @@ const compileTokeniZkPrivatesale = async () => {
     }
 }
 
-const createBasicToken = async (factoryAddress: string, basicTokenZkAppAddress: string, totalSupply: number, 
+const createBasicToken = async (factoryAddress: string, basicTokenZkAppAddress: string, totalSupply: number,
     feePayerAddress: string, txFee: number) => {
     if (await compileTokeniZkBasicToken()) {
         const feePayer = new PublicKey(feePayerAddress);
@@ -384,36 +392,35 @@ const contributePresale = async (basicTokenZkAppAddress: string, saleAddress: st
     return null;
 }
 
-const redeemTokens = async (
-    saleParams0: any,
-    saleContributorMembershipWitnessData0: {
-        tokenAddress: string,
-        tokenId: string,
-        saleContractAddress: string,
-        contributorAddress: string,
-        minaAmount: string
-    },
-    lowLeafWitness0: string[],
-    oldNullWitness: string,
-    feePayerAddress: string, txFee: number) => {
-    //
-}
-
 const claimTokens = async (
     saleParams0: any,
-    saleContribution0: {
-        tokenAddress: string,
-        tokenId: string,
-        saleContractAddress: string,
-        contributorAddress: string,
-        minaAmount: string
+    saleContributorMembershipWitnessData0: {
+        leafData: {
+            tokenAddress: string,
+            tokenId: string,
+            saleContractAddress: string,
+            contributorAddress: string,
+            minaAmount: string
+        },
+        siblingPath: string[],
+        index: string
     },
-    contributorMerkleWitness0: string[], leafIndex: string,
+    lowLeafWitness0: {
+        leafData: {
+            value: string,
+            nextValue: string,
+            nextIndex: string,
+        },
+        siblingPath: string[],
+        index: string,
+    },
+    oldNullWitness0: string[],
     feePayerAddress: string, txFee: number) => {
 
     if ((await compileTokeniZkBasicToken()) && (await compileTokeniZkPresale())) {
         const feePayer = new PublicKey(feePayerAddress);
 
+        const saleContribution0 = saleContributorMembershipWitnessData0.leafData;
         const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(PublicKey.fromBase58(saleContribution0.tokenAddress));
         const tokeniZkPresaleZkApp = new TokeniZkPresale(PublicKey.fromBase58(saleContribution0.saleContractAddress), TokenId.derive(PublicKey.fromBase58(saleContribution0.tokenAddress)));
         const saleParams = new SaleParams(
@@ -456,7 +463,13 @@ const claimTokens = async (
             contributorAddress: PublicKey.empty(),
             minaAmount: UInt64.from(10000)
         });
-        const contributorMerkleWitness = new ContributorsMembershipMerkleWitness(contributorMerkleWitness0.map(x => Field(x)));
+
+        const saleContributorMembershipWitnessData = SaleContributorMembershipWitnessData.fromDTO(saleContributorMembershipWitnessData0);
+
+        const lowLeafWitness = UserLowLeafWitnessData.fromDTO(lowLeafWitness0);
+
+        const oldNullWitness = new UserNullifierMerkleWitness(oldNullWitness0.map(o => Field(0)));
+
         const tx = await Mina.transaction(
             {
                 sender: feePayer,
@@ -464,7 +477,7 @@ const claimTokens = async (
                 memo: 'Presale.claimTokens',
             },
             () => {
-                tokeniZkPresaleZkApp.claimTokens(saleParams, saleContribution, contributorMerkleWitness, Field(leafIndex));
+                tokeniZkPresaleZkApp.claimTokens(saleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
 
                 tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkPresaleZkApp.self,
                     saleContribution.contributorAddress, UInt64.from(saleContribution.minaAmount), saleParams.vestingParams());
@@ -476,6 +489,33 @@ const claimTokens = async (
         return tx.toJSON();
     }
     return null;
+}
+
+const redeemTokens = async (
+    saleParams0: any,
+    saleContributorMembershipWitnessData0: {
+        leafData: {
+            tokenAddress: string,
+            tokenId: string,
+            saleContractAddress: string,
+            contributorAddress: string,
+            minaAmount: string
+        },
+        siblingPath: string[],
+        index: string
+    },
+    lowLeafWitness0: {
+        leafData: {
+            value: string,
+            nextValue: string,
+            nextIndex: string,
+        },
+        siblingPath: string[],
+        index: string,
+    },
+    oldNullWitness0: string[],
+    feePayerAddress: string, txFee: number) => {
+    //
 }
 
 const circuitController = {
@@ -494,6 +534,8 @@ const circuitController = {
     redeemTokens,
     claimTokens
 }
+
+await circuitController.compileTokeniZkPresale();
 
 expose(circuitController);
 

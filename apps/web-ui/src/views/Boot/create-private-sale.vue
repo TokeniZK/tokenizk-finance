@@ -3,6 +3,16 @@ import { reactive, ref, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useConnectStatusStore } from '@/stores/connectStatus'
 
+// 组件挂载完成后执行的函数
+onMounted(() => {
+
+  // 进入当前组件都会回到顶部
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+
+})
 
 // 无论上一步、下一步后，都要回到页面顶部
 const goToTop = () => {
@@ -70,27 +80,29 @@ const prev = () => {
 
 // 表单
 interface RuleForm {
-  saleName: string
+  privateSaleName: string
+  name: string
   currency: string
+  feeOptions: string
   privateSaleRate: string
-  whitelistMembers: string
+  whiteList: string
+  // whiteListUser: string
   softCap: string
   hardCap: string
   minimumBuy: string
   maximumBuy: string
-  startTimestamp: string
-  endTimestamp: string
-
+  startTime: string
+  endTime: string
   firstFundReleaseForProject: string
   fundVestingPeriodEachCycle: string
   fundReleaseEachCycle: string
-
   logoUrl: string
-  website: string
+  webSite: string
   facebook: string
-  github: string
   twitter: string
+  github: string
   telegram: string
+  instagram: string
   discord: string
   reddit: string
   description: string
@@ -99,25 +111,29 @@ interface RuleForm {
 const ruleFormRef = ref<FormInstance>()
 
 const ruleForm = reactive<RuleForm>({
-  saleName: '',
+  privateSaleName: '',
+  name: '',
+  feeOptions: '',
   currency: '',
   privateSaleRate: '',
-  whitelistMembers: '',
+  whiteList: '',
+  // whiteListUser: '',
   softCap: '',
   hardCap: '',
   minimumBuy: '',
   maximumBuy: '',
-  startTimestamp: '',
-  endTimestamp: '',
+  startTime: '',
+  endTime: '',
   firstFundReleaseForProject: '',
   fundVestingPeriodEachCycle: '',
   fundReleaseEachCycle: '',
   logoUrl: '',
-  website: '',
+  webSite: '',
   facebook: '',
   twitter: '',
   github: '',
   telegram: '',
+  instagram: '',
   discord: '',
   reddit: '',
   description: '',
@@ -127,7 +143,7 @@ const ruleForm = reactive<RuleForm>({
 const rules = reactive<FormRules<RuleForm>>({
 
   // 步骤1
-  saleName: [
+  privateSaleName: [
     { required: true, message: 'Please input Private Sale Name', trigger: 'blur' },
     { min: 3, max: 10, message: 'Length should be 3 to 10', trigger: 'blur' },
   ],
@@ -136,6 +152,15 @@ const rules = reactive<FormRules<RuleForm>>({
     {
       required: true,
       message: 'Please select currency',
+      trigger: 'change',
+    },
+  ],
+
+
+  feeOptions: [
+    {
+      required: true,
+      message: 'Please select any feeOptions',
       trigger: 'change',
     },
   ],
@@ -151,13 +176,21 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  whitelistMembers: [
+  whiteList: [
     {
       required: true,
-      message: 'Please input whitelistMembers address',
+      message: 'Please input whiteList address',
       trigger: 'blur',
     },
   ],
+
+  // whiteListUser: [
+  //   {
+  //     required: true,
+  //     message: 'Please input whiteList UserName',
+  //     trigger: 'blur',
+  //   },
+  // ],
 
   softCap: [
     {
@@ -195,7 +228,7 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  startTimestamp: [
+  startTime: [
     {
       type: 'date',
       required: true,
@@ -204,7 +237,7 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  endTimestamp: [
+  endTime: [
     {
       type: 'date',
       required: true,
@@ -240,12 +273,13 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
+
   logoUrl: [
     { required: true, message: 'Please input logoUrl', trigger: 'blur' },
   ],
 
-  website: [
-    { required: true, message: 'Please input website address', trigger: 'blur' },
+  webSite: [
+    { required: true, message: 'Please input webSite address', trigger: 'blur' },
   ],
 
   facebook: [
@@ -264,6 +298,10 @@ const rules = reactive<FormRules<RuleForm>>({
     { required: true, message: 'Please input telegram address', trigger: 'blur' },
   ],
 
+  instagram: [
+    { required: true, message: 'Please input instagram address', trigger: 'blur' },
+  ],
+
   discord: [
     { required: true, message: 'Please input discord address', trigger: 'blur' },
   ],
@@ -275,7 +313,6 @@ const rules = reactive<FormRules<RuleForm>>({
   description: [
     { required: true, message: 'Please input Description', trigger: 'blur' },
   ],
-
 
 })
 
@@ -302,18 +339,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
-
-
-// 组件挂载完成后执行的函数
-onMounted(() => {
-
-  // 进入当前组件都会回到顶部
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth' // 平滑滚动到顶部  
-  });
-
-})
 
 </script>
 
@@ -364,8 +389,8 @@ onMounted(() => {
                     <el-row class="row-bg">
 
                       <el-col :span="24">
-                        <el-form-item label="Private Sale Name" prop="saleName">
-                          <el-input v-model.trim="ruleForm.saleName" placeholder="Ex: Mina" />
+                        <el-form-item label="Private Sale Name" prop="privateSaleName">
+                          <el-input v-model.trim="ruleForm.privateSaleName" placeholder="Ex: Mina" />
                         </el-form-item>
                       </el-col>
                       <!-- <el-col :span="1"></el-col> -->
@@ -385,6 +410,12 @@ onMounted(() => {
                       <div class="form-notes" style="margin-left: 20px;">Users will pay with Mina for your token</div>
                     </el-form-item>
 
+                    <!-- <el-form-item label="Fee Options" prop="feeOptions">
+                      <el-radio-group v-model="ruleForm.feeOptions">
+                        <el-radio label="5% raised only (Recommended)" />
+                        <el-radio label="Other" />
+                      </el-radio-group>
+                    </el-form-item> -->
 
                   </el-col>
                 </el-row>
@@ -399,13 +430,13 @@ onMounted(() => {
                       <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
                     </el-form-item>
 
-                    <el-form-item label="Whitelist" prop="whitelistMembers">
-                      <el-input v-model.trim="ruleForm.whitelistMembers" placeholder="" />
+                    <!-- 模态框 -->
+                    <el-form-item label="Whitelist" prop="whiteList">
+                      <el-input v-model.trim="ruleForm.whiteList" placeholder="" />
                     </el-form-item>
 
-                    <!-- 模态框 -->
-                    <!-- <el-form-item label="Whitelist" prop="whitelistMembers">
-                      <el-radio-group v-model="ruleForm.whitelistMembers">
+                    <!-- <el-form-item label="Whitelist" prop="whiteList">
+                      <el-radio-group v-model="ruleForm.whiteList">
                         <el-radio label="Disable" />
                         <el-radio label="Enable" @change="dialogFormVisible = true" />
 
@@ -477,13 +508,13 @@ onMounted(() => {
                     <el-row class="row-bg">
                       <el-col :span="12">
                         <el-form-item label="Start Time (UTC)" required style="width: 100%">
-                          <el-date-picker v-model="ruleForm.startTimestamp" type="datetime" placeholder="Pick a Date"
+                          <el-date-picker v-model="ruleForm.startTime" type="datetime" placeholder="Pick a Date"
                             format="YYYY/MM/DD hh:mm:ss" value-format="x" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
                         <el-form-item label="End Time (UTC)" required style="width: 100%">
-                          <el-date-picker v-model="ruleForm.endTimestamp" type="datetime" placeholder="Pick a Date"
+                          <el-date-picker v-model="ruleForm.endTime" type="datetime" placeholder="Pick a Date"
                             format="YYYY/MM/DD hh:mm:ss" value-format="x" />
                         </el-form-item>
                       </el-col>
@@ -534,8 +565,8 @@ onMounted(() => {
                       <el-col :span="1"></el-col>
 
                       <el-col :span="12">
-                        <el-form-item label="Website" prop="website">
-                          <el-input v-model.trim="ruleForm.website" placeholder="Ex: https://..." />
+                        <el-form-item label="Website" prop="webSite">
+                          <el-input v-model.trim="ruleForm.webSite" placeholder="Ex: https://..." />
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -572,19 +603,23 @@ onMounted(() => {
 
                     <el-row class="row-bg">
                       <el-col :span="11">
+                        <el-form-item label="Instagram" prop="instagram">
+                          <el-input v-model.trim="ruleForm.instagram" placeholder="Ex: https://instagram.com/..." />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="1"></el-col>
+
+                      <el-col :span="12">
                         <el-form-item label="Discord" prop="discord">
                           <el-input v-model.trim="ruleForm.discord" placeholder="Ex: https://discord.com/" />
                         </el-form-item>
                       </el-col>
-
-                      <el-col :span="1"></el-col>
-
-                      <el-col :span="12">
-                        <el-form-item label="Reddit" prop="reddit">
-                          <el-input v-model.trim="ruleForm.reddit" placeholder="Ex: https://reddit.com/..." />
-                        </el-form-item>
-                      </el-col>
                     </el-row>
+
+
+                    <el-form-item label="Reddit" prop="reddit">
+                      <el-input v-model.trim="ruleForm.reddit" placeholder="Ex: https://reddit.com/..." />
+                    </el-form-item>
 
                     <el-form-item label="Description" prop="description">
                       <el-input v-model.trim="ruleForm.description" type="textarea"
@@ -600,7 +635,7 @@ onMounted(() => {
 
                     <el-row class="row-bg">
                       <el-col :span="12">Private Sale Name</el-col>
-                      <el-col :span="12">{{ ruleForm.saleName }}</el-col>
+                      <el-col :span="12">{{ ruleForm.privateSaleName }}</el-col>
                     </el-row>
 
                     <!-- 注意 下面两项 -->
@@ -647,16 +682,16 @@ onMounted(() => {
 
                     <el-row>
                       <el-col :span="12">Start Time</el-col>
-                      <el-col :span="12">{{ ruleForm.startTimestamp }}</el-col>
+                      <el-col :span="12">{{ ruleForm.startTime }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">End Time</el-col>
-                      <el-col :span="12">{{ ruleForm.endTimestamp }}</el-col>
+                      <el-col :span="12">{{ ruleForm.endTime }}</el-col>
                     </el-row>
 
                     <el-row>
-                      <el-col :span="12">WebSite</el-col>
-                      <el-col :span="12">{{ ruleForm.website }}</el-col>
+                      <el-col :span="12">Website</el-col>
+                      <el-col :span="12">{{ ruleForm.webSite }}</el-col>
                     </el-row>
 
                   </el-col>

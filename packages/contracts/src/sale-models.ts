@@ -10,6 +10,7 @@ import {
 import {
     CONTRIBUTORS_TREE_HEIGHT,
     USER_NULLIFIER_TREE_HEIGHT,
+    WHITELIST_TREE_HEIGHT,
 } from './constants';
 import { SiblingPath } from '@tokenizk/merkle-tree';
 
@@ -205,6 +206,15 @@ export class ContributionEvent extends Struct({
 export class RedeemEvent extends Struct({
     saleContribution: SaleContribution
 }) { }
+
+
+
+/**
+ * Merkle tree witness for the sale whitelist
+ */
+export class WhitelistMembershipMerkleWitness extends SiblingPath(
+    WHITELIST_TREE_HEIGHT
+) { }
 
 /**
  * Merkle tree witness for the sale contributors

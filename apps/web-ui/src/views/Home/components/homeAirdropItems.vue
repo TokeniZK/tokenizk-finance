@@ -2,10 +2,9 @@
 import { ref } from 'vue'
 import { getAirdropItemsAPI } from '@/apis/airdropAll'
 import { onMounted, reactive } from 'vue'
+
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
-import { type SaleDto } from '@tokenizk/types'
-
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
 
@@ -24,338 +23,226 @@ onMounted(() => {
 })
 
 
-// 临时数据 本尊
-const fetchResult: SaleDto[] = [
+// 临时数据
+const fetchResult = [
   {
-    id: 0,
-    saleType: 1,
-    txHash: '0x123456789',
-    status: 1,
-
-    tokenName: 'TZ',
-    tokenSymbol: 'tzk',
+    id: nanoid(),
+    logoUrl: '/src/assets/images/1.png',
+    name: 'Oggy Inu 2.0',
+    status: '',
+    teamName: 'Yoga',
+    star: 4,
+    saleAddress: 'B62',
+    softCap: '21',
+    hardCap: '60',
+    totalContributedMina: 40,
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '10%',
+    lockupTime: '365day',
+    presaleStartTime: 1703081125572,
+    presaleEndTime: 1705093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 4,
+    contributedMinaAmount: 1000,
+    recievedTokenAmount: 4000,
+  },
+  {
+    id: nanoid(),
+    logoUrl: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'walking',
+    star: 2,
+    saleAddress: 'B62',
+    softCap: '10',
+    hardCap: '60',
     totalContributedMina: 20,
-    saleName: 'Oggy Inu 2.0',
-
-    teamName: 'Yoga',
-
-    tokenAddress: 'B62xxxt',
-    saleAddress: 'B62xxs',
-
-    star: 4,
-
-    totalSaleSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    saleRate: 10,
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-    softCap: 21,
-    hardCap: 60,
-    minimumBuy: 0.1,
-    maximumBuy: 1,
-    startTimestamp: 1704083125572,
-    endTimestamp: 1703093115572,
-
-    cliffTime: 300,
-    cliffAmountRate: 3,
-    vestingPeriod: 1704527581215,
-    vestingIncrement: 0,
-    contributorsFetchFlag: 0,
-    contributorsTreeRoot: '',
-    contributorsMaintainFlag: 0,
-
-    logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: 1703691515995,
-    createdAt: 1703691251595,
-
-    // totalContributedMina: 40, // 请求Mina网络获取/hardcap
-
-    // progressStart: '0',
-
-    // progressEnd: '50',    // hardcap
-
-    // liquidity: '10%',
-    // lockupTime: '365day',  // cliffTime  * 5 / 60  >
-    // firstReleaseForProject: '95%',
-    // vestingForProject: '3% each 1 days',
+    progressStart: '0',
+    progressEnd: '60',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1702082115572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 3,
+    contributedMinaAmount: 2000,
+    recievedTokenAmount: 6000,
 
   },
   {
-    id: 0,
-    saleType: 1,
-    txHash: '0x123456789',
-    status: 1,
-
-    tokenName: 'TZ',
-
-    saleName: 'Oggy Inu 2.0',
-
-    teamName: 'Yoga',
-
-    tokenAddress: 'B62xxxt',
-    saleAddress: 'B62xxs',
-
-    star: 4,
-
-    totalSaleSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    saleRate: 10,
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-    softCap: 21,
-    hardCap: 60,
-    minimumBuy: 0.1,
-    maximumBuy: 1,
-    startTimestamp: 1704083125572,
-    endTimestamp: 1703093115572,
-
-    cliffTime: 300,
-    cliffAmountRate: 3,
-    vestingPeriod: 1704527581215,
-    vestingIncrement: 0,
-    contributorsFetchFlag: 0,
-    contributorsTreeRoot: '',
-    contributorsMaintainFlag: 0,
-
-    logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: 1703691515995,
-    createdAt: 1703691251595,
+    id: nanoid(),
+    logoUrl: '/src/assets/images/3.png',
+    name: 'Ripple Frog',
+    status: '',
+    teamName: 'cherry',
+    star: 2,
+    saleAddress: 'B62',
+    softCap: '30',
+    hardCap: '45',
+    totalContributedMina: 60,
+    progressStart: '0',
+    progressEnd: '45',
+    liquidity: '53%',
+    lockupTime: '365day',
+    presaleStartTime: 1703003135572,
+    presaleEndTime: 1703003115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 2,
+    contributedMinaAmount: 500,
+    recievedTokenAmount: 1000,
   },
   {
-    id: 0,
-    saleType: 1,
-    txHash: '0x123456789',
-    status: 1,
-
-    tokenName: 'TZ',
-
-    saleName: 'Oggy Inu 2.0',
-
-    teamName: 'Yoga',
-
-    tokenAddress: 'B62xxxt',
-    saleAddress: 'B62xxs',
-
+    id: nanoid(),
+    logoUrl: '/src/assets/images/3.png',
+    name: 'FastAI',
+    status: '',
+    teamName: 'Tang',
     star: 4,
-
-    totalSaleSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    saleRate: 10,
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-    softCap: 21,
-    hardCap: 60,
-    minimumBuy: 0.1,
-    maximumBuy: 1,
-    startTimestamp: 1704083125572,
-    endTimestamp: 1703093115572,
-
-    cliffTime: 300,
-    cliffAmountRate: 3,
-    vestingPeriod: 1704527581215,
-    vestingIncrement: 0,
-    contributorsFetchFlag: 0,
-    contributorsTreeRoot: '',
-    contributorsMaintainFlag: 0,
-
-    logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: 1703691515995,
-    createdAt: 1703691251595,
+    saleAddress: 'B62',
+    softCap: '10',
+    hardCap: '55',
+    totalContributedMina: 30,
+    progressStart: '10',
+    progressEnd: '50',
+    liquidity: '40%',
+    lockupTime: '365day',
+    presaleStartTime: 1703003135572,
+    presaleEndTime: 1703003115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 3,
+    contributedMinaAmount: 5000,
+    recievedTokenAmount: 15000,
   },
   {
-    id: 0,
-    saleType: 1,
-    txHash: '0x123456789',
-    status: 1,
-
-    tokenName: 'TZ',
-
-    saleName: 'Oggy Inu 2.0',
-
-    teamName: 'Yoga',
-
-    tokenAddress: 'B62xxxt',
-    saleAddress: 'B62xxs',
-
-    star: 4,
-
-    totalSaleSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    saleRate: 10,
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-    softCap: 21,
-    hardCap: 60,
-    minimumBuy: 0.1,
-    maximumBuy: 1,
-    startTimestamp: 1704083125572,
-    endTimestamp: 1703093115572,
-
-    cliffTime: 300,
-    cliffAmountRate: 3,
-    vestingPeriod: 1704527581215,
-    vestingIncrement: 0,
-    contributorsFetchFlag: 0,
-    contributorsTreeRoot: '',
-    contributorsMaintainFlag: 0,
-
-    logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: 1703691515995,
-    createdAt: 1703691251595,
+    id: nanoid(),
+    logoUrl: '/src/assets/images/2.png',
+    name: 'Wrapped XRP',
+    status: '',
+    teamName: 'mina',
+    star: 2,
+    saleAddress: 'B62',
+    softCap: '9',
+    hardCap: '50',
+    totalContributedMina: 50,
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1702083115572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 6,
+    contributedMinaAmount: 1500,
+    recievedTokenAmount: 9000,
   },
   {
-    id: 0,
-    saleType: 1,
-    txHash: '0x123456789',
-    status: 1,
-
-    tokenName: 'TZ',
-
-    saleName: 'Oggy Inu 2.0',
-
-    teamName: 'Yoga',
-
-    tokenAddress: 'B62xxxt',
-    saleAddress: 'B62xxs',
-
-    star: 4,
-
-    totalSaleSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    saleRate: 10,
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-    softCap: 21,
-    hardCap: 60,
-    minimumBuy: 0.1,
-    maximumBuy: 1,
-    startTimestamp: 1704083125572,
-    endTimestamp: 1703093115572,
-
-    cliffTime: 300,
-    cliffAmountRate: 3,
-    vestingPeriod: 1704527581215,
-    vestingIncrement: 0,
-    contributorsFetchFlag: 0,
-    contributorsTreeRoot: '',
-    contributorsMaintainFlag: 0,
-
+    id: nanoid(),
     logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: 1703691515995,
-    createdAt: 1703691251595,
+    name: 'THREADS V2',
+    status: '',
+    teamName: 'BTC',
+    star: 2,
+    saleAddress: 'B62',
+    softCap: '12',
+    hardCap: '50',
+    totalContributedMina: 10,
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '30%',
+    lockupTime: '365day',
+    presaleStartTime: 1704083125572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 8,
+    contributedMinaAmount: 3000,
+    recievedTokenAmount: 24000,
   },
   {
-    id: 0,
-    saleType: 1,
-    txHash: '0x123456789',
-    status: 1,
-
-    tokenName: 'TZ',
-
-    saleName: 'Oggy Inu 2.0',
-
+    id: nanoid(),
+    logoUrl: '/src/assets/images/2.png',
+    name: 'Oggy Inu 2.0',
+    status: '',
     teamName: 'Yoga',
-
-    tokenAddress: 'B62xxxt',
-    saleAddress: 'B62xxs',
-
-    star: 4,
-
-    totalSaleSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    saleRate: 10,
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-    softCap: 21,
-    hardCap: 60,
-    minimumBuy: 0.1,
-    maximumBuy: 1,
-    startTimestamp: 1704083125572,
-    endTimestamp: 1703093115572,
-
-    cliffTime: 300,
-    cliffAmountRate: 3,
-    vestingPeriod: 1704527581215,
-    vestingIncrement: 0,
-    contributorsFetchFlag: 0,
-    contributorsTreeRoot: '',
-    contributorsMaintainFlag: 0,
-
-    logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: 1703691515995,
-    createdAt: 1703691251595,
+    star: 5,
+    saleAddress: 'B62',
+    softCap: '11',
+    hardCap: '50',
+    totalContributedMina: 13,
+    progressStart: '23',
+    progressEnd: '50',
+    liquidity: '15%',
+    lockupTime: '365day',
+    presaleStartTime: 1704083125572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 3,
+    contributedMinaAmount: 4000,
+    recievedTokenAmount: 12000,
   },
-
+  {
+    id: nanoid(),
+    logoUrl: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'Yoga',
+    star: 2,
+    saleAddress: 'B62',
+    softCap: '20',
+    hardCap: '50',
+    totalContributedMina: 42,
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '23%',
+    lockupTime: '365day',
+    presaleStartTime: 1703083145572,
+    presaleEndTime: 1703093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 5,
+    contributedMinaAmount: 6000,
+    recievedTokenAmount: 30000,
+  },
+  {
+    id: nanoid(),
+    logoUrl: '/src/assets/images/2.png',
+    name: 'Wojak 2.69',
+    status: '',
+    teamName: 'Yoga',
+    star: 2,
+    saleAddress: 'B62',
+    softCap: '10',
+    hardCap: '50',
+    totalContributedMina: 23,
+    progressStart: '0',
+    progressEnd: '50',
+    liquidity: '54%',
+    lockupTime: '365day',
+    presaleStartTime: 1703083115572,
+    presaleEndTime: 1706093115572,
+    firstReleaseForProject: '95%',
+    vestingForProject: '3% each 1 days',
+    rate: 10,
+    contributedMinaAmount: 300,
+    recievedTokenAmount: 3000,
+  },
 ];
 
 // 判断项目的状态
 let currentTime = new Date().getTime();
 fetchResult.forEach(item => {
-  if (item.startTimestamp > currentTime) {
+  if (item.presaleStartTime > currentTime) {
     item.projectStatus = 'Upcoming'
-  } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
+  } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
     item.projectStatus = 'Ongoing'
-  } else if (item.endTimestamp < currentTime) {
+  } else if (item.presaleEndTime < currentTime) {
     item.projectStatus = 'Ended'
   } else {
     item.projectStatus = 'All Status'
@@ -382,7 +269,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
             <el-col :span="12">
               <el-row>
-                <h2 class="home-region-title">Airdrop items</h2>
+                <h2 class="title">Airdrop items</h2>
               </el-row>
               <el-row>Fair Airdrop tool helps project team to record related contributors and token distribution.</el-row>
             </el-col>
@@ -405,70 +292,120 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
       <!-- 每个项目 -->
       <el-row class="row-bg" justify="center">
         <el-col :span="20">
+          <el-row>
+            <ul class="launchpads-ul">
+              <li v-for="item in presaleProjects.saleList" :key="item.id">
 
-          <ul class="launchpads-ul">
+                <!-- <el-card shadow="hover"> -->
 
-            <li v-for="item in presaleProjects.saleList" :key="item.id">
+                <div class="launchpads-box">
 
-              <div class="launchpads-box">
+                  <!-- photo -->
+                  <el-row class="thumb">
 
-                <!-- photo -->
-                <el-row class="thumb">
-                  <router-link to="/airdrop-datails">
-                    <el-image style="width: 100%; height: 100%;" :src="item.logoUrl" :alt="item.saleName"
-                      loading="lazy" />
-                  </router-link>
-                </el-row>
+                    <el-col>
 
-                <!-- 项目描述 -->
-                <el-row class="launchpads-content">
+                      <el-row>
+                        <img :src="item.logoUrl" :alt="item.name" style="width: 349px; height: 130px;">
+                      </el-row>
 
-                  <el-col :span="24">
+                      <el-row class="button-box">
+                        <el-col>
+                          <a href="Ripple-Frog-presale-details.html" class="link link-1">
+                            <el-icon>
+                              <View />
+                            </el-icon>
+                          </a>
+                        </el-col>
+                        <el-col>
+                          <a href="#0" class="link link-3"><el-icon>
+                              <StarFilled />
+                            </el-icon>
+                          </a>
+                        </el-col>
+                      </el-row>
 
-                    <el-row class="row-bg" justify="space-between">
-                      <el-col :span="24">
-                        <router-link to="#" style="font-weight: 700;">{{ item.saleName }}</router-link>
-                      </el-col>
-                    </el-row>
+                    </el-col>
 
-                    <el-row class="row-bg soft-hard-cap" justify="space-between">
-                      <el-col :span="10">Token:</el-col>
-                      <el-col :span="8"></el-col>
-                      <el-col :span="6">{{ item.tokenName }}</el-col>
-                    </el-row>
+                  </el-row>
 
-                    <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10">Total Token:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6"> {{ item.hardCap }}</el-col>
-                    </el-row>
+                  <!-- 项目描述 -->
+                  <el-row class="launchpads-content">
 
-                    <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10">Participants:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6">0</el-col>
-                    </el-row>
+                    <el-col>
 
-                    <el-row class="row-bg" justify="space-between">
-                      <el-col :span="6">Begin at :</el-col>
-                      <el-col :span="14"> {{ new Date(item.startTimestamp).toISOString() }}</el-col>
-                    </el-row>
+                      <el-row>
+                        <el-col :span="24">
+                          <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
+                        </el-col>
+                      </el-row>
 
-                    <el-row class="row-bg" justify="end">
-                      <router-link to="/airdrop-datails">
-                        <el-button type="primary" round class="statusColor"> View Airdrop</el-button>
-                      </router-link>
-                    </el-row>
+                      <!-- 团队名称 -->
+                      <el-row class="text-review-change" justify="space-between" style="align-items: center;">
 
-                  </el-col>
+                        <el-col class="text" :span="8">
+                          by <a href="" class="link">{{ item.teamName }}</a>
+                        </el-col>
 
-                </el-row>
+                        <el-col :span="5"></el-col>
 
-              </div>
+                        <el-col class="review" :span="7">
+                          <el-button type="primary" round>{{ item.projectStatus }}</el-button>
+                        </el-col>
 
+                      </el-row>
 
-            </li>
-          </ul>
+                      <el-row class="row-bg soft-hard-cap" justify="space-between">
+                        <el-col :span="10">Soft / Hard</el-col>
+                        <el-col :span="2"></el-col>
+                        <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
+                      </el-row>
+
+                      <!-- 进度条 -->
+                      <el-row class="content-Progress">
+                        <el-col>
+
+                          <el-row class="title">Progress</el-row>
+
+                          <el-row class="Progress demo-progress" style="margin-bottom: 0;">
+                            <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
+                          </el-row>
+
+                          <el-row class="row-bg sub-title" justify="space-between">
+                            <el-col :span="10"> 0 Mina</el-col>
+                            <el-col :span="4"></el-col>
+                            <el-col :span="6">50 Mina</el-col>
+                          </el-row>
+
+                        </el-col>
+                      </el-row>
+
+                      <el-row class="row-bg liquidity-percent" justify="space-between">
+                        <el-col :span="10">Liquidity %:</el-col>
+                        <el-col :span="4"></el-col>
+                        <el-col :span="6"> {{ item.liquidity }}</el-col>
+                      </el-row>
+
+                      <el-row class="row-bg lockup-time" justify="space-between">
+                        <el-col :span="10">Lockup Time:</el-col>
+                        <el-col :span="4"></el-col>
+                        <el-col :span="6">365 day</el-col>
+                      </el-row>
+
+                    </el-col>
+
+                  </el-row>
+
+                </div>
+
+                <!-- </el-card> -->
+
+              </li>
+            </ul>
+          </el-row>
+
+          <el-row style="margin-top: 20px">123</el-row>
+
         </el-col>
       </el-row>
 
@@ -487,7 +424,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
   .ongoing-presales-content {
     width: 100%;
 
-    .home-region-title {
+    .title {
       font-size: 35px;
       padding-bottom: 1px;
     }
@@ -515,7 +452,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
       margin-top: 25px;
       margin-bottom: 25px;
       width: 349px;
-      height: 370px;
+      height: 416px;
       border-radius: 15px;
 
       .launchpads-box {
@@ -526,8 +463,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
         .thumb {
           width: 349px;
-          height: 130px;
-          border-radius: 15px;
+          height: 160px;
           overflow: hidden;
         }
 
@@ -547,7 +483,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
   }
 
   .el-row {
-    margin-bottom: 12px;
+    margin-bottom: 5px;
   }
 
 }

@@ -200,12 +200,7 @@ const countdownFinishCallback = () => {
             <el-col :span="20">
               <el-row>
                 <h1>{{ fetchResult.name }}</h1>
-              </el-row>
 
-              <el-row>
-                <i class="iconfont icon-birdxiaoniao"></i>
-                <i class="iconfont icon-discord"></i>
-                <i class="iconfont icon-telegram"></i>
               </el-row>
 
               <el-row>
@@ -375,14 +370,6 @@ const countdownFinishCallback = () => {
   padding-top: 120px;
   padding-bottom: 120px;
   background: #f7f7f7;
-
-  .icon-discord,
-  .icon-birdxiaoniao,
-  .icon-telegram {
-    margin-right: 20px;
-    font-size: 20px;
-    color: #00FFC2;
-  }
 
   .project-description {
     background-color: #fff;
