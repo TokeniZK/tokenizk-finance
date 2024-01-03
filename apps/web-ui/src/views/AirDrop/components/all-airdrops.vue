@@ -28,13 +28,13 @@ onMounted(() => {
 const fetchResult = [
   {
     id: nanoid(),
-    photo: '/src/assets/images/1.png',
+    logoUrl: '/src/assets/images/1.png',
     name: 'Favoom ',
     tokenName: 'FM',
     teamName: 'Yoga',
     participants: 100,
     star: 4,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 21,
     hardCap: 60,
     totalContributedMina: 40,
@@ -49,13 +49,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'BabyAmple ',
     tokenName: 'BA',
     teamName: 'walking',
     participants: 200,
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 10,
     hardCap: 60,
     totalContributedMina: 20,
@@ -70,13 +70,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/3.png',
+    logoUrl: '/src/assets/images/3.png',
     name: 'Versa',
     tokenName: 'VA',
     participants: 300,
     teamName: 'cherry',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 30,
     hardCap: 45,
     totalContributedMina: 60,
@@ -91,13 +91,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/3.png',
+    logoUrl: '/src/assets/images/3.png',
     name: 'FastAI',
     tokenName: 'BA',
     participants: 400,
     teamName: 'Tang',
     star: 4,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 10,
     hardCap: 55,
     totalContributedMina: 30,
@@ -112,13 +112,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wrapped',
     tokenName: 'VA',
     participants: 500,
     teamName: 'mina',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 9,
     hardCap: 50,
     totalContributedMina: 50,
@@ -133,13 +133,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/1.png',
+    logoUrl: '/src/assets/images/1.png',
     name: 'THREADS V2',
     tokenName: 'VA',
     participants: 200,
     teamName: 'BTC',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 12,
     hardCap: 50,
     totalContributedMina: 10,
@@ -154,13 +154,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Oggy Inu 2.0',
     tokenName: 'OI',
     participants: 100,
     teamName: 'Yoga',
     star: 5,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 11,
     hardCap: 50,
     totalContributedMina: 13,
@@ -175,13 +175,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     tokenName: 'WK',
     participants: 200,
     teamName: 'Yoga',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 20,
     hardCap: 50,
     totalContributedMina: 42,
@@ -196,13 +196,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     tokenName: 'WK',
     participants: 100,
     teamName: 'Yoga',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 10,
     hardCap: 50,
     totalContributedMina: 23,
@@ -283,13 +283,13 @@ const searchProjects = () => {
 let currentTime = new Date().getTime();
 fetchResult.forEach(item => {
   if (item.presaleStartTime > currentTime) {
-    item.status = 'Upcoming'
+    item.projectStatus = 'Upcoming'
   } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-    item.status = 'Ongoing'
+    item.projectStatus = 'Ongoing'
   } else if (item.presaleEndTime < currentTime) {
-    item.status = 'Ended'
+    item.projectStatus = 'Ended'
   } else {
-    item.status = 'All Status'
+    item.projectStatus = 'All Status'
   }
 });
 
@@ -314,13 +314,13 @@ const filterOption = (option: string) => {
   let currentTime = new Date().getTime();
   fetchResult.forEach(item => {
     if (item.presaleStartTime > currentTime) {
-      item.status = 'Upcoming'
+      item.projectStatus = 'Upcoming'
     } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-      item.status = 'Ongoing'
+      item.projectStatus = 'Ongoing'
     } else if (item.presaleEndTime < currentTime) {
-      item.status = 'Ended'
+      item.projectStatus = 'Ended'
     } else {
-      item.status = 'All Status'
+      item.projectStatus = 'All Status'
     }
   });
 
@@ -328,7 +328,7 @@ const filterOption = (option: string) => {
   if (option === '3') {
     // TODO 
     fetchResult.filter(item => {
-      return item.status === 'All Status'
+      return item.projectStatus === 'All Status'
     })
 
   } else if (option === '0') {
@@ -336,11 +336,11 @@ const filterOption = (option: string) => {
   } else {
     renderSaleBlock = fetchResult.filter(item => {
       if (option == '1') {
-        return item.status === 'Upcoming'
+        return item.projectStatus === 'Upcoming'
       } else if (option == '2') {
-        return item.status === 'Ongoing'
+        return item.projectStatus === 'Ongoing'
       } else if (option == '3') {
-        return item.status === 'Ended'
+        return item.projectStatus === 'Ended'
       }
     });
 
@@ -434,7 +434,7 @@ const sortOption = (option: string) => {
                 <!-- photo -->
                 <el-row class="thumb">
                   <router-link to="/airdrop-datails">
-                    <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
+                    <el-image style="width: 349px; height: 130px;" :src="item.logoUrl" :alt="item.name" loading="lazy" />
                   </router-link>
                 </el-row>
 

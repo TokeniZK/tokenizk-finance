@@ -20,7 +20,7 @@ onMounted(() => {
 // 临时数据本尊
 const originalResult = {
   id: nanoid(),
-  photo: '/src/assets/images/1.png',
+  logoUrl: '/src/assets/images/1.png',
   name: 'TokeniZK - Airdrop',
   teamName: 'Yoga',
   star: 4,

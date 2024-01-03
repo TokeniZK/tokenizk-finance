@@ -5,6 +5,7 @@ import { Search } from '@element-plus/icons-vue'
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
 import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
+import { type SaleDto } from '@tokenizk/types'
 
 const percentage = ref(20)
 const customColor = ref('#00FFC2')
@@ -28,183 +29,75 @@ onMounted(() => {
 })
 
 // 临时数据 本尊
-const fetchResult = [
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/1.png',
-    name: 'Oggy Inu 2.0',
-    teamName: 'Yoga',
-    star: 4,
-    preSaleAddr: 'B62',
-    softCap: 21,
-    hardCap: 60,
-    totalContributedMina: 40,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '10%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    teamName: 'walking',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 10,
-    hardCap: 60,
-    totalContributedMina: 20,
-    progressStart: '0',
-    progressEnd: '60',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1703082115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/3.png',
-    name: 'Ripple Frog',
-    teamName: 'cherry',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 30,
-    hardCap: 45,
-    totalContributedMina: 60,
-    progressStart: '0',
-    progressEnd: '45',
-    liquidity: '53%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/3.png',
-    name: 'FastAI',
-    teamName: 'Tang',
-    star: 4,
-    preSaleAddr: 'B62',
-    softCap: 10,
-    hardCap: 55,
-    totalContributedMina: 30,
-    progressStart: '10',
-    progressEnd: '50',
-    liquidity: '40%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Wrapped XRP',
-    teamName: 'mina',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 9,
-    hardCap: 50,
-    totalContributedMina: 50,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1702083115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/1.png',
-    name: 'THREADS V2',
-    teamName: 'BTC',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 12,
-    hardCap: 50,
-    totalContributedMina: 10,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Oggy Inu 2.0',
-    teamName: 'Yoga',
-    star: 5,
-    preSaleAddr: 'B62',
-    softCap: 11,
-    hardCap: 50,
-    totalContributedMina: 13,
-    progressStart: '23',
-    progressEnd: '50',
-    liquidity: '15%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    teamName: 'Yoga',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 20,
-    hardCap: 50,
-    totalContributedMina: 42,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '23%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083145572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    photo: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    teamName: 'Yoga',
-    star: 2,
-    preSaleAddr: 'B62',
-    softCap: 10,
-    hardCap: 50,
-    totalContributedMina: 23,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '54%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083115572,
-    presaleEndTime: 1706093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-];
+const fetchResult: SaleDto[] = [{
+  id: 0,
+  saleType: 1,
+  txHash: '0x123456789',
+  status: 1,
+
+  tokenName: 'TZ',
+  tokenSymbol: 'tzk',
+  totalContributedMina: 20,
+
+  saleName: 'Oggy Inu 2.0',
+
+  teamName: 'Yoga',
+
+  tokenAddress: 'B62xxxt',
+  saleAddress: 'B62xxs',
+
+  star: 4,
+
+  totalSaleSupply: 20,
+  currency: 'Mina',
+  feeRate: '5%',
+  saleRate: 10,
+  whitelistTreeRoot: '45678ityuioghjk',
+  whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+
+  softCap: 21,
+  hardCap: 60,
+  minimumBuy: 0.1,
+  maximumBuy: 1,
+  startTimestamp: 1704083125572,
+  endTimestamp: 1703093115572,
+
+  cliffTime: 6,
+  cliffAmountRate: 3,
+  vestingPeriod: 1704527581215,
+  vestingIncrement: 0,
+  contributorsFetchFlag: 0,
+  contributorsTreeRoot: '',
+  contributorsMaintainFlag: 0,
+
+  logoUrl: '/src/assets/images/1.png',
+  website: 'https://tokenizk.finance/',
+  facebook: 'https://tokenizk.finance/',
+  github: 'https://tokenizk.finance/',
+  twitter: 'https://tokenizk.finance/',
+  telegram: 'https://tokenizk.finance/',
+  discord: 'https://tokenizk.finance/',
+  reddit: 'https://tokenizk.finance/',
+  description: 'The Launchpad focusing on ZK-Token for Everyone!',
+  updatedAt: 1703691515995,
+  createdAt: 1703691251595,
+
+  // totalContributedMina: 40, // 请求Mina网络获取/hardcap
+
+  // progressStart: '0',
+
+  // progressEnd: '50',    // hardcap
+
+  // liquidity: '10%',
+  // lockupTime: '365day',  // cliffTime  * 5 * 60 * 1000 / 12
+  // firstReleaseForProject: '95%',
+  // vestingForProject: '3% each 1 days',
+
+},];
 
 let keyWord = ref('')
 const getSearchProjects = async () => {
-  let searchRes = getAllPrivateSalesAPI(keyWord)
+  let searchRes = getSearchProjectAPI(keyWord)
   allPrivateSalesList.value = searchRes.value
 }
 
@@ -278,14 +171,14 @@ const searchProjects = () => {
 let currentTime = new Date().getTime();
 
 fetchResult.forEach(item => {
-  if (item.presaleStartTime > currentTime) {
-    item.status = 'Upcoming'
-  } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-    item.status = 'Ongoing'
-  } else if (item.presaleEndTime < currentTime) {
-    item.status = 'Ended'
+  if (item.startTimestamp > currentTime) {
+    item.projectStatus = 'Upcoming'
+  } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
+    item.projectStatus = 'Ongoing'
+  } else if (item.endTimestamp < currentTime) {
+    item.projectStatus = 'Ended'
   } else {
-    item.status = 'All Status'
+    item.projectStatus = 'All Status'
   }
 });
 
@@ -300,11 +193,11 @@ if (sortBy.value == '1') {
   });
 } else if (sortBy.value == '3') {
   fetchResult.sort((a, b) => {
-    return Number(b.presaleStartTime) - Number(a.presaleStartTime);
+    return Number(b.startTimestamp) - Number(a.startTimestamp);
   });
 } else if (sortBy.value == '4') {
   fetchResult.sort((a, b) => {
-    return Number(b.presaleEndTime) - Number(a.presaleEndTime);
+    return Number(b.endTimestamp) - Number(a.endTimestamp);
   });
 }
 
@@ -317,14 +210,14 @@ const filterOption = (option: string) => {
 
   let currentTime = new Date().getTime();
   fetchResult.forEach(item => {
-    if (item.presaleStartTime > currentTime) {
-      item.status = 'Upcoming'
-    } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-      item.status = 'Ongoing'
-    } else if (item.presaleEndTime < currentTime) {
-      item.status = 'Ended'
+    if (item.startTimestamp > currentTime) {
+      item.projectStatus = 'Upcoming'
+    } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
+      item.projectStatus = 'Ongoing'
+    } else if (item.endTimestamp < currentTime) {
+      item.projectStatus = 'Ended'
     } else {
-      item.status = 'All Status'
+      item.projectStatus = 'All Status'
     }
   });
 
@@ -332,7 +225,7 @@ const filterOption = (option: string) => {
   if (option === '3') {
     // TODO 
     fetchResult.filter(item => {
-      return item.status === 'All Status'
+      return item.projectStatus === 'All Status'
     })
 
   } else if (option === '0') {
@@ -340,11 +233,11 @@ const filterOption = (option: string) => {
   } else {
     renderSaleBlock = fetchResult.filter(item => {
       if (option == '1') {
-        return item.status === 'Upcoming'
+        return item.projectStatus === 'Upcoming'
       } else if (option == '2') {
-        return item.status === 'Ongoing'
+        return item.projectStatus === 'Ongoing'
       } else if (option == '3') {
-        return item.status === 'Ended'
+        return item.projectStatus === 'Ended'
       }
     });
 
@@ -359,11 +252,11 @@ const filterOption = (option: string) => {
       });
     } else if (sortBy.value == '3') {
       renderSaleBlock.sort((a, b) => {
-        return Number(b.presaleStartTime) - Number(a.presaleStartTime);
+        return Number(b.startTimestamp) - Number(a.startTimestamp);
       });
     } else if (sortBy.value == '4') {
       renderSaleBlock.sort((a, b) => {
-        return Number(b.presaleEndTime) - Number(a.presaleEndTime);
+        return Number(b.endTimestamp) - Number(a.endTimestamp);
       });
     }
 
@@ -387,11 +280,11 @@ const sortOption = (option: string) => {
     });
   } else if (sortBy.value == '3') {
     renderSaleBlock.sort((a, b) => {
-      return Number(b.presaleStartTime) - Number(a.presaleStartTime);
+      return Number(b.startTimestamp) - Number(a.startTimestamp);
     });
   } else if (sortBy.value == '4') {
     renderSaleBlock.sort((a, b) => {
-      return Number(b.presaleEndTime) - Number(a.presaleEndTime);
+      return Number(b.endTimestamp) - Number(a.endTimestamp);
     });
   }
   renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock))
@@ -454,7 +347,8 @@ const sortOption = (option: string) => {
                 <!-- photo -->
                 <el-row class="thumb">
                   <router-link to="/private-sales-datails">
-                    <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
+                    <el-image style="width: 100%; height: 100%;" :src="item.logoUrl" :alt="item.saleName"
+                      loading="lazy" />
                   </router-link>
                 </el-row>
 
@@ -466,7 +360,7 @@ const sortOption = (option: string) => {
 
                     <el-row>
                       <el-col :span="24">
-                        <h4><a href="Ripple-Frog-presale-details.html">{{ item.name }}</a></h4>
+                        <h4><a href="Ripple-Frog-presale-details.html">{{ item.saleName }}</a></h4>
                       </el-col>
                     </el-row>
 
@@ -487,35 +381,42 @@ const sortOption = (option: string) => {
                       <el-col :span="10">{{ item.softCap }}Mina - {{ item.hardCap }}Mina</el-col>
                     </el-row>
 
-                    <!-- 进度条 -->
+                    <!-- 注意  进度条 -->
                     <el-row class="content-Progress">
                       <el-col>
 
                         <el-row class="title">Progress</el-row>
 
                         <el-row class="Progress demo-progress" style="margin-bottom: 0;">
-                          <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
+                          <el-progress :text-inside="true" :stroke-width="14" :percentage="30" />
                         </el-row>
 
                         <el-row class="row-bg sub-title" justify="space-between">
                           <el-col :span="10"> 0 Mina</el-col>
                           <el-col :span="4"></el-col>
-                          <el-col :span="6">50 Mina</el-col>
+                          <el-col :span="6">{{ item.hardCap }} Mina </el-col>
                         </el-row>
 
                       </el-col>
                     </el-row>
-
+                    <!-- 
                     <el-row class="row-bg liquidity-percent" justify="space-between">
                       <el-col :span="10">Liquidity %:</el-col>
                       <el-col :span="4"></el-col>
                       <el-col :span="6"> {{ item.liquidity }}</el-col>
-                    </el-row>
+                    </el-row> -->
 
                     <el-row class="row-bg lockup-time" justify="space-between">
                       <el-col :span="10">Lockup Time:</el-col>
                       <el-col :span="4"></el-col>
-                      <el-col :span="6">365 day</el-col>
+                      <el-col :span="6">{{ item.cliffTime }} </el-col>
+                    </el-row>
+
+
+                    <el-row class="row-bg Sale-Ends-In" justify="space-between">
+                      <el-col :span="10">Sale Ends In :</el-col>
+                      <el-col :span="4"></el-col>
+                      <el-col :span="6">{{ item.cliffTime }} </el-col>
                     </el-row>
 
                   </el-col>
@@ -565,7 +466,8 @@ const sortOption = (option: string) => {
 
         .thumb {
           width: 349px;
-          height: 160px;
+          height: 130px;
+          border-radius: 15px;
           overflow: hidden;
         }
 

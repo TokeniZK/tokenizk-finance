@@ -1,3 +1,4 @@
+
 import { SaleRollupProver, SaleActionBatch, SaleRollupState, SaleRollupProof } from "@tokenizk/contracts";
 import { activeMinaInstance } from '@tokenizk/util';
 import { getLogger } from "../lib/logUtils";
@@ -100,4 +101,34 @@ const execCircuit = async (message: any, func: () => Promise<any>) => {
         process.send!({// must notify main process to change worker's status to 'isReady'
             type: 'error',
             messageType: message.type,
-            id: process.p
+            id: process.pid,
+            payload: {},
+        });
+
+        // when meet errors, probably it's about out of wasm32 memory, so restart the process
+        process.exit(0);
+    }
+}
+
+const initWorker = async () => {
+    // init 
+    await activeMinaInstance();
+
+    process.send!({
+        type: 'online',
+    });
+
+    logger.info(`[WORKER ${process.pid}] new worker forked`);
+
+    await SaleRollupProver.compile();
+
+    // recieve message from main process...
+    processMsgFromMaster();
+
+    process.send!({
+        type: 'isReady',
+    });
+    logger.info(`[WORKER ${process.pid}] new worker ready`);
+};
+
+await initWorker();

@@ -16,8 +16,9 @@
   "scripts": {
     "state": "tsc -p tsconfig.json --module esnext && cross-env TEST_ON_BERKELEY=true node --experimental-specifier-resolution=node ./dist/scripts/token_state.js",
     "genkeys": "tsc -p tsconfig.json --module esnext && node --experimental-specifier-resolution=node ./dist/scripts/genkeys.js",
-    "deploy-all": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --experimental-specifier-resolution=node ./dist/scripts/deploy-all.js",
+    "deploy-all": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=true node --experimental-specifier-resolution=node ./dist/scripts/deploy-all.js",
     "deploy-all-escow": "tsc -p tsconfig.json && node --experimental-specifier-resolution=node ./dist/scripts/deploy-all-escow.js",
+    "presale-op": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --experimental-specifier-resolution=node ./dist/scripts/presale-op.js",
     "encrypt": "tsc -p tsconfig.json && node --experimental-specifier-resolution=node ./dist/scripts/encrypt.js",
     "lib:dev": "tsc --build tsconfig.json --watch",
     "lib:build": "tsc --build tsconfig.json",
@@ -57,6 +58,9 @@
   },
   "dependencies": {
     "@tokenizk/types": "^0.0.1",
-    "@tokenizk/util": "^0.0.1"
+    "@tokenizk/util": "^0.0.1",
+    "level": "^8.0.0",
+    "levelup": "^5.1.1",
+    "memdown": "^6.1.1"
   }
 }

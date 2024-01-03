@@ -10,8 +10,13 @@ import ProofTaskDtoSchema from "./proof-task-dto-schema.json" assert { type: "js
 
 import UserRedeemClaimWitnessDtoSchema from "./user-redeem-claim-witness-dto-schema.json" assert { type: "json" };
 
-export { MerkleProofDtoSchema, SaleDtoSchema, SaleReqSchema, SaleUserDtoSchema, ProofTaskDtoSchema, UserRedeemClaimWitnessDtoSchema }
+import TokenDtoSchema from './token-dto-schema.json' assert { type: "json" };
 
+import SaleContributorsDetailDtoSchema from "./sale-contributors-detail-dto-schema.json" assert { type: "json" };
+
+import UserContributionDtoSchema from './user-contribution-dto-schema.json' assert { type: "json" };
+
+export { UserContributionDtoSchema, MerkleProofDtoSchema, SaleDtoSchema, SaleReqSchema, SaleUserDtoSchema, ProofTaskDtoSchema, UserRedeemClaimWitnessDtoSchema, TokenDtoSchema, SaleContributorsDetailDtoSchema }
 
 export * from './fetch-events-standard-response'
 
@@ -29,7 +34,13 @@ export * from './sale-user-dto'
 
 export * from './sale-req'
 
-
 export * from './proof-task-dto'
 
 export * from './user-redeem-claim-witness-dto'
+
+export * from './token-dto'
+
+export * from './user-contribution-dto'
+
+export * from './sale-contributors-detail-dto'
+

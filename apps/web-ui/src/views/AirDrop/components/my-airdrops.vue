@@ -28,13 +28,13 @@ onMounted(() => {
 const fetchResult = [
   {
     id: nanoid(),
-    photo: '/src/assets/images/1.png',
+    logoUrl: '/src/assets/images/1.png',
     name: 'Favoom ',
     tokenName: 'FM',
     teamName: 'Yoga',
     participants: 100,
     star: 4,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 21,
     hardCap: 60,
     totalContributedMina: 40,
@@ -49,13 +49,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'BabyAmple ',
     tokenName: 'BA',
     teamName: 'walking',
     participants: 200,
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 10,
     hardCap: 60,
     totalContributedMina: 20,
@@ -70,13 +70,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/3.png',
+    logoUrl: '/src/assets/images/3.png',
     name: 'Versa',
     tokenName: 'VA',
     participants: 300,
     teamName: 'cherry',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 30,
     hardCap: 45,
     totalContributedMina: 60,
@@ -91,13 +91,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/3.png',
+    logoUrl: '/src/assets/images/3.png',
     name: 'FastAI',
     tokenName: 'BA',
     participants: 400,
     teamName: 'Tang',
     star: 4,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 10,
     hardCap: 55,
     totalContributedMina: 30,
@@ -112,13 +112,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wrapped',
     tokenName: 'VA',
     participants: 500,
     teamName: 'mina',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 9,
     hardCap: 50,
     totalContributedMina: 50,
@@ -133,13 +133,13 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     tokenName: 'WK',
     participants: 100,
     teamName: 'Yoga',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: 10,
     hardCap: 50,
     totalContributedMina: 23,
@@ -219,7 +219,7 @@ const sortOption = (option: string) => {
                 <!-- photo -->
                 <el-row class="thumb">
                   <router-link to="/airdrop-datails">
-                    <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
+                    <el-image style="width: 349px; height: 130px;" :src="item.logoUrl" :alt="item.name" loading="lazy" />
                   </router-link>
                 </el-row>
 

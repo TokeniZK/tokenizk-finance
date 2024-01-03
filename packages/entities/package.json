@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "typeorm": "^0.2.45",
+    "@tokenizk/contracts": "^0.0.1",
     "@tokenizk/types": "^0.0.1",
     "@tokenizk/util": "^0.0.1"
   }

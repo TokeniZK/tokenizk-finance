@@ -15,7 +15,7 @@ export class User {
     id: number
 
     @Column()
-    txHash: string
+    txHash:string
 
     @Column()
     status: number

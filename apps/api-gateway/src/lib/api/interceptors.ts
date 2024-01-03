@@ -1,5 +1,5 @@
 import type { AxiosResponse } from 'axios';
-import { $axiosCoreService } from './client';
+import { $axiosCore, $axiosProofGen } from './client';
 import type { ResponseError } from './response-error';
 
 type ResponseSuccessCallback = (response: AxiosResponse) => void;
@@ -10,29 +10,51 @@ interface CallbackTrigger {
     responseError: ResponseErrorCallback;
 }
 
+const callbackTrigger: CallbackTrigger = {
+    responseSuccess: (null as any) as ResponseSuccessCallback,
+    responseError: (null as any) as ResponseErrorCallback
+};
 
-$axiosCoreService.interceptors.response.use(
+$axiosCore.interceptors.response.use(
     (response: AxiosResponse) => {
         if (callbackTrigger.responseSuccess) callbackTrigger.responseSuccess(response);
         return response;
     },
 
     async (error: ResponseError) => {
-     try{
         if (error.response && error.response.status !== 0) {
             error.isNetworkError = false;
         } else {
             error.isNetworkError = true;
         }
-      }catch(error){
-         console.log(error)
-      }
+
         if (callbackTrigger.responseError) {
             callbackTrigger.responseError(error);
         }
         return Promise.reject(error);
     }
 );
+
+$axiosProofGen.interceptors.response.use(
+    (response: AxiosResponse) => {
+        if (callbackTrigger.responseSuccess) callbackTrigger.responseSuccess(response);
+        return response;
+    },
+
+    async (error: ResponseError) => {
+        if (error.response && error.response.status !== 0) {
+            error.isNetworkError = false;
+        } else {
+            error.isNetworkError = true;
+        }
+
+        if (callbackTrigger.responseError) {
+            callbackTrigger.responseError(error);
+        }
+        return Promise.reject(error);
+    }
+);
+
 export function onResponseSuccess(callback: ResponseSuccessCallback): void {
     callbackTrigger.responseSuccess = callback;
 }

@@ -6,7 +6,6 @@ interface IResponseLog {
 
 interface IRequestLog {
     method?: string
-    // url?: string
     url?: string
     headers: IncomingHttpHeaders
 }

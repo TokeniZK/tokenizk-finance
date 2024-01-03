@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getOngoingPresaleAPI } from '@/apis/presaleAll'
+import { getOngoingPresaleAPI } from '@/apis/sale-api'
 import { onMounted, reactive } from 'vue'
 import { ref } from 'vue'
 import { nanoid } from 'nanoid'
@@ -26,11 +26,11 @@ onMounted(() => {
 const fetchResult = [
   {
     id: nanoid(),
-    photo: '/src/assets/images/1.png',
+    logoUrl: '/src/assets/images/1.png',
     name: 'Oggy Inu 2.0',
     teamName: 'Yoga',
     star: 4,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '21',
     hardCap: '60',
     totalContributedMina: 40,
@@ -48,11 +48,11 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     teamName: 'walking',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '10',
     hardCap: '60',
     totalContributedMina: 20,
@@ -71,11 +71,11 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/3.png',
+    logoUrl: '/src/assets/images/3.png',
     name: 'Ripple Frog',
     teamName: 'cherry',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '30',
     hardCap: '45',
     totalContributedMina: 60,
@@ -93,11 +93,11 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/3.png',
+    logoUrl: '/src/assets/images/3.png',
     name: 'FastAI',
     teamName: 'Tang',
     star: 4,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '10',
     hardCap: '55',
     totalContributedMina: 30,
@@ -115,11 +115,11 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wrapped XRP',
     teamName: 'mina',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '9',
     hardCap: '50',
     totalContributedMina: 50,
@@ -137,11 +137,11 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/1.png',
+    logoUrl: '/src/assets/images/1.png',
     name: 'THREADS V2',
     teamName: 'BTC',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '12',
     hardCap: '50',
     totalContributedMina: 10,
@@ -159,11 +159,11 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Oggy Inu 2.0',
     teamName: 'Yoga',
     star: 5,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '11',
     hardCap: '50',
     totalContributedMina: 13,
@@ -181,11 +181,11 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     teamName: 'Yoga',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '20',
     hardCap: '50',
     totalContributedMina: 42,
@@ -203,11 +203,11 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     teamName: 'Yoga',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '10',
     hardCap: '50',
     totalContributedMina: 23,
@@ -229,13 +229,13 @@ const fetchResult = [
 let currentTime = new Date().getTime();
 fetchResult.forEach(item => {
   if (item.presaleStartTime > currentTime) {
-    item.status = 'Upcoming'
+    item.projectStatus = 'Upcoming'
   } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-    item.status = 'Ongoing'
+    item.projectStatus = 'Ongoing'
   } else if (item.presaleEndTime < currentTime) {
-    item.status = 'Ended'
+    item.projectStatus = 'Ended'
   } else {
-    item.status = 'All Status'
+    item.projectStatus = 'All Status'
   }
 });
 
@@ -252,7 +252,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
     <el-col :span="24">
 
       <el-row class="row-bg" justify="center">
-        <!-- <el-col :span="1"></el-col> --> 
+        <!-- <el-col :span="1"></el-col> -->
 
         <el-col :span="18">
 
@@ -280,114 +280,116 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
       </el-row>
 
-      
-      <!-- 轮播图 -->
-      <!-- 每个项目 -->
-      <el-row class="row-bg ongoing-presales-carousel">
 
-        <el-col :span="2"></el-col>
+      <!-- 轮播图 -->
+      <!-- 每个项目 -->
+      <el-row class="row-bg ongoing-presales-carousel">
 
-        <el-col :span="20">
+        <el-col :span="2"></el-col>
 
-          <ul class="launchpads-ul">
+        <el-col :span="20">
 
-            <el-carousel :interval="4000" type="card" height="500px">
-              <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
+          <ul class="launchpads-ul">
 
-                <!-- <li v-for="item in presaleProjects.saleList" :key="item.id"> -->
+            <el-carousel :interval="3000" type="card" height="500px" loop>
+              <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
 
-                <div class="launchpads-box" object-fit="cover">
+                <!-- <li v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi"> -->
 
-                  <!-- photo -->
-                  <el-row class="thumb">
-                    <router-link to="/presale-datails">
-                      <el-image style="width: 349px; height: 160px;" :src="item.photo" :alt="item.name" loading="lazy" />
-                    </router-link>
-                  </el-row>
+                <div class="launchpads-box">
 
-                  <!-- 项目描述 -->
-                  <el-row class="launchpads-content">
+                  <!-- photo -->
+                  <el-row class="thumb">
+                    <router-link to="/presale-datails">
+                      <el-image style="width: 349px; height: 130px;" :src="item.logoUrl" :alt="item.name"
+                        loading="lazy" />
+                    </router-link>
+                  </el-row>
 
-                    <el-col :span="24">
+                  <!-- 项目描述 -->
+                  <el-row class="launchpads-content">
 
-                      <el-row class="row-bg" justify="space-between">
-                        <el-col :span="8">
-                          <h4><a href=" ">{{ item.name }}</a ></h4>
-                        </el-col>
+                    <el-col :span="24">
 
-                        <el-col :span="5"></el-col>
+                      <el-row class="row-bg" justify="space-between">
+                        <el-col :span="8">
+                          <h4><a href="#">{{ item.name }}</a></h4>
+                        </el-col>
 
-                        <el-col class="review" :span="7">
-                          <el-button type="primary" round class="statusColor" to="">{{ item.status }}</el-button>
-                        </el-col>
-                      </el-row>
+                        <el-col :span="5"></el-col>
 
-                      <!-- 团队名称 -->
-                      <el-row class="text-review-change" justify="space-between">
-                        <el-col class="text" :span="10">
-                          by {{ item.teamName }}
-                        </el-col>
+                        <el-col class="review" :span="7">
+                          <el-button type="primary" round class="statusColor" to="">{{ item.projectStatus }}</el-button>
+                        </el-col>
+                      </el-row>
 
-                        <el-col class="review" :span="10">
-                          <el-rate v-model="item.star" size="large" />
-                        </el-col>
-                      </el-row>
+                      <!-- 团队名称 -->
+                      <el-row class="text-review-change" justify="space-between">
+                        <el-col class="text" :span="10">
+                          by {{ item.teamName }}
+                        </el-col>
 
-                      <el-row class="row-bg soft-hard-cap" justify="space-between">
-                        <el-col :span="10">Soft / Hard</el-col>
-                        <el-col :span="2"></el-col>
-                        <el-col :span="10">{{ item.softCap }}Mina - {{ item.hardCap }}Mina</el-col>
-                      </el-row>
+                        <el-col class="review" :span="10">
+                          <el-rate v-model="item.star" size="large" />
+                        </el-col>
+                      </el-row>
+
+                      <el-row class="row-bg soft-hard-cap" justify="space-between">
+                        <el-col :span="10">Soft / Hard</el-col>
+                        <el-col :span="2"></el-col>
+                        <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
+                      </el-row>
 
 
-                      <!-- 进度条 -->
-                      <el-row class="content-Progress">
-                        <el-col>
+                      <!-- 进度条 -->
+                      <el-row class="content-Progress">
+                        <el-col>
 
-                          <el-row class="title">Progress</el-row>
+                          <el-row class="title">Progress</el-row>
 
-                          <el-row class="Progress demo-progress">
-                            <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
-                          </el-row>
+                          <el-row class="Progress demo-progress">
+                            <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
+                          </el-row>
 
-                          <el-row class="row-bg sub-title" justify="space-between">
-                            <el-col :span="10"> 0 Mina</el-col>
-                            <el-col :span="4"></el-col>
-                            <el-col :span="6">50 Mina</el-col>
-                          </el-row>
+                          <el-row class="row-bg sub-title" justify="space-between">
+                            <el-col :span="10"> 0 Mina</el-col>
+                            <el-col :span="4"></el-col>
+                            <el-col :span="6">50 Mina</el-col>
+                          </el-row>
 
-                        </el-col>
-                      </el-row>
+                        </el-col>
+                      </el-row>
 
-                      <el-row class="row-bg liquidity-percent" justify="space-between">
-                        <el-col :span="10">Liquidity %:</el-col>
-                        <el-col :span="4"></el-col>
-                        <el-col :span="6"> {{ item.liquidity }}</el-col>
-                      </el-row>
+                      <el-row class="row-bg liquidity-percent" justify="space-between">
+                        <el-col :span="10">Liquidity %:</el-col>
+                        <el-col :span="4"></el-col>
+                        <el-col :span="6"> {{ item.liquidity }}</el-col>
+                      </el-row>
 
-                      <el-row class="row-bg lockup-time" justify="space-between">
-                        <el-col :span="10">Lockup Time:</el-col>
-                        <el-col :span="4"></el-col>
-                        <el-col :span="6">365 day</el-col>
-                      </el-row>
+                      <el-row class="row-bg lockup-time" justify="space-between">
+                        <el-col :span="10">Lockup Time:</el-col>
+                        <el-col :span="4"></el-col>
+                        <el-col :span="6">365 day</el-col>
+                      </el-row>
 
-                    </el-col>
+                    </el-col>
 
-                  </el-row>
-                </div>
-                <!-- </li> -->
+                  </el-row>
+                </div>
 
-              </el-carousel-item>
-            </el-carousel>
+                <!-- </li> -->
 
-          </ul>
+              </el-carousel-item>
+            </el-carousel>
 
-        </el-col>
+          </ul>
 
-        <el-col :span="2"></el-col>
+        </el-col>
 
-      </el-row>
-                                                       
+        <el-col :span="2"></el-col>
+
+      </el-row>
+                           
 
     </el-col>
   </el-row>
@@ -420,13 +422,13 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
   }
 
   .ongoing-presales-carousel {
+    width: 100%;
+
     .launchpads-ul {
       width: 100%;
-      justify-content: space-around;
 
-      li {
+      .launchpadsLi {
         margin-top: 60px;
-        // margin-right: 200px;
         margin-bottom: 30px;
         width: 349px;
         height: 416px;
@@ -436,7 +438,6 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
           width: 100%;
           height: 100%;
           background-color: #fff;
-          // border: 1px solid yellow;
           border-radius: 15px;
 
           .thumb {
@@ -461,9 +462,13 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
           }
 
         }
+
       }
+
     }
+
   }
 
 }
 </style>
+@/apis/sale-api

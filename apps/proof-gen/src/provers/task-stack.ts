@@ -2,7 +2,7 @@
 
 import { getLogger } from '../lib/logUtils';
 
-let logger = getLogger('proof-gen');
+let logger = getLogger('proof-generators');
 
 export { TaskStack };
 

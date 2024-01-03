@@ -1,24 +1,55 @@
 // axios 基础的封装
-import axios from "axios";
+import axios, { AxiosError, type AxiosResponse } from "axios";
 
 // 创建 axios 实例
-const httpInstance = axios.create({
+export const $httpInstance = axios.create({
   baseURL: 'http://pcapi-xiaotuxian-front-devtest.itheima.net',
   timeout: 5000
 })
 
-// 拦截器
+type ResponseSuccessCallback = (response: AxiosResponse) => void;
+type ResponseErrorCallback = (error: ResponseError) => void;
 
-// axios 请求拦截器
-httpInstance.interceptors.request.use(config => {
-  return config
-}, e => Promise.reject(e))
+interface CallbackTrigger {
+    responseSuccess: ResponseSuccessCallback;
+    responseError: ResponseErrorCallback;
+}
 
-// axios 响应式拦截器
-httpInstance.interceptors.response.use(res => res.data, e => {
-  return Promise.reject(e)
-})
+export interface ResponseError extends AxiosError {
+    isNetworkError: boolean;
+}
 
-// 后续 可修改 拦截器
+const callbackTrigger: CallbackTrigger = {
+    responseSuccess: (null as any) as ResponseSuccessCallback,
+    responseError: (null as any) as ResponseErrorCallback
+};
 
-export default httpInstance
+$httpInstance.interceptors.response.use(
+    (response: AxiosResponse) => {
+        if (callbackTrigger.responseSuccess) callbackTrigger.responseSuccess(response);
+        return response;
+    },
+
+    async (error: ResponseError) => {
+        if (error.response && error.response.status !== 0) {
+            error.isNetworkError = false;
+        } else {
+            error.isNetworkError = true;
+        }
+
+        if (callbackTrigger.responseError) {
+            callbackTrigger.responseError(error);
+        }
+        return Promise.reject(error);
+    }
+);
+export function onResponseSuccess(callback: ResponseSuccessCallback): void {
+    callbackTrigger.responseSuccess = callback;
+}
+
+export function onResponseError(callback: ResponseErrorCallback): void {
+    callbackTrigger.responseError = callback;
+}
+
+
+export default $httpInstance

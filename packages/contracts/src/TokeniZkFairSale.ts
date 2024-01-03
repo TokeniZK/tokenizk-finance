@@ -16,10 +16,11 @@ import {
     Reducer,
     Bool,
 } from 'o1js';
-import { MembershipMerkleWitness } from '@tokenizk/types';
 import { STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleRollupProof } from './sale-rollup-prover';
-import { ContributionEvent, SaleContribution, SaleParams,SaleParamsConfigurationEvent } from './sale-models';
+import { ContributorsMembershipMerkleWitness, ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
+import { ClaimTokenEvent } from './TokeniZkPresale';
+import { RedeemAccount } from './TokeniZkUser';
 
 
 export class TokeniZkFairSale extends SmartContract {
@@ -30,10 +31,10 @@ export class TokeniZkFairSale extends SmartContract {
         const fairsaleParams = new SaleParams({
             tokenAddress: PublicKey.empty(),
             totalSaleSupply: UInt64.from(0),
-            saleRate: UInt64.from(0),
+            saleRate: UInt64.from(0),// ignored at fair sale
             whitelistTreeRoot: Field(0),
-            softCap: UInt64.from(0),
-            hardCap: UInt64.from(0),
+            softCap: UInt64.from(0),// ignored at fair sale
+            hardCap: UInt64.from(0),// ignored at fair sale
             minimumBuy: UInt64.from(0),
             maximumBuy: UInt64.from(0),
             startTime: UInt64.from(0),
@@ -61,8 +62,10 @@ export class TokeniZkFairSale extends SmartContract {
     reducer = Reducer({ actionType: SaleContribution });
 
     events = {
+        configureSaleParams: SaleParamsConfigurationEvent,
         contribute: ContributionEvent,
-        configureSaleParams: SaleParamsConfigurationEvent
+        claimToken: ClaimTokenEvent,
+
     }
 
     /**
@@ -84,22 +87,30 @@ export class TokeniZkFairSale extends SmartContract {
     public contributorTreeRoot = State<Field>();
 
     /**
-     * Total amount of Mina contributed
-     */
-    @state(UInt64)
-    public totalContributedMina = State<UInt64>();
-
-    /**
      * The state of the previously processed actions
      */
     @state(Field)
     public fromActionState = State<Field>();
 
+    /**
+     * Total amount of Mina contributed
+     */
+    @state(UInt64)
+    public totalContributedMina = State<UInt64>();
+
     @method
-    configureSaleParams(fairsaleParams0: SaleParams, fairsaleParams1: SaleParams, adminSignature: Signature) {
+    configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
+        // cannot be changed after ('startTime' - 60 * 60 * 1000)
+        this.network.timestamp.assertBetween(saleParams0.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
+
         // check if  params is aligned with the existing ones
-        const hash0 = fairsaleParams0.hash();
-        const hash1 = fairsaleParams1.hash();
+        const hash0 = saleParams0.hash();
+        const hash1 = saleParams1.hash();
+
+        saleParams0.tokenAddress.assertEquals(saleParams1.tokenAddress);
+        saleParams0.totalSaleSupply.assertEquals(saleParams1.totalSaleSupply);
+
+        this.network.timestamp.assertBetween(saleParams1.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
 
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
@@ -107,20 +118,23 @@ export class TokeniZkFairSale extends SmartContract {
         // verify signature of admin
         adminSignature.verify(this.address, [hash0, hash1, ...nonce.toFields()]);
         // incrementNonce to avoid replay attack of adminSignature
-        this.self.body.incrementNonce= Bool(true);
+        this.self.body.incrementNonce = Bool(true);
 
         // TODO With all parameters of Unsigned Integer type, do we still need check if they are greater than 0?
 
-        fairsaleParams1.minimumBuy.assertLessThanOrEqual(fairsaleParams1.maximumBuy);
-        fairsaleParams1.startTime.assertLessThan(fairsaleParams1.endTime);
+        saleParams1.minimumBuy.assertLessThanOrEqual(saleParams1.maximumBuy);
+        saleParams1.startTime.assertLessThan(saleParams1.endTime);
+        saleParams1.saleRate.assertEquals(UInt64.from(0));// !
+        saleParams1.softCap.assertEquals(UInt64.from(0));// !
+        saleParams1.hardCap.assertEquals(UInt64.from(0));// !
 
-        this.self.account.balance.assertBetween(fairsaleParams1.totalSaleSupply, UInt64.MAXINT());
+        this.self.account.balance.assertBetween(saleParams1.totalSaleSupply, UInt64.MAXINT());
 
         this.saleParamsHash.set(hash1);
-        this.vestingParamsHash.set(fairsaleParams1.vestingParamsHash());
+        this.vestingParamsHash.set(saleParams1.vestingParamsHash());
 
         this.emitEvent('configureSaleParams', new SaleParamsConfigurationEvent({
-            saleParams: fairsaleParams1,
+            saleParams: saleParams1,
             tokenId: this.tokenId
         }));
     }
@@ -131,25 +145,25 @@ export class TokeniZkFairSale extends SmartContract {
      * @param minaAmount MINA amount
      */
     @method
-    contribute(fairsaleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64, membershipMerkleWitness: MembershipMerkleWitness, leafIndex: Field) {
+    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64, membershipMerkleWitness: ContributorsMembershipMerkleWitness, leafIndex: Field) {
         // check  params
         this.saleParamsHash.getAndRequireEquals().assertEquals(
-            fairsaleParams.hash()
+            saleParams.hash()
         );
 
         // check network timestamp
-        this.network.timestamp.assertBetween(fairsaleParams.startTime, fairsaleParams.endTime);
+        this.network.timestamp.assertBetween(saleParams.startTime, saleParams.endTime);
 
         // check [minimumBuy, maximumBuy]
-        minaAmount.assertGreaterThanOrEqual(fairsaleParams.minimumBuy);
-        minaAmount.assertLessThanOrEqual(fairsaleParams.maximumBuy);
+        minaAmount.assertGreaterThanOrEqual(saleParams.minimumBuy);
+        minaAmount.assertLessThanOrEqual(saleParams.maximumBuy);
 
         // check whitelist
         const leaf = Provable.if(
-            fairsaleParams.whitelistTreeRoot.equals(Field(0n)),
+            saleParams.whitelistTreeRoot.equals(Field(0n)),
             Field(0),
             Poseidon.hash(contributorAddress.toFields()))
-        membershipMerkleWitness.calculateRoot(leaf, leafIndex).assertEquals(fairsaleParams.whitelistTreeRoot);
+        membershipMerkleWitness.calculateRoot(leaf, leafIndex).assertEquals(saleParams.whitelistTreeRoot);
 
         const contributorMinaAU = AccountUpdate.createSigned(contributorAddress);
         contributorMinaAU.balance.subInPlace(minaAmount);
@@ -157,74 +171,103 @@ export class TokeniZkFairSale extends SmartContract {
         MinaAU.balance.addInPlace(minaAmount);
 
         // emit actions
-        const fairSaleContribution = new SaleContribution({
+        const saleContribution = new SaleContribution({
+            tokenAddress: saleParams.tokenAddress,
+            tokenId: this.tokenId,
             saleContractAddress: this.address,
             contributorAddress: contributorAddress,
-            tokenId: this.tokenId,
             minaAmount: minaAmount
         });
-        this.reducer.dispatch(fairSaleContribution);
+        this.reducer.dispatch(saleContribution);
 
         // emit events
-        this.emitEvent('contribute', fairSaleContribution);
+        this.emitEvent('contribute', new ContributionEvent({
+            tokenAddress: saleParams.tokenAddress,
+            tokenId: this.tokenId,
+            saleContractAddress: this.address,
+            contributorAddress: contributorAddress,
+            minaAmount: minaAmount,
+            tokenAmount: UInt64.from(0)
+        }));
     }
 
     /**
      * 
-     * @param fairsaleParams 
+     * @param saleParams 
      * @param adminSignature 
      */
     @method
-    maintainContributors(fairsaleParams: SaleParams, fairSaleRollupProof: SaleRollupProof) {
+    maintainContributors(saleParams: SaleParams, saleRollupProof: SaleRollupProof) {
         // check if  params is aligned with the existing ones
-        const hash0 = fairsaleParams.hash();
+        const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
-        this.network.timestamp.assertBetween(fairsaleParams.endTime, UInt64.MAXINT());
-
+        // check endTime
+        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
+        // check actionState
         this.account.actionState.assertEquals(
-            fairSaleRollupProof.publicOutput.target.currentActionsHash
+            saleRollupProof.publicOutput.target.currentActionsHash
         );
+        // check proof
+        saleRollupProof.verify();
 
-        fairSaleRollupProof.verify();
-        fairSaleRollupProof.publicOutput.source.currentActionsHash.assertEquals(this.fromActionState.getAndRequireEquals());
-        fairSaleRollupProof.publicOutput.source.membershipTreeRoot.assertEquals(this.contributorTreeRoot.getAndRequireEquals());
-        fairSaleRollupProof.publicOutput.source.currentMinaAmount.assertEquals(this.totalContributedMina.getAndRequireEquals());
+        // check source is aligned with zkApp onchain states
+        saleRollupProof.publicOutput.source.currentActionsHash.assertEquals(this.fromActionState.getAndRequireEquals());
+        saleRollupProof.publicOutput.source.membershipTreeRoot.assertEquals(this.contributorTreeRoot.getAndRequireEquals());
+        saleRollupProof.publicOutput.source.currentMinaAmount.assertEquals(this.totalContributedMina.getAndRequireEquals());
 
-        this.fromActionState.set(fairSaleRollupProof.publicOutput.target.currentActionsHash);
-        this.contributorTreeRoot.set(fairSaleRollupProof.publicOutput.target.membershipTreeRoot);
-        this.totalContributedMina.set(fairSaleRollupProof.publicOutput.target.currentMinaAmount);
-
+        this.fromActionState.set(saleRollupProof.publicOutput.target.currentActionsHash);
+        this.contributorTreeRoot.set(saleRollupProof.publicOutput.target.membershipTreeRoot);
+        this.totalContributedMina.set(saleRollupProof.publicOutput.target.currentMinaAmount);
 
         ///////////////////////////////////////////////////////
         // transfer partial MINA-fee to TokeniZK platform
         // TODO at next version TODO
         ///////////////////////////////////////////////////////
     }
-
+   
     /**
-     * need go back to 'TokeniZkPrivateSale.approveTransferCallbackWithVesting()' for approval and transfer
-     * @param fairsaleParams 
-     * @param fairSaleContribution 
-     * @param membershipMerkleWitness 
+     * need go back to 'TokeniZkPrivateSale.approveTransferCallbackWithVesting()' for approval and transfer, which means each address could contribute only once.
+     * @param saleParams 
+     * @param saleContribution 
+     * @param contributorMerkleWitness 
      * @param leafIndex 
      */
     @method
-    claimTokens(fairsaleParams: SaleParams, fairSaleContribution: SaleContribution, membershipMerkleWitness: MembershipMerkleWitness, leafIndex: Field) {
-        // check if  params is aligned with the existing ones
-        const hash0 = fairsaleParams.hash();
+    claimTokens(saleParams: SaleParams,
+        saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
+        lowLeafWitness: UserLowLeafWitnessData,
+        oldNullWitness: UserNullifierMerkleWitness) {
+        // check if presale params is aligned with the existing ones
+        const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
-        this.network.timestamp.assertBetween(fairsaleParams.endTime, UInt64.MAXINT());
+        // check endTime
+        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
 
-        const hash = fairSaleContribution.hash();
-        const root = membershipMerkleWitness.calculateRoot(hash, leafIndex);
-        this.contributorTreeRoot.getAndRequireEquals().assertEquals(root);
-
+        // check softcap
         const totalMina = this.totalContributedMina.getAndRequireEquals();
-        const totalSupply = fairsaleParams.totalSaleSupply;
+        totalMina.assertGreaterThanOrEqual(saleParams.softCap);
 
-        this.self.balance.subInPlace(totalSupply.div(totalMina).mul(fairSaleContribution.minaAmount));
+        // check contributorMerkleWitness
+        saleContributorMembershipWitnessData.checkMembershipAndAssert(this.contributorTreeRoot.getAndRequireEquals());
+
+        const saleContribution = saleContributorMembershipWitnessData.leafData;
+        const contributorAddress = saleContribution.contributorAddress;
+
+        this.self.balance.subInPlace(saleContribution.minaAmount.div(10 ** 9).mul(saleParams.saleRate));
+
+        const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
+        redeemAccount.updateState(
+            saleContribution.hash(),
+            lowLeafWitness,
+            oldNullWitness
+        );
+
+        this.emitEvent('claimToken', new ClaimTokenEvent({
+            presaleContribution: saleContribution
+        }));
     }
+
 }
 

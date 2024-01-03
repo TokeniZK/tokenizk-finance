@@ -10,7 +10,7 @@ import {
     Provable,
 } from 'o1js';
 import { greaterThanFor254BitField, checkMembershipAndAssert } from './utils';
-import { UserLowLeafWitnessData, UserNullifierMerkleWitness, LeafData } from './merkle_witness';
+import { UserLowLeafWitnessData, UserNullifierMerkleWitness, LeafData } from './sale-models';
 
 const DUMMY_FIELD = Field(0);
 

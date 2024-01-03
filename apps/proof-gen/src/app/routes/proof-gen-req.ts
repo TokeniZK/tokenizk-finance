@@ -1,11 +1,11 @@
 import { FastifyPlugin } from "fastify"
 import { RequestHandler } from '@/lib/types'
-import { BaseResponse, ProofTaskDto, ProofTaskType, ProofTaskDtoSchma } from "@tokenizk/types";
+import { BaseResponse, ProofTaskDto, ProofTaskType, ProofTaskDtoSchema } from "@tokenizk/types";
 import { parentPort } from "worker_threads";
 import process from "process";
 
 /**
-* recieve proof-gen req 
+* recieve proof-gen req from 'deposit-processor' & 'sequencer'
 */
 export const proofGenReqEndpoint: FastifyPlugin = async function (
     instance,
@@ -25,26 +25,26 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
     req,
     res
 ): Promise<BaseResponse<string>> {
-     const { taskType, index, payload } = req.body
+    const { taskType, index, payload } = req.body
 
-    if ([ProofTaskType.PRESALE_BATCH_MERGE, ProofTaskType.PRESALE_CONTRACT_CALL].includes(taskType)) {
-        // parentPort?.postMessage(payload);
-        (process as any).send(req.body)
-    }
+    if ([ProofTaskType.PRESALE_BATCH_MERGE, ProofTaskType.PRESALE_CONTRACT_CALL].includes(taskType)) {
+        // parentPort?.postMessage(payload);
+        (process as any).send(req.body)
+    }
 
-    return {
-        code: 0,
-        data: '',
-        msg: ''
-    };
+    return {
+        code: 0,
+        data: '',
+        msg: ''
+    };
 }
 
 const schema = {
-    description: 'recieve proof-gen req',
+    description: 'recieve proof-gen req from \'deposit-processor\' & \'sequencer\'',
     tags: ["Proof"],
     body: {
         type: "object",
-        properties: (ProofTaskDtoSchma as any).properties,
+        properties: (ProofTaskDtoSchema as any).properties,
     },
     response: {
         200: {

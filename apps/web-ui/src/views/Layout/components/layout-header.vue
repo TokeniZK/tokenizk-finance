@@ -1,12 +1,54 @@
 <script lang="ts" setup>
-import { CaretBottom } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { useStatusStore } from "@/stores";
+import { omitAddress } from "@/utils";
+import { ElMessage } from 'element-plus'
+import { ref } from "vue";
+
+const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
+
+const connectWallet = async () => {
+  console.log('connect wallet...');
+  if (!window.mina) {
+    ElMessage({
+      showClose: true,
+      message: 'Please install auro wallet browser extension first.',
+    })
+    return;
+  }
+
+  try {
+    const currentNetwork = await window.mina.requestNetwork();
+    if (appState.minaNetwork !== currentNetwork.name) {
+      ElMessage({
+        showClose: true,
+        message: `Please switch to the correct network (${appState.minaNetwork}) first.`,
+      })
+      return;
+    }
+
+    let accounts = await window.mina.requestAccounts();
+    setConnectedWallet(accounts[0]);
+  } catch (err: any) {
+    // if user reject, requestAccounts will throw an error with code and message filed
+    console.error(err);
+    ElMessage({
+      showClose: true,
+      message: `Please switch to the correct network (${err.message}) first.`,
+    })
+  }
+};
+
+const disconnect = async () => {
+  setConnectedWallet(null);
+}
+
 </script>
+
 
 <template>
   <el-row class="LayoutHeader">
@@ -28,9 +70,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
         <el-sub-menu index="2" class="header-category">
 
           <template #title>
-            <el-icon class="header-category">
-              <HotWater />
-            </el-icon>
+            <i class="iconfont icon-fire"></i>
             <span class="header-category">Hot Sales</span>
           </template>
 
@@ -193,7 +233,41 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
         <el-menu-item index="8">
           <el-row class="mb-4">
-            <el-button type="success" class="ConnectBtn">Connect</el-button>
+
+            <div v-if="appState.connectedWallet58 == null">
+              <el-button type="success" class="ConnectBtn" @click="connectWallet">Connect</el-button>
+            </div>
+
+            <div v-if="appState.connectedWallet58 != null">
+
+              <el-dropdown>
+                <span class="el-dropdown-link">
+                  {{ omitAddress(appState.connectedWallet58) }}
+                  <el-icon class="el-icon--right">
+                    <arrow-down />
+                  </el-icon>
+                </span>
+
+                <template #dropdown>
+                  <el-dropdown-menu>
+
+                    <el-dropdown-item>
+                      <el-button @click="disconnect">Disconnect</el-button>
+                    </el-dropdown-item>
+
+                    <router-link to="/my-launches">
+                      <el-dropdown-item>
+                        <el-button>my launches</el-button>
+                      </el-dropdown-item>
+                    </router-link>
+                    
+                  </el-dropdown-menu>
+                </template>
+
+              </el-dropdown>
+
+            </div>
+
           </el-row>
         </el-menu-item>
 
@@ -222,6 +296,11 @@ const handleSelect = (key: string, keyPath: string[]) => {
   .header-category:hover {
     color: #fff;
     color: #00FFC2;
+  }
+
+  .icon-fire {
+    color: #F2B535;
+    margin-right: 8px;
   }
 
 

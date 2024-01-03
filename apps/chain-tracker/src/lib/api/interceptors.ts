@@ -1,5 +1,6 @@
 import type { AxiosResponse } from 'axios';
-import { $axiosCoreService } from './client';
+import { timeout } from '@tokenizk/utils';
+import { $axiosCore, $axiosDeposit } from './client';
 import type { ResponseError } from './response-error';
 
 type ResponseSuccessCallback = (response: AxiosResponse) => void;
@@ -15,14 +16,34 @@ const callbackTrigger: CallbackTrigger = {
     responseError: (null as any) as ResponseErrorCallback
 };
 
-$axiosCoreService.interceptors.response.use(
+$axiosCore.interceptors.response.use(
     (response: AxiosResponse) => {
         if (callbackTrigger.responseSuccess) callbackTrigger.responseSuccess(response);
         return response;
     },
 
     async (error: ResponseError) => {
-        if (error.response && error.response.status !== 1) {
+        if (error.response && error.response.status !== 0) {
+            error.isNetworkError = false;
+        } else {
+            error.isNetworkError = true;
+        }
+
+        if (callbackTrigger.responseError) {
+            callbackTrigger.responseError(error);
+        }
+        return Promise.reject(error);
+    }
+);
+
+$axiosDeposit.interceptors.response.use(
+    (response: AxiosResponse) => {
+        if (callbackTrigger.responseSuccess) callbackTrigger.responseSuccess(response);
+        return response;
+    },
+
+    async (error: ResponseError) => {
+        if (error.response && error.response.status !== 0) {
             error.isNetworkError = false;
         } else {
             error.isNetworkError = true;

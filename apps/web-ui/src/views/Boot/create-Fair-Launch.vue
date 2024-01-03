@@ -28,7 +28,6 @@ let { cnState } = connectStatus;
 const flagX = ref(0);
 
 const nextX = () => {
-
   if (flagX.value >= 3) {
     flagX.value = 3
   } else {
@@ -82,24 +81,32 @@ const prev = () => {
 // 表单
 interface RuleForm {
   tokenAddress: string
-  name: string
+  tokenName: string
+  saleName: string
   currency: string
-  feeOptions: string
-  totalSellingAmount: string
-  whiteList: string
-  // whiteListUser: string
-  softCap: string
-  liquidity: string
-  startTime: string
-  endTime: string
-  liquidityLockup: string
+  feeRate: string
+  saleRate: string
+  whitelistMembers: string
+
+  totalSaleSupply: string
+
+  // softCap: string
+
+  // symbol: string
+
+  // liquidity: string
+
+  startTimestamp: string
+  endTimestamp: string
+
+  cliffTime: string
+
   logoUrl: string
-  webSite: string
+  website: string
   facebook: string
-  twitter: string
   github: string
+  twitter: string
   telegram: string
-  instagram: string
   discord: string
   reddit: string
   description: string
@@ -109,24 +116,26 @@ const ruleFormRef = ref<FormInstance>()
 
 const ruleForm = reactive<RuleForm>({
   tokenAddress: '',
-  name: '',
-  feeOptions: '',
+  tokenName: '',
+  saleName: '',
+  feeRate: '',
   currency: '',
-  totalSellingAmount: '',
-  whiteList: '',
-  // whiteListUser: '',
-  softCap: '',
-  liquidity: '',
-  startTime: '',
-  endTime: '',
-  liquidityLockup: '',
+  saleRate: '',
+  whitelistMembers: '',
+  totalSaleSupply: '',
+  // softCap: '',
+  // symbol: '',
+  // liquidity: '',
+
+  startTimestamp: '',
+  endTimestamp: '',
+  cliffTime: '',
   logoUrl: '',
-  webSite: '',
+  website: '',
   facebook: '',
   twitter: '',
   github: '',
   telegram: '',
-  instagram: '',
   discord: '',
   reddit: '',
   description: '',
@@ -138,8 +147,15 @@ const rules = reactive<FormRules<RuleForm>>({
   // 步骤1
   tokenAddress: [
     { required: true, message: 'Please input Token address', trigger: 'blur' },
-    { min: 3, max: 10, message: 'Length should be 3 to 10', trigger: 'blur' },
   ],
+
+  // tokenName: [
+  //   {
+  //     required: true,
+  //     message: 'Please input Token name',
+  //     trigger: 'blur',
+  //   },
+  // ],
 
   currency: [
     {
@@ -150,60 +166,52 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
 
 
-  feeOptions: [
+  feeRate: [
     {
       required: true,
-      message: 'Please select any feeOptions',
+      message: 'Please select any feeRate',
       trigger: 'change',
     },
   ],
 
 
   // 步骤2
-  totalSellingAmount: [
+  totalSaleSupply: [
     {
       type: 'number',
       required: true,
-      message: 'totalSellingAmount must be number type',
+      message: 'totalSaleSupply must be number type',
       trigger: 'blur'
     },
   ],
 
-  whiteList: [
+  whitelistMembers: [
     {
       required: true,
-      message: 'Please input whiteList address',
+      message: 'Please input whitelistMembers address',
       trigger: 'blur',
     },
   ],
 
-  // whiteListUser: [
+  // softCap: [
   //   {
+  //     type: 'number',
   //     required: true,
-  //     message: 'Please input whiteList UserName',
-  //     trigger: 'blur',
+  //     message: 'softCap must be number type',
+  //     trigger: 'blur'
   //   },
   // ],
 
-  softCap: [
-    {
-      type: 'number',
-      required: true,
-      message: 'softCap must be number type',
-      trigger: 'blur'
-    },
-  ],
+  // liquidity: [
+  //   {
+  //     type: 'number',
+  //     required: true,
+  //     message: 'liquidity must be number type',
+  //     trigger: 'blur'
+  //   },
+  // ],
 
-  liquidity: [
-    {
-      type: 'number',
-      required: true,
-      message: 'liquidity must be number type',
-      trigger: 'blur'
-    },
-  ],
-
-  startTime: [
+  startTimestamp: [
     {
       type: 'date',
       required: true,
@@ -212,7 +220,7 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  endTime: [
+  endTimestamp: [
     {
       type: 'date',
       required: true,
@@ -221,11 +229,11 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 
-  liquidityLockup: [
+  cliffTime: [
     {
       type: 'number',
       required: true,
-      message: 'liquidityLockup must be number type',
+      message: 'cliffTime must be number type',
       trigger: 'blur'
     },
   ],
@@ -234,8 +242,8 @@ const rules = reactive<FormRules<RuleForm>>({
     { required: true, message: 'Please input logoUrl', trigger: 'blur' },
   ],
 
-  webSite: [
-    { required: true, message: 'Please input webSite address', trigger: 'blur' },
+  website: [
+    { required: true, message: 'Please input website address', trigger: 'blur' },
   ],
 
   facebook: [
@@ -252,10 +260,6 @@ const rules = reactive<FormRules<RuleForm>>({
 
   telegram: [
     { required: true, message: 'Please input telegram address', trigger: 'blur' },
-  ],
-
-  instagram: [
-    { required: true, message: 'Please input instagram address', trigger: 'blur' },
   ],
 
   discord: [
@@ -309,7 +313,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             <el-step title="Verify Token" description="Enter the token address and verify" />
 
-            <el-step title="Fairlaunch Info"
+            <el-step title="Fair launch Info"
               description="Enter the launchpad information that you want to raise , that should be enter all details about your presale" />
 
             <el-step title="Add Additional Info " description="Let people know who you are" />
@@ -346,8 +350,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                       <el-col :span="1"></el-col>
 
                       <el-col :span="12">
-                        <el-form-item label="Name" prop="name">
-                          <el-input v-model.trim="ruleForm.name" placeholder="name" />
+                        <el-form-item label="Name" prop="tokenName">
+                          <el-input v-model.trim="ruleForm.tokenName" placeholder="token Name" />
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -359,7 +363,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     </el-form-item>
 
                     <el-form-item label="Fee Options" prop="feeOptions">
-                      <el-radio-group v-model="ruleForm.feeOptions">
+                      <el-radio-group v-model="ruleForm.feeRate">
                         <el-radio label="5% raised only (Recommended)" />
                         <el-radio label="Other" />
                       </el-radio-group>
@@ -374,14 +378,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                   <el-col :span="24">
 
-                    <el-form-item label="Total selling amount" prop="totalSellingAmount">
-                      <el-input v-model.number.trim="ruleForm.totalSellingAmount" placeholder="0" />
+                    <el-form-item label="Total Sale Supply" prop="totalSaleSupply">
+                      <el-input v-model.number.trim="ruleForm.totalSaleSupply" placeholder="0" />
                       <div class="form-notes">If I spend 1 Mina how many tokens will I receive?</div>
                     </el-form-item>
 
                     <!-- 模态框 -->
-                    <el-form-item label="Whitelist" prop="whiteList">
-                      <el-input v-model.trim="ruleForm.whiteList" placeholder="" />
+                    <el-form-item label="whitelist Members" prop="whitelistMembers">
+                      <el-input v-model.trim="ruleForm.whitelistMembers" placeholder="" />
                     </el-form-item>
 
                     <!-- <el-radio-group v-model="ruleForm.whiteList">
@@ -405,32 +409,32 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                       </el-radio-group> -->
 
 
-                    <el-form-item label="SoftCap (Mina)" prop="softCap">
+                    <!-- <el-form-item label="SoftCap (Mina)" prop="softCap">
                       <el-input v-model.number.trim="ruleForm.softCap" placeholder="0" />
                       <div class="form-notes"> Setting max contribution?</div>
-                    </el-form-item>
+                    </el-form-item> -->
 
-                    <el-form-item label="Liquidity (%)" prop="liquidity">
+                    <!-- <el-form-item label="Liquidity (%)" prop="liquidity">
                       <el-input v-model.number.trim="ruleForm.liquidity" placeholder="0" />
-                    </el-form-item>
+                    </el-form-item> -->
 
                     <el-row class="row-bg">
                       <el-col :span="12">
                         <el-form-item label="Start Time (UTC)" required style="width: 100%">
-                          <el-date-picker v-model="ruleForm.startTime" type="datetime" placeholder="Pick a Date"
+                          <el-date-picker v-model="ruleForm.startTimestamp" type="datetime" placeholder="Pick a Date"
                             format="YYYY/MM/DD hh:mm:ss" value-format="x" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
                         <el-form-item label="End Time (UTC)" required style="width: 100%">
-                          <el-date-picker v-model="ruleForm.endTime" type="datetime" placeholder="Pick a Date"
+                          <el-date-picker v-model="ruleForm.endTimestamp" type="datetime" placeholder="Pick a Date"
                             format="YYYY/MM/DD hh:mm:ss" value-format="x" />
                         </el-form-item>
                       </el-col>
                     </el-row>
 
-                    <el-form-item label="Liquidity lockup (minutes)" prop="liquidityLockup">
-                      <el-input v-model.number.trim="ruleForm.liquidityLockup" placeholder="0" />
+                    <el-form-item label="Liquidity lockup (minutes)" prop="cliffTime">
+                      <el-input v-model.number.trim="ruleForm.cliffTime" placeholder="0" />
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -452,8 +456,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                       <el-col :span="1"></el-col>
 
                       <el-col :span="12">
-                        <el-form-item label="Website" prop="webSite">
-                          <el-input v-model.trim="ruleForm.webSite" placeholder="Ex: https://..." />
+                        <el-form-item label="Website" prop="website">
+                          <el-input v-model.trim="ruleForm.website" placeholder="Ex: https://..." />
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -491,23 +495,18 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                     <el-row class="row-bg">
                       <el-col :span="11">
-                        <el-form-item label="Instagram" prop="instagram">
-                          <el-input v-model.trim="ruleForm.instagram" placeholder="Ex: https://instagram.com/..." />
+                        <el-form-item label="Discord" prop="discord">
+                          <el-input v-model.trim="ruleForm.discord" placeholder="Ex: https://discord.com/" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="1"></el-col>
 
                       <el-col :span="12">
-                        <el-form-item label="Discord" prop="discord">
-                          <el-input v-model.trim="ruleForm.discord" placeholder="Ex: https://discord.com/" />
+                        <el-form-item label="Reddit" prop="reddit">
+                          <el-input v-model.trim="ruleForm.reddit" placeholder="Ex: https://reddit.com/..." />
                         </el-form-item>
                       </el-col>
                     </el-row>
-
-
-                    <el-form-item label="Reddit" prop="reddit">
-                      <el-input v-model.trim="ruleForm.reddit" placeholder="Ex: https://reddit.com/..." />
-                    </el-form-item>
 
                     <el-form-item label="Description" prop="description">
                       <el-input v-model.trim="ruleForm.description" type="textarea"
@@ -522,44 +521,48 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                     <el-row class="row-bg">
                       <el-col :span="12">Total token</el-col>
-                      <el-col :span="12">{{ ruleForm.totalSellingAmount }}</el-col>
+                      <el-col :span="12">{{ ruleForm.totalSaleSupply }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Token name</el-col>
-                      <el-col :span="12">{{ ruleForm.name }}</el-col>
+                      <el-col :span="12">{{ ruleForm.tokenName }}</el-col>
                     </el-row>
+
                     <el-row>
                       <el-col :span="12">Token symbol</el-col>
                       <el-col :span="12"><!-- {{ ruleForm.symbol }} --></el-col>
-
                     </el-row>
+
                     <el-row>
                       <el-col :span="12">Token decimals</el-col>
                       <el-col :span="12"><!-- {{ ruleForm.decimals }} --></el-col>
                     </el-row>
-                    <el-row>
+
+                    <!-- <el-row>
                       <el-col :span="12">Softcap</el-col>
                       <el-col :span="12">{{ ruleForm.softCap }}</el-col>
-                    </el-row>
-                    <el-row>
+                    </el-row> -->
+
+                    <!-- <el-row>
                       <el-col :span="12">Liquidity</el-col>
                       <el-col :span="12">{{ ruleForm.liquidity }}</el-col>
-                    </el-row>
+                    </el-row> -->
+
                     <el-row>
                       <el-col :span="12">Start Time</el-col>
-                      <el-col :span="12">{{ ruleForm.startTime }}</el-col>
+                      <el-col :span="12">{{ ruleForm.startTimestamp }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">End Time</el-col>
-                      <el-col :span="12">{{ ruleForm.endTime }}</el-col>
+                      <el-col :span="12">{{ ruleForm.endTimestamp }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Liquidity lockup time</el-col>
-                      <el-col :span="12">{{ ruleForm.liquidityLockup }}</el-col>
+                      <el-col :span="12">{{ ruleForm.cliffTime }}</el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">Website</el-col>
-                      <el-col :span="12">{{ ruleForm.webSite }}</el-col>
+                      <el-col :span="12">{{ ruleForm.website }}</el-col>
                     </el-row>
                   </el-col>
                 </el-row>

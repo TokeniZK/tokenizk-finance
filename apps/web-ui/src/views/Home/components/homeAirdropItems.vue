@@ -27,12 +27,12 @@ onMounted(() => {
 const fetchResult = [
   {
     id: nanoid(),
-    photo: '/src/assets/images/1.png',
+    logoUrl: '/src/assets/images/1.png',
     name: 'Oggy Inu 2.0',
     status: '',
     teamName: 'Yoga',
     star: 4,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '21',
     hardCap: '60',
     totalContributedMina: 40,
@@ -50,12 +50,12 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     status: '',
     teamName: 'walking',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '10',
     hardCap: '60',
     totalContributedMina: 20,
@@ -74,12 +74,12 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/3.png',
+    logoUrl: '/src/assets/images/3.png',
     name: 'Ripple Frog',
     status: '',
     teamName: 'cherry',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '30',
     hardCap: '45',
     totalContributedMina: 60,
@@ -97,12 +97,12 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/3.png',
+    logoUrl: '/src/assets/images/3.png',
     name: 'FastAI',
     status: '',
     teamName: 'Tang',
     star: 4,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '10',
     hardCap: '55',
     totalContributedMina: 30,
@@ -120,12 +120,12 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wrapped XRP',
     status: '',
     teamName: 'mina',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '9',
     hardCap: '50',
     totalContributedMina: 50,
@@ -143,12 +143,12 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/1.png',
+    logoUrl: '/src/assets/images/1.png',
     name: 'THREADS V2',
     status: '',
     teamName: 'BTC',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '12',
     hardCap: '50',
     totalContributedMina: 10,
@@ -166,12 +166,12 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Oggy Inu 2.0',
     status: '',
     teamName: 'Yoga',
     star: 5,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '11',
     hardCap: '50',
     totalContributedMina: 13,
@@ -189,12 +189,12 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     status: '',
     teamName: 'Yoga',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '20',
     hardCap: '50',
     totalContributedMina: 42,
@@ -212,12 +212,12 @@ const fetchResult = [
   },
   {
     id: nanoid(),
-    photo: '/src/assets/images/2.png',
+    logoUrl: '/src/assets/images/2.png',
     name: 'Wojak 2.69',
     status: '',
     teamName: 'Yoga',
     star: 2,
-    preSaleAddr: 'B62',
+    saleAddress: 'B62',
     softCap: '10',
     hardCap: '50',
     totalContributedMina: 23,
@@ -239,13 +239,13 @@ const fetchResult = [
 let currentTime = new Date().getTime();
 fetchResult.forEach(item => {
   if (item.presaleStartTime > currentTime) {
-    item.status = 'Upcoming'
+    item.projectStatus = 'Upcoming'
   } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-    item.status = 'Ongoing'
+    item.projectStatus = 'Ongoing'
   } else if (item.presaleEndTime < currentTime) {
-    item.status = 'Ended'
+    item.projectStatus = 'Ended'
   } else {
-    item.status = 'All Status'
+    item.projectStatus = 'All Status'
   }
 });
 
@@ -306,7 +306,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                     <el-col>
 
                       <el-row>
-                        <img :src="item.photo" :alt="item.name" style="width: 349px; height: 160px;">
+                        <img :src="item.logoUrl" :alt="item.name" style="width: 349px; height: 130px;">
                       </el-row>
 
                       <el-row class="button-box">
@@ -350,7 +350,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
                         <el-col :span="5"></el-col>
 
                         <el-col class="review" :span="7">
-                          <el-button type="primary" round>{{ item.status }}</el-button>
+                          <el-button type="primary" round>{{ item.projectStatus }}</el-button>
                         </el-col>
 
                       </el-row>

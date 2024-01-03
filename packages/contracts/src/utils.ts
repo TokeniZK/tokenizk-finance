@@ -1,4 +1,4 @@
-import { BaseSiblingPath } from '@tokenizk/types';
+import { BaseSiblingPath } from '@tokenizk/merkle-tree';
 import {
   Bool,
   Field,

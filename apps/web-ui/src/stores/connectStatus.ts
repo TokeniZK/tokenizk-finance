@@ -4,9 +4,10 @@ import { defineStore } from 'pinia'
 export const useConnectStatusStore = defineStore('connectStatus', () => {
 
   // Auro Wallet 连接状态 管理
-  let cnState = ref(true)
+  const cnState = ref(true)
 
-  function setConnectStatus() {
+  function setConnectStatus(cnState1: boolean) {
+    cnState.value = cnState1
     return cnState
   }
 

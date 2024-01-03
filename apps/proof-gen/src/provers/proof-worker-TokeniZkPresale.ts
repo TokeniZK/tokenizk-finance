@@ -12,6 +12,7 @@ let preSaleContractCallTimes = 0;
 
 function processMsgFromMaster() {
     process.on('message', async (message: { type: string; payload: any }) => {
+
         logger.info(`[WORKER ${process.pid}] running ${message.type}`);
 
         switch (message.type) {
@@ -57,7 +58,6 @@ function processMsgFromMaster() {
         if (++preSaleContractCallTimes > 6) {// TODO set 6 temporarily
             process.exit(0);
         }
-
 
     });
 }
