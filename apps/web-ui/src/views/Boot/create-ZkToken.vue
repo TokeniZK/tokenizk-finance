@@ -287,7 +287,3 @@ const resetForm = (formEl: FormInstance | undefined) => {
     }
 }
 </style>
-<<<<<<< HEAD
-
-=======
->>>>>>> main
