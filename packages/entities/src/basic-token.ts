@@ -40,6 +40,9 @@ export class BasiceToken {
     name: string
 
     @Column()
+    logoUrl:string
+
+    @Column()
     symbol: string
 
     @Column()

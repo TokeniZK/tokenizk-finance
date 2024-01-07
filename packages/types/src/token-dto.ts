@@ -23,4 +23,6 @@ export interface TokenDto {
     updatedAt: number
 
     createdAt: number
+
+    logoUrl:string
 }
