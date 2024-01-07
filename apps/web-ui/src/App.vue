@@ -99,4 +99,40 @@ onMounted(async () => {
         <span>{{ appState.mask.loadingText }}</span>
     </el-dialog>
 </template>
-@/stores/useCircuitController
+<style lang="less">
+.subMenuSecondaryMenu {
+    border: none !important;
+
+    .el-menu {
+        // 修改二级菜单整个背景颜色
+        background-color: #fff;
+        width: 200px;
+        padding: 0;
+
+        // 二级菜单中的子选项
+        .el-menu-item {
+            background-color: transparent !important;
+            color: #000 !important;
+            font-weight: 400;
+            width: 100%;
+            font-size: 14px;
+            text-align: center;
+
+            // 被选择的子选项
+            &:not(.is-disabled):hover {
+                color: #00FFC2 !important;
+                background-color: #E6FFF9 !important;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    }
+
+    // 弹出的二级菜单
+    .el-menu--popup {
+        min-width: 104px !important;
+        min-height: 112px !important;
+    }
+}
+</style>
+

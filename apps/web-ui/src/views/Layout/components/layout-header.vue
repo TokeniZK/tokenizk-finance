@@ -1,9 +1,13 @@
 <script lang="ts" setup>
+import { CHANNEL_MINA, WalletEventType, type WalletEvent } from "@/common";
 import { useStatusStore } from "@/stores";
 import { omitAddress } from "@/utils";
 import { ElMessage } from 'element-plus'
 import { ref } from "vue";
+import { generateTokenKey } from '@/utils/keys-gen';
+import { queryToken } from "@/apis/token-api";
 
+const chan = new BroadcastChannel(CHANNEL_MINA);
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 const activeIndex = ref('1')
@@ -32,19 +36,34 @@ const connectWallet = async () => {
     }
 
     let accounts = await window.mina.requestAccounts();
+
+    // gen token
+    const { privateKey: tokenKey, publicKey: tokenAddress0 } = await generateTokenKey();
+    appState.tokeniZkBasicTokenKeyPair!.key = tokenKey.toBase58();
+    appState.tokeniZkBasicTokenKeyPair!.value = tokenAddress0.toBase58();
+
     setConnectedWallet(accounts[0]);
+    chan.postMessage({
+      eventType: WalletEventType.CONNECT,
+      connectedAddress: accounts[0],
+    } as WalletEvent);
   } catch (err: any) {
     // if user reject, requestAccounts will throw an error with code and message filed
     console.error(err);
     ElMessage({
       showClose: true,
-      message: `Please switch to the correct network (${err.message}) first.`,
+      message: `${err.message}`,
     })
   }
 };
 
 const disconnect = async () => {
   setConnectedWallet(null);
+  // window.mina.emitAccountsChanged([]);
+  chan.postMessage({
+    eventType: WalletEventType.DISCONNECT,
+    connectedAddress: undefined,
+  } as WalletEvent);
 }
 
 </script>
@@ -55,47 +74,55 @@ const disconnect = async () => {
     <el-col :span="24">
 
       <el-menu :default-active="activeIndex" class="el-menu-demo LayoutHeader" mode="horizontal" :ellipsis="false"
-        @select="handleSelect">
+        @select="handleSelect" background-color="#000" active-text-color="#00FFC2">
 
-        <el-menu-item index="0">
+        <el-menu-item>
           <RouterLink class="logo" to="/" alt="Element logo" />
         </el-menu-item>
 
         <div class="flex-grow" />
 
+
         <el-menu-item index="1" class="header-category">
-          <router-link to="/">Home </router-link>
+          <router-link to="/">Home</router-link>
         </el-menu-item>
 
-        <el-sub-menu index="2" class="header-category">
+        <el-sub-menu index="2" text-color="#fff" popper-class="subMenuSecondaryMenu">
 
           <template #title>
-            <i class="iconfont icon-fire"></i>
-            <span class="header-category">Hot Sales</span>
+            <i class="iconfont icon-fire2"></i>
+            <span class="header-title">Hot Sales</span>
           </template>
 
-          <router-link to="/pre-sales">
+          <router-link to="/sales?saleType=0">
             <el-menu-item index="2-1">
-              Presales
+              PreSales
             </el-menu-item>
           </router-link>
 
-          <router-link to="/private-sales">
+          <router-link to="/sales?saleType=1">
             <el-menu-item index="2-2">
+              Fair Sales
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/sales?saleType=2">
+            <el-menu-item index="2-3">
               Private Sales
             </el-menu-item>
           </router-link>
 
         </el-sub-menu>
 
+
         <el-menu-item index="3" class="header-category">
-          <router-link to="/airdrop-list">Airdrop</router-link>
+          <router-link to="/airdrop-list">Airdrop-list</router-link>
         </el-menu-item>
 
-        <el-sub-menu index="4">
+        <el-sub-menu index="4" class="header-title" popper-class="subMenuSecondaryMenu">
 
           <template #title>
-            <span class="header-category">Boot</span>
+            <span class="header-title">Boot</span>
           </template>
 
           <router-link to="/create-zk-token">
@@ -104,19 +131,19 @@ const disconnect = async () => {
             </el-menu-item>
           </router-link>
 
-          <router-link to="/create-fair-launch">
-            <el-menu-item index="4-2">
-              Create Fair Launch
-            </el-menu-item>
-          </router-link>
-
-          <router-link to="/create-normal-launch">
+          <router-link to="/create-sale-launch?saleType=0">
             <el-menu-item index="4-3">
-              Create Normal Launch
+              Create PreSales
             </el-menu-item>
           </router-link>
 
-          <router-link to="/create-private-sale">
+          <router-link to="/create-sale-launch?saleType=1">
+            <el-menu-item index="4-2">
+              Create Fair Sale
+            </el-menu-item>
+          </router-link>
+
+          <router-link to="/create-sale-launch?saleType=2">
             <el-menu-item index="4-4">
               Create Private Sale
             </el-menu-item>
@@ -128,122 +155,128 @@ const disconnect = async () => {
             </el-menu-item>
           </router-link>
 
-          <router-link to="/create-lock">
-            <el-menu-item index="4-6">
-              Create Lock
-            </el-menu-item>
-          </router-link>
+          <!-- 
+                    <router-link to="/create-lock">
+                        <el-menu-item index="4-6">
+                            Create Lock
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/create-zk-nft">
-            <el-menu-item index="4-7">
-              Create zkNFT
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/create-zk-nft">
+                        <el-menu-item index="4-7">
+                            Create zkNFT
+                        </el-menu-item>
+                    </router-link>-->
 
         </el-sub-menu>
+
 
         <el-menu-item index="5" class="header-category">
-          <router-link to="/wallet">Wallet</router-link>
+          <router-link to="/wallet"> Wallet</router-link>
         </el-menu-item>
 
-        <el-sub-menu index="6">
-          <template #title>
-            <span class="header-category">About</span>
-          </template>
 
-          <router-link to="/services">
-            <el-menu-item index="6-1">
-              Services
-            </el-menu-item>
-          </router-link>
+        <!-- 
+                <el-sub-menu index="6">
+                    <template #title>
+                        <span class="header-category">About</span>
+                    </template>
 
-          <router-link to="/team">
-            <el-menu-item index="6-2">
-              team
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/services">
+                        <el-menu-item index="6-1">
+                            Services
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/faq">
-            <el-menu-item index="6-3">
-              FAQ
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/team">
+                        <el-menu-item index="6-2">
+                            team
+                        </el-menu-item>
+                    </router-link>
 
-        </el-sub-menu>
+                    <router-link to="/faq">
+                        <el-menu-item index="6-3">
+                            FAQ
+                        </el-menu-item>
+                    </router-link>
 
-        <el-sub-menu index="7">
+                </el-sub-menu>
 
-          <template #title>
-            <el-badge :value="12" class="item">
-              <el-icon class="header-category">
-                <Bell />
-              </el-icon>
-            </el-badge>
-          </template>
+                <el-sub-menu index="7">
 
-          <router-link to="/comments">
-            <el-menu-item index="7-1">
-              <el-badge :value="21" class="item">
-                Comments and @
-              </el-badge>
-            </el-menu-item>
-          </router-link>
+                    <template #title>
+                        <el-badge :value="12" class="item">
+                            <el-icon class="header-category">
+                                <Bell />
+                            </el-icon>
+                        </el-badge>
+                    </template>
 
-          <router-link to="/add-fans">
-            <el-menu-item index="7-2">
-              <el-badge :value="6" class="item">
-                Add Fans
-              </el-badge>
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/comments">
+                        <el-menu-item index="7-1">
+                            <el-badge :value="21" class="item">
+                                Comments and @
+                            </el-badge>
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/praise-and-collection">
-            <el-menu-item index="7-3">
-              <el-badge :value="4" class="item">
-                Praise and Collection
-              </el-badge>
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/add-fans">
+                        <el-menu-item index="7-2">
+                            <el-badge :value="6" class="item">
+                                Add Fans
+                            </el-badge>
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/private-message">
-            <el-menu-item index="7-4">
-              <el-badge :value="3" class="item">
-                Private Message
-              </el-badge>
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/praise-and-collection">
+                        <el-menu-item index="7-3">
+                            <el-badge :value="4" class="item">
+                                Praise and Collection
+                            </el-badge>
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/system-notifications">
-            <el-menu-item index="7-5">
-              <el-badge :value="9" class="item">
-                System Notifications
-              </el-badge>
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/private-message">
+                        <el-menu-item index="7-4">
+                            <el-badge :value="3" class="item">
+                                Private Message
+                            </el-badge>
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/message-settings">
-            <el-menu-item index="7-6">
-              <el-badge :value="14" class="item">
-                Message Settings
-              </el-badge>
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/system-notifications">
+                        <el-menu-item index="7-5">
+                            <el-badge :value="9" class="item">
+                                System Notifications
+                            </el-badge>
+                        </el-menu-item>
+                    </router-link>
 
-        </el-sub-menu>
+                    <router-link to="/message-settings">
+                        <el-menu-item index="7-6">
+                            <el-badge :value="14" class="item">
+                                Message Settings
+                            </el-badge>
+                        </el-menu-item>
+                    </router-link>
 
-        <el-menu-item index="8">
+                </el-sub-menu>-->
+
+
+        <el-menu-item>
           <el-row class="mb-4">
 
             <div v-if="appState.connectedWallet58 == null">
               <el-button type="success" class="ConnectBtn" @click="connectWallet">Connect</el-button>
             </div>
 
-            <div v-if="appState.connectedWallet58 != null">
+            <div v-else class="el-dropdown-link">
 
               <el-dropdown>
-                <span class="el-dropdown-link">
+
+                <span class="address--left">
                   {{ omitAddress(appState.connectedWallet58) }}
-                  <el-icon class="el-icon--right">
+                  <el-icon class="el-icon--right" size="14px">
                     <arrow-down />
                   </el-icon>
                 </span>
@@ -251,16 +284,26 @@ const disconnect = async () => {
                 <template #dropdown>
                   <el-dropdown-menu>
 
-                    <el-dropdown-item>
-                      <el-button @click="disconnect">Disconnect</el-button>
+                    <el-dropdown-item @click="disconnect">
+                      Disconnect
                     </el-dropdown-item>
 
                     <router-link to="/my-launches">
                       <el-dropdown-item>
-                        <el-button>my launches</el-button>
+                        my launches
                       </el-dropdown-item>
                     </router-link>
-                    
+
+                    <!-- <el-dropdown-item>
+                                            <el-button @click="disconnect">Disconnect</el-button>
+                                        </el-dropdown-item>
+
+                                        <router-link to="/my-launches">
+                                            <el-dropdown-item>
+                                                <el-button>my launches</el-button>
+                                            </el-dropdown-item>
+                                        </router-link> -->
+
                   </el-dropdown-menu>
                 </template>
 
@@ -288,22 +331,6 @@ const disconnect = async () => {
   color: #fff;
   background-color: #000;
 
-  .header-category {
-    color: #fff;
-    font-size: 16px;
-  }
-
-  .header-category:hover {
-    color: #fff;
-    color: #00FFC2;
-  }
-
-  .icon-fire {
-    color: #F2B535;
-    margin-right: 8px;
-  }
-
-
   .logo {
     width: 200px;
     height: 80px;
@@ -317,16 +344,56 @@ const disconnect = async () => {
   }
 
   .el-dropdown {
-    margin-top: 1.1rem;
+    margin-top: 13px;
   }
 
   .flex-grow {
     flex-grow: 1;
   }
 
+  .header-category {
+    color: #fff;
+    font-size: 16px;
+    // padding-top: 20px;
+  }
+
+  .header-category:hover {
+    color: #00FFC2;
+  }
+
+  .header-title {
+    font-size: 16px;
+    color: #fff;
+  }
+
+  .header-title:hover {
+    color: #00FFC2;
+  }
+
+  .icon-fire2 {
+    color: #F2B535;
+    margin-right: 8px;
+  }
+
+  .subMenu-item {
+    background-color: #fff;
+  }
+
   .ConnectBtn {
     font-size: 16px;
     background-color: #00FFC2;
   }
+
+  .address--left {
+    padding-top: 5px;
+    padding-left: 10px;
+    font-size: 16px;
+    color: #00FFC2;
+  }
+
+  .el-icon--right {
+    color: #00FFC2;
+  }
+
 }
 </style>
