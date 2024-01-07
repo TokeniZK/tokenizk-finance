@@ -18,7 +18,7 @@ import {
 } from 'o1js';
 import { STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleRollupProof } from './sale-rollup-prover';
-import { ContributorsMembershipMerkleWitness, ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
+import { ContributorsMembershipMerkleWitness, ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness, WhitelistMembershipMerkleWitness } from './sale-models';
 import { ClaimTokenEvent } from './TokeniZkPresale';
 import { RedeemAccount } from './TokeniZkUser';
 
@@ -145,7 +145,8 @@ export class TokeniZkFairSale extends SmartContract {
      * @param minaAmount MINA amount
      */
     @method
-    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64, membershipMerkleWitness: ContributorsMembershipMerkleWitness, leafIndex: Field) {
+    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
+        membershipMerkleWitness: WhitelistMembershipMerkleWitness, leafIndex: Field) {
         // check  params
         this.saleParamsHash.getAndRequireEquals().assertEquals(
             saleParams.hash()
@@ -225,7 +226,7 @@ export class TokeniZkFairSale extends SmartContract {
         // TODO at next version TODO
         ///////////////////////////////////////////////////////
     }
-   
+
     /**
      * need go back to 'TokeniZkPrivateSale.approveTransferCallbackWithVesting()' for approval and transfer, which means each address could contribute only once.
      * @param saleParams 

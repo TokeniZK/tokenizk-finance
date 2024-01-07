@@ -25,6 +25,7 @@ import {
 import { LauchpadPlatformParams, TokeniZkFactory } from './TokeniZkFactory';
 import { STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleParams, VestingParams } from './sale-models';
+import { AirdropParams } from './TokeniZkAirdrop';
 
 
 const SUPPLY = UInt64.from(10n ** 18n);
@@ -40,6 +41,9 @@ export class TokeniZkBasicToken extends SmartContract {
      * Total amount in circulation
      */
     @state(UInt64) totalAmountInCirculation = State<UInt64>();
+
+    @state(PublicKey) tokeniZkFactoryAddress = State<PublicKey>();
+
 
     deployZkApp(totalSupply: UInt64) {
         super.deploy();
@@ -136,7 +140,7 @@ export class TokeniZkBasicToken extends SmartContract {
         zkapp.account.isNew.assertEquals(Bool(true));
 
         saleParams.tokenAddress.assertEquals(this.address);
-        saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
+        // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
         saleParams.softCap.mul(4).assertGreaterThanOrEqual(saleParams.hardCap);
         saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
         saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 5 * 60 * 1000)); // at least last for 10 blocks
@@ -163,16 +167,16 @@ export class TokeniZkBasicToken extends SmartContract {
 
     /**
      * 
-     * @param newParams 
+     * @param lauchpadPlatformParams 
      * @param saleAddress 
      * @param saleContractVk 
      */
     @method
-    public createFairSale(newParams: LauchpadPlatformParams,
+    public createFairSale(lauchpadPlatformParams: LauchpadPlatformParams,
         saleAddress: PublicKey, saleContractVk: VerificationKey, saleParams: SaleParams) {
 
         const tokeniZkFactory = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
-        tokeniZkFactory.createFairSale(newParams, saleParams, this.address, saleAddress, saleContractVk);
+        tokeniZkFactory.createFairSale(lauchpadPlatformParams, saleParams, this.address, saleAddress, saleContractVk);
 
         let tokenId = this.token.id;
         const zkapp = Experimental.createChildAccountUpdate(
@@ -183,7 +187,7 @@ export class TokeniZkBasicToken extends SmartContract {
         zkapp.account.isNew.assertEquals(Bool(true));
 
         saleParams.tokenAddress.assertEquals(this.address);
-        saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
+        // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
         saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
         saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 5 * 60 * 1000)); // at least last for 10 blocks
         saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
@@ -234,6 +238,51 @@ export class TokeniZkBasicToken extends SmartContract {
         this.self.requireSignature();// mint need signature of tokenOwner
     }
 
+
+    /**
+     * 
+     * @param lauchpadPlatformParams 
+     * @param airdropAddress 
+     * @param airdropContractVk 
+     */
+    @method
+    public createAirdrop(lauchpadPlatformParams: LauchpadPlatformParams,
+        airdropAddress: PublicKey, airdropContractVk: VerificationKey, airdropParams: AirdropParams) {
+
+        const tokeniZkFactory = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
+        tokeniZkFactory.createAirdrop(lauchpadPlatformParams, airdropParams, this.address, airdropAddress, airdropContractVk);
+
+        let tokenId = this.token.id;
+        const zkapp = Experimental.createChildAccountUpdate(
+            this.self,
+            airdropAddress,
+            tokenId
+        );
+        zkapp.account.isNew.assertEquals(Bool(true));
+
+        airdropParams.tokenAddress.assertEquals(this.address);
+        // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
+        // airdropParams.startTime.assertLessThan(airdropParams.endTime.sub(10 * 5 * 60 * 1000)); // at least last for 10 blocks
+        airdropParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
+
+        AccountUpdate.setValue(zkapp.body.update.appState[0], airdropParams.hash());//  airdropParamsHash
+        AccountUpdate.setValue(zkapp.body.update.appState[1], airdropParams.vestingParamsHash());//vestingParamsHash
+        AccountUpdate.setValue(zkapp.body.update.appState[2], Field(0));// totalDistributed
+
+        zkapp.account.permissions.set({
+            ...Permissions.default(),
+            editState: Permissions.proof(),
+            send: Permissions.proof(),
+        });
+
+        zkapp.account.verificationKey.set(airdropContractVk);
+        zkapp.requireSignature();
+        this.approve(zkapp);
+
+        this.mintToken(airdropAddress, airdropParams.totalAirdropSupply);
+    }
+
+
     /**
      * 
      * @param receiverAddress - address of the receiver
@@ -278,12 +327,16 @@ export class TokeniZkBasicToken extends SmartContract {
      */
     @method
     approveTransferCallback(
+        //callback: Experimental.Callback<any>,
         zkappUpdate: AccountUpdate,
         receiverAddress: PublicKey,
         amount: UInt64,
     ) {
         let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
         let senderAccountUpdate = this.approve(zkappUpdate, layout);
+
+        //let layout = AccountUpdate.Layout.AnyChildren; // Allow only 1 accountUpdate with no children
+        //let senderAccountUpdate = this.approve(callback, layout);
 
         let negativeAmount = Int64.fromObject(
             senderAccountUpdate.body.balanceChange

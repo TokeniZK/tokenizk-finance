@@ -122,6 +122,70 @@ export class SaleParams extends Struct({
         });
     }
 
+    static fromDto(dto: {
+        tokenAddress: string,
+
+        totalSaleSupply: number,
+
+        saleRate: number,
+
+        whitelistTreeRoot: string,
+
+
+        softCap: number,
+
+
+        hardCap: number,
+
+        minimumBuy: number,
+
+
+        maximumBuy: number,
+
+
+        startTime: number,
+
+
+        endTime: number,
+
+        cliffTime: number,
+        cliffAmountRate: number,
+        vestingPeriod: number, // 0 is not allowed, default value is 1
+        vestingIncrement: number
+    }) {
+        return new SaleParams({
+            tokenAddress: PublicKey.fromBase58(dto.tokenAddress),
+
+            totalSaleSupply: UInt64.from(dto.totalSaleSupply),
+
+            saleRate: UInt64.from(dto.saleRate),
+
+            whitelistTreeRoot: Field(dto.whitelistTreeRoot),
+
+
+            softCap: UInt64.from(dto.softCap),
+
+
+            hardCap: UInt64.from(dto.hardCap),
+
+            minimumBuy: UInt64.from(dto.minimumBuy),
+
+
+            maximumBuy: UInt64.from(dto.maximumBuy),
+
+
+            startTime: UInt64.from(dto.startTime),
+
+
+            endTime: UInt64.from(dto.endTime),
+
+            cliffTime: UInt32.from(dto.cliffTime),
+            cliffAmountRate: UInt64.from(dto.cliffAmountRate),
+            vestingPeriod: UInt32.from(dto.vestingPeriod), // 0 is not allowed, default value is 1
+            vestingIncrement: UInt64.from(dto.vestingIncrement)
+        });
+    }
+
 }
 
 export class SaleContribution extends Struct({

@@ -19,7 +19,7 @@ import {
 } from 'o1js';
 import { STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleRollupProof } from './sale-rollup-prover';
-import { ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent } from './sale-models';
+import { ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent, WhitelistMembershipMerkleWitness } from './sale-models';
 import { ContributorsMembershipMerkleWitness, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
 import { RedeemAccount } from './TokeniZkUser';
 import { RedeemEvent } from './sale-models';
@@ -131,7 +131,8 @@ export class TokeniZkPrivateSale extends SmartContract {
      * @param minaAmount MINA amount
      */
     @method
-    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64, membershipMerkleWitness: ContributorsMembershipMerkleWitness, leafIndex: Field) {
+    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
+        membershipMerkleWitness: WhitelistMembershipMerkleWitness, leafIndex: Field) {
         // check privateSale params
         this.saleParamsHash.getAndRequireEquals().assertEquals(
             saleParams.hash()

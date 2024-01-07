@@ -123,7 +123,7 @@ function getTestContext(onlySupportProof = false): TestContext {
 
     if (deployToBerkeley) {
       // Wait for the specified block height
-      for (;;) {
+      for (; ;) {
         currentBlockHeight = (await getNetworkStatus()).blockchainLength;
         if (blockHeight.lessThanOrEqual(currentBlockHeight).toBoolean()) {
           break;
@@ -173,7 +173,10 @@ function getTestContext(onlySupportProof = false): TestContext {
       signKeys = signKeys.concat(params.otherSignKeys);
     }
     console.log('tx fee: ', DEFAULT_TX_FEE);
-    let txId = await tx.sign(signKeys).send();
+    tx = tx.sign(signKeys);
+    console.log(`tx: ${tx.toJSON()}`);
+
+    let txId = await tx.send();
     let logLabel =
       params.logLabel !== undefined ? params.logLabel + ' txId: ' : 'txId: ';
     console.log(logLabel, txId.hash());

@@ -273,8 +273,8 @@ export class TokeniZkPresale extends SmartContract {
         this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
 
         // check softcap
-        const totalMina = this.totalContributedMina.getAndRequireEquals();
-        totalMina.assertGreaterThanOrEqual(saleParams.softCap);
+        const totalContributedMina = this.totalContributedMina.getAndRequireEquals();
+        totalContributedMina.assertGreaterThanOrEqual(saleParams.softCap);
 
         // check contributorMerkleWitness
         saleContributorMembershipWitnessData.checkMembershipAndAssert(this.contributorTreeRoot.getAndRequireEquals());

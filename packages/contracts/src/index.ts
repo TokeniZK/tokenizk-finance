@@ -8,3 +8,4 @@ export * from './TokeniZkUser'
 export * from './sale-models';
 export * from './sale-rollup-prover'
 export * from './test_utils'
+export * from './TokeniZkAirdrop'

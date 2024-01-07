@@ -15,10 +15,11 @@ import {
     AccountUpdate,
     Bool,
     UInt32,
-    TokenId,
+    Experimental,
 } from 'o1js';
 import { SaleParams } from './sale-models';
-import { INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
+import { INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_16 } from './constants';
+import { AirdropParams } from './TokeniZkAirdrop';
 
 
 export class LauchpadPlatformParams extends Struct({
@@ -38,6 +39,9 @@ export class LauchpadPlatformParams extends Struct({
     privateSaleCreationFee: UInt64,
     privateSaleServiceFeeRate: UInt64,
 
+    airdropVk: Field,
+    airdropCreationFee: UInt64,
+
     redeemAccountVk: Field
 }) {
 
@@ -55,12 +59,63 @@ export class LauchpadPlatformParams extends Struct({
             ... this.fairSaleCreationFee.toFields(),
             ... this.fairSaleServiceFeeRate.toFields(),
 
-            this.presaleContractVk,
+            this.privateSaleContractVk,
             ... this.privateSaleCreationFee.toFields(),
             ...this.privateSaleServiceFeeRate.toFields(),
 
+            this.airdropVk,
+            ...this.airdropCreationFee.toFields(),
+
             this.redeemAccountVk
         ]);
+    }
+
+    static fromDto(dto: {
+        basicTokenVk: string,
+        basicTokenCreationFee: number,
+
+        presaleContractVk: string,
+        presaleCreationFee: number,
+        presaleServiceFeeRate: number,
+        presaleMinaFundHolderVk: string,
+
+        fairSaleContractVk: string,
+        fairSaleCreationFee: number,
+        fairSaleServiceFeeRate: number,
+
+        privateSaleContractVk: string,
+        privateSaleCreationFee: number,
+        privateSaleServiceFeeRate: number,
+
+        airdropVk: string,
+        airdropCreationFee: number,
+
+        redeemAccountVk: string
+    }) {
+        return new LauchpadPlatformParams(
+            {
+                basicTokenVk: Field(dto.basicTokenVk),
+                basicTokenCreationFee: UInt64.from(dto.basicTokenCreationFee),
+
+                presaleContractVk: Field(dto.presaleContractVk),
+                presaleCreationFee: UInt64.from(dto.presaleCreationFee),
+                presaleServiceFeeRate: UInt64.from(dto.presaleServiceFeeRate),
+                presaleMinaFundHolderVk: Field(dto.presaleMinaFundHolderVk),
+
+                fairSaleContractVk: Field(dto.fairSaleContractVk),
+                fairSaleCreationFee: UInt64.from(dto.fairSaleCreationFee),
+                fairSaleServiceFeeRate: UInt64.from(dto.fairSaleServiceFeeRate),
+
+                privateSaleContractVk: Field(dto.privateSaleContractVk),
+                privateSaleCreationFee: UInt64.from(dto.privateSaleCreationFee),
+                privateSaleServiceFeeRate: UInt64.from(dto.privateSaleServiceFeeRate),
+
+                airdropVk: Field(dto.airdropVk),
+                airdropCreationFee: UInt64.from(dto.airdropCreationFee),
+
+                redeemAccountVk: Field(dto.redeemAccountVk)
+            }
+        );
     }
 }
 
@@ -86,6 +141,13 @@ export class CreateSaleEvent extends Struct({
     saleParams: SaleParams
 }) { }
 
+export class CreateAirdropEvent extends Struct({
+    basicTokenAddress: PublicKey,
+    airdropContractAddress: PublicKey,
+    fee: UInt64,
+    airdropParams: AirdropParams
+}) { }
+
 export class CreateRedeemAccount extends Struct({
     redeemAccountAddress: PublicKey,
     nullifierRoot: Field
@@ -104,6 +166,8 @@ export class TokeniZkFactory extends SmartContract {
     static fairSaleContractVk: VerificationKey;// TODO 
 
     static privateSaleContractVk: VerificationKey;// TODO 
+
+    static airdropVk: VerificationKey;// TODO 
 
     static redeemAccountVk: VerificationKey;// TODO
 
@@ -127,7 +191,8 @@ export class TokeniZkFactory extends SmartContract {
         createPresale: CreateSaleEvent,
         createFairsale: CreateSaleEvent,
         createPrivateSale: CreateSaleEvent,
-        createRedeemAccount: CreateRedeemAccount
+        createRedeemAccount: CreateRedeemAccount,
+        createAirdrop: CreateAirdropEvent
     }
 
 
@@ -196,17 +261,19 @@ export class TokeniZkFactory extends SmartContract {
         // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
 
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
+        // Provable.log('lauchpadPlatformParamsHash: ', lauchpadPlatformParamsHash);
         const newParamsHash = newParams.hash();
+        // Provable.log('newParamsHash: ', newParamsHash);
         lauchpadPlatformParamsHash.assertEquals(newParamsHash, 'newParamsHash is not equaled to existing lauchpadPlatformParamsHash');
 
         newParams.basicTokenVk.assertEquals(basicTokenVk.hash, 'new basicTokenVk.hash is not equaled to existing basicTokenVk.hash');
 
         let zkapp = AccountUpdate.createSigned(tokenAddr);
-        zkapp.account.isNew.requireEquals(Bool(true));
+        // zkapp.account.isNew.requireEquals(Bool(true));
         zkapp.account.permissions.set({
             ...Permissions.default(),
             editState: Permissions.proofOrSignature(),
-            access: Permissions.proofOrSignature(),
+            // access: Permissions.proofOrSignature(),
         });
         zkapp.account.verificationKey.set(basicTokenVk);
         AccountUpdate.setValue(zkapp.body.update.appState[0], totalSupply);//totalSupply
@@ -280,6 +347,25 @@ export class TokeniZkFactory extends SmartContract {
     }
 
     @method
+    public createAirdrop(lauchpadPlatformParams: LauchpadPlatformParams, airdropParams: AirdropParams, tokenAddr: PublicKey, airdropAddress: PublicKey, verificationKey: VerificationKey) {
+        // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
+        const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
+        lauchpadPlatformParams.hash().assertEquals(lauchpadPlatformParamsHash);
+        lauchpadPlatformParams.airdropVk.assertEquals(verificationKey.hash);
+
+        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feeReceiverAU = AccountUpdate.create(this.address);
+        feePayer.send({ to: feeReceiverAU, amount: lauchpadPlatformParams.fairSaleCreationFee });
+
+        this.emitEvent('createAirdrop', new CreateAirdropEvent({
+            basicTokenAddress: tokenAddr,
+            airdropContractAddress: airdropAddress,
+            fee: lauchpadPlatformParams.fairSaleCreationFee,
+            airdropParams
+        }));
+    }
+
+    @method
     public createPrivateSale(lauchpadPlatformParams: LauchpadPlatformParams, saleAddress: PublicKey, privateSaleVk: VerificationKey, saleParams: SaleParams) {
         // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
@@ -295,7 +381,7 @@ export class TokeniZkFactory extends SmartContract {
         saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
         saleParams.startTime.assertLessThan(saleParams.endTime);
         saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
-        saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
+        // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], saleParams.hash());//  privateSaleParamsHash
         AccountUpdate.setValue(zkapp.body.update.appState[1], STANDARD_TREE_INIT_ROOT_16);// contributorTreeRoot
@@ -337,9 +423,23 @@ export class TokeniZkFactory extends SmartContract {
         lauchpadPlatformParams.hash().assertEquals(lauchpadPlatformParamsHash);
         lauchpadPlatformParams.redeemAccountVk.assertEquals(redeemAccountVk.hash);
 
-        let zkapp = AccountUpdate.createSigned(redeemAccountAddress);
+        let tokenId = this.token.id;
+        const zkapp = Experimental.createChildAccountUpdate(
+            this.self,
+            redeemAccountAddress,
+            tokenId
+        );        
+        zkapp.account.isNew.assertEquals(Bool(true));
+
         AccountUpdate.setValue(zkapp.body.update.appState[0], INDEX_TREE_INIT_ROOT_8);//nullifierRoot
-        AccountUpdate.setValue(zkapp.body.update.appState[1], Field(0));//nullStartIndex
+        AccountUpdate.setValue(zkapp.body.update.appState[1], Field(1));//nullStartIndex
+        zkapp.account.permissions.set({
+            ...Permissions.default(),
+            editState: Permissions.proof(),
+            send: Permissions.proofOrSignature()
+        });
+        zkapp.account.verificationKey.set(redeemAccountVk);
+        zkapp.requireSignature();
 
         this.emitEvent('createRedeemAccount', new CreateRedeemAccount({
             redeemAccountAddress,

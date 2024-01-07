@@ -1,4 +1,4 @@
-
+import fs from "fs";
 import {
     isReady,
     method,
@@ -20,6 +20,7 @@ import {
     Bool,
     Provable,
     UInt32,
+    fetchAccount,
 } from 'o1js';
 
 import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness } from "../src";
@@ -34,10 +35,13 @@ await ctx.initMinaNetwork();
 // ================
 
 // let feePayerKey = Local.testAccounts[0].privateKey;
-let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEm81DLyU44Gpu4egbX9g1zgrVS7NnGCcbNZYGrKiG4XRQacKRK') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
+let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEDgneTyC6VimEUWF4jrreDaR4ntSvJdjw6ckfDQCtMG5aJtMGP') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
 let feePayer = feePayerKey.toPublicKey();
+if (process.env.TEST_ON_BERKELEY === 'true') {
+    await fetchAccount({ publicKey: feePayer });
+}
 
-let tokenFactoryZkAppKey = PrivateKey.random() //Local.testAccounts[1].privateKey;
+let tokenFactoryZkAppKey = PrivateKey.random()//PrivateKey.fromBase58('EKFTrkQTUwfnzvC27Gp9zxJhHqSZ4h7oFJuj2ckB6GQnMxS9vZyF') //Local.testAccounts[1].privateKey;
 let tokenFactoryZkAppAddress = tokenFactoryZkAppKey.toPublicKey();
 
 let basicTokenZkAppKey = PrivateKey.random() //Local.testAccounts[2].privateKey;
@@ -90,13 +94,19 @@ TokeniZkFactory.platfromFeeAddress = platfromFeeRecieverAddress;
 TokeniZkFactory.tokeniZkFactoryAddress = tokenFactoryZkAppAddress;
 
 console.time('compile (TokeniZkFactory)');
-await TokeniZkFactory.compile();
+const factoryVK = (await TokeniZkFactory.compile()).verificationKey;
 console.timeEnd('compile (TokeniZkFactory)');
+console.log(`factoryVK.hash: ${factoryVK.hash}`)
+
+fs.writeFileSync('./deploy/verification-keys/TokeniZkFactory-VK.json', JSON.stringify(factoryVK));
 
 console.time('compile (TokeniZkBasicToken)');
 const tokeniZkBasicTokenVK = (await TokeniZkBasicToken.compile()).verificationKey;
 TokeniZkFactory.basicTokenVk = tokeniZkBasicTokenVK;
+console.log('TokeniZkFactory.basicTokenVk: ' + TokeniZkFactory.basicTokenVk.hash);
 console.timeEnd('compile (TokeniZkBasicToken)');
+
+fs.writeFileSync('./deploy/verification-keys/TokeniZkBasicToken-VK.json', JSON.stringify(tokeniZkBasicTokenVK));
 
 
 let tokenFactoryZkApp = new TokeniZkFactory(tokenFactoryZkAppAddress);
@@ -105,23 +115,33 @@ let basicTokenZkApp = new TokeniZkBasicToken(basicTokenZkAppAddress);
 let tokenId = basicTokenZkApp.token.id;
 
 console.time('compile (SaleRollupProver)');
-await SaleRollupProver.compile();
+const saleRollupProverVK = (await SaleRollupProver.compile()).verificationKey;
 console.timeEnd('compile (SaleRollupProver)');
+
+fs.writeFileSync('./deploy/verification-keys/SaleRollupProver-VK.json', JSON.stringify(saleRollupProverVK));
 
 console.time('compile (TokeniZkPresale)');
 const tokeniZkPresaleVK = (await TokeniZkPresale.compile()).verificationKey;
 TokeniZkFactory.presaleContractVk = tokeniZkPresaleVK;
+console.log('TokeniZkFactory.presaleContractVk: ' + TokeniZkFactory.presaleContractVk.hash);
 console.timeEnd('compile (TokeniZkPresale)');
+
+fs.writeFileSync('./deploy/verification-keys/TokeniZkPresale-VK.json', JSON.stringify(tokeniZkPresaleVK));
+
 
 console.time('compile (TokeniZkFairSale)');
 const tokeniZkFairsaleVK = (await TokeniZkFairSale.compile()).verificationKey;
 TokeniZkFactory.fairSaleContractVk = tokeniZkFairsaleVK;
 console.timeEnd('compile (TokeniZkFairSale)');
 
+fs.writeFileSync('./deploy/verification-keys/TokeniZkFairSale-VK.json', JSON.stringify(tokeniZkFairsaleVK));
+
 console.time('compile (TokeniZkPrivateSale)');
 const tokeniZkPrivatesaleVK = (await TokeniZkPrivateSale.compile()).verificationKey;
 TokeniZkFactory.privateSaleContractVk = tokeniZkPrivatesaleVK;
 console.timeEnd('compile (TokeniZkPrivateSale)');
+
+fs.writeFileSync('./deploy/verification-keys/TokeniZkPrivateSale-VK.json', JSON.stringify(tokeniZkPrivatesaleVK));
 
 console.time('compile (RedeemAccount)');
 await RedeemAccount.compile();
@@ -129,11 +149,15 @@ const redeemAccountVk = (await RedeemAccount.compile()).verificationKey;
 TokeniZkFactory.redeemAccountVk = redeemAccountVk;
 console.timeEnd('compile (RedeemAccount)');
 
+fs.writeFileSync('./deploy/verification-keys/RedeemAccount-VK.json', JSON.stringify(redeemAccountVk));
+
 console.time('compile (PresaleMinaFundHolder)');
 await PresaleMinaFundHolder.compile();
 const presaleMinaFundHolderVK = (await PresaleMinaFundHolder.compile()).verificationKey;
 TokeniZkFactory.presaleMinaFundHolderVk = presaleMinaFundHolderVK;
 console.timeEnd('compile (PresaleMinaFundHolder)');
+
+fs.writeFileSync('./deploy/verification-keys/PresaleMinaFundHolder-VK.json', JSON.stringify(presaleMinaFundHolderVK));
 
 console.log('-------------------------------------------');
 // log vk hash
@@ -165,8 +189,37 @@ const lauchpadPlatformParams0 = new LauchpadPlatformParams({
     privateSaleCreationFee: UInt64.from(1 * (10 ** 9)),
     privateSaleServiceFeeRate: UInt64.from(10 * (10 ** 9)),
 
+    
+    airdropVk: TokeniZkFactory.airdropVk.hash,
+    airdropCreationFee: UInt64.from(10 * (10 ** 9)),
+
     redeemAccountVk: TokeniZkFactory.redeemAccountVk.hash,
 });
+console.log('lauchpadPlatformParams0: ' + JSON.stringify(lauchpadPlatformParams0));
+fs.writeFileSync('./deploy/tokenizk-factory-keypair-params.json',
+    JSON.stringify({
+        key: tokenFactoryZkAppKey.toBase58(),
+        value: tokenFactoryZkAppAddress.toBase58(),
+        lauchpadPlatformParams: {
+            basicTokenVk: TokeniZkFactory.basicTokenVk.hash, // TODO 
+            basicTokenCreationFee: 1 * (10 ** 9),
+
+            presaleContractVk: TokeniZkFactory.presaleContractVk.hash, // TODO 
+            presaleCreationFee: 1 * (10 ** 9),
+            presaleServiceFeeRate: 10 * (10 ** 9),
+            presaleMinaFundHolderVk: TokeniZkFactory.presaleMinaFundHolderVk.hash, // TODO 
+
+            fairSaleContractVk: TokeniZkFactory.fairSaleContractVk.hash,// TODO 
+            fairSaleCreationFee: 1 * (10 ** 9),
+            fairSaleServiceFeeRate: 10 * (10 ** 9),
+
+            privateSaleContractVk: TokeniZkFactory.privateSaleContractVk.hash, // TODO 
+            privateSaleCreationFee: 1 * (10 ** 9),
+            privateSaleServiceFeeRate: 10 * (10 ** 9),
+
+            redeemAccountVk: TokeniZkFactory.redeemAccountVk.hash,
+        }
+    }))
 
 tx = await Mina.transaction(
     {
