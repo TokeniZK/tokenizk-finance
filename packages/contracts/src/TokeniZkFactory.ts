@@ -273,7 +273,7 @@ export class TokeniZkFactory extends SmartContract {
         zkapp.account.permissions.set({
             ...Permissions.default(),
             editState: Permissions.proofOrSignature(),
-            // access: Permissions.proofOrSignature(),
+            access: Permissions.proofOrSignature(),
         });
         zkapp.account.verificationKey.set(basicTokenVk);
         AccountUpdate.setValue(zkapp.body.update.appState[0], totalSupply);//totalSupply
