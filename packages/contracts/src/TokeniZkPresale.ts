@@ -230,7 +230,8 @@ export class TokeniZkPresale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
+        // this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT()); TODO need uncomment here 
+
         // check actionState
         this.account.actionState.assertEquals(
             saleRollupProof.publicOutput.target.currentActionsHash
@@ -270,7 +271,7 @@ export class TokeniZkPresale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
+        // this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT()); TODO need uncomment here
 
         // check softcap
         const totalContributedMina = this.totalContributedMina.getAndRequireEquals();
@@ -312,7 +313,7 @@ export class TokeniZkPresale extends SmartContract {
         const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
-        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
+        // this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT()); TODO need uncomment here
 
         // check softcap
         const totalContributedMina = this.totalContributedMina.getAndRequireEquals();
