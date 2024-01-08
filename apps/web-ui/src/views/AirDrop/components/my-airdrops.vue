@@ -1,20 +1,190 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
-import { getMyAirdropListAPI } from '@/apis/airdropAll'
-import { Search } from '@element-plus/icons-vue'
-import { nanoid } from 'nanoid'
-import { Minus, Plus } from '@element-plus/icons-vue'
-import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
+import { onMounted, reactive, computed, type ComputedRef, watch } from 'vue'
+import { useStatusStore } from "@/stores"
+import type { AirdropDto } from '@tokenizk/types/src/airdrop-dto'
+import { useRoute, useRouter } from 'vue-router'
+import AirdropBlock from '@/components/airdrop-block.vue'
 
-const MyAirdropList = ref([])
-const getMyAirdropList = async () => {
-  const res = await getMyAirdropListAPI()
-  MyAirdropList.value = res.data
+const route = useRoute();
+const type = route.query.type;
+
+const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
+
+const router = useRouter();
+watch(() => appState.connectedWallet58, async (value, oldValue) => {
+  if (!appState.connectedWallet58) {
+    router.replace('/sales?type=' + type);
+  }
+})
+
+type AirdropDtoExtend = AirdropDto & { projectStatus: string }
+type AirdropUserDtoExtend = {
+  airdropDto: AirdropDtoExtend,
+  // userContribute: {
+  //   txHash: string;
+  //   contributeTimestamp: string;
+  //   contributedCurrencyAmount: string;
+  // }
 }
 
-// 组件挂载完成后执行的函数 
-onMounted(() => {
-  getMyAirdropList()
+let fetchResult: AirdropUserDtoExtend[] = [];
+
+const myAirdropsList = reactive({ airdropList: fetchResult });
+
+// 转换项目的状态
+// const transformProjectStatus = (itmes: AirdropDtoExtend[]) => {
+//   let currentTime = new Date().getTime();
+
+//   itmes.forEach(item => {
+//     if (item.airdropDto.startTimestamp > currentTime) {
+//       item.airdropDto.projectStatus = 'Upcoming'
+//     } else if (item.airdropDto.startTimestamp <= currentTime && item.airdropDto.endTimestamp > currentTime) {
+//       item.airdropDto.projectStatus = 'Ongoing'
+//     } else if (item.airdropDto.endTimestamp < currentTime) {
+//       item.airdropDto.projectStatus = 'Ended'
+//     } else {
+//       item.airdropDto.projectStatus = 'All Status'
+//     }
+//   });
+// }
+
+// 组件挂载完成后执行的函数  请求数据  
+onMounted(async () => {
+  // myContributionsList.saleList = await querySaleUserContribution(type, appState.connectedWallet58!);
+  // 临时数据 本尊
+  fetchResult = [{
+    airdropDto: {
+      id: 0,
+      type: 1,
+      txHash: '0x123456789',
+      status: 1,
+      tokenName: 'OZ',
+      tokenAddress: 'B62xxxt',
+      tokenSymbol: 'TZ',
+      airdropName: 'Oggy Inu 2.0',
+      airdropAddress: 'B62xxs',
+      star: 4,
+      totalAirdropSupply: 20,
+      currency: 'Mina',
+      feeRate: '5%',
+      whitelistTreeRoot: '45678ityuioghjk',
+      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
+      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+      projectStatus: '',
+      cliffTime: 300,
+      cliffAmountRate: 3,
+      vestingPeriod: 4,
+      vestingIncrement: 5,
+      teamName: 'Tokenizk Team',
+      logoUrl: '/src/assets/images/1.png',
+      website: 'https://tokenizk.finance/',
+      facebook: 'https://tokenizk.finance/',
+      github: 'https://tokenizk.finance/',
+      twitter: 'https://tokenizk.finance/',
+      telegram: 'https://tokenizk.finance/',
+      discord: 'https://tokenizk.finance/',
+      reddit: 'https://tokenizk.finance/',
+      description: 'The Launchpad focusing on ZK-Token for Everyone!',
+      updatedAt: new Date().getTime(),
+      createdAt: new Date().getTime(),
+    },
+    // userContribute: {
+    //   txHash: '',
+    //   contributeTimestamp: '',
+    //   contributedCurrencyAmount: ''
+    // }
+  },
+  {
+    airdropDto: {
+      id: 0,
+      type: 1,
+      txHash: '0x123456789',
+      status: 1,
+      tokenName: 'OZ',
+      tokenAddress: 'B62xxxt',
+      tokenSymbol: 'TZ',
+      airdropName: 'Oggy Inu 2.0',
+      airdropAddress: 'B62xxs',
+      star: 4,
+      totalAirdropSupply: 20,
+      currency: 'Mina',
+      feeRate: '5%',
+      whitelistTreeRoot: '45678ityuioghjk',
+      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
+      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+      projectStatus: '',
+      cliffTime: 300,
+      cliffAmountRate: 3,
+      vestingPeriod: 4,
+      vestingIncrement: 5,
+      teamName: 'Tokenizk Team',
+      logoUrl: '/src/assets/images/1.png',
+      website: 'https://tokenizk.finance/',
+      facebook: 'https://tokenizk.finance/',
+      github: 'https://tokenizk.finance/',
+      twitter: 'https://tokenizk.finance/',
+      telegram: 'https://tokenizk.finance/',
+      discord: 'https://tokenizk.finance/',
+      reddit: 'https://tokenizk.finance/',
+      description: 'The Launchpad focusing on ZK-Token for Everyone!',
+      updatedAt: new Date().getTime(),
+      createdAt: new Date().getTime(),
+    },
+    // userContribute: {
+    //   txHash: '',
+    //   contributeTimestamp: '',
+    //   contributedCurrencyAmount: ''
+    // }
+  },
+  {
+    airdropDto: {
+      id: 0,
+      type: 1,
+      txHash: '0x123456789',
+      status: 1,
+      tokenName: 'OZ',
+      tokenAddress: 'B62xxxt',
+      tokenSymbol: 'TZ',
+      airdropName: 'Oggy Inu 2.0',
+      airdropAddress: 'B62xxs',
+      star: 4,
+      totalAirdropSupply: 20,
+      currency: 'Mina',
+      feeRate: '5%',
+      whitelistTreeRoot: '45678ityuioghjk',
+      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
+      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+      projectStatus: '',
+      cliffTime: 300,
+      cliffAmountRate: 3,
+      vestingPeriod: 4,
+      vestingIncrement: 5,
+      teamName: 'Tokenizk Team',
+      logoUrl: '/src/assets/images/1.png',
+      website: 'https://tokenizk.finance/',
+      facebook: 'https://tokenizk.finance/',
+      github: 'https://tokenizk.finance/',
+      twitter: 'https://tokenizk.finance/',
+      telegram: 'https://tokenizk.finance/',
+      discord: 'https://tokenizk.finance/',
+      reddit: 'https://tokenizk.finance/',
+      description: 'The Launchpad focusing on ZK-Token for Everyone!',
+      updatedAt: new Date().getTime(),
+      createdAt: new Date().getTime(),
+    },
+    // userContribute: {
+    //   txHash: '',
+    //   contributeTimestamp: '',
+    //   contributedCurrencyAmount: ''
+    // }
+  }];
+
+  // transformProjectStatus(fetchResult);
+
+  myAirdropsList.airdropList = fetchResult;
 
   // 进入当前组件都会回到顶部
   window.scrollTo({
@@ -23,178 +193,6 @@ onMounted(() => {
   });
 
 })
-
-// 临时数据 本尊
-const fetchResult = [
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/1.png',
-    name: 'Favoom ',
-    tokenName: 'FM',
-    teamName: 'Yoga',
-    participants: 100,
-    star: 4,
-    saleAddress: 'B62',
-    softCap: 21,
-    hardCap: 60,
-    totalContributedMina: 40,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '10%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'BabyAmple ',
-    tokenName: 'BA',
-    teamName: 'walking',
-    participants: 200,
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 10,
-    hardCap: 60,
-    totalContributedMina: 20,
-    progressStart: '0',
-    progressEnd: '60',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1703082115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/3.png',
-    name: 'Versa',
-    tokenName: 'VA',
-    participants: 300,
-    teamName: 'cherry',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 30,
-    hardCap: 45,
-    totalContributedMina: 60,
-    progressStart: '0',
-    progressEnd: '45',
-    liquidity: '53%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/3.png',
-    name: 'FastAI',
-    tokenName: 'BA',
-    participants: 400,
-    teamName: 'Tang',
-    star: 4,
-    saleAddress: 'B62',
-    softCap: 10,
-    hardCap: 55,
-    totalContributedMina: 30,
-    progressStart: '10',
-    progressEnd: '50',
-    liquidity: '40%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wrapped',
-    tokenName: 'VA',
-    participants: 500,
-    teamName: 'mina',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 9,
-    hardCap: 50,
-    totalContributedMina: 50,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1702083115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    tokenName: 'WK',
-    participants: 100,
-    teamName: 'Yoga',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 10,
-    hardCap: 50,
-    totalContributedMina: 23,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '54%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083115572,
-    presaleEndTime: 1706093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-];
-
-// 过滤器
-const sortBy = ref('')
-
-// sortBy 下拉菜单 渲染所需的数据
-const sortByOptions = [
-  {
-    value: '0',
-    label: 'No Sort',
-  },
-  {
-    value: '1',
-    label: 'Start time',
-  },
-  {
-    value: '2',
-    label: 'End time',
-  },
-]
-
-// 临时数据 副本
-let renderSaleBlock = fetchResult;
-let presaleProjects = reactive({ saleList: renderSaleBlock });
-
-
-
-// 根据 用户选择 sortBy的选项 sort排序 由近到远
-const sortOption = (option: string) => {
-  // sort
-  if (sortBy.value == '1') {
-    renderSaleBlock.sort((a, b) => {
-      return Number(b.presaleStartTime) - Number(a.presaleStartTime);
-    });
-  } else if (sortBy.value == '2') {
-    renderSaleBlock.sort((a, b) => {
-      return Number(b.presaleEndTime) - Number(a.presaleEndTime);
-    });
-  }
-  renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock))
-  presaleProjects.saleList = renderSaleBlock;
-}
-
 
 </script>
 
@@ -210,66 +208,13 @@ const sortOption = (option: string) => {
       <el-row class="row-bg" justify="center">
         <el-col :span="20">
 
-          <ul class="launchpads-ul">
+          <ul class="my-airdrop-ul">
 
-            <li v-for="item in presaleProjects.saleList" :key="item.id">
-
-              <div class="launchpads-box">
-
-                <!-- photo -->
-                <el-row class="thumb">
-                  <router-link to="/airdrop-datails">
-                    <el-image style="width: 349px; height: 130px;" :src="item.logoUrl" :alt="item.name" loading="lazy" />
-                  </router-link>
-                </el-row>
-
-                <!-- 项目描述 -->
-                <el-row class="launchpads-content">
-
-                  <el-col :span="24">
-
-                    <el-row class="row-bg" justify="space-between">
-                      <el-col :span="24">
-                        <h3><a href="#">{{ item.name }}</a></h3>
-                      </el-col>
-                    </el-row>
-
-                    <el-row class="row-bg soft-hard-cap" justify="space-between">
-                      <el-col :span="10">Token</el-col>
-                      <el-col :span="8"></el-col>
-                      <el-col :span="6">{{ item.tokenName }}</el-col>
-                    </el-row>
-
-                    <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10">Total Token:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6"> {{ item.totalContributedMina }}</el-col>
-                    </el-row>
-
-                    <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10">Participants:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6">{{ item.participants }}</el-col>
-                    </el-row>
-
-                    <el-row class="row-bg" justify="space-between">
-                      <el-col :span="6">Begin at :</el-col>
-                      <el-col :span="14"> {{ new Date(item.presaleStartTime).toISOString() }}</el-col>
-                    </el-row>
-
-                    <el-row class="row-bg" justify="end">
-                      <el-button type="primary" round class="statusColor"> View Airdrop</el-button>
-                    </el-row>
-
-                  </el-col>
-
-                </el-row>
-
-              </div>
-
-
+            <li v-for="item in myAirdropsList.airdropList" :key="item.airdropDto.id">
+              <AirdropBlock :airdropDto="item" />
             </li>
           </ul>
+
         </el-col>
       </el-row>
 
@@ -288,48 +233,16 @@ const sortOption = (option: string) => {
     background-color: var(--el-fill-color-blank);
   }
 
-  .launchpads-ul {
+  .my-airdrop-ul {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-
-    li {
-      margin-top: 0px;
-      margin-bottom: 30px;
-      width: 349px;
-      height: 400px;
-      border-radius: 15px;
-
-      .launchpads-box {
-        width: 100%;
-        height: 100%;
-        background-color: #fff;
-        border-radius: 15px;
-
-        .thumb {
-          width: 349px;
-          height: 160px;
-          overflow: hidden;
-        }
-
-        .launchpads-content {
-          width: 100%;
-          padding: 12px 20px;
-
-          .demo-progress .el-progress--line {
-            margin-bottom: 15px;
-            width: 300px;
-          }
-
-        }
-
-      }
-    }
   }
+
 }
 
 .el-row {
-  margin-bottom: 12px;
+  margin-bottom: 5px;
 }
 </style>

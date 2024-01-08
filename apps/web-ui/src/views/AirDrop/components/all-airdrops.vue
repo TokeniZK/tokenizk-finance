@@ -1,229 +1,24 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { getAllAirdropListAPI } from '@/apis/airdropAll'
 import { Search } from '@element-plus/icons-vue'
-import { nanoid } from 'nanoid'
-import { Minus, Plus } from '@element-plus/icons-vue'
-import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
+import { type AirdropDto } from '@tokenizk/types/src/airdrop-dto'
+import { type AirdropReq } from '@tokenizk/types/src/airdrop-req'
+import AirdropBlock from '@/components/airdrop-block.vue'
+import { useRoute, useRouter } from 'vue-router';
 
-const allAirdropList = ref([])
-const getAllAirdropList = async () => {
-  const res = await getAllAirdropListAPI()
-  allAirdropList.value = res.data
-}
+let route = useRoute();
+let type = ref(route.query.type as any as number);
 
-// 组件挂载完成后执行的函数 
-onMounted(() => {
-  getAllAirdropList()
+const router = useRouter();
+router.beforeEach((to, from, next) => {
+  const query = to.query;
+  type.value = query.type as any as number;
+  next();
+});
 
-  // 进入当前组件都会回到顶部
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth' // 平滑滚动到顶部  
-  });
+type AirdropDtoExtend = AirdropDto & { projectStatus: string }
 
-})
-
-// 临时数据 本尊
-const fetchResult = [
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/1.png',
-    name: 'Favoom ',
-    tokenName: 'FM',
-    teamName: 'Yoga',
-    participants: 100,
-    star: 4,
-    saleAddress: 'B62',
-    softCap: 21,
-    hardCap: 60,
-    totalContributedMina: 40,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '10%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'BabyAmple ',
-    tokenName: 'BA',
-    teamName: 'walking',
-    participants: 200,
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 10,
-    hardCap: 60,
-    totalContributedMina: 20,
-    progressStart: '0',
-    progressEnd: '60',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1703082115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/3.png',
-    name: 'Versa',
-    tokenName: 'VA',
-    participants: 300,
-    teamName: 'cherry',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 30,
-    hardCap: 45,
-    totalContributedMina: 60,
-    progressStart: '0',
-    progressEnd: '45',
-    liquidity: '53%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/3.png',
-    name: 'FastAI',
-    tokenName: 'BA',
-    participants: 400,
-    teamName: 'Tang',
-    star: 4,
-    saleAddress: 'B62',
-    softCap: 10,
-    hardCap: 55,
-    totalContributedMina: 30,
-    progressStart: '10',
-    progressEnd: '50',
-    liquidity: '40%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wrapped',
-    tokenName: 'VA',
-    participants: 500,
-    teamName: 'mina',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 9,
-    hardCap: 50,
-    totalContributedMina: 50,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1702083115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/1.png',
-    name: 'THREADS V2',
-    tokenName: 'VA',
-    participants: 200,
-    teamName: 'BTC',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 12,
-    hardCap: 50,
-    totalContributedMina: 10,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Oggy Inu 2.0',
-    tokenName: 'OI',
-    participants: 100,
-    teamName: 'Yoga',
-    star: 5,
-    saleAddress: 'B62',
-    softCap: 11,
-    hardCap: 50,
-    totalContributedMina: 13,
-    progressStart: '23',
-    progressEnd: '50',
-    liquidity: '15%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    tokenName: 'WK',
-    participants: 200,
-    teamName: 'Yoga',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 20,
-    hardCap: 50,
-    totalContributedMina: 42,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '23%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083145572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    tokenName: 'WK',
-    participants: 100,
-    teamName: 'Yoga',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: 10,
-    hardCap: 50,
-    totalContributedMina: 23,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '54%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083115572,
-    presaleEndTime: 1706093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-  },
-];
-
-
-// 获取 用户输入的关键字 进行搜索
-let keyWord = ref('')
-const getSearchProjects = async () => {
-  let searchRes = getSearchProjectAPI(keyWord)
-  allAirdropList.value = searchRes.data
-}
+let fetchResult: AirdropDtoExtend[] = [];
 
 // 过滤器
 const filterBy = ref('')
@@ -246,11 +41,7 @@ const filterByOptions = [
   {
     value: '3',
     label: 'Ended',
-  },
-  // {
-  //   value: '4',
-  //   label: 'Canceled',
-  // },
+  }
 ]
 
 // sortBy 下拉菜单 渲染所需的数据
@@ -266,117 +57,235 @@ const sortByOptions = [
   {
     value: '2',
     label: 'End time',
-  },
-  // {
-  //   value: '5',
-  //   label: 'LP percent',
-  // },
+  }
 ]
 
 // 每次点击 搜索按钮 时，重置 过滤选项 和 排序选项
 const searchProjects = () => {
-  filterBy.value = '0'
-  sortBy.value = '0'
-}
+  if (keyWord.value) {
+    filterBy.value = '0'
+    sortBy.value = '0'
 
-// 判断项目的状态
-let currentTime = new Date().getTime();
-fetchResult.forEach(item => {
-  if (item.presaleStartTime > currentTime) {
-    item.projectStatus = 'Upcoming'
-  } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-    item.projectStatus = 'Ongoing'
-  } else if (item.presaleEndTime < currentTime) {
-    item.projectStatus = 'Ended'
-  } else {
-    item.projectStatus = 'All Status'
+    // trigger api
+    getSearchProjects();
   }
-});
-
-// sort   
-if (sortBy.value == '1') {
-  fetchResult.sort((a, b) => {
-    return Number(b.presaleStartTime) - Number(a.presaleStartTime);
-  });
-} else if (sortBy.value == '2') {
-  fetchResult.sort((a, b) => {
-    return Number(b.presaleEndTime) - Number(a.presaleEndTime);
-  });
 }
 
-// 临时数据 副本
-let renderSaleBlock = fetchResult;
-let presaleProjects = reactive({ saleList: renderSaleBlock });
-
-// 根据 用户选择 filterBy的选项  过滤数据
-const filterOption = (option: string) => {
-
+// 转换项目的状态
+const transformProjectStatus = (itmes: AirdropDtoExtend[]) => {
   let currentTime = new Date().getTime();
-  fetchResult.forEach(item => {
-    if (item.presaleStartTime > currentTime) {
+
+  itmes.forEach(item => {
+    if (item.startTimestamp > currentTime) {
       item.projectStatus = 'Upcoming'
-    } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
+    } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
       item.projectStatus = 'Ongoing'
-    } else if (item.presaleEndTime < currentTime) {
+    } else if (item.endTimestamp < currentTime) {
       item.projectStatus = 'Ended'
     } else {
       item.projectStatus = 'All Status'
     }
   });
+}
 
+const sortProjects = (sortByValue: string, items: AirdropDtoExtend[]) => {
+  if (sortByValue == '1') {
+    items.sort((a, b) => {
+      return Number(b.startTimestamp) - Number(a.startTimestamp);
+    });
+  } else if (sortByValue == '2') {
+    items.sort((a, b) => {
+      return Number(b.endTimestamp) - Number(a.endTimestamp);
+    });
+  }
 
-  if (option === '3') {
+  return items;
+}
+
+let renderAirdropBlock: AirdropDtoExtend[] = [];
+// 临时数据
+let airdropProjects = reactive({ airdropList: renderAirdropBlock });
+
+// 获取 用户输入的关键字 进行搜索
+let keyWord = ref('')
+const getSearchProjects = async () => {
+
+  const airdropReq = {
+    type: type.value,
+    airdropName: keyWord.value
+  } as any as AirdropReq;
+
+  // 临时数据 本尊
+  fetchResult = [{
+    id: 0,
+    type: 1,
+    txHash: '0x333123456789',
+    status: 1,
+    tokenName: 'TxZ',
+    tokenAddress: 'B62xxxt',
+    tokenSymbol: 'TxZ',
+    airdropName: 'ZHI Inu 2.0',
+    airdropAddress: 'B62xxs',
+    star: 4,
+    totalAirdropSupply: 20,
+    currency: 'Mina',
+    feeRate: '5%',
+    whitelistTreeRoot: '45678ityuioghjk',
+    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+    startTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
+    endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+    projectStatus: '',
+    cliffTime: 3,
+    cliffAmountRate: 3,
+    vestingPeriod: 3,
+    vestingIncrement: 10,
+    teamName: 'Zhi Tokenizk Team',
+    logoUrl: '/src/assets/images/1.png',
+    website: 'https://tokenizk.finance/',
+    facebook: 'https://tokenizk.finance/',
+    github: 'https://tokenizk.finance/',
+    twitter: 'https://tokenizk.finance/',
+    telegram: 'https://tokenizk.finance/',
+    discord: 'https://tokenizk.finance/',
+    reddit: 'https://tokenizk.finance/',
+    description: 'The Launchpad focusing on ZK-Token for Everyone!',
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime(),
+  },
+  {
+    id: 0,
+    type: 1,
+    txHash: '0x123456789',
+    status: 1,
+    tokenName: 'OZ',
+    tokenAddress: 'B62xxxt',
+    tokenSymbol: 'TZ',
+    airdropName: 'Oggy Inu 2.0',
+    airdropAddress: 'B62xxs',
+    star: 4,
+    totalAirdropSupply: 20,
+    currency: 'Mina',
+    feeRate: '5%',
+    whitelistTreeRoot: '45678ityuioghjk',
+    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+    startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
+    endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+    projectStatus: '',
+    cliffTime: 300,
+    cliffAmountRate: 3,
+    vestingPeriod: 4,
+    vestingIncrement: 5,
+    teamName: 'Tokenizk Team',
+    logoUrl: '/src/assets/images/1.png',
+    website: 'https://tokenizk.finance/',
+    facebook: 'https://tokenizk.finance/',
+    github: 'https://tokenizk.finance/',
+    twitter: 'https://tokenizk.finance/',
+    telegram: 'https://tokenizk.finance/',
+    discord: 'https://tokenizk.finance/',
+    reddit: 'https://tokenizk.finance/',
+    description: 'The Launchpad focusing on ZK-Token for Everyone!',
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime(),
+  },
+  {
+    id: 0,
+    type: 1,
+    txHash: '0x123456789',
+    status: 1,
+    tokenName: 'XZ',
+    tokenAddress: 'B62xxxt',
+    tokenSymbol: 'TZ',
+    airdropName: 'XX Inu 2.0',
+    airdropAddress: 'B62xxs',
+    star: 4,
+    totalAirdropSupply: 20,
+    currency: 'Mina',
+    feeRate: '5%',
+    whitelistTreeRoot: '45678ityuioghjk',
+    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+    startTimestamp: new Date().getTime() - 10 * 24 * 60 * 60 * 1000,
+    endTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
+    projectStatus: '',
+    cliffTime: 300,
+    cliffAmountRate: 3,
+    vestingPeriod: 12,
+    vestingIncrement: 10,
+    teamName: 'Tokenizk Team',
+    logoUrl: '/src/assets/images/1.png',
+    website: 'https://tokenizk.finance/',
+    facebook: 'https://tokenizk.finance/',
+    github: 'https://tokenizk.finance/',
+    twitter: 'https://tokenizk.finance/',
+    telegram: 'https://tokenizk.finance/',
+    discord: 'https://tokenizk.finance/',
+    reddit: 'https://tokenizk.finance/',
+    description: 'The Launchpad focusing on ZK-Token for Everyone!',
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime(),
+  }];
+
+  // 转换项目状态
+  transformProjectStatus(fetchResult);
+  // sort 相等运算符会转类型、 最后一项没使用Number做转换
+  sortProjects(sortByOptions[0].value, fetchResult);
+
+  renderAirdropBlock = fetchResult;
+  airdropProjects.airdropList = renderAirdropBlock
+}
+
+// 根据 用户选择 filterBy的选项  过滤数据
+const triggerFilterProjects = () => {
+  // 计算项目状态
+  transformProjectStatus(fetchResult);
+
+  if (filterBy.value === '4') {
     // TODO 
     fetchResult.filter(item => {
       return item.projectStatus === 'All Status'
     })
 
-  } else if (option === '0') {
-    renderSaleBlock = fetchResult
+  } else if (filterBy.value === '0') {
+    renderAirdropBlock = fetchResult
   } else {
-    renderSaleBlock = fetchResult.filter(item => {
-      if (option == '1') {
+    renderAirdropBlock = fetchResult.filter(item => {
+      if (filterBy.value == '1') {
         return item.projectStatus === 'Upcoming'
-      } else if (option == '2') {
+      } else if (filterBy.value == '2') {
         return item.projectStatus === 'Ongoing'
-      } else if (option == '3') {
+      } else if (filterBy.value == '3') {
         return item.projectStatus === 'Ended'
       }
     });
-
-    // sort
-    if (sortBy.value == '1') {
-      renderSaleBlock.sort((a, b) => {
-        return Number(b.presaleStartTime) - Number(a.presaleStartTime);
-      });
-    } else if (sortBy.value == '2') {
-      renderSaleBlock.sort((a, b) => {
-        return Number(b.presaleEndTime) - Number(a.presaleEndTime);
-      });
-    }
-
-    presaleProjects.saleList = renderSaleBlock;
-
   }
 
-}
+  // sort
+  sortProjects(sortBy.value, renderAirdropBlock);
 
+  airdropProjects.airdropList = renderAirdropBlock;
+}
 
 // 根据 用户选择 sortBy的选项 sort排序 由近到远
-const sortOption = (option: string) => {
+const triggerSortProjects = () => {
   // sort
-  if (sortBy.value == '1') {
-    renderSaleBlock.sort((a, b) => {
-      return Number(b.presaleStartTime) - Number(a.presaleStartTime);
-    });
-  } else if (sortBy.value == '2') {
-    renderSaleBlock.sort((a, b) => {
-      return Number(b.presaleEndTime) - Number(a.presaleEndTime);
-    });
-  }
-  renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock))
-  presaleProjects.saleList = renderSaleBlock;
+  sortProjects(sortBy.value, renderAirdropBlock);
+
+  renderAirdropBlock = JSON.parse(JSON.stringify(renderAirdropBlock));
+  airdropProjects.airdropList = renderAirdropBlock;
 }
+
+
+// 组件挂载完成后执行的函数 
+onMounted(() => {
+  getSearchProjects();
+
+  // 进入当前组件都会回到顶部
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 平滑滚动到顶部  
+  });
+
+})
 
 
 </script>
@@ -407,7 +316,7 @@ const sortOption = (option: string) => {
           <div>Filter By</div>
           <el-select v-model="filterBy" class="m-2 filterBy" placeholer="Select" size="large">
             <el-option v-for="item in filterByOptions" :key="item.value" :label="item.label" :value="item.value"
-              @click="filterOption(item.value)" />
+              @click="triggerFilterProjects()" />
           </el-select>
         </el-col>
 
@@ -415,7 +324,7 @@ const sortOption = (option: string) => {
           <div>Sort By</div>
           <el-select v-model="sortBy" class="m-2 sortBy" placeholder="Select" size="large">
             <el-option v-for="item in sortByOptions" :key="item.value" :label="item.label" :value="item.value"
-              @click="sortOption(item.value)" />
+              @click="triggerSortProjects()" />
           </el-select>
         </el-col>
 
@@ -425,66 +334,14 @@ const sortOption = (option: string) => {
       <el-row class="row-bg" justify="center">
         <el-col :span="20">
 
-          <ul class="launchpads-ul">
+          <ul class="airdrops-ul">
+            <li v-for="item in airdropProjects.airdropList" :key="item.id">
 
-            <li v-for="item in presaleProjects.saleList" :key="item.id">
-
-              <div class="launchpads-box">
-
-                <!-- photo -->
-                <el-row class="thumb">
-                  <router-link to="/airdrop-datails">
-                    <el-image style="width: 349px; height: 130px;" :src="item.logoUrl" :alt="item.name" loading="lazy" />
-                  </router-link>
-                </el-row>
-
-                <!-- 项目描述 -->
-                <el-row class="launchpads-content">
-
-                  <el-col :span="24">
-
-                    <el-row class="row-bg" justify="space-between">
-                      <el-col :span="24">
-                        <h3><a href="#">{{ item.name }}</a></h3>
-                      </el-col>
-                    </el-row>
-
-                    <el-row class="row-bg soft-hard-cap" justify="space-between">
-                      <el-col :span="10">Token</el-col>
-                      <el-col :span="8"></el-col>
-                      <el-col :span="6">{{ item.tokenName }}</el-col>
-                    </el-row>
-
-                    <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10">Total Token:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6"> {{ item.totalContributedMina }}</el-col>
-                    </el-row>
-
-                    <el-row class="row-bg lockup-time" justify="space-between">
-                      <el-col :span="10">Participants:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6">{{ item.participants }}</el-col>
-                    </el-row>
-
-                    <el-row class="row-bg" justify="space-between">
-                      <el-col :span="6">Begin at :</el-col>
-                      <el-col :span="14"> {{ new Date(item.presaleStartTime).toISOString() }}</el-col>
-                    </el-row>
-
-                    <el-row class="row-bg" justify="end">
-                      <el-button type="primary" round class="statusColor"> View Airdrop</el-button>
-                    </el-row>
-
-                  </el-col>
-
-                </el-row>
-
-              </div>
-
+              <AirdropBlock :airdropDto="item" />
 
             </li>
           </ul>
+
         </el-col>
       </el-row>
 
@@ -503,48 +360,15 @@ const sortOption = (option: string) => {
     background-color: var(--el-fill-color-blank);
   }
 
-  .launchpads-ul {
+  .airdrops-ul {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-
-    li {
-      margin-top: 0px;
-      margin-bottom: 30px;
-      width: 349px;
-      height: 400px;
-      border-radius: 15px;
-
-      .launchpads-box {
-        width: 100%;
-        height: 100%;
-        background-color: #fff;
-        border-radius: 15px;
-
-        .thumb {
-          width: 349px;
-          height: 160px;
-          overflow: hidden;
-        }
-
-        .launchpads-content {
-          width: 100%;
-          padding: 12px 20px;
-
-          .demo-progress .el-progress--line {
-            margin-bottom: 15px;
-            width: 300px;
-          }
-
-        }
-
-      }
-    }
   }
 }
 
 .el-row {
-  margin-bottom: 12px;
+  margin-bottom: 5px;
 }
 </style>
