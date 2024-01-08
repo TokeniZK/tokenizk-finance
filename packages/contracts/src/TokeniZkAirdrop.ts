@@ -193,11 +193,16 @@ export class TokeniZkAirdrop extends SmartContract {
         oldNullWitness: UserNullifierMerkleWitness) {
 
         // check if airdrop params is aligned with the existing ones
+        const existingHash = this.airdropParamsHash.getAndRequireEquals();
         const hash0 = airdropParams.hash();
-        this.airdropParamsHash.getAndRequireEquals().assertEquals(hash0);
+        Provable.log('existingHash: ', existingHash);
+        Provable.log('airdropParams.hash(): ', hash0);
+        existingHash.assertEquals(hash0);
 
         // check startTime
-        this.network.timestamp.assertBetween(airdropParams.startTime, UInt64.MAXINT());
+        Provable.log('airdropParams.startTime: ', airdropParams.startTime);
+        Provable.log('this.network.timestamp: ', this.network.timestamp.get());
+        this.network.timestamp.requireBetween(airdropParams.startTime, UInt64.MAXINT());
 
         // check whitelist
         membershipMerkleWitness.calculateRoot(Poseidon.hash(this.sender.toFields()), leafIndex)
@@ -212,7 +217,7 @@ export class TokeniZkAirdrop extends SmartContract {
             claimerAddress: this.sender,
             tokenAmount
         });
-        const redeemAccount = new RedeemAccount(this.sender, TokenId.derive(TokeniZkFactory.tokeniZkFactoryAddress));// MINA account
+        const redeemAccount = new RedeemAccount(this.sender);// MINA account
         redeemAccount.updateState(
             airdropClaim.hash(),
             lowLeafWitness,

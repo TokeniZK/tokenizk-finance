@@ -278,7 +278,7 @@ tx = await Mina.transaction(
         memo: 'Create Redeem Account',
     },
     () => {
-        AccountUpdate.fundNewAccount(feePayer);
+        // AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.createRedeemAccount(lauchpadPlatformParams, redeemAccountZkAppAddress, TokeniZkFactory.redeemAccountVk);
     }
 );

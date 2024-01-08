@@ -360,7 +360,7 @@ export class TokeniZkFactory extends SmartContract {
         this.emitEvent('createAirdrop', new CreateAirdropEvent({
             basicTokenAddress: tokenAddr,
             airdropContractAddress: airdropAddress,
-            fee: lauchpadPlatformParams.fairSaleCreationFee,
+            fee: lauchpadPlatformParams.airdropCreationFee,
             airdropParams
         }));
     }
@@ -423,23 +423,26 @@ export class TokeniZkFactory extends SmartContract {
         lauchpadPlatformParams.hash().assertEquals(lauchpadPlatformParamsHash);
         lauchpadPlatformParams.redeemAccountVk.assertEquals(redeemAccountVk.hash);
 
+        /*
         let tokenId = this.token.id;
         const zkapp = Experimental.createChildAccountUpdate(
             this.self,
             redeemAccountAddress,
             tokenId
-        );        
+        );
         zkapp.account.isNew.assertEquals(Bool(true));
+        zkapp.requireSignature();
+        */
+        let zkapp = AccountUpdate.createSigned(redeemAccountAddress);
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], INDEX_TREE_INIT_ROOT_8);//nullifierRoot
         AccountUpdate.setValue(zkapp.body.update.appState[1], Field(1));//nullStartIndex
         zkapp.account.permissions.set({
             ...Permissions.default(),
             editState: Permissions.proof(),
-            send: Permissions.proofOrSignature()
+            send: Permissions.signature()
         });
         zkapp.account.verificationKey.set(redeemAccountVk);
-        zkapp.requireSignature();
 
         this.emitEvent('createRedeemAccount', new CreateRedeemAccount({
             redeemAccountAddress,

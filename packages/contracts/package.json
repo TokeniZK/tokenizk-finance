@@ -24,6 +24,7 @@
     "deploy-token-airdrop-local": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/deploy-token-airdrop-local.js",
     "check-user-nullifier": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/check-user-nullifier.js",
     "deploy-redeem-account": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/deploy-redeem-account.js",
+    "simple": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/simple.js",
     "encrypt": "tsc -p tsconfig.json && node --experimental-specifier-resolution=node ./dist/scripts/encrypt.js",
     "lib:dev": "tsc --build tsconfig.json --watch",
     "lib:build": "tsc --build tsconfig.json",
