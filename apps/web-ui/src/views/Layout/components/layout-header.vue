@@ -327,13 +327,13 @@ const disconnect = async () => {
   left: 0;
   z-index: 999;
   width: 100%;
-  height: 80px;
+  height: 70px;
   color: #fff;
   background-color: #000;
 
   .logo {
     width: 200px;
-    height: 80px;
+    height: 70px;
     background: url("/src/assets/logo.svg") no-repeat right 2px;
     background-size: 200px 70px;
   }
