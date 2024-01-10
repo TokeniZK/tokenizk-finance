@@ -25,25 +25,45 @@
             <p class="text"> The Launchpad focusing on ZK-Token for Everyone!</p>
           </el-row>
           <el-row>
-            <p class="text">A ZK-Token creation, pre-sale, and management platform suitable </p>
-            <p class="text">for everyone. Anyone can easily create their own tokens and </p>
-            <p class="text">project pre-sales here.</p>
+            <el-col>
+              <p class="text">A ZK-Token creation, pre-sale, and management platform suitable </p>
+              <p class="text">for everyone. Anyone can easily create their own tokens and </p>
+              <p class="text">project pre-sales here.</p>
+            </el-col>
           </el-row>
         </el-col>
 
         <el-col class="box-right" :span="12">
 
-          <el-row style="margin: 30px 25px;">
-            <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
-            <p class="text"> Create your own tokens and sales quickly, easily and cheaply</p>
+          <el-row class="row-bg" justify="space-between">
+            <el-col :span="4">
+              <img src="/src/assets/homeBannerPhoto.png" alt="">
+            </el-col>
+            <el-col :span="19">
+              <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
+              <p class="text"> Create your own tokens and sales quickly, easily and cheaply</p>
+            </el-col>
           </el-row>
-          <el-row style="margin: 30px 25px;">
-            <h4 class="lasthead">No mental burden</h4>
-            <p class="text">No need to understand complex zero knowledge proof, code knowledge</p>
+
+          <el-row class="row-bg" justify="space-between">
+            <el-col :span="4">
+              <img src="/src/assets/homeBannerPhoto.png" alt="">
+            </el-col>
+            <el-col :span="19">
+              <h4 class="lasthead">No mental burden</h4>
+              <p class="text">No need to understand complex zero knowledge proof ,</p>
+              <p class="text">code knowledge</p>
+            </el-col>
           </el-row>
-          <el-row style="margin: 30px 25px;">
-            <h4 class="lasthead">Verifiable Security Platform</h4>
-            <p class="text">Cryptography guarantees data consistency</p>
+
+          <el-row class="row-bg" justify="space-between">
+            <el-col :span="4">
+              <img src="/src/assets/homeBannerPhoto.png" alt="">
+            </el-col>
+            <el-col :span="19">
+              <h4 class="lasthead">Verifiable Security Platform</h4>
+              <p class="text">Cryptography guarantees data consistency</p>
+            </el-col>
           </el-row>
 
         </el-col>
@@ -120,8 +140,7 @@
       border-radius: 15px;
       visibility: visible;
       animation-name: fadeInUp;
-      padding: 0 15px;
-      padding-bottom: 10px;
+      padding: 30px 20px 20px 25px;
 
       .lasthead {
         font-size: 20px;
