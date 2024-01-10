@@ -21,6 +21,7 @@ import { SaleRollupProof } from './sale-rollup-prover';
 import { SaleContribution, SaleParams, SaleParamsConfigurationEvent, ContributionEvent, RedeemEvent } from './sale-models';
 import { WhitelistMembershipMerkleWitness, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
 import { RedeemAccount } from './TokeniZkUser';
+import { TokeniZkBasicToken } from './TokeniZkBasicToken';
 
 
 export class ClaimTokenEvent extends Struct({
@@ -306,7 +307,7 @@ export class TokeniZkPresale extends SmartContract {
      * @param leafIndex 
      */
     @method
-    claimRedeemCheck(saleParams: SaleParams,
+    redeemCheck(saleParams: SaleParams,
         saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData) {
 
         // check if presale params is aligned with the existing ones
@@ -359,9 +360,12 @@ export class PresaleMinaFundHolder extends SmartContract {
         lowLeafWitness: UserLowLeafWitnessData,
         oldNullWitness: UserNullifierMerkleWitness) {
 
-        const saleContract = new TokeniZkPresale(this.address, TokenId.derive(this.tokenContractAddress.getAndRequireEquals()));
+        const tokenAddress = this.tokenContractAddress.getAndRequireEquals();
+        const saleContract = new TokeniZkPresale(this.address, TokenId.derive(tokenAddress));
         // check if meet redeeming conditions
-        saleContract.claimRedeemCheck(saleParams, saleContributorMembershipWitnessData);
+        saleContract.redeemCheck(saleParams, saleContributorMembershipWitnessData);
+        const tokenContract = new TokeniZkBasicToken(tokenAddress);
+        tokenContract.approveAnyAccountUpdate(saleContract.self);
 
         const presaleContribution = saleContributorMembershipWitnessData.leafData;
         const contributorAddress = presaleContribution.contributorAddress;

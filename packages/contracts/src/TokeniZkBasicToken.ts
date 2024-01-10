@@ -23,7 +23,7 @@ import {
     Provable,
 } from 'o1js';
 import { LauchpadPlatformParams, TokeniZkFactory } from './TokeniZkFactory';
-import { STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
+import { CONTRIBUTORS_TREE_ROOT, STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleParams, VestingParams } from './sale-models';
 import { AirdropParams } from './TokeniZkAirdrop';
 
@@ -148,7 +148,7 @@ export class TokeniZkBasicToken extends SmartContract {
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], saleParams.hash());
         AccountUpdate.setValue(zkapp.body.update.appState[1], saleParams.vestingParamsHash());
-        AccountUpdate.setValue(zkapp.body.update.appState[2], STANDARD_TREE_INIT_ROOT_16);// contributorTreeRoot
+        AccountUpdate.setValue(zkapp.body.update.appState[2], CONTRIBUTORS_TREE_ROOT);// contributorTreeRoot
         AccountUpdate.setValue(zkapp.body.update.appState[3], Reducer.initialActionState);//fromActionState
         AccountUpdate.setValue(zkapp.body.update.appState[4], Field(0));// totalDistributed
         AccountUpdate.setValue(zkapp.body.update.appState[5], Field(0));//totalContributedMina
@@ -157,6 +157,7 @@ export class TokeniZkBasicToken extends SmartContract {
             ...Permissions.default(),
             editState: Permissions.proof(),
             send: Permissions.proof(),
+            // access: Permissions.proofOrSignature()
         });
         zkapp.account.verificationKey.set(saleContractVk);
         zkapp.requireSignature();
@@ -197,7 +198,7 @@ export class TokeniZkBasicToken extends SmartContract {
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], saleParams.hash());//  fairsaleParamsHash
         AccountUpdate.setValue(zkapp.body.update.appState[1], saleParams.vestingParamsHash());//vestingParamsHash
-        AccountUpdate.setValue(zkapp.body.update.appState[2], STANDARD_TREE_INIT_ROOT_16);// contributorTreeRoot
+        AccountUpdate.setValue(zkapp.body.update.appState[2], CONTRIBUTORS_TREE_ROOT);// contributorTreeRoot
         AccountUpdate.setValue(zkapp.body.update.appState[3], Reducer.initialActionState);// fromActionState
         AccountUpdate.setValue(zkapp.body.update.appState[4], Field(0));// totalContributedMina TODO ‘UInt64.from(0).toFields()[0]’ check if UInt64 is composed of only one Field !!!
 
@@ -372,20 +373,25 @@ export class TokeniZkBasicToken extends SmartContract {
         let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
         let senderAccountUpdate = this.approve(zkappUpdate, layout);
 
+        Provable.log('t1');
         let negativeAmount = Int64.fromObject(
             senderAccountUpdate.body.balanceChange
         );
         negativeAmount.assertEquals(Int64.from(amount).neg());
+        Provable.log('t2');
 
         let tokenId = this.token.id;
         senderAccountUpdate.body.tokenId.assertEquals(tokenId);
-        
+        Provable.log('t3');
+
         // create a new AccountUpdate to check vestingParams
         let senderAU = Experimental.createChildAccountUpdate(
             this.self,
             zkappUpdate.body.publicKey,
             tokenId
         );
+        Provable.log('t4');
+
         AccountUpdate.assertEquals(
             senderAU.body.preconditions.account.state[1],
             vestingParams.hash()
@@ -397,18 +403,44 @@ export class TokeniZkBasicToken extends SmartContract {
             receiverAddress,
             tokenId
         );
+        Provable.log('t5');
+
         receiverAccountUpdate.balance.addInPlace(amount);
 
         // vesting receiver's token
         const initialMinimumBalance = amount.sub(1);
         const cliffAmount = UInt64.from(initialMinimumBalance.mul(vestingParams.cliffAmountRate).div(100));
+        const vestingIncrement = UInt64.from(initialMinimumBalance.mul(vestingParams.vestingIncrement).div(100));
         receiverAccountUpdate.account.timing.set({
             initialMinimumBalance,
             cliffTime: vestingParams.cliffTime,
             cliffAmount,
             vestingPeriod: vestingParams.vestingPeriod,
-            vestingIncrement: vestingParams.vestingIncrement
+            vestingIncrement
         });
+        Provable.log('t6');
+
         receiverAccountUpdate.requireSignature();
+    }
+
+    /**
+     * 
+     * @param senderAddress - address of the sender
+     * @param receiverAddress 
+     * @param amount 
+     * @param callback 
+     */
+    @method
+    approveAnyAccountUpdate(zkappUpdate: AccountUpdate) {
+        let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
+        let senderAccountUpdate = this.approve(zkappUpdate, layout);
+
+        let negativeAmount = Int64.fromObject(
+            senderAccountUpdate.body.balanceChange
+        );
+        negativeAmount.assertEquals(0);
+
+        let tokenId = this.token.id;
+        senderAccountUpdate.body.tokenId.assertEquals(tokenId);
     }
 }

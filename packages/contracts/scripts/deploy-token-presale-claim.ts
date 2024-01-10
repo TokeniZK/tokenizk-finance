@@ -22,6 +22,7 @@ import {
     UInt32,
     fetchAccount,
     Reducer,
+    Account,
 } from 'o1js';
 
 import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, AirdropParams, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, UserNullifierMerkleWitness, AirdropClaim, SaleContribution, SaleContributorMembershipWitnessData, SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleRollupState } from "../src";
@@ -259,7 +260,7 @@ const presaleParams = new SaleParams({
     startTime: UInt64.from(new Date().getTime() - 20 * 5 * 60 * 1000),
     endTime: UInt64.from(new Date().getTime() + 20 * 5 * 60 * 1000),
     cliffTime: UInt32.from(1),// slot
-    cliffAmountRate: UInt64.from(25),
+    cliffAmountRate: UInt64.from(10),
     vestingPeriod: UInt32.from(5), // default value is 1
     vestingIncrement: UInt64.from(10)
 });
@@ -302,6 +303,7 @@ tx = await Mina.transaction(
     },
     () => {
         tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress, contributeMinaAmount, whitelistMembershipMerkleWitness, whitelistLeafIndex);
+        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
     }
 );
 console.log('generated tx: ' + tx.toJSON());
@@ -324,7 +326,9 @@ tx = await Mina.transaction(
         memo: 'user2 contribute',
     },
     () => {
-        tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress2, contributeMinaAmount2, whitelistMembershipMerkleWitness2, whitelistLeafIndex2)
+        tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress2, contributeMinaAmount2, whitelistMembershipMerkleWitness2, whitelistLeafIndex2);
+        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
+
     }
 );
 console.log('generated tx: ' + tx.toJSON());
@@ -435,6 +439,7 @@ tx = await Mina.transaction(
     },
     () => {
         tokeniZkPresaleZkapp.maintainContributors(presaleParams, saleRollupProof);
+        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
     }
 );
 await ctx.submitTx(tx, {
@@ -469,7 +474,7 @@ await ctx.submitTx(tx, {
 });
 
 
-console.log('============= redeem from TokeniZkPresale =============');
+console.log('============= claim token from TokeniZkPresale =============');
 if (process.env.TEST_ON_BERKELEY === 'true') {
     await fetchAccount({ publicKey: basicTokenZkAppAddress });
     await fetchAccount({ publicKey: presaleZkAppAddress, tokenId });
@@ -550,30 +555,32 @@ const saleContributorMembershipWitnessData = new SaleContributorMembershipWitnes
     siblingPath: contributorsMembershipMerkleWitness,
     index: Field(contributorLeafIndex)
 });
+try {
+    console.log(`presale contract token balance before claim: ${Mina.getBalance(presaleZkAppAddress, tokenId)}`);
+    console.log(`redeemAccountZkAppAddress token balance before claim: 0`);
+} catch (error) {
+    console.error(error);
+}
 
-console.log(`presale contract balance before redeem: ${Mina.getBalance(presaleZkAppAddress)}`);
-console.log(`redeemAccountZkAppAddress balance before redeem: ${Mina.getBalance(redeemAccountZkAppAddress)}`);
-
-const presaleMinaFundHolderZkapp = new PresaleMinaFundHolder(presaleZkAppAddress);
 tx = await Mina.transaction(
     {
         sender: redeemAccountZkAppAddress,
         fee: ctx.txFee,
-        memo: 'redeem MINA',
+        memo: 'claim tokens',
     },
     () => {
-        AccountUpdate.fundNewAccount(redeemAccountZkAppAddress);
-        presaleMinaFundHolderZkapp.redeem(presaleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
+        AccountUpdate.fundNewAccount(redeemAccountZkAppAddress, 1);
+        tokeniZkPresaleZkapp.claimTokens(presaleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
+        basicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkPresaleZkapp.self, redeemAccountZkAppAddress, 
+            saleContribution.minaAmount.div(10 ** 9).mul(presaleParams.saleRate), vestingParams);
     }
 );
 await ctx.submitTx(tx, {
     feePayerKey: redeemAccountZkAppKey,
-    logLabel: 'redeem MINA',
+    logLabel: 'claim tokens',
 });
-console.log(`airdrop contract balance after redeem: ${Mina.getBalance(presaleZkAppAddress)}`);
-console.log(`redeemAccountZkAppAddress balance after redeem: ${Mina.getBalance(redeemAccountZkAppAddress)}`);
-
-
+console.log(`airdrop contract balance after redeem: ${Mina.getBalance(presaleZkAppAddress, tokenId)}`);
+console.log(`redeemAccountZkAppAddress balance after redeem: ${Mina.getBalance(redeemAccountZkAppAddress, tokenId)}`);
 
 console.log('============= transfer tokens =============');
 const toKey = PrivateKey.random();// new address
@@ -582,8 +589,8 @@ console.log('toKey: ' + toKey.toBase58());
 console.log('to: ' + to.toBase58());
 
 if (process.env.TEST_ON_BERKELEY === 'true') {
-    await fetchAccount({ publicKey: basicTokenZkAppAddress });
-    await fetchAccount({ publicKey: redeemAccountZkAppAddress });
+    await fetchAccount({ publicKey: basicTokenZkAppAddress, tokenId });
+    await fetchAccount({ publicKey: redeemAccountZkAppAddress, tokenId });
 }
 tx = await Mina.transaction(
     {
@@ -592,7 +599,7 @@ tx = await Mina.transaction(
         memo: 'transfer tokens',
     },
     () => {
-        AccountUpdate.fundNewAccount(redeemAccountZkAppAddress);// create a new account for a new address
+        AccountUpdate.fundNewAccount(redeemAccountZkAppAddress, 1);
         basicTokenZkApp.transferToken(redeemAccountZkAppAddress, to, UInt64.from(11));
     }
 );
@@ -602,9 +609,9 @@ await ctx.submitTx(tx, {
 });
 
 if (process.env.TEST_ON_BERKELEY === 'true') {
-    await fetchAccount({ publicKey: to });
-    await fetchAccount({ publicKey: redeemAccountZkAppAddress });
+    await fetchAccount({ publicKey: to, tokenId });
+    await fetchAccount({ publicKey: redeemAccountZkAppAddress, tokenId });
 }
 
-console.log(`after transfer, balance of redeemAccountZkAppAddress: ${Mina.getBalance(redeemAccountZkAppAddress)}`);
-console.log(`after transfer, balance of to: ${Mina.getBalance(to)}`);
+console.log(`after transfer, balance of redeemAccountZkAppAddress: ${Mina.getBalance(redeemAccountZkAppAddress, tokenId)}`);
+console.log(`after transfer, balance of to: ${Mina.getBalance(to, tokenId)}`);

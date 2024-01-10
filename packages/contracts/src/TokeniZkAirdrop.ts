@@ -174,12 +174,6 @@ export class TokeniZkAirdrop extends SmartContract {
     public vestingParamsHash = State<Field>();
 
     /**
-     * Total distributed tokens
-     */
-    @state(UInt64)
-    public totalDistributed = State<UInt64>();
-
-    /**
      * need go back to 'TokeniZkPrivateSale.approveTransferCallbackWithVesting()' for approval and transfer, which means each address could contribute only once.
      * @param airdropParams 
      * @param saleContribution 

@@ -16,9 +16,10 @@ import {
     Bool,
     UInt32,
     Experimental,
+    Int64,
 } from 'o1js';
 import { SaleParams } from './sale-models';
-import { INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_16 } from './constants';
+import { CONTRIBUTORS_TREE_ROOT, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { AirdropParams } from './TokeniZkAirdrop';
 
 
@@ -310,7 +311,6 @@ export class TokeniZkFactory extends SmartContract {
             ...Permissions.default(),
             editState: Permissions.proof(),
             send: Permissions.proof(),
-            // access: Permissions.proofOrSignature(),
         });
 
         const feePayer = AccountUpdate.createSigned(this.sender);
@@ -384,7 +384,7 @@ export class TokeniZkFactory extends SmartContract {
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], saleParams.hash());//  privateSaleParamsHash
-        AccountUpdate.setValue(zkapp.body.update.appState[1], STANDARD_TREE_INIT_ROOT_16);// contributorTreeRoot
+        AccountUpdate.setValue(zkapp.body.update.appState[1], CONTRIBUTORS_TREE_ROOT);// contributorTreeRoot
         AccountUpdate.setValue(zkapp.body.update.appState[2], Reducer.initialActionState);// fromActionState
         AccountUpdate.setValue(zkapp.body.update.appState[3], Field(0));// totalContributedMina TODO ‘UInt64.from(0).toFields()[0]’ check if UInt64 is composed of only one Field !!!
 
@@ -448,5 +448,26 @@ export class TokeniZkFactory extends SmartContract {
             redeemAccountAddress,
             nullifierRoot: INDEX_TREE_INIT_ROOT_8
         }));
+    }
+
+    /**
+     * 
+     * @param senderAddress - address of the sender
+     * @param receiverAddress 
+     * @param amount 
+     * @param callback 
+     */
+    @method
+    approveAnyAccountUpdate(zkappUpdate: AccountUpdate) {
+        let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
+        let senderAccountUpdate = this.approve(zkappUpdate, layout);
+
+        let negativeAmount = Int64.fromObject(
+            senderAccountUpdate.body.balanceChange
+        );
+        negativeAmount.assertEquals(0);
+
+        let tokenId = this.token.id;
+        senderAccountUpdate.body.tokenId.assertEquals(tokenId);
     }
 }
