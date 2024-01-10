@@ -379,14 +379,19 @@ export class TokeniZkBasicToken extends SmartContract {
 
         let tokenId = this.token.id;
         senderAccountUpdate.body.tokenId.assertEquals(tokenId);
-
-        // check vestingParams
+        
+        // create a new AccountUpdate to check vestingParams
+        let senderAU = Experimental.createChildAccountUpdate(
+            this.self,
+            zkappUpdate.body.publicKey,
+            tokenId
+        );
         AccountUpdate.assertEquals(
-            senderAccountUpdate.body.preconditions.account.state[1],
+            senderAU.body.preconditions.account.state[1],
             vestingParams.hash()
         );
 
-        // TODO !!!! check this approach is ok for new addresses !!!!
+        // increase receiver's token
         let receiverAccountUpdate = Experimental.createChildAccountUpdate(
             this.self,
             receiverAddress,
@@ -395,8 +400,8 @@ export class TokeniZkBasicToken extends SmartContract {
         receiverAccountUpdate.balance.addInPlace(amount);
 
         // vesting receiver's token
-        const initialMinimumBalance = amount;
-        const cliffAmount = UInt64.from(initialMinimumBalance.div(vestingParams.cliffAmountRate));
+        const initialMinimumBalance = amount.sub(1);
+        const cliffAmount = UInt64.from(initialMinimumBalance.mul(vestingParams.cliffAmountRate).div(100));
         receiverAccountUpdate.account.timing.set({
             initialMinimumBalance,
             cliffTime: vestingParams.cliffTime,
@@ -404,5 +409,6 @@ export class TokeniZkBasicToken extends SmartContract {
             vestingPeriod: vestingParams.vestingPeriod,
             vestingIncrement: vestingParams.vestingIncrement
         });
+        receiverAccountUpdate.requireSignature();
     }
 }
