@@ -26,11 +26,39 @@
 
                 </div>
               </el-row>
+
               <el-row>
-                <div class="bottom">
-                  <!-- 没 icon 待做 -->
+                <div style="padding-left:20px ;">
+
+                  <a href="https://twitter.com/TokeniZK" target="_blank">
+                    <i class="iconfont icon-bird"></i>
+                  </a>
+
+                  <a href="https://github.com/TokeniZK/tokenizk-finance" target="_blank">
+                    <i class="iconfont icon-GitHub"></i>
+                  </a>
+
+                  <a href="javascript:void(0);">
+                    <i class="iconfont icon-discord1"></i>
+                  </a>
+
+                  <a href="javascript:void(0);">
+                    <i class="iconfont icon-facebook"></i>
+                  </a>
+
+                  <a href="javascript:void(0);">
+                    <i class="iconfont icon-telegram"></i>
+                  </a>
+
+                  <a href="javascript:void(0);">
+                    <i class="iconfont icon-redditsquare"></i>
+                  </a>
+
+
+
                 </div>
               </el-row>
+
             </el-col>
           </el-row>
         </el-col>
