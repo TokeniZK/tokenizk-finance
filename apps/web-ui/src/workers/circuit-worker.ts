@@ -789,6 +789,36 @@ const redeemFunds = async (
     return null;
 }
 
+type ClaimTokensAirdropParams = {
+    airdropAddress0: string,
+    airdropParams0: {
+        tokenAddress: string,
+        totalAirdropSupply: number,
+        totalMembersNumber: number,
+        whitelistTreeRoot: string,
+        startTime: number,
+        endTime: number,
+        cliffTime: number,
+        cliffAmountRate: number,
+        vestingPeriod: number, // 0 is not allowed, default value is 1
+        vestingIncrement: number
+    },
+    membershipMerkleWitness0: string[],
+    leafIndex0: string,
+    lowLeafWitness0: {
+        leafData: {
+            value: string,
+            nextValue: string,
+            nextIndex: string,
+        },
+        siblingPath: string[],
+        index: string,
+    },
+    oldNullWitness0: string[],
+    feePayerAddress: string,
+    txFee: number
+}
+
 const claimTokensAirdrop = async (
     airdropAddress0: string,
     airdropParams0: {
@@ -815,11 +845,28 @@ const claimTokensAirdrop = async (
         index: string,
     },
     oldNullWitness0: string[],
-    feePayerAddress: string, txFee: number) => {
+    feePayerAddress: string,
+    txFee: number
+) => {
+
+    const claimTokensAirdropParams = {
+        airdropAddress0,
+        airdropParams0,
+        membershipMerkleWitness0,
+        leafIndex0,
+        lowLeafWitness0,
+        oldNullWitness0,
+        feePayerAddress,
+        txFee
+    }
+    console.log("claimTokensAirdropParams:" + JSON.stringify(claimTokensAirdropParams));
+
     const saleTag = 'Airdrop';
-    let flag = await compileTokeniZkBasicToken();
-    flag = flag && (await compileTokeniZkAirdrop());
+    let flag = true;
+
+    await compileTokeniZkBasicToken();
     flag = flag && (await compileRedeemAccount());
+    flag = flag && (await compileTokeniZkAirdrop());
 
     if (flag) {
         // try {
