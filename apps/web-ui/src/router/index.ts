@@ -3,26 +3,25 @@ import Layout from '@/views/Layout/index.vue'
 
 import Home from '@/views/Home/index.vue'
 
-import PreSales from '@/views/PreSales/pre-sales.vue'
+import PreSales from '@/views/PreSales/pre-Sales.vue'
 import AllLaunchpads from '@/views/PreSales/components/all-launchpads.vue'
 import MyContributions from '@/views/PreSales/components/my-contributions.vue'
 import PresaleDetails from '@/views/PreSales/components/presale-details.vue'
 
-import PrivateSales from '@/views/PrivateSales/private-sales.vue'
-import AllPrivateSales from '@/views/PrivateSales/components/all-private-sales.vue'
-import PrivateSalesMyContributions from '@/views/PrivateSales/components/private-sales-my-contributions.vue'
-import PrivateSalesDetails from '@/views/PrivateSales/components/private-sales-details.vue'
+// import PrivateSales from '@/views/PrivateSales/private-sales.vue'
+// import AllPrivateSales from '@/views/PrivateSales/components/all-private-sales.vue'
+// import PrivateSalesMyContributions from '@/views/PrivateSales/components/private-sales-my-contributions.vue'
+// import PrivateSalesDetails from '@/views/PrivateSales/components/private-sales-details.vue'
 
-import AirdropList from '@/views/AirDrop/airdrop-list.vue'
+import AirdropList from '@/views/AirDrop/airdrop-List.vue'
 import AllAirdrops from '@/views/AirDrop/components/all-airdrops.vue'
 import MyAirdrops from '@/views/AirDrop/components/my-airdrops.vue'
-import CreatedByYouAirdrops from '@/views/AirDrop/components/created-by-you-airdrops.vue'
 import AirdropDetails from '@/views/AirDrop/components/airdrop-details.vue'
 
 import CreateZkToken from '@/views/Boot/create-ZkToken.vue'
-import CreateFairLaunch from '@/views/Boot/create-fair-launch.vue'
-import CreateNormalLaunch from '@/views/Boot/create-normal-launch.vue'
-import CreatePrivateSale from '@/views/Boot/create-private-sale.vue'
+import CreateNormalLaunch from '@/views/Boot/create-Normal-Launch.vue'
+// import CreateFairLaunch from '@/views/Boot/create-fair-launch.vue'
+// import CreatePrivateSale from '@/views/Boot/create-private-sale.vue'
 import CreateAirdrop from '@/views/Boot/create-new-airdrop.vue'
 
 import Wallet from '@/views/Wallet/wallet.vue'
@@ -32,14 +31,14 @@ import MyLaunchesTokens from '@/views/Mylaunches/components/my-launches-tokens.v
 import MyLaunchesSales from '@/views/Mylaunches/components/my-launches-sales.vue'
 import MyLaunchesAirdrops from '@/views/Mylaunches/components/my-launches-airdrops.vue'
 
-import CreateLock from '../views/create-lock.vue'
+import CreateLock from '@/views/create-Lock.vue'
 import CreateZkNFT from '../views/create-zkNFT.vue'
 import Services from '../views/Services.vue'
 import Team from '../views/Team.vue'
 import FAQ from '../views/FAQ.vue'
 import Comments from '../views/Comments.vue'
 import AddFans from '../views/Add-fans.vue'
-import PraiseAndCollection from '../views/praise-and-collection.vue'
+import PraiseAndCollection from '@/views/Praise-and-Collection.vue'
 import PrivateMessage from '../views/Private-Message.vue'
 import SystemNotifications from '../views/System-Notifications.vue'
 import MessageSettings from '../views/Message-Settings.vue'
@@ -54,7 +53,7 @@ const routes = [
         component: Home
       },
       {
-        path: '/pre-sales',
+        path: '/sales',
         component: PreSales,
         children: [
           {
@@ -62,32 +61,14 @@ const routes = [
             component: AllLaunchpads
           },
           {
-            path: '/pre-sales/my-contributions',
+            path: '/sales/my-contributions',
             component: MyContributions
           }
         ]
       },
       {
-        path: '/presale-datails',
+        path: '/sale-datails',
         component: PresaleDetails
-      },
-      {
-        path: '/private-sales',
-        component: PrivateSales,
-        children: [
-          {
-            path: '',
-            component: AllPrivateSales
-          },
-          {
-            path: '/private-sales/my-contributions',
-            component: PrivateSalesMyContributions
-          }
-        ]
-      },
-      {
-        path: '/private-sales-datails',
-        component: PrivateSalesDetails
       },
       {
         path: '/airdrop-list',
@@ -100,10 +81,6 @@ const routes = [
           {
             path: '/airdrop-list/my-airdrop',
             component: MyAirdrops
-          },
-          {
-            path: '/airdrop-list/created-by-you-airdrop',
-            component: CreatedByYouAirdrops
           }
         ]
       },
@@ -138,16 +115,8 @@ const routes = [
         component: CreateZkToken
       },
       {
-        path: '/create-fair-launch',
-        component: CreateFairLaunch
-      },
-      {
-        path: '/create-normal-launch',
+        path: '/create-sale-launch',
         component: CreateNormalLaunch
-      },
-      {
-        path: '/create-private-sale',
-        component: CreatePrivateSale
       },
       {
         path: '/create-new-airdrop',
