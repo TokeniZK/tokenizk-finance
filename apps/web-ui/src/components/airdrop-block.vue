@@ -85,18 +85,21 @@ const toDetailPage = `/sale-datails?saleAddress=${item.airdropAddress}&tokenAddr
 
         <el-row class="row-bg" justify="space-between">
           <el-col :span="24">
-            <h3><a href="#">{{ item.airdropName }}</a></h3>
+            <h3> <router-link to="/airdrop-datails">{{ item.airdropName }}</router-link></h3>
           </el-col>
         </el-row>
 
-        <el-row class="row-bg soft-hard-cap" justify="space-between">
-          <el-col :span="10">Token</el-col>
-          <el-col :span="8"></el-col>
-          <el-col :span="6">{{ item.tokenName }}</el-col>
+        <el-row class="row-bg" justify="space-between" style="margin-top: 15px;">
+          <el-col :span="6">Token :</el-col>
+          <el-col :span="17">
+            <el-row justify="end">
+              {{ item.tokenName }}
+            </el-row>
+          </el-col>
         </el-row>
 
         <el-row class="row-bg" justify="space-between">
-          <el-col :span="7">
+          <el-col :span="6">
             <el-row style="padding-top: 8px;">Begin at :</el-row>
           </el-col>
           <el-col :span="17">
@@ -108,7 +111,9 @@ const toDetailPage = `/sale-datails?saleAddress=${item.airdropAddress}&tokenAddr
         </el-row>
 
         <el-row class="row-bg" justify="end">
-          <el-button type="primary" round class="statusColor"> View Airdrop</el-button>
+          <router-link to="/airdrop-datails">
+            <el-button type="primary" round class="statusColor"> View Airdrop</el-button>
+          </router-link>
         </el-row>
 
       </el-col>
@@ -118,7 +123,7 @@ const toDetailPage = `/sale-datails?saleAddress=${item.airdropAddress}&tokenAddr
   </div>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
 .airdrop-box {
   width: 100%;
   height: 100%;
@@ -147,6 +152,10 @@ const toDetailPage = `/sale-datails?saleAddress=${item.airdropAddress}&tokenAddr
 }
 
 .el-row {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+}
+
+.el-row:last-child {
+  margin-bottom: 6px;
 }
 </style>
