@@ -22,8 +22,8 @@ export interface AirdropDto {
 
     star: number
 
-    // private no
     totalAirdropSupply: number
+
     currency: string
     feeRate: string
 
