@@ -1,19 +1,33 @@
 <script setup lang="ts">
-import { onMounted, reactive, computed, type ComputedRef, watch } from 'vue'
-import { useStatusStore } from "@/stores";
-import type { SaleDto } from '@tokenizk/types';
-import { useRouter } from 'vue-router';
+import { ref, onMounted, reactive, computed, type ComputedRef, watch } from 'vue'
+import { useStatusStore } from "@/stores"
+import { type SaleDto, type SaleReq } from '@tokenizk/types'
+import SaleBlock from '../../../components/sale-block.vue'
+import { useRoute, useRouter } from 'vue-router'
+
+
+let route = useRoute();
+let saleType = ref(route.query.saleType as any as number);
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 const router = useRouter();
-watch(()=> appState.connectedWallet58, async (value, oldValue)=>{
+router.beforeEach((to, from, next) => {
+    const query = to.query;
+    saleType.value = query.saleType as any as number;
+    next();
+});
+
+watch(() => appState.connectedWallet58, async (value, oldValue) => {
     if (!appState.connectedWallet58) {
-        router.replace('/pre-sale');
+        router.replace('/sales?saleType=' + saleType);
     }
 })
 
 type SaleDtoExtend = SaleDto & { projectStatus: string, progressBarStatus: string, progressPercent: number }
+
+let fetchResult: SaleDtoExtend[] = [];
+
 type SaleUserDtoExtend = {
     saleDto: SaleDtoExtend,
     userContribute: {
@@ -23,14 +37,9 @@ type SaleUserDtoExtend = {
     }
 }
 
-let fetchResult: SaleUserDtoExtend[] = [];
-
-const myContributionsList = reactive({ saleList: fetchResult });
-
-const saleType = 0; // from parent component
 
 // 转换项目的状态
-const transformProjectStatus = (itmes: SaleUserDtoExtend[]) => {
+const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
     let currentTime = new Date().getTime();
 
     itmes.forEach(item => {
@@ -47,21 +56,27 @@ const transformProjectStatus = (itmes: SaleUserDtoExtend[]) => {
 }
 
 // 项目进度条
-const calcProjectProgress = (itmes: SaleUserDtoExtend[]) => {
+const calcProjectProgress = (itmes: SaleDtoExtend[]) => {
     itmes.forEach(item => {
-        item.saleDto.progressPercent = computed(() => Number((item.saleDto.totalContributedMina * 100 / item.saleDto.hardCap).toFixed(1))) as any as number;
-        if ((item.saleDto.progressPercent as any as ComputedRef).value >= 80) {
-            item.saleDto.progressBarStatus = 'exception'
-        } else if ((item.saleDto.progressPercent as any as ComputedRef).value >= 60) {
-            item.saleDto.progressBarStatus = 'warning'
+        item.progressPercent = computed(() => Number((item.totalContributedMina * 100 / item.hardCap).toFixed(1))) as any as number;
+        if ((item.progressPercent as any as ComputedRef).value >= 80) {
+            item.progressBarStatus = 'exception'
+        } else if ((item.progressPercent as any as ComputedRef).value >= 60) {
+            item.progressBarStatus = 'warning'
         } else {
-            item.saleDto.progressBarStatus = 'success'
+            item.progressBarStatus = 'success'
         }
     });
 }
 
+let renderSaleBlock: SaleDtoExtend[] = [];
+// 临时数据
+let myContributionsList = reactive({ saleList: renderSaleBlock });
+
+
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(async () => {
+
     //myContributionsList.saleList = await querySaleUserContribution(saleType, appState.connectedWallet58!);
     // 临时数据 本尊
     fetchResult = [{
@@ -102,7 +117,10 @@ onMounted(async () => {
             contributorsFetchFlag: 0,
             contributorsTreeRoot: '',
             contributorsMaintainFlag: 0,
+            totalContributorNum: 0,
+
             totalContributedMina: 11,
+
             teamName: 'Zhi Tokenizk Team',
             logoUrl: '/src/assets/images/1.png',
             website: 'https://tokenizk.finance/',
@@ -165,6 +183,7 @@ onMounted(async () => {
             contributorsFetchFlag: 0,
             contributorsTreeRoot: '',
             contributorsMaintainFlag: 0,
+            totalContributorNum: 0,
 
             teamName: 'Tokenizk Team',
             logoUrl: '/src/assets/images/1.png',
@@ -226,6 +245,8 @@ onMounted(async () => {
             contributorsFetchFlag: 0,
             contributorsTreeRoot: '',
             contributorsMaintainFlag: 0,
+            totalContributorNum: 0,
+
             totalContributedMina: 100,
 
             teamName: 'Tokenizk Team',
@@ -249,10 +270,11 @@ onMounted(async () => {
             contributeTimestamp: '',
             contributedCurrencyAmount: ''
         }
-    }];
+    }
+    ];
 
-    transformProjectStatus(fetchResult);
     calcProjectProgress(fetchResult);
+    transformProjectStatus(fetchResult);
 
     myContributionsList.saleList = fetchResult;
 
@@ -274,109 +296,9 @@ onMounted(async () => {
                 <el-col :span="20">
 
                     <ul class="launchpads-ul">
-                        <li v-for="item in myContributionsList.saleList" :key="item.saleDto.id">
+                        <li v-for="item in myContributionsList.saleList" :key="item.id" style="margin-bottom: 40px;">
 
-                            <div class="launchpads-box">
-
-                                <!-- photo -->
-                                <el-row class="thumb">
-                                    <router-link to="/presale-datails">
-                                        <el-image style="width: 349px; height: 130px;" :src="item.saleDto.logoUrl"
-                                            :alt="item.saleDto.saleName" loading="lazy" />
-                                    </router-link>
-                                </el-row>
-
-                                <!-- 项目描述 -->
-                                <el-row class="launchpads-content">
-
-                                    <el-col :span="24">
-
-                                        <el-row class="row-bg" justify="space-between">
-                                            <el-col :span="8">
-                                                <h4><a href="#">{{ item.saleDto.saleName }}</a></h4>
-                                            </el-col>
-
-                                            <el-col :span="5"></el-col>
-
-                                            <el-col class="review" :span="7">
-                                                <el-button type="primary" round class="statusColor" to="/presale-datails">
-                                                    {{ item.saleDto.projectStatus }}
-                                                </el-button>
-                                            </el-col>
-                                        </el-row>
-
-                                        <!-- 投资Mina数量 -->
-                                        <el-row class="row-bg liquidity-percent" justify="space-between">
-                                            <el-col :span="15">contributed Mina Amount :</el-col>
-                                            <el-col :span="6"> {{ item.saleDto.hardCap }}</el-col>
-                                        </el-row>
-
-                                        <!-- 团队名称 -->
-                                        <el-row class="text-review-change" justify="space-between">
-                                            <el-col class="text" :span="10">
-                                                by <a href="" class="link">{{ item.saleDto.teamName }}</a>
-                                            </el-col>
-
-                                            <el-col class="review" :span="10">
-                                                <el-rate v-model="item.saleDto.star" size="default" />
-                                            </el-col>
-                                        </el-row>
-
-                                        <el-row class="row-bg soft-hard-cap" justify="space-between">
-                                            <el-col :span="10">Soft / Hard</el-col>
-                                            <el-col :span="2"></el-col>
-                                            <el-col :span="10">{{ item.saleDto.softCap }}Mina - {{ item.saleDto.hardCap
-                                            }}Mina</el-col>
-                                        </el-row>
-
-                                        <!-- 注意  进度条 -->
-                                        <el-row class="content-Progress">
-                                            <el-col>
-
-                                                <!-- 注意  进度条 -->
-                                                <el-row class="content-Progress">
-                                                    <el-col>
-
-                                                        <el-row class="title">Progress</el-row>
-
-                                                        <el-row class="Progress demo-progress" style="margin-bottom: 0;">
-                                                            <el-progress :text-inside="true" :stroke-width="14"
-                                                                :status="item.saleDto.progressBarStatus"
-                                                                :percentage="item.saleDto.progressPercent" striped
-                                                                striped-flow :duration="6" />
-                                                        </el-row>
-
-                                                        <el-row class="row-bg sub-title" justify="space-between">
-                                                            <el-col :span="10"> 0 Mina</el-col>
-                                                            <el-col :span="4"></el-col>
-                                                            <el-col :span="6">{{ item.saleDto.hardCap }} Mina </el-col>
-                                                        </el-row>
-
-                                                    </el-col>
-                                                </el-row>
-
-                                            </el-col>
-                                        </el-row>
-
-                                        <el-row class="row-bg lockup-time" justify="space-between">
-                                            <el-col :span="10">Lockup Time :</el-col>
-                                            <el-col :span="4"></el-col>
-                                            <el-col :span="6">{{ new Date(item.saleDto.cliffTime).getHours() }}
-                                                minutes</el-col>
-                                        </el-row>
-
-
-                                        <el-row class="row-bg Sale-Ends-In" justify="space-between">
-                                            <el-col :span="10">Sale Ends In :</el-col>
-                                            <el-col :span="4"></el-col>
-                                            <el-col :span="6">{{ item.saleDto.cliffTime * 5 }} </el-col>
-                                        </el-row>
-
-                                    </el-col>
-
-                                </el-row>
-
-                            </div>
+                            <SaleBlock :saleDto="item" />
 
                         </li>
                     </ul>
@@ -399,39 +321,6 @@ onMounted(async () => {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
-
-        li {
-            margin-top: 0px;
-            margin-bottom: 30px;
-            width: 349px;
-            height: 430px;
-            border-radius: 15px;
-
-            .launchpads-box {
-                width: 100%;
-                height: 100%;
-                background-color: #fff;
-                border-radius: 15px;
-
-                .thumb {
-                    width: 349px;
-                    height: 130px;
-                    overflow: hidden;
-                }
-
-                .launchpads-content {
-                    width: 100%;
-                    padding: 12px 20px;
-
-                    .demo-progress .el-progress--line {
-                        margin-bottom: 10px;
-                        width: 300px;
-                    }
-
-                }
-
-            }
-        }
     }
 }
 

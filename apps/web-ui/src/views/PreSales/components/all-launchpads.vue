@@ -1,7 +1,20 @@
 <script lang="ts" setup >
 import { ref, onMounted, reactive, computed, type ComputedRef } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { type SaleDto } from '@tokenizk/types'
+import { type SaleDto, type SaleReq } from '@tokenizk/types'
+import SaleBlock from '../../../components/sale-block.vue'
+import { useRoute, useRouter } from 'vue-router';
+
+
+let route = useRoute();
+let saleType = ref(route.query.saleType as any as number);
+
+const router = useRouter();
+router.beforeEach((to, from, next) => {
+    const query = to.query;
+    saleType.value = query.saleType as any as number;
+    next();
+});
 
 type SaleDtoExtend = SaleDto & { projectStatus: string, progressBarStatus: string, progressPercent: number }
 
@@ -30,14 +43,15 @@ const filterByOptions = [
         label: 'Ended',
     },
     /*
-        {
-            value: '4',
-            label: 'Filled',
-        },
-        {
-            value: '5',
-            label: 'notFilled',
-        },
+    {
+        value: '4',
+        label: 'Filled',
+    },
+
+    {
+        value: '5',
+        label: 'notFilled',
+    },
     */
 ]
 
@@ -135,175 +149,180 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
 // 获取 用户输入的关键字 进行搜索
 let keyWord = ref('')
-const saleType = 0;
 const getSearchProjects = async () => {
-    // fetchResult = (await getSearchProjectAPI(saleType, keyWord.value)) as SaleDtoExtend[];
+    const saleReq = {
+        saleType: saleType.value,
+        saleName: keyWord.value
+    } as any as SaleReq;
+    // fetchResult = (await querySale(saleReq)) as SaleDtoExtend[];
     // 临时数据 本尊
-    fetchResult = [{
-        id: 0,
-        saleType: 1,
-        txHash: '0x333123456789',
-        status: 1,
+    fetchResult = [
+        {
+            id: 0,
+            saleType: 1,
+            txHash: '0x333123456789',
+            status: 1,
 
-        tokenName: 'TxZ',
-        tokenAddress: 'B62xxxt',
-        tokenSymbol: 'TxZ',
+            tokenName: 'TxZ',
+            tokenAddress: 'B62qqJEi4QGEqy4Po72s16BSa8oPnXQzHRk2eErETU4PucrMqaCKL88',
+            tokenSymbol: 'TxZ',
 
-        saleName: 'ZHI Inu 2.0',
-        saleAddress: 'B62xxs',
+            saleName: 'ZHI Inu 2.0',
+            saleAddress: 'B62qrWrGd7iCwXf9ucNxL2kyw8s63Uz7ovHtKMkRwfRREWAWtvXjkFy',
 
-        star: 4,
+            star: 4,
 
-        totalSaleSupply: 20,
-        currency: 'Mina',
-        feeRate: '5%',
-        saleRate: 10,
-        whitelistTreeRoot: '45678ityuioghjk',
-        whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+            totalSaleSupply: 20,
+            currency: 'Mina',
+            feeRate: '5%',
+            saleRate: 10,
+            whitelistTreeRoot: '45678ityuioghjk',
+            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+            totalContributorNum: 3,
+            softCap: 21,
+            hardCap: 60,
+            minimumBuy: 0.1,
+            maximumBuy: 1,
+            startTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
+            endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+            projectStatus: '',
 
-        softCap: 21,
-        hardCap: 60,
-        minimumBuy: 0.1,
-        maximumBuy: 1,
-        startTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
-        endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-        projectStatus: '',
+            cliffTime: 300,
+            cliffAmountRate: 3,
+            vestingPeriod: 3,
+            vestingIncrement: 10,
+            contributorsFetchFlag: 0,
+            contributorsTreeRoot: '',
+            contributorsMaintainFlag: 0,
+            totalContributedMina: 11,
+            teamName: 'Zhi Tokenizk Team',
+            logoUrl: '/src/assets/images/1.png',
+            website: 'https://tokenizk.finance/',
+            facebook: 'https://tokenizk.finance/',
+            github: 'https://tokenizk.finance/',
+            twitter: 'https://tokenizk.finance/',
+            telegram: 'https://tokenizk.finance/',
+            discord: 'https://tokenizk.finance/',
+            reddit: 'https://tokenizk.finance/',
+            description: 'The Launchpad focusing on ZK-Token for Everyone!',
+            updatedAt: 1703641015995,
+            createdAt: 1703691251595,
 
-        cliffTime: 300,
-        cliffAmountRate: 3,
-        vestingPeriod: 1704527581215,
-        vestingIncrement: 0,
-        contributorsFetchFlag: 0,
-        contributorsTreeRoot: '',
-        contributorsMaintainFlag: 0,
-        totalContributedMina: 11,
-        teamName: 'Zhi Tokenizk Team',
-        logoUrl: '/src/assets/images/1.png',
-        website: 'https://tokenizk.finance/',
-        facebook: 'https://tokenizk.finance/',
-        github: 'https://tokenizk.finance/',
-        twitter: 'https://tokenizk.finance/',
-        telegram: 'https://tokenizk.finance/',
-        discord: 'https://tokenizk.finance/',
-        reddit: 'https://tokenizk.finance/',
-        description: 'The Launchpad focusing on ZK-Token for Everyone!',
-        updatedAt: 1703691515995,
-        createdAt: 1703691251595,
+            progressBarStatus: 'success',
+            progressPercent: 0,
 
-        progressBarStatus: 'success',
-        progressPercent: 0,
+        },
+        {
+            id: 0,
+            saleType: 1,
+            txHash: '0x123456789',
+            status: 1,
 
-    },
-    {
-        id: 0,
-        saleType: 1,
-        txHash: '0x123456789',
-        status: 1,
+            tokenName: 'TZ',
+            tokenAddress: 'B62qqJEi4QGEqy4Po72s16BSa8oPnXQzHRk2eErETU4PucrMqaCKL88',
+            tokenSymbol: 'TZ',
 
-        tokenName: 'TZ',
-        tokenAddress: 'B62xxxt',
-        tokenSymbol: 'TZ',
+            saleName: 'Oggy Inu 2.0',
+            saleAddress: 'B62qrWrGd7iCwXf9ucNxL2kyw8s63Uz7ovHtKMkRwfRREWAWtvXjkFy',
 
-        saleName: 'Oggy Inu 2.0',
-        saleAddress: 'B62xxs',
+            star: 4,
 
-        star: 4,
+            totalSaleSupply: 20,
+            currency: 'Mina',
+            feeRate: '5%',
+            saleRate: 10,
+            whitelistTreeRoot: '45678ityuioghjk',
+            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+            totalContributedMina: 80,
+            totalContributorNum: 3,
+            softCap: 11,
+            hardCap: 90,
+            minimumBuy: 0.1,
+            maximumBuy: 1,
+            startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
+            endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+            projectStatus: '',
 
-        totalSaleSupply: 20,
-        currency: 'Mina',
-        feeRate: '5%',
-        saleRate: 10,
-        whitelistTreeRoot: '45678ityuioghjk',
-        whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-        totalContributedMina: 80,
+            cliffTime: 300,
+            cliffAmountRate: 3,
+            vestingPeriod: 4,
+            vestingIncrement: 5,
+            contributorsFetchFlag: 0,
+            contributorsTreeRoot: '',
+            contributorsMaintainFlag: 0,
 
-        softCap: 11,
-        hardCap: 90,
-        minimumBuy: 0.1,
-        maximumBuy: 1,
-        startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-        endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-        projectStatus: '',
+            teamName: 'Tokenizk Team',
+            logoUrl: '/src/assets/images/2.png',
+            website: 'https://tokenizk.finance/',
+            facebook: 'https://tokenizk.finance/',
+            github: 'https://tokenizk.finance/',
+            twitter: 'https://tokenizk.finance/',
+            telegram: 'https://tokenizk.finance/',
+            discord: 'https://tokenizk.finance/',
+            reddit: 'https://tokenizk.finance/',
+            description: 'The Launchpad focusing on ZK-Token for Everyone!',
+            updatedAt: new Date().getTime(),
+            createdAt: new Date().getTime(),
 
-        cliffTime: 300,
-        cliffAmountRate: 3,
-        vestingPeriod: 1704527581215,
-        vestingIncrement: 0,
-        contributorsFetchFlag: 0,
-        contributorsTreeRoot: '',
-        contributorsMaintainFlag: 0,
+            progressBarStatus: 'success',
+            progressPercent: 0
+        },
+        {
+            id: 0,
+            saleType: 1,
+            txHash: '0x123456789',
+            status: 1,
 
-        teamName: 'Tokenizk Team',
-        logoUrl: '/src/assets/images/1.png',
-        website: 'https://tokenizk.finance/',
-        facebook: 'https://tokenizk.finance/',
-        github: 'https://tokenizk.finance/',
-        twitter: 'https://tokenizk.finance/',
-        telegram: 'https://tokenizk.finance/',
-        discord: 'https://tokenizk.finance/',
-        reddit: 'https://tokenizk.finance/',
-        description: 'The Launchpad focusing on ZK-Token for Everyone!',
-        updatedAt: new Date().getTime(),
-        createdAt: new Date().getTime(),
+            tokenName: 'TZ',
+            tokenAddress: 'B62qqJEi4QGEqy4Po72s16BSa8oPnXQzHRk2eErETU4PucrMqaCKL88',
+            tokenSymbol: 'TZ',
 
-        progressBarStatus: 'success',
-        progressPercent: 0
-    },
-    {
-        id: 0,
-        saleType: 1,
-        txHash: '0x123456789',
-        status: 1,
+            saleName: 'XX Inu 2.0',
+            saleAddress: 'B62qrWrGd7iCwXf9ucNxL2kyw8s63Uz7ovHtKMkRwfRREWAWtvXjkFy',
 
-        tokenName: 'TZ',
-        tokenAddress: 'B62xxxt',
-        tokenSymbol: 'TZ',
+            star: 4,
 
-        saleName: 'XX Inu 2.0',
-        saleAddress: 'B62xxs',
+            totalSaleSupply: 20,
+            currency: 'Mina',
+            feeRate: '5%',
+            saleRate: 10,
+            whitelistTreeRoot: '45678ityuioghjk',
+            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
 
-        star: 4,
+            softCap: 101,
+            hardCap: 300,
+            minimumBuy: 0.1,
+            maximumBuy: 1,
+            startTimestamp: new Date().getTime() - 10 * 24 * 60 * 60 * 1000,
+            endTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
+            projectStatus: '',
 
-        totalSaleSupply: 20,
-        currency: 'Mina',
-        feeRate: '5%',
-        saleRate: 10,
-        whitelistTreeRoot: '45678ityuioghjk',
-        whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+            cliffTime: 300,
+            cliffAmountRate: 3,
+            vestingPeriod: 12,
+            vestingIncrement: 10,
+            contributorsFetchFlag: 0,
+            contributorsTreeRoot: '',
+            contributorsMaintainFlag: 0,
+            totalContributedMina: 100,
+            totalContributorNum: 3,
+            teamName: 'Tokenizk Team',
+            logoUrl: '/src/assets/images/3.png',
+            website: 'https://tokenizk.finance/',
+            facebook: 'https://tokenizk.finance/',
+            github: 'https://tokenizk.finance/',
+            twitter: 'https://tokenizk.finance/',
+            telegram: 'https://tokenizk.finance/',
+            discord: 'https://tokenizk.finance/',
+            reddit: 'https://tokenizk.finance/',
+            description: 'The Launchpad focusing on ZK-Token for Everyone!',
+            updatedAt: new Date().getTime(),
+            createdAt: new Date().getTime(),
 
-        softCap: 101,
-        hardCap: 300,
-        minimumBuy: 0.1,
-        maximumBuy: 1,
-        startTimestamp: new Date().getTime() - 10 * 24 * 60 * 60 * 1000,
-        endTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
-        projectStatus: '',
-
-        cliffTime: 300,
-        cliffAmountRate: 3,
-        vestingPeriod: 1704527581215,
-        vestingIncrement: 0,
-        contributorsFetchFlag: 0,
-        contributorsTreeRoot: '',
-        contributorsMaintainFlag: 0,
-        totalContributedMina: 100,
-
-        teamName: 'Tokenizk Team',
-        logoUrl: '/src/assets/images/1.png',
-        website: 'https://tokenizk.finance/',
-        facebook: 'https://tokenizk.finance/',
-        github: 'https://tokenizk.finance/',
-        twitter: 'https://tokenizk.finance/',
-        telegram: 'https://tokenizk.finance/',
-        discord: 'https://tokenizk.finance/',
-        reddit: 'https://tokenizk.finance/',
-        description: 'The Launchpad focusing on ZK-Token for Everyone!',
-        updatedAt: new Date().getTime(),
-        createdAt: new Date().getTime(),
-
-        progressBarStatus: 'success',
-        progressPercent: 0
-    }];
+            progressBarStatus: 'success',
+            progressPercent: 0
+        },
+    ];
 
     calcProjectProgress(fetchResult);
     // 转换项目状态
@@ -320,29 +339,30 @@ const triggerFilterProjects = () => {
     // 计算项目状态
     transformProjectStatus(fetchResult);
 
-    if (filterBy.value === '4') {
+    if (filterBy.value === '0') {
         // TODO 
-        fetchResult.filter(item => {
-            return item.projectStatus === 'All Status'
-        })
-
-    } else if (filterBy.value === '0') {
+        // renderSaleBlock = fetchResult.filter(item => {
+        //     return item.projectStatus === 'All Status'
+        // })
         renderSaleBlock = fetchResult
-    } else {
-        renderSaleBlock = fetchResult.filter(item => {
-            if (filterBy.value == '1') {
-                return item.projectStatus === 'Upcoming'
-            } else if (filterBy.value == '2') {
-                return item.projectStatus === 'Ongoing'
-            } else if (filterBy.value == '3') {
-                return item.projectStatus === 'Ended'
-            }
+
+    }else if (filterBy.value === '1'){
+        renderSaleBlock = fetchResult.filter(item => { 
+            return item.projectStatus === 'Ongoing'
+        });
+    }else if (filterBy.value === '2'){
+        renderSaleBlock = fetchResult.filter(item => { 
+            return item.projectStatus === 'Ongoing'
+        });
+    }else if (filterBy.value === '3'){
+        renderSaleBlock = fetchResult.filter(item => { 
+            return item.projectStatus === 'Ended'
         });
     }
 
     // sort
     sortProjects(sortBy.value, renderSaleBlock);
-
+    // renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock));
     presaleProjects.saleList = renderSaleBlock;
 }
 
@@ -355,6 +375,7 @@ const triggerSortProjects = () => {
     presaleProjects.saleList = renderSaleBlock;
 }
 
+
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(() => {
     getSearchProjects();
@@ -365,6 +386,9 @@ onMounted(() => {
         behavior: 'smooth' // 平滑滚动到顶部  
     });
 })
+
+
+
 
 </script>
 
@@ -411,102 +435,14 @@ onMounted(() => {
 
                     <ul class="launchpads-ul">
 
-                        <li v-for="item in presaleProjects.saleList" :key="item.id">
+                        <li v-for="item in presaleProjects.saleList" :key="item.id" style="margin-bottom: 40px;">
 
-                            <div class="launchpads-box">
-
-                                <!-- photo -->
-                                <el-row class="thumb">
-                                    <router-link to="/presale-datails">
-                                        <el-image style="width: 349px; height: 130px;" :src="item.logoUrl"
-                                            :alt="item.saleName" loading="lazy" />
-                                    </router-link>
-                                </el-row>
-
-                                <!-- 项目描述 -->
-                                <el-row class="launchpads-content">
-
-                                    <el-col :span="24">
-
-                                        <el-row class="row-bg" justify="space-between">
-                                            <el-col :span="8">
-                                                <h4><a href="#">{{ item.saleName }}</a></h4>
-                                            </el-col>
-
-                                            <el-col :span="5"></el-col>
-
-                                            <el-col class="review" :span="7">
-                                                <el-button type="primary" round class="statusColor">{{ item.projectStatus
-                                                }}</el-button>
-                                            </el-col>
-                                        </el-row>
-
-                                        <!-- 团队名称 -->
-                                        <el-row class="row-bg" justify="space-between" style="align-items: center;">
-                                            <el-col class="text" :span="10">
-                                                by <a href="" class="link">{{ item.teamName }}</a>
-                                            </el-col>
-
-                                            <el-col class="review" :span="10">
-                                                <el-rate v-model="item.star" size="large" />
-                                            </el-col>
-                                        </el-row>
-
-                                        <el-row class="row-bg soft-hard-cap" justify="space-between">
-                                            <el-col :span="10">Soft / Hard</el-col>
-                                            <el-col :span="2"></el-col>
-                                            <el-col :span="10">{{ item.softCap }}Mina - {{ item.hardCap }}Mina</el-col>
-                                        </el-row>
-
-                                        <!-- 注意  进度条 -->
-                                        <el-row class="content-Progress">
-                                            <el-col>
-
-                                                <el-row class="title">Progress</el-row>
-
-                                                <el-row class="Progress demo-progress" style="margin-bottom: 0;">
-                                                    <el-progress :text-inside="true" :stroke-width="14"
-                                                        :status="item.progressBarStatus" :percentage="item.progressPercent"
-                                                        striped striped-flow :duration="6" />
-                                                </el-row>
-
-                                                <el-row class="row-bg sub-title" justify="space-between">
-                                                    <el-col :span="10"> 0 Mina</el-col>
-                                                    <el-col :span="4"></el-col>
-                                                    <el-col :span="6">{{ item.hardCap }} Mina </el-col>
-                                                </el-row>
-
-                                            </el-col>
-                                        </el-row>
-
-                                        <!-- <el-row class="row-bg liquidity-percent" justify="space-between">
-                      <el-col :span="10">Liquidity %:</el-col>
-                      <el-col :span="4"></el-col>
-                      <el-col :span="6"> {{ item.liquidity }}</el-col>
-                    </el-row> -->
-
-                                        <el-row class="row-bg lockup-time" justify="space-between">
-                                            <el-col :span="10">Lockup Time:</el-col>
-                                            <el-col :span="4"></el-col>
-                                            <el-col :span="6">{{ new Date(item.cliffTime).getHours() }} </el-col>
-                                        </el-row>
-
-
-                                        <el-row class="row-bg Sale-Ends-In" justify="space-between">
-                                            <el-col :span="10">Sale Ends In :</el-col>
-                                            <el-col :span="4"></el-col>
-                                            <el-col :span="6">{{ item.cliffTime * 5 }} </el-col>
-                                        </el-row>
-
-                                    </el-col>
-
-                                </el-row>
-
-                            </div>
-
+                            <SaleBlock :saleDto="item"/>
 
                         </li>
+
                     </ul>
+
                 </el-col>
             </el-row>
 
@@ -530,39 +466,6 @@ onMounted(() => {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
-
-        li {
-            margin-top: 0px;
-            margin-bottom: 30px;
-            width: 349px;
-            height: 430px;
-            border-radius: 15px;
-
-            .launchpads-box {
-                width: 100%;
-                height: 100%;
-                background-color: #fff;
-                border-radius: 15px;
-
-                .thumb {
-                    width: 349px;
-                    height: 130px;
-                    overflow: hidden;
-                }
-
-                .launchpads-content {
-                    width: 100%;
-                    padding: 12px 20px;
-
-                    .demo-progress .el-progress--line {
-                        margin-bottom: 15px;
-                        width: 300px;
-                    }
-
-                }
-
-            }
-        }
     }
 }
 

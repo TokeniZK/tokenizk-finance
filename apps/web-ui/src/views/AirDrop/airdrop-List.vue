@@ -1,5 +1,20 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+
+let isASelected = ref(true)
+let isBSelected = ref(false)
+
+const handleAClick = () => {
+  isASelected.value = true;
+  isBSelected.value = false;
+}
+
+const handleBClick = () => {
+  isASelected.value = false;
+  isBSelected.value = true;
+}
+
+
 // 组件挂载完成后执行的函数
 onMounted(() => {
 
@@ -25,14 +40,16 @@ onMounted(() => {
         <el-col :span="18" class="airdropBoard">
           <el-row class="row-bg" justify="center">
             <el-col :span="8">
-              <el-row class="row-bg" justify="center">Airdrop Launched</el-row>
+              <el-row class="row-bg" justify="center">Airdrop
+                Launched</el-row>
               <el-row class="row-bg" justify="center">
                 <h3>294</h3>
               </el-row>
             </el-col>
 
             <el-col :span="8">
-              <el-row class="row-bg" justify="center">Participants in All-time</el-row>
+              <el-row class="row-bg" justify="center">Participants in
+                All-time</el-row>
               <el-row class="row-bg" justify="center">
                 <h3>16790</h3>
               </el-row>
@@ -48,15 +65,13 @@ onMounted(() => {
         <el-col :span="5"></el-col>
 
         <el-col :span="6">
-          <router-link to="/airdrop-list" class="bline">All Airdrops</router-link>
+          <router-link to="/airdrop-list" :class="{ 'activeMenu': isASelected }" @click="handleAClick">All
+            Airdrops</router-link>
         </el-col>
 
         <el-col :span="6">
-          <router-link to="/airdrop-list/my-airdrop" class="bline">My Airdrops</router-link>
-        </el-col>
-
-        <el-col :span="6">
-          <router-link to="/airdrop-list/created-by-you-airdrop" class="bline">Created By You</router-link>
+          <router-link to="/airdrop-list/my-airdrop" :class="{ 'activeMenu': isBSelected }" @click="handleBClick">My
+            Airdrops</router-link>
         </el-col>
 
       </el-row>
@@ -87,7 +102,7 @@ onMounted(() => {
     text-align: center;
   }
 
-  .bline:hover {
+  .activeMenu {
     border-bottom: 2px solid #00FFC2;
   }
 

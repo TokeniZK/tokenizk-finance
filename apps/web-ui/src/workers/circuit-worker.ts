@@ -25,6 +25,8 @@ import TokeniZkFairSaleVK from "../../../../packages/contracts/deploy/verificati
 import TokeniZkPrivateSaleVK from "../../../../packages/contracts/deploy/verification-keys/TokeniZkPrivateSale-VK.json";
 import TokeniZkAirdropVK from "../../../../packages/contracts/deploy/verification-keys/TokeniZkAirdrop-VK.json";
 import RedeemAccountVK from "../../../../packages/contracts/deploy/verification-keys/RedeemAccount-VK.json";
+import { proofReq, proofResult } from '@/apis/proof-api';
+import { ClientProofReqType, type ClientProveTaskDto } from '@tokenizk/types';
 // import SaleRollupProverVK from "../../../../packages/contracts/deploy/verification-keys/SaleRollupProver-VK.json";
 
 // Error.stackTraceLimit = Infinity;
@@ -534,19 +536,67 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
     membershipMerkleWitness0: string[], leafIndex: string,
     feePayerAddress: string, txFee: number) => {
 
+    let saleType = 0;
     let saleTag = '';
-    let flag = true;
     if (saleParams0.totalSaleSupply == 0) {
-        flag = flag && (await compileTokeniZkPrivatesale());
-        saleTag = 'Presale'
-    } else if (saleParams0.softCap == 0) {
-        flag = flag && (await compileTokeniZkFairsale());
-        saleTag = 'Fairsale'
-    } else {
-        flag = flag && (await compileTokeniZkPresale());
+        // flag = flag && (await compileTokeniZkPresale());
         saleTag = 'Privatesale'
+        saleType = ClientProofReqType.PRIVATESALE_CONTRIBUTE;
+
+    } else if (saleParams0.softCap == 0) {
+        // flag = flag && (await compileTokeniZkFairsale());
+        saleTag = 'Fairsale'
+        saleType = ClientProofReqType.FAIRSALE_CONTRIBUTE;
+
+    } else {
+        // flag = flag && (await compileTokeniZkPrivatesale());
+        saleTag = 'Presale'
+        saleType = ClientProofReqType.PRESALE_CONTRIBUTE;
+
     }
 
+    const contributeTxParams = {
+        feePayer: feePayerAddress,
+        fee: txFee,
+        tokenAddress: saleParams0.tokenAddress,
+        contractAddress: saleAddress,
+
+        methodParams: {
+            saleParams: saleParams0,
+            membershipMerkleWitness: membershipMerkleWitness0,
+            leafIndex,
+            contributorAddress,
+            minaAmount
+        }
+    }
+
+    const clientProveTaskDto: ClientProveTaskDto = {
+        id: 0,
+        type: saleType,
+        params: JSON.stringify(contributeTxParams),
+        result: '',
+        userAddress: feePayerAddress,
+        targetAddress: saleAddress,
+        tokenAddress: basicTokenZkAppAddress,
+        txHash: '',
+        status: 0,
+        updatedAt: 0,
+        createdAt: 0
+    };
+    const rs = 1 // await proofReq(clientProveTaskDto);
+    if (rs > 0) {
+        try {
+            // setInterval to fetch result back
+            //
+            //
+            //
+            return await proofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    let flag = true;
     if (flag) {
         const feePayer = PublicKey.fromBase58(feePayerAddress);
         await fetchAccount({ publicKey: feePayer });
@@ -627,16 +677,64 @@ const claimTokensSale = async (
     },
     oldNullWitness0: string[],
     feePayerAddress: string, txFee: number) => {
+
+    let flag = true; // await compileTokeniZkBasicToken();
+    //flag = flag && (await compileRedeemAccount());
+    let saleType = 0;
     let saleTag = '';
-    let flag = await compileTokeniZkBasicToken();
-    flag = flag && (await compileRedeemAccount());
-    if (flag) {
-        if (saleParams0.softCap == 0) {
-            flag = flag && (await compileTokeniZkFairsale());
-            saleTag = 'Fairsale'
-        } else {
-            flag = flag && (await compileTokeniZkPresale());
-            saleTag = 'Privatesale'
+    if (saleParams0.softCap == 0) {
+        // flag = flag && (await compileTokeniZkPresale());
+        saleTag = 'Fairsale'
+        saleType = ClientProofReqType.FAIRSALE_CLAIM_TOKEN;
+    } else {
+        // flag = flag && (await compileTokeniZkPrivatesale());
+        saleTag = 'Presale'
+        saleType = ClientProofReqType.PRESALE_CLAIM_TOKEN;
+    }
+
+    const saleContribution0 = saleContributorMembershipWitnessData0.leafData;
+    const saleAddress = saleContribution0.saleContractAddress;
+    const tokenAddress = saleContribution0.tokenAddress;
+
+    const lowLeafWitness = lowLeafWitness0;
+    const oldNullWitness = oldNullWitness0;
+    const contributeTxParams = {
+        feePayer: feePayerAddress,
+        fee: txFee,
+        tokenAddress: saleParams0.tokenAddress,
+        contractAddress: saleAddress,
+
+        methodParams: {
+            saleParams: saleParams0,
+            saleContributorMembershipWitnessData: saleContributorMembershipWitnessData0,
+            lowLeafWitness,
+            oldNullWitness
+        }
+    }
+
+    const clientProveTaskDto: ClientProveTaskDto = {
+        id: 0,
+        type: saleType,
+        params: JSON.stringify(contributeTxParams),
+        result: '',
+        userAddress: feePayerAddress,
+        targetAddress: saleAddress,
+        tokenAddress,
+        txHash: '',
+        status: 0,
+        updatedAt: 0,
+        createdAt: 0
+    };
+    const rs = await proofReq(clientProveTaskDto);
+    if (rs > 0) {
+        try {
+            // setInterval to fetch result back
+            //
+            //
+            //
+            return await proofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -848,23 +946,47 @@ const claimTokensAirdrop = async (
     feePayerAddress: string,
     txFee: number
 ) => {
-
     const claimTokensAirdropParams = {
-        airdropAddress0,
-        airdropParams0,
-        membershipMerkleWitness0,
-        leafIndex0,
-        lowLeafWitness0,
-        oldNullWitness0,
-        feePayerAddress,
-        txFee
+        feePayer: feePayerAddress,
+        fee: txFee,
+        tokenAddress: airdropParams0.tokenAddress,
+        contractAddress: airdropAddress0,
+
+        methodParams: {
+            airdropParams: airdropParams0,
+            membershipMerkleWitness: membershipMerkleWitness0,
+            leafIndex: leafIndex0,
+            lowLeafWitness: lowLeafWitness0,
+            oldNullWitness: oldNullWitness0,
+        }
     }
+
     console.log("claimTokensAirdropParams:" + JSON.stringify(claimTokensAirdropParams));
 
-    const saleTag = 'Airdrop';
-    let flag = true;
+    const clientProveTaskDto: ClientProveTaskDto = {
+        id: 0,
+        type: ClientProofReqType.AIRDROP_CLAIM_TOKEN,
+        params: JSON.stringify(claimTokensAirdropParams),
+        result: '',
+        userAddress: feePayerAddress,
+        targetAddress: airdropAddress0,
+        tokenAddress: airdropParams0.tokenAddress,
+        txHash: '',
+        status: 0,
+        updatedAt: 0,
+        createdAt: 0
+    };
+    const rs = await proofReq(clientProveTaskDto);
+    if (rs > 0) {
+        // setInterval to fetch result back
+        //
+        //
+        //
+        return await proofResult({ userAddress: feePayerAddress, targetAddress: airdropAddress0 });
+    }
 
-    await compileTokeniZkBasicToken();
+    const saleTag = 'Airdrop';
+    let flag = await compileTokeniZkBasicToken();
     flag = flag && (await compileRedeemAccount());
     flag = flag && (await compileTokeniZkAirdrop());
 
@@ -912,6 +1034,7 @@ const claimTokensAirdrop = async (
        } catch (e) {
            console.error(e);
        } */
+
     }
     return null;
 }

@@ -210,9 +210,12 @@ onMounted(async () => {
 
           <ul class="my-airdrop-ul">
 
-            <li v-for="item in myAirdropsList.airdropList" :key="item.airdropDto.id">
+            <li v-for="item in myAirdropsList.airdropList" :key="item.airdropDto.id" style="margin-bottom: 40px;">
+              
               <AirdropBlock :airdropDto="item" />
+
             </li>
+
           </ul>
 
         </el-col>

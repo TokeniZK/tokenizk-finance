@@ -335,11 +335,13 @@ onMounted(() => {
         <el-col :span="20">
 
           <ul class="airdrops-ul">
-            <li v-for="item in airdropProjects.airdropList" :key="item.id">
+
+            <li v-for="item in airdropProjects.airdropList" :key="item.id" style="margin-bottom: 40px;">
 
               <AirdropBlock :airdropDto="item" />
 
             </li>
+            
           </ul>
 
         </el-col>

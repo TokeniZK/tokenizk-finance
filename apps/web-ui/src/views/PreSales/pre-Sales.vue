@@ -4,19 +4,6 @@ import { useStatusStore, type AppState } from "@/stores";
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
 
-let isASelected = ref(true)
-let isBSelected = ref(false)
-
-const handleAClick = () => {
-    isASelected.value = true;
-    isBSelected.value = false;
-}
-
-const handleBClick = () => {
-    isASelected.value = false;
-    isBSelected.value = true;
-}
-
 let route = useRoute();
 let saleType = ref(route.query.saleType as any as number);
 
@@ -39,6 +26,20 @@ let salePageTitle = computed(() => {
 let SecondaryRoutingTitle = computed(() => {
     return `All ${saleType.value == 0 ? 'launchpads' : (saleType.value == 1 ? ' FairSales' : 'PrivateSales')}`
 })
+
+
+let isASelected = ref(true)
+let isBSelected = ref(false)
+
+const handleAClick = () => {
+    isASelected.value = true;
+    isBSelected.value = false;
+}
+
+const handleBClick = () => {
+    isASelected.value = false;
+    isBSelected.value = true;
+}
 
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();

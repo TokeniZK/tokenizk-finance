@@ -4,7 +4,7 @@ import { getAllPrivateSalesAPI } from '@/apis/privateSalesAll'
 import { Search } from '@element-plus/icons-vue'
 import { nanoid } from 'nanoid'
 import { Minus, Plus } from '@element-plus/icons-vue'
-import { getSearchProjectAPI } from '@/apis/getSearchProjectsApi'
+import { getSearchProjectAPI } from '@/apis/sale-api'
 import { type SaleDto } from '@tokenizk/types'
 
 const percentage = ref(20)
@@ -97,7 +97,7 @@ const fetchResult: SaleDto[] = [{
 
 let keyWord = ref('')
 const getSearchProjects = async () => {
-  let searchRes = getSearchProjectAPI(keyWord)
+  let searchRes = querySale(keyWord)
   allPrivateSalesList.value = searchRes.value
 }
 
