@@ -1,4 +1,4 @@
-import { SaleStatus } from '@tokenizk/types'
+import { AirdropDto } from '@tokenizk/types'
 import {
     Column,
     CreateDateColumn,
@@ -6,6 +6,13 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm'
+import {
+    UInt64,
+    PublicKey,
+    Field,
+    UInt32,
+} from 'o1js';
+import { AirdropParams } from '@tokenizk/contracts';
 
 /**
  * 
@@ -14,6 +21,9 @@ import {
 export class Airdrop {
     @PrimaryGeneratedColumn("increment")
     id: number
+
+    @Column()
+    type: number
 
     /**
      * L1TxHash
@@ -24,64 +34,119 @@ export class Airdrop {
     /**
      * {@link L1TxStatus}
      */
-    @Column({ default: SaleStatus.UNCONFIRMED })
+    @Column()
     status: number
+
+    @Column()
+    airdropName: string
 
     /**
      * current batch's starting actionState
      */
     @Column()
-    startActionHash: string
+    airdropAddress: string
+
+    @Column()
+    tokenAddress: string
+
+    @Column()
+    totalAirdropSupply: number
+
+    @Column()
+    currency: string
+
+    @Column()
+    feeRate: string
+
+    @Column()
+    whitelistTreeRoot: string
 
     /**
-     * next batch's starting actionState
+     * comma separated list of addresses
      */
     @Column()
-    nextActionHash: string
-
-    /**
-     * current batch's starting actionIndex
-     */
-    @Column()
-    startActionIndex: string
-
-    /**
-     * next batch's starting actionIndex
-     */
-    @Column()
-    nextActionIndex: string
-
-    /**
-     * record the starting block number where obtaining actions/events
-     */
-    @Column()
-    startBlock: number
-
-    /**
-     * record the ending block number where obtaining actions/events
-     */
-    @Column()
-    endBlock: number
+    whitelistMembers: string
 
     @Column()
-    startDepositRoot: string
+    startTimestamp: number
 
     @Column()
-    nextDepositRoot: string
+    endTimestamp: number
 
-    /**
-     * just record
-     */
+    @Column()
+    cliffTime: number
+
+    @Column()
+    cliffAmountRate: number
+
+    @Column()
+    vestingPeriod: number
+
+    @Column()
+    vestingIncrement: number
+    
+    @Column()
+    star: number
+
+    @Column()
+    logoUrl: string
+
+    @Column()
+    website: string
+
+    @Column()
+    facebook: string
+
+    @Column()
+    github: string
+
+    @Column()
+    twitter: string
+
+    @Column()
+    telegram: string
+
+    @Column()
+    discord: string
+
+    @Column()
+    reddit: string
+
+    @Column()
+    description: string
+
     @UpdateDateColumn({
         default: () => 'CURRENT_TIMESTAMP',
     })
     updatedAt: Date
 
-    /**
-     * the timestamp when L2Block is created at Layer2
-     */
     @CreateDateColumn({
         default: () => 'CURRENT_TIMESTAMP',
     })
     createdAt: Date
+
+    generateSaleParam() {
+        const airdropParams = new AirdropParams({
+            tokenAddress: PublicKey.fromBase58(this.tokenAddress),
+            totalAirdropSupply: UInt64.from(this.totalAirdropSupply),
+            totalMembersNumber: UInt64.from(this.whitelistMembers.split(',').length),
+            whitelistTreeRoot: Field(this.whitelistTreeRoot),
+            startTime: UInt32.from(this.startTimestamp),
+            cliffTime: UInt32.from(this.cliffTime),
+            cliffAmountRate: UInt64.from(this.cliffAmountRate),
+            vestingPeriod: UInt32.from(this.vestingPeriod), // 0 is not allowed, default value is 1
+            vestingIncrement: UInt64.from(this.vestingIncrement)
+        });
+
+        return airdropParams;
+    }
+
+    static fromDto(airdropDto: AirdropDto) {
+        const airdrop = new Airdrop();
+
+        Object.assign(airdrop, airdropDto);
+
+        return airdrop;
+    }
+
 }

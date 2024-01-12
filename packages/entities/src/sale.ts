@@ -1,4 +1,4 @@
-import { SaleStatus } from '@tokenizk/types'
+import { SaleDto, SaleStatus } from '@tokenizk/types'
 import {
     Column,
     CreateDateColumn,
@@ -115,6 +115,8 @@ export class Sale {
     @Column()
     contributorsTreeRoot: string
 
+    @Column()
+    totalContributedMina: number
     /**
      * 0: not yet, 1: handle
      * 
@@ -169,8 +171,8 @@ export class Sale {
             hardCap: UInt64.from(this.hardCap),
             minimumBuy: UInt64.from(this.minimumBuy),
             maximumBuy: UInt64.from(this.maximumBuy),
-            startTime: UInt64.from(this.startTimestamp),
-            endTime: UInt64.from(this.endTimestamp),
+            startTime: UInt32.from(this.startTimestamp),
+            endTime: UInt32.from(this.endTimestamp),
             cliffTime: UInt32.from(this.cliffTime),
             cliffAmountRate: UInt64.from(this.cliffAmountRate),
             vestingPeriod: UInt32.from(this.vestingPeriod), // 0 is not allowed, default value is 1
@@ -178,6 +180,14 @@ export class Sale {
         });
 
         return saleParams;
+    }
+
+    static fromDto(saleDto: SaleDto) {
+        const sale = new Sale();
+
+        Object.assign(sale, saleDto);
+
+        return sale;
     }
 
 }

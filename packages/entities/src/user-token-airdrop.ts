@@ -9,53 +9,53 @@ import {
 /**
  * 
  */
-@Entity("tb_basic_token")
-export class BasiceToken {
+@Entity("tb_user_token_airdrop")
+export class UserTokenAirdrop {
     @PrimaryGeneratedColumn("increment")
     id: number
 
-    /**
-     * L1TxHash
-     */
-    @Column()
-    txHash: string
-
-    @Column()
-    type: number
-
-    /**
-     * 0: unconfirmed
-     * 1: confirmed
-     */
-    @Column()
+    @Column({ default: 0 })
     status: number
 
     @Column()
-    address: string
+    userAddress: string
 
     @Column()
-    fee: string
+    airdropId: number
 
     @Column()
-    name: string
+    airdropAddress: string
 
     @Column()
-    logoUrl: string
+    tokenAddress: string
 
     @Column()
-    symbol: string
-
-    @Column()
-    zkappUri: string
+    tokenId: string
 
     /**
-     * current batch's starting actionIndex
+     * claim TxHash
      */
     @Column()
-    totalSupply: string
+    claimTxHash: string
 
+    @Column()
+    claimAmount: string
+
+    @Column()
+    claimBlockHeight: number
+
+    /**
+     * 0: default
+     * 1: synced
+     */
     @Column({ default: 0 })
-    totalAmountInCirculation: number
+    syncNullTreeFlag: number
+
+    /**
+     * record the leaf index in user_nullifier_tree
+     */
+    @Column()
+    nullTreeLeafIndex: number
 
     /**
      * just record
