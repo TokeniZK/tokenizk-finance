@@ -15,7 +15,7 @@ export interface TokenDto {
     symbol: string
 
     zkappUri: string
-    
+
     totalSupply: number
 
     totalAmountInCirculation: number
@@ -24,5 +24,5 @@ export interface TokenDto {
 
     createdAt: number
 
-    logoUrl:string
+    logoUrl: string
 }

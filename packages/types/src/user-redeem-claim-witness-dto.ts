@@ -1,5 +1,5 @@
 export interface UserRedeemClaimWitnessDto {
-    saleContributorMembershipWitnessData: {
+    saleContributorMembershipWitnessData?: {
         leafData: {
             tokenAddress: string,
             tokenId: string,

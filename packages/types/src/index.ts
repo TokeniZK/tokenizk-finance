@@ -15,8 +15,16 @@ import TokenDtoSchema from './token-dto-schema.json' assert { type: "json" };
 import SaleContributorsDetailDtoSchema from "./sale-contributors-detail-dto-schema.json" assert { type: "json" };
 
 import UserContributionDtoSchema from './user-contribution-dto-schema.json' assert { type: "json" };
+import ClientProveTaskDtoSchema from './client-prove-task-dto-schema.json' assert { type: "json" };
 
-export { UserContributionDtoSchema, MerkleProofDtoSchema, SaleDtoSchema, SaleReqSchema, SaleUserDtoSchema, ProofTaskDtoSchema, UserRedeemClaimWitnessDtoSchema, TokenDtoSchema, SaleContributorsDetailDtoSchema }
+
+import AirdropReqSchema from './airdrop-req-schema.json' assert { type: "json" };
+import AirdropDtoSchema from './airdrop-dto-schema.json' assert { type: "json" };
+import AirdropUserDtoSchema from './airdrop-user-dto-schema.json' assert { type: "json" };
+import AirdropClaimerDtoSchema from './airdrop-claimer-dto-schema.json' assert { type: "json" };
+import AirdropClaimersDetailDtoSchema from './airdrop-claimers-detail-dto-schema.json' assert { type: "json" };
+
+export { ClientProveTaskDtoSchema, AirdropReqSchema, AirdropDtoSchema, AirdropUserDtoSchema, AirdropClaimerDtoSchema, AirdropClaimersDetailDtoSchema, UserContributionDtoSchema, MerkleProofDtoSchema, SaleDtoSchema, SaleReqSchema, SaleUserDtoSchema, ProofTaskDtoSchema, UserRedeemClaimWitnessDtoSchema, TokenDtoSchema, SaleContributorsDetailDtoSchema }
 
 export * from './fetch-events-standard-response'
 
@@ -44,3 +52,14 @@ export * from './user-contribution-dto'
 
 export * from './sale-contributors-detail-dto'
 
+export * from './airdrop-req'
+
+export * from './airdrop-dto'
+
+export * from './airdrop-user-dto'
+
+export * from './airdrop-claimer-dto'
+
+export * from './airdrop-claimers-detail-dto'
+
+export * from './client-prove-task-dto'

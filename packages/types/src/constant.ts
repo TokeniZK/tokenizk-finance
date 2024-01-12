@@ -1,3 +1,4 @@
+import exp from "constants";
 
 export enum SaleStatus {
 
@@ -18,8 +19,31 @@ export enum SaleStatus {
     */
 }
 
+export enum AirdropStatus {
+
+    UNCONFIRMED,
+
+    CONFIRMED,
+
+}
+
+
+export enum ClientProofReqType {
+
+    AIRDROP_CLAIM_TOKEN,
+
+    PRESALE_CONTRIBUTE,
+    PRESALE_CLAIM_TOKEN,
+    PRESALE_REDEEM_FUND,
+
+    FAIRSALE_CONTRIBUTE,
+    FAIRSALE_CLAIM_TOKEN,
+
+    PRIVATESALE_CONTRIBUTE,
+}
+
 export enum SaleType {
-    PRESALE ,
+    PRESALE,
     FAIRSALE,
     PRIVATESALE
 }
