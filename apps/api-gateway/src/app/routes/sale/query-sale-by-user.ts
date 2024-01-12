@@ -24,8 +24,7 @@ export const querySaleListByUser: FastifyPlugin = async function (
         handler
     })
 }
-
-export const handler: RequestHandler<{ saleType: number, userAddress: string }, null> = async function (
+const handler: RequestHandler<{ saleType: number, userAddress: string }, null> = async function (
     req,
     res
 ): Promise<BaseResponse<SaleUserDto[]>> {
@@ -50,8 +49,8 @@ export const handler: RequestHandler<{ saleType: number, userAddress: string }, 
             }
         });
         presaleList.forEach(p => {
-            const token = tokenList.filter(t => t.tokenAddress == p.tokenAddress)[0];
-            (p as any as SaleDto).tokenSymbol = token.tokenSymbol
+            const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
+            (p as any as SaleDto).tokenSymbol = token.symbol
         })
 
         for (let i = 0; i < userSaleList.length; i++) {
@@ -60,10 +59,10 @@ export const handler: RequestHandler<{ saleType: number, userAddress: string }, 
             const presale = presaleList.filter(p => p.id == ufs.saleId)[0];
 
             const fsDto: SaleUserDto = {
-                saleDto: presale as SaleDto,
+                saleDto: presale as any as SaleDto,
                 userContribute: {
                     txHash: ufs.contributeTxHash,
-                    contributeTimestamp: ufs.contributeBlockHeight,
+                    contributeBlockHeight: ufs.contributeBlockHeight,
                     contributedCurrencyAmount: ufs.contributeCurrencyAmount
                 }
             }

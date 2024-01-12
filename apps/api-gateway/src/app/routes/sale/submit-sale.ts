@@ -9,9 +9,6 @@ import { Sale, UserTokenSale } from "@tokenizk/entities"
 
 const logger = getLogger('createSale');
 
-// query all, filter by status==on, order by createTime, limit 18
-// by tokenName
-// by userAddress 
 export const createSale: FastifyPlugin = async function (
     instance,
     options,
@@ -26,29 +23,38 @@ export const createSale: FastifyPlugin = async function (
     })
 }
 
-
-export const handler: RequestHandler<SaleDto, null> = async function (
+const handler: RequestHandler<SaleDto, null> = async function (
     req,
     res
-): Promise<BaseResponse<string>> {
-    const presaleDto = req.body
+): Promise<BaseResponse<number>> {
+    const saleDto = req.body
 
     try {
         const connection = getConnection();
-        const presaleRepo = connection.getRepository(Sale)
+        const saleRepo = connection.getRepository(Sale)
 
-        // transform from SaleDto to Sale
-        const presale = new Sale();
-        // TODO
-        //
-        //
-        //
- 
-        await presaleRepo.save(presale);
+
+        let sale = await saleRepo.findOne({
+            where: {
+                saleAddress: saleDto.saleAddress,
+                tokenAddress: saleDto.tokenAddress,
+            }
+        });
+
+        if (sale) {
+            sale.txHash = saleDto.txHash;
+            sale.updatedAt = new Date();
+        } else {
+            // transform from SaleDto to Sale
+            sale = Sale.fromDto(saleDto);
+            sale.createdAt = new Date();
+            sale.updatedAt = new Date();
+        }
+        sale = await saleRepo.save(sale);
 
         return {
             code: 0,
-            data: '',
+            data: sale.id,
             msg: ''
         };
     } catch (err) {
@@ -60,7 +66,7 @@ export const handler: RequestHandler<SaleDto, null> = async function (
 }
 
 const schema = {
-    description: 'create presale',
+    description: 'create sale',
     tags: ["Sale"],
     body: {
         type: SaleDtoSchema.type,
@@ -74,7 +80,7 @@ const schema = {
                     type: 'number',
                 },
                 data: {
-                    type: 'string'
+                    type: 'number'
                 },
                 msg: {
                     type: 'string'

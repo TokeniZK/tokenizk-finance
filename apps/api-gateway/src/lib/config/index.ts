@@ -1,10 +1,4 @@
-import {
-    VerificationKey,
-} from 'o1js';
 import * as dotenv from "dotenv"
-import fs from "fs";
-
-const KeyConfig = JSON.parse(fs.readFileSync('../../packages/circuits/scripts/keys-private.json', 'utf8'));
 
 dotenv.config({ path: '../../.env' })
 
@@ -57,21 +51,14 @@ const config = {
         }
     },
     pinoLogFilePath: <string>process.env.PINO_LOG_FILE_PATH || '/var/anomix/logs/',
-    txFeeFloor: <number>Number(<string>process.env.TxFeeFloor) || 1000 * 1000, // default 0.001Mina
 
-    coreServiceHost: <string>process.env.ROLLUP_SEQUENCER_HOST || '127.0.0.1',
-    coreServicePort: <number>Number(<string>process.env.ROLLUP_SEQUENCER_PORT) || 8080,
+    coreServiceHost: <string>process.env.CORE_SERVICE_HOST || '127.0.0.1',
+    coreServicePort: <number>Number(<string>process.env.CORE_SERVICE_PORT) || 8080,
 
     proofGenHost: <string>process.env.PROOF_GENERATOR_HOST || '127.0.0.1',
     proofGenPort: <number>Number(<string>process.env.PROOF_GENERATOR_PORT ?? 8081),
 
-    maxMpTxCnt: <number>Number(<string>process.env.MAX_MP_TX_CNT) || 300,
-    txFeePayerPrivateKey: <string>KeyConfig.feePayer.privateKey,
-    operatorPrivateKey: <string>KeyConfig.operator.privateKey,
-
     // L2Tx Fee suggestion
-    minMpTxFeeToGenBlock: <number>Number(<string>process.env.MIN_MP_TX_FEE_TO_GEN_BLOCK) || 0.09 * 1000_000_000,
-    floorMpTxFee: <number>Number(<string>process.env.FLOOR_MP_TX_FEE) || 0.03 * 1000_000_000,
     httpProtocol: <string>process.env.HTTP_PROTOCOL || 'http',
 
     proxyMinaEndpoint: <string>process.env.PROXY_MINA_ENDPOINT || 'https://berkeley.graphql.minaexplorer.com/',

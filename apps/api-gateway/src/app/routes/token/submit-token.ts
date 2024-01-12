@@ -27,7 +27,7 @@ export const createSale: FastifyPlugin = async function (
 }
 
 
-export const handler: RequestHandler<TokenDto, null> = async function (
+const handler: RequestHandler<TokenDto, null> = async function (
     req,
     res
 ): Promise<BaseResponse<string>> {
@@ -42,9 +42,11 @@ export const handler: RequestHandler<TokenDto, null> = async function (
         token.status = 0;
         token.type = dto.type;
         token.address = dto.address;
+        token.name = dto.name;
         token.symbol = dto.symbol;
-        token.totalAmountInCirculation = dto.totalAmountInCirculation;
-        token.totalSupply = dto.totalSupply;
+        token.zkappUri = dto.zkappUri;
+        token.totalAmountInCirculation = 0;// init 0
+        token.totalSupply = dto.totalSupply.toString();
         token.zkappUri = dto.zkappUri;
 
         await tokenRepo.save(token);

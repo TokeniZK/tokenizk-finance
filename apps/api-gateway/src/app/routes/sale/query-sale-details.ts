@@ -1,34 +1,32 @@
 import httpCodes from "@inip/http-codes"
 import { FastifyPlugin } from "fastify"
-import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema } from '@tokenizk/types'
+import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, UserContributionDto, SaleContributorsDetailDto, SaleContributorsDetailDtoSchema } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
 
 import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
-import { BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
+import { BasiceToken, Sale, UserTokenSale, } from "@tokenizk/entities"
 
-const logger = getLogger('querySaleList');
+const logger = getLogger('querySaleDetails');
 
-// query all, filter by status==on, order by createTime, limit 18
-// by tokenName
-// by userAddress 
-export const querySaleList: FastifyPlugin = async function (
+export const querySaleDetails: FastifyPlugin = async function (
     instance,
     options,
     done
 ): Promise<void> {
     instance.route({
         method: "POST",
-        url: "/presale/list",
+        url: "/sale/details",
         //preHandler: [instance.authGuard],
         schema,
         handler
     })
 }
+
 const handler: RequestHandler<SaleReq, null> = async function (
     req,
     res
-): Promise<BaseResponse<SaleDto[]>> {
+): Promise<BaseResponse<SaleContributorsDetailDto>> {
     const saleReq = req.body
 
     try {
@@ -36,14 +34,6 @@ const handler: RequestHandler<SaleReq, null> = async function (
         const saleRepo = connection.getRepository(Sale)
 
         const queryBuilder = saleRepo.createQueryBuilder('ps');
-
-        if (saleReq?.saleType) {
-            queryBuilder.andWhere(`ps.saleType = '%${saleReq.saleType}%'`);
-        }
-
-        if (saleReq?.saleName) {
-            queryBuilder.andWhere(`ps.saleName like '%${saleReq.saleName}%'`);
-        }
 
         if (saleReq?.saleAddress) {
             queryBuilder.andWhere(`ps.saleAddress = '${saleReq.saleAddress}'`);
@@ -53,22 +43,29 @@ const handler: RequestHandler<SaleReq, null> = async function (
             queryBuilder.andWhere(`ps.tokenAddress = '${saleReq.tokenAddress}'`);
         }
 
-        const presaleList = (await queryBuilder.orderBy({ createdAt: 'DESC' }).getMany()) ?? [];
+        const sale = ((await queryBuilder.orderBy({ createdAt: 'DESC' }).getMany()) ?? [])[0];
 
-        const tokenList = await connection.getRepository(BasiceToken).find({
+        const token = (await connection.getRepository(BasiceToken).findOne({
             where: {
-                address: In(presaleList.map(p => p.tokenAddress))
+                address: sale.tokenAddress
+            }
+        }))!;
+        (sale as any as SaleDto).tokenSymbol = token.symbol
+
+        const userTokenSaleRepo = connection.getRepository(UserTokenSale)
+        const userTokenSaleList = await userTokenSaleRepo.find({
+            where: {
+                saleId: sale.id
             }
         });
 
-        presaleList.forEach(p => {
-            const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-            (p as any as SaleDto).tokenSymbol = token.symbol
-        })
-
         return {
             code: 0,
-            data: presaleList as any as SaleDto[],
+            data: {
+                saleDto: (sale as any as SaleDto),
+                contributorList: userTokenSaleList as UserContributionDto[]
+
+            } as SaleContributorsDetailDto,
             msg: ''
         };
     } catch (err) {
@@ -80,7 +77,7 @@ const handler: RequestHandler<SaleReq, null> = async function (
 }
 
 const schema = {
-    description: 'query presale list',
+    description: 'query presale details',
     tags: ["Sale"],
     body: {
         type: SaleReqSchema.type,
@@ -94,11 +91,8 @@ const schema = {
                     type: 'number',
                 },
                 data: {
-                    type: 'array',
-                    items: {
-                        type: SaleDtoSchema.type,
-                        properties: SaleDtoSchema.properties
-                    }
+                    type: SaleContributorsDetailDtoSchema.type,
+                    properties: SaleContributorsDetailDtoSchema.properties
                 },
                 msg: {
                     type: 'string'
