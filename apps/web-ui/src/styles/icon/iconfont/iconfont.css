@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4366180 */
-  src: url('iconfont.woff2?t=1703774033186') format('woff2'),
-       url('iconfont.woff?t=1703774033186') format('woff'),
-       url('iconfont.ttf?t=1703774033186') format('truetype');
+  src: url('iconfont.woff2?t=1704384560684') format('woff2'),
+       url('iconfont.woff?t=1704384560684') format('woff'),
+       url('iconfont.ttf?t=1704384560684') format('truetype');
 }
 
 .iconfont {
@@ -13,6 +13,26 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-bird:before {
+  content: "\e602";
+}
+
+.icon-fire2:before {
+  content: "\e600";
+}
+
+.icon-GitHub:before {
+  content: "\ea0a";
+}
+
+.icon-logo_instagram:before {
+  content: "\e682";
+}
+
+.icon-discord1:before {
+  content: "\e6e0";
+}
+
 .icon-redditsquare:before {
   content: "\e7ce";
 }
@@ -21,28 +41,8 @@
   content: "\e715";
 }
 
-.icon-discord:before {
-  content: "\f18d";
-}
-
 .icon-facebook:before {
   content: "\f19d";
-}
-
-.icon-github:before {
-  content: "\e63a";
-}
-
-.icon-a-Instagramblock:before {
-  content: "\e61f";
-}
-
-.icon-birdxiaoniao:before {
-  content: "\e736";
-}
-
-.icon-fire:before {
-  content: "\e635";
 }
 
 .icon-googleplus:before {

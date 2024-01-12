@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "5835056",
+      "name": "bird",
+      "font_class": "bird",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "34999306",
+      "name": "fire",
+      "font_class": "fire2",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "3176645",
+      "name": "GitHub",
+      "font_class": "GitHub",
+      "unicode": "ea0a",
+      "unicode_decimal": 59914
+    },
+    {
+      "icon_id": "14679150",
+      "name": "logo_instagram",
+      "font_class": "logo_instagram",
+      "unicode": "e682",
+      "unicode_decimal": 59010
+    },
+    {
+      "icon_id": "15188325",
+      "name": "discord",
+      "font_class": "discord1",
+      "unicode": "e6e0",
+      "unicode_decimal": 59104
+    },
+    {
       "icon_id": "837149",
       "name": "reddit-square",
       "font_class": "redditsquare",
@@ -20,46 +55,11 @@
       "unicode_decimal": 59157
     },
     {
-      "icon_id": "5634635",
-      "name": "discord",
-      "font_class": "discord",
-      "unicode": "f18d",
-      "unicode_decimal": 61837
-    },
-    {
       "icon_id": "5634657",
       "name": "facebook",
       "font_class": "facebook",
       "unicode": "f19d",
       "unicode_decimal": 61853
-    },
-    {
-      "icon_id": "7714975",
-      "name": "github",
-      "font_class": "github",
-      "unicode": "e63a",
-      "unicode_decimal": 58938
-    },
-    {
-      "icon_id": "35561385",
-      "name": "Instagram block",
-      "font_class": "a-Instagramblock",
-      "unicode": "e61f",
-      "unicode_decimal": 58911
-    },
-    {
-      "icon_id": "792496",
-      "name": "bird-小鸟",
-      "font_class": "birdxiaoniao",
-      "unicode": "e736",
-      "unicode_decimal": 59190
-    },
-    {
-      "icon_id": "1061559",
-      "name": "fire",
-      "font_class": "fire",
-      "unicode": "e635",
-      "unicode_decimal": 58933
     },
     {
       "icon_id": "4936949",
