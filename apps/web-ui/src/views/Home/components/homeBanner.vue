@@ -37,7 +37,7 @@
 
           <el-row class="row-bg" justify="space-between">
             <el-col :span="4">
-              <img src="/src/assets/homeBannerPhoto.png" alt="">
+              <img src="/src/assets/homeBannerPhoto.png" alt="homeBannerPhoto.png" style="border-radius: 10px;">
             </el-col>
             <el-col :span="19">
               <h4 class="lasthead">Complete Toolkit for Token Launch and Sale</h4>
@@ -47,7 +47,7 @@
 
           <el-row class="row-bg" justify="space-between">
             <el-col :span="4">
-              <img src="/src/assets/homeBannerPhoto.png" alt="">
+              <img src="/src/assets/homeBannerPhoto.png" alt="homeBannerPhoto.png" style="border-radius: 10px;">
             </el-col>
             <el-col :span="19">
               <h4 class="lasthead">No mental burden</h4>
@@ -58,7 +58,7 @@
 
           <el-row class="row-bg" justify="space-between">
             <el-col :span="4">
-              <img src="/src/assets/homeBannerPhoto.png" alt="">
+              <img src="/src/assets/homeBannerPhoto.png" alt="homeBannerPhoto.png" style="border-radius: 10px;">
             </el-col>
             <el-col :span="19">
               <h4 class="lasthead">Verifiable Security Platform</h4>
@@ -113,7 +113,7 @@
     border-radius: 15px;
     background-color: #161616;
     box-shadow: 0 -5px 30px 1px #00FFC2;
-    padding: 50px 80px 50px;
+    padding: 45px 80px 50px;
     font-family: Manrope;
     margin-top: 70px;
     height: 415px;
@@ -140,7 +140,7 @@
       border-radius: 15px;
       visibility: visible;
       animation-name: fadeInUp;
-      padding: 30px 20px 20px 25px;
+      padding: 25px 20px 20px 25px;
 
       .lasthead {
         font-size: 20px;
@@ -153,6 +153,14 @@
         font-size: 13px;
         line-height: 1.66;
         font-weight: 400;
+      }
+
+      .el-row {
+        margin-bottom: 15px;
+      }
+
+      .el-row:last-child {
+        margin-bottom: 0;
       }
 
     }

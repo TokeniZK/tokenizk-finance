@@ -1,474 +1,507 @@
-<script setup lang="ts">
+<script lang="ts" setup >
+import { ref, onMounted, reactive, computed, type ComputedRef } from 'vue'
 import { getOngoingPresaleAPI } from '@/apis/sale-api'
-import { onMounted, reactive } from 'vue'
-import { ref } from 'vue'
-import { nanoid } from 'nanoid'
-import { Minus, Plus } from '@element-plus/icons-vue'
+import { type SaleDto, type SaleReq } from '@tokenizk/types'
+import SaleBlock from '../../../components/sale-block.vue'
+import { useRoute } from 'vue-router';
 
-const percentage = ref(20)
-const customColor = ref('#00FFC2')
 
-const OngoingPresaleList = ref([])
+const route = useRoute();
+const saleType = route.query.saleType;
 
-const getOngoingPresale = async () => {
-  const res = await getOngoingPresaleAPI()
-  console.log(res, 'OngoingPresale');
-  OngoingPresaleList.value = res.result
+type SaleDtoExtend = SaleDto & { projectStatus: string, progressBarStatus: string, progressPercent: number }
+
+let fetchResult: SaleDtoExtend[] = [];
+
+// 过滤器
+const filterBy = ref('')
+const sortBy = ref('')
+
+// fitlerBy 下拉菜单 渲染所需的数据
+const filterByOptions = [
+    {
+        value: '0',
+        label: 'All Status',
+    },
+    {
+        value: '1',
+        label: 'Upcoming',
+    },
+    {
+        value: '2',
+        label: 'Ongoing',
+    },
+    {
+        value: '3',
+        label: 'Ended',
+    },
+    /*
+        {
+            value: '4',
+            label: 'Filled',
+        },
+        {
+            value: '5',
+            label: 'notFilled',
+        },
+    */
+]
+
+// sortBy 下拉菜单 渲染所需的数据
+const sortByOptions = [
+    {
+        value: '0',
+        label: 'No Sort',
+    },
+    {
+        value: '1',
+        label: 'Soft Cap',
+    },
+    {
+        value: '2',
+        label: 'Hard Cap',
+    },
+    {
+        value: '3',
+        label: 'Start time',
+    },
+    {
+        value: '4',
+        label: 'End time',
+    }
+]
+
+// 每次点击 搜索按钮 时，重置 过滤选项 和 排序选项
+const searchProjects = () => {
+    if (keyWord.value) {
+        filterBy.value = '0'
+        sortBy.value = '0'
+
+        // trigger api
+        getSearchProjects();
+    }
 }
 
-// 组件挂载完成后执行的函数
-onMounted(() => {
-  getOngoingPresale()
-})
+// 转换项目的状态
+const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
+    let currentTime = new Date().getTime();
 
+    itmes.forEach(item => {
+        if (item.startTimestamp > currentTime) {
+            item.projectStatus = 'Upcoming'
+        } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
+            item.projectStatus = 'Ongoing'
+        } else if (item.endTimestamp < currentTime) {
+            item.projectStatus = 'Ended'
+        } else {
+            item.projectStatus = 'All Status'
+        }
+    });
+}
 
-// 临时数据
-const fetchResult = [
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/1.png',
-    name: 'Oggy Inu 2.0',
-    teamName: 'Yoga',
-    star: 4,
-    saleAddress: 'B62',
-    softCap: '21',
-    hardCap: '60',
-    totalContributedMina: 40,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '10%',
-    lockupTime: '365day',
-    presaleStartTime: 1703081125572,
-    presaleEndTime: 1705093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 4,
-    contributedMinaAmount: 1000,
-    recievedTokenAmount: 4000,
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    teamName: 'walking',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: '10',
-    hardCap: '60',
-    totalContributedMina: 20,
-    progressStart: '0',
-    progressEnd: '60',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1702082115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 3,
-    contributedMinaAmount: 2000,
-    recievedTokenAmount: 6000,
+// 项目进度条
+const calcProjectProgress = (itmes: SaleDtoExtend[]) => {
+    itmes.forEach(item => {
+        item.progressPercent = computed(() => Number((item.totalContributedMina * 100 / item.hardCap).toFixed(1))) as any as number;
+        if ((item.progressPercent as any as ComputedRef).value >= 80) {
+            item.progressBarStatus = 'exception'
+        } else if ((item.progressPercent as any as ComputedRef).value >= 60) {
+            item.progressBarStatus = 'warning'
+        } else {
+            item.progressBarStatus = 'success'
+        }
+    });
+}
 
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/3.png',
-    name: 'Ripple Frog',
-    teamName: 'cherry',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: '30',
-    hardCap: '45',
-    totalContributedMina: 60,
-    progressStart: '0',
-    progressEnd: '45',
-    liquidity: '53%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 2,
-    contributedMinaAmount: 500,
-    recievedTokenAmount: 1000,
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/3.png',
-    name: 'FastAI',
-    teamName: 'Tang',
-    star: 4,
-    saleAddress: 'B62',
-    softCap: '10',
-    hardCap: '55',
-    totalContributedMina: 30,
-    progressStart: '10',
-    progressEnd: '50',
-    liquidity: '40%',
-    lockupTime: '365day',
-    presaleStartTime: 1703003135572,
-    presaleEndTime: 1703003115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 3,
-    contributedMinaAmount: 5000,
-    recievedTokenAmount: 15000,
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wrapped XRP',
-    teamName: 'mina',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: '9',
-    hardCap: '50',
-    totalContributedMina: 50,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1702083115572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 6,
-    contributedMinaAmount: 1500,
-    recievedTokenAmount: 9000,
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/1.png',
-    name: 'THREADS V2',
-    teamName: 'BTC',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: '12',
-    hardCap: '50',
-    totalContributedMina: 10,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '30%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 8,
-    contributedMinaAmount: 3000,
-    recievedTokenAmount: 24000,
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Oggy Inu 2.0',
-    teamName: 'Yoga',
-    star: 5,
-    saleAddress: 'B62',
-    softCap: '11',
-    hardCap: '50',
-    totalContributedMina: 13,
-    progressStart: '23',
-    progressEnd: '50',
-    liquidity: '15%',
-    lockupTime: '365day',
-    presaleStartTime: 1704083125572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 3,
-    contributedMinaAmount: 4000,
-    recievedTokenAmount: 12000,
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    teamName: 'Yoga',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: '20',
-    hardCap: '50',
-    totalContributedMina: 42,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '23%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083145572,
-    presaleEndTime: 1703093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 5,
-    contributedMinaAmount: 6000,
-    recievedTokenAmount: 30000,
-  },
-  {
-    id: nanoid(),
-    logoUrl: '/src/assets/images/2.png',
-    name: 'Wojak 2.69',
-    teamName: 'Yoga',
-    star: 2,
-    saleAddress: 'B62',
-    softCap: '10',
-    hardCap: '50',
-    totalContributedMina: 23,
-    progressStart: '0',
-    progressEnd: '50',
-    liquidity: '54%',
-    lockupTime: '365day',
-    presaleStartTime: 1703083115572,
-    presaleEndTime: 1706093115572,
-    firstReleaseForProject: '95%',
-    vestingForProject: '3% each 1 days',
-    rate: 10,
-    contributedMinaAmount: 300,
-    recievedTokenAmount: 3000,
-  },
-];
+const sortProjects = (sortByValue: string, items: SaleDtoExtend[]) => {
+    if (sortByValue == '1') {
+        items.sort((a, b) => {
+            return Number(a.softCap) - Number(b.softCap);
+        });
+    } else if (sortByValue == '2') {
+        items.sort((a, b) => {
+            return Number(b.hardCap) - Number(a.hardCap);
+        });
+    } else if (sortByValue == '3') {
+        items.sort((a, b) => {
+            return Number(b.startTimestamp) - Number(a.startTimestamp);
+        });
+    } else if (sortByValue == '4') {
+        items.sort((a, b) => {
+            return Number(b.endTimestamp) - Number(a.endTimestamp);
+        });
+    }
 
-// 判断项目的状态
-let currentTime = new Date().getTime();
-fetchResult.forEach(item => {
-  if (item.presaleStartTime > currentTime) {
-    item.projectStatus = 'Upcoming'
-  } else if (item.presaleStartTime <= currentTime && item.presaleEndTime > currentTime) {
-    item.projectStatus = 'Ongoing'
-  } else if (item.presaleEndTime < currentTime) {
-    item.projectStatus = 'Ended'
-  } else {
-    item.projectStatus = 'All Status'
-  }
-});
+    return items;
+}
 
-
-let renderSaleBlock = fetchResult;
+let renderSaleBlock: SaleDtoExtend[] = [];
 // 临时数据
 let presaleProjects = reactive({ saleList: renderSaleBlock });
+
+// 获取 用户输入的关键字 进行搜索
+let keyWord = ref('')
+const getSearchProjects = async () => {
+    // const saleReq = {
+    //     saleType,
+    //     saleName: keyWord.value
+    // } as SaleReq;
+    // fetchResult = (await querySale(saleReq)) as SaleDtoExtend[];
+    // 临时数据 本尊
+    fetchResult = [
+        {
+            id: 0,
+            saleType: 1,
+            txHash: '0x333123456789',
+            status: 1,
+
+            tokenName: 'TxZ',
+            tokenAddress: 'B62xxxt',
+            tokenSymbol: 'TxZ',
+
+            saleName: 'ZHI Inu 2.0',
+            saleAddress: 'B62xxs',
+
+            star: 4,
+
+            totalSaleSupply: 20,
+            currency: 'Mina',
+            feeRate: '5%',
+            saleRate: 10,
+            whitelistTreeRoot: '45678ityuioghjk',
+            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+            totalContributorNum: 3,
+            softCap: 21,
+            hardCap: 60,
+            minimumBuy: 0.1,
+            maximumBuy: 1,
+            startTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
+            endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+            projectStatus: '',
+
+            cliffTime: 300,
+            cliffAmountRate: 3,
+            vestingPeriod: 3,
+            vestingIncrement: 10,
+            contributorsFetchFlag: 0,
+            contributorsTreeRoot: '',
+            contributorsMaintainFlag: 0,
+            totalContributedMina: 11,
+            teamName: 'Zhi Tokenizk Team',
+            logoUrl: '/src/assets/images/1.png',
+            website: 'https://tokenizk.finance/',
+            facebook: 'https://tokenizk.finance/',
+            github: 'https://tokenizk.finance/',
+            twitter: 'https://tokenizk.finance/',
+            telegram: 'https://tokenizk.finance/',
+            discord: 'https://tokenizk.finance/',
+            reddit: 'https://tokenizk.finance/',
+            description: 'The Launchpad focusing on ZK-Token for Everyone!',
+            updatedAt: 1703641015995,
+            createdAt: 1703691251595,
+
+            progressBarStatus: 'success',
+            progressPercent: 0,
+
+        },
+        {
+            id: 0,
+            saleType: 1,
+            txHash: '0x123456789',
+            status: 1,
+
+            tokenName: 'TZ',
+            tokenAddress: 'B62xxxt',
+            tokenSymbol: 'TZ',
+
+            saleName: 'Oggy Inu 2.0',
+            saleAddress: 'B62xxs',
+
+            star: 4,
+
+            totalSaleSupply: 20,
+            currency: 'Mina',
+            feeRate: '5%',
+            saleRate: 10,
+            whitelistTreeRoot: '45678ityuioghjk',
+            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+            totalContributedMina: 80,
+            totalContributorNum: 3,
+            softCap: 11,
+            hardCap: 90,
+            minimumBuy: 0.1,
+            maximumBuy: 1,
+            startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
+            endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
+            projectStatus: '',
+
+            cliffTime: 300,
+            cliffAmountRate: 3,
+            vestingPeriod: 4,
+            vestingIncrement: 5,
+            contributorsFetchFlag: 0,
+            contributorsTreeRoot: '',
+            contributorsMaintainFlag: 0,
+
+            teamName: 'Tokenizk Team',
+            logoUrl: '/src/assets/images/1.png',
+            website: 'https://tokenizk.finance/',
+            facebook: 'https://tokenizk.finance/',
+            github: 'https://tokenizk.finance/',
+            twitter: 'https://tokenizk.finance/',
+            telegram: 'https://tokenizk.finance/',
+            discord: 'https://tokenizk.finance/',
+            reddit: 'https://tokenizk.finance/',
+            description: 'The Launchpad focusing on ZK-Token for Everyone!',
+            updatedAt: new Date().getTime(),
+            createdAt: new Date().getTime(),
+
+            progressBarStatus: 'success',
+            progressPercent: 0
+        },
+        {
+            id: 0,
+            saleType: 1,
+            txHash: '0x123456789',
+            status: 1,
+
+            tokenName: 'TZ',
+            tokenAddress: 'B62xxxt',
+            tokenSymbol: 'TZ',
+
+            saleName: 'XX Inu 2.0',
+            saleAddress: 'B62xxs',
+
+            star: 4,
+
+            totalSaleSupply: 20,
+            currency: 'Mina',
+            feeRate: '5%',
+            saleRate: 10,
+            whitelistTreeRoot: '45678ityuioghjk',
+            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
+
+            softCap: 101,
+            hardCap: 300,
+            minimumBuy: 0.1,
+            maximumBuy: 1,
+            startTimestamp: new Date().getTime() - 10 * 24 * 60 * 60 * 1000,
+            endTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
+            projectStatus: '',
+
+            cliffTime: 300,
+            cliffAmountRate: 3,
+            vestingPeriod: 12,
+            vestingIncrement: 10,
+            contributorsFetchFlag: 0,
+            contributorsTreeRoot: '',
+            contributorsMaintainFlag: 0,
+            totalContributedMina: 100,
+            totalContributorNum: 3,
+            teamName: 'Tokenizk Team',
+            logoUrl: '/src/assets/images/1.png',
+            website: 'https://tokenizk.finance/',
+            facebook: 'https://tokenizk.finance/',
+            github: 'https://tokenizk.finance/',
+            twitter: 'https://tokenizk.finance/',
+            telegram: 'https://tokenizk.finance/',
+            discord: 'https://tokenizk.finance/',
+            reddit: 'https://tokenizk.finance/',
+            description: 'The Launchpad focusing on ZK-Token for Everyone!',
+            updatedAt: new Date().getTime(),
+            createdAt: new Date().getTime(),
+
+            progressBarStatus: 'success',
+            progressPercent: 0
+        }];
+
+    calcProjectProgress(fetchResult);
+    // 转换项目状态
+    transformProjectStatus(fetchResult);
+    // sort 相等运算符会转类型、 最后一项没使用Number做转换
+    sortProjects(sortByOptions[0].value, fetchResult);
+
+    renderSaleBlock = fetchResult;
+    presaleProjects.saleList = renderSaleBlock
+}
+
+// 根据 用户选择 filterBy的选项  过滤数据
+const triggerFilterProjects = () => {
+    // 计算项目状态
+    transformProjectStatus(fetchResult);
+
+    if (filterBy.value === '4') {
+        // TODO 
+        fetchResult.filter(item => {
+            return item.projectStatus === 'All Status'
+        })
+
+    } else if (filterBy.value === '0') {
+        renderSaleBlock = fetchResult
+    } else {
+        renderSaleBlock = fetchResult.filter(item => {
+            if (filterBy.value == '1') {
+                return item.projectStatus === 'Upcoming'
+            } else if (filterBy.value == '2') {
+                return item.projectStatus === 'Ongoing'
+            } else if (filterBy.value == '3') {
+                return item.projectStatus === 'Ended'
+            }
+        });
+    }
+
+    // sort
+    sortProjects(sortBy.value, renderSaleBlock);
+
+    presaleProjects.saleList = renderSaleBlock;
+}
+
+// 根据 用户选择 sortBy的选项 sort排序 由近到远
+const triggerSortProjects = () => {
+    // sort
+    sortProjects(sortBy.value, renderSaleBlock);
+
+    renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock));
+    presaleProjects.saleList = renderSaleBlock;
+}
+
+
+// 组件挂载完成后执行的函数  请求数据  
+onMounted(() => {
+    getSearchProjects();
+})
 
 </script>
 
 <template>
-  <el-row class="row-bg ongoing-presales" justify="center">
+    <el-row class="row-bg ongoing-presales" justify="center">
+        <el-col :span="24">
 
-    <el-col :span="24">
+            <!-- 标题+按钮 -->
+            <el-row class="row-bg ongoing-presales-content" justify="center">
 
-      <el-row class="row-bg" justify="center">
-        <!-- <el-col :span="1"></el-col> -->
+                <el-col :span="10">
+                    <el-row>
+                        <h2 class="title"> Ongoing Presales</h2>
+                    </el-row>
+                    <el-row>Normal Presale pages work for project team to pre-configure a set of presale
+                        rules</el-row>
+                </el-col>
 
-        <el-col :span="18">
+                <el-col :span="8" class="link">
+                    <el-row class="mb-4" justify="end">
+                        <router-link to="/sales?saleType=0" class="main-btn">
+                            <el-button type="primary" size="large" round>
+                                View All Item
+                            </el-button>
+                        </router-link>
+                    </el-row>
+                </el-col>
 
-          <el-row class="row-bg ongoing-presales-content">
+            </el-row>
 
-            <el-col :span="12">
-              <el-row>
-                <h2 class="title"> Ongoing Presales</h2>
-              </el-row>
-              <el-row>Normal Presale pages work for project team to pre-configure a set of presale rules</el-row>
-            </el-col>
+            <!-- 轮播图 -->
+            <el-row class="row-bg ongoing-presales-carousel" justify="center">
 
-            <el-col :span="12" class="link">
-              <el-row class="mb-4" justify="end">
-                <el-button type="primary" size="large" round>
-                  <router-link to="/pre-sales" class="main-btn">View All Item</router-link>
-                </el-button>
-              </el-row>
-            </el-col>
+                <el-col :span="20" class="ongoingBox">
 
-            <el-col :span="1"></el-col>
+                    <!-- 每个项目 -->
+                    <ul>
+                        <li v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
 
-          </el-row>
-        </el-col>
+                            <SaleBlock :saleDto="item" />
 
-      </el-row>
+                        </li>
+                    </ul>
 
+                    <!-- <el-carousel :interval="3000" type="card" height="500px" loop>
+                        <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
 
-      <!-- 轮播图 -->
-      <!-- 每个项目 -->
-      <el-row class="row-bg ongoing-presales-carousel">
+                        <SaleBlock :saleDto="item" />
 
-        <el-col :span="2"></el-col>
+                        </el-carousel-item>
+                    </el-carousel> -->
 
-        <el-col :span="20">
+                </el-col>
 
-          <ul class="launchpads-ul">
-
-            <el-carousel :interval="3000" type="card" height="500px" loop>
-              <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
-
-                <!-- <li v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi"> -->
-
-                <div class="launchpads-box">
-
-                  <!-- photo -->
-                  <el-row class="thumb">
-                    <router-link to="/presale-datails">
-                      <el-image style="width: 349px; height: 130px;" :src="item.logoUrl" :alt="item.name"
-                        loading="lazy" />
-                    </router-link>
-                  </el-row>
-
-                  <!-- 项目描述 -->
-                  <el-row class="launchpads-content">
-
-                    <el-col :span="24">
-
-                      <el-row class="row-bg" justify="space-between">
-                        <el-col :span="8">
-                          <h4><a href="#">{{ item.name }}</a></h4>
-                        </el-col>
-
-                        <el-col :span="5"></el-col>
-
-                        <el-col class="review" :span="7">
-                          <el-button type="primary" round class="statusColor" to="">{{ item.projectStatus }}</el-button>
-                        </el-col>
-                      </el-row>
-
-                      <!-- 团队名称 -->
-                      <el-row class="text-review-change" justify="space-between">
-                        <el-col class="text" :span="10">
-                          by {{ item.teamName }}
-                        </el-col>
-
-                        <el-col class="review" :span="10">
-                          <el-rate v-model="item.star" size="large" />
-                        </el-col>
-                      </el-row>
-
-                      <el-row class="row-bg soft-hard-cap" justify="space-between">
-                        <el-col :span="10">Soft / Hard</el-col>
-                        <el-col :span="2"></el-col>
-                        <el-col :span="10">{{ item.softCap }}Mina - {{ item.HardCap }}Mina</el-col>
-                      </el-row>
-
-
-                      <!-- 进度条 -->
-                      <el-row class="content-Progress">
-                        <el-col>
-
-                          <el-row class="title">Progress</el-row>
-
-                          <el-row class="Progress demo-progress">
-                            <el-progress :text-inside="true" :stroke-width="14" :percentage="item.totalContributedMina" />
-                          </el-row>
-
-                          <el-row class="row-bg sub-title" justify="space-between">
-                            <el-col :span="10"> 0 Mina</el-col>
-                            <el-col :span="4"></el-col>
-                            <el-col :span="6">50 Mina</el-col>
-                          </el-row>
-
-                        </el-col>
-                      </el-row>
-
-                      <el-row class="row-bg liquidity-percent" justify="space-between">
-                        <el-col :span="10">Liquidity %:</el-col>
-                        <el-col :span="4"></el-col>
-                        <el-col :span="6"> {{ item.liquidity }}</el-col>
-                      </el-row>
-
-                      <el-row class="row-bg lockup-time" justify="space-between">
-                        <el-col :span="10">Lockup Time:</el-col>
-                        <el-col :span="4"></el-col>
-                        <el-col :span="6">365 day</el-col>
-                      </el-row>
-
-                    </el-col>
-
-                  </el-row>
-                </div>
-
-                <!-- </li> -->
-
-              </el-carousel-item>
-            </el-carousel>
-
-          </ul>
+            </el-row>
 
         </el-col>
-
-        <el-col :span="2"></el-col>
-
-      </el-row>
-                           
-
-    </el-col>
-  </el-row>
+    </el-row>
 </template>
 
 <style lang="less" scoped>
 .ongoing-presales {
-  width: 100%;
-  height: 700px;
-  padding: 0px 0px 120px;
-  background-color: #f7f7f7;
-
-  .ongoing-presales-content {
     width: 100%;
+    margin-bottom: 100px;
+    background-color: #f7f7f7;
 
-    .title {
-      font-size: 35px;
-      padding-bottom: 11px;
+    .ongoing-presales-content {
+        width: 100%;
+        padding-bottom: 10px;
+
+        .title {
+            font-size: 35px;
+            padding-bottom: 11px;
+        }
+
+        .link {
+            padding-top: 40px;
+
+            .main-btn {
+                font-size: 16px;
+                color: #fff;
+            }
+
+        }
     }
 
-    .link {
-      padding-top: 40px;
+    .ongoing-presales-carousel {
+        overflow: hidden;
 
-      .main-btn {
-        font-size: 16px;
-        color: #fff;
-      }
-
-    }
-  }
-
-  .ongoing-presales-carousel {
-    width: 100%;
-
-    .launchpads-ul {
-      width: 100%;
-
-      .launchpadsLi {
-        margin-top: 60px;
-        margin-bottom: 30px;
-        width: 349px;
-        height: 416px;
-        border-radius: 15px;
-
-        .launchpads-box {
-          width: 100%;
-          height: 100%;
-          background-color: #fff;
-          border-radius: 15px;
-
-          .thumb {
-            width: 349px;
-            height: 160px;
-            overflow: hidden;
-          }
-
-          .launchpads-content {
+        .ongoingBox {
             width: 100%;
-            padding: 12px 20px;
+            overflow: hidden;
+            white-space: nowrap;
+            margin-top: 40px;
 
-            .content-Progress {
-              margin: 6px auto 4px;
+            ul {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                display: inline-block;
+                // padding-right: 100%;
+                // animation: move 6s infinite linear;
+                // animation: move 6s infinite alternate linear backwards;
+                // animation: move 6s infinite alternate linear forwards;
+
+
+                .launchpadsLi {
+                    display: inline-block;
+                    margin-left: 30px;
+                    margin-right: 50px;
+                }
             }
 
-            .demo-progress .el-progress--line {
-              margin-bottom: 10px;
-              width: 300px;
-            }
+            // @keyframes move {
+            //     0% {
+            //         transform: translateX(0);
+            //     }
 
-          }
+            //     100% {
+            //         transform: translateX(-100%);
+            //     }
+            // }
+
 
         }
 
-      }
+        // .ongoingBox:hover ul {
+        //     animation-play-state: paused;
+        // }
 
     }
 
-  }
-
 }
 </style>
-@/apis/sale-api
+

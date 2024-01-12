@@ -17,3 +17,9 @@ import LayoutFooter from './components/layout-footer.vue'
   </el-row>
 </template>
 
+<style scoped>
+.el-row:last-child {
+  margin-bottom: 0;
+}
+</style>
+
