@@ -116,7 +116,7 @@ const disconnect = async () => {
 
 
         <el-menu-item index="3" class="header-category">
-          <router-link to="/airdrop-list">Airdrop-list</router-link>
+          <router-link to="/airdrop-list">Airdrop</router-link>
         </el-menu-item>
 
         <el-sub-menu index="4" class="header-title" popper-class="subMenuSecondaryMenu">
