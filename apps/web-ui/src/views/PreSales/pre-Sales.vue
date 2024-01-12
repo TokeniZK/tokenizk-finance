@@ -1,7 +1,45 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useStatusStore, type AppState } from "@/stores";
 import { ElMessage } from 'element-plus';
+import { useRoute, useRouter } from 'vue-router';
+
+let isASelected = ref(true)
+let isBSelected = ref(false)
+
+const handleAClick = () => {
+    isASelected.value = true;
+    isBSelected.value = false;
+}
+
+const handleBClick = () => {
+    isASelected.value = false;
+    isBSelected.value = true;
+}
+
+let route = useRoute();
+let saleType = ref(route.query.saleType as any as number);
+
+const allSaleUrl = '/sales?saleType=' + saleType.value;
+const myContriUrl = '/sales/my-contributions?saleType=' + saleType.value;
+console.log('allSaleUrl: ' + allSaleUrl);
+console.log('myContriUrl: ' + myContriUrl);
+
+const router = useRouter();
+router.beforeEach((to, from, next) => {
+    const query = to.query;
+    saleType.value = query.saleType as any as number;
+    next();
+});
+
+let salePageTitle = computed(() => {
+    return `Current ${saleType.value == 0 ? 'PreSale' : (saleType.value == 1 ? 'FairSale' : 'PrivateSale')}`
+})
+
+let SecondaryRoutingTitle = computed(() => {
+    return `All ${saleType.value == 0 ? 'launchpads' : (saleType.value == 1 ? ' FairSales' : 'PrivateSales')}`
+})
+
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -14,16 +52,19 @@ const checkConnectedWallet = () => {
 
 }
 
-// 组件挂载完成后执行的函数
+
+
 onMounted(() => {
 
-    // 进入当前组件都会回到顶部
+
     window.scrollTo({
         top: 0,
-        behavior: 'smooth' // 平滑滚动到顶部  
+        behavior: 'smooth'
     });
 
 })
+
+
 
 </script>
 
@@ -33,7 +74,11 @@ onMounted(() => {
 
             <el-row class="row-bg" justify="center">
                 <el-col :span="18">
-                    <h1>Current Presales</h1>
+                    <h1>
+                        <!-- Current Presales -->
+                        {{ salePageTitle }}
+
+                    </h1>
                 </el-col>
             </el-row>
 
@@ -42,11 +87,14 @@ onMounted(() => {
                 <el-col :span="8"></el-col>
 
                 <el-col :span="6">
-                    <router-link to="/pre-sales" class="bline">All launchpads</router-link>
+                    <router-link :to="allSaleUrl" :class="{ 'activeMenu': isASelected }" @click="handleAClick">
+                        <!-- All launchpads -->
+                        {{ SecondaryRoutingTitle }}
+                    </router-link>
                 </el-col>
 
                 <el-col :span="6">
-                    <router-link to="/pre-sales/my-contributions" class="bline"
+                    <router-link :to="myContriUrl" :class="{ 'activeMenu': isBSelected }" @click="handleBClick"
                         v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">My
                         Contributions</router-link>
                     <div v-else @click="checkConnectedWallet">
@@ -76,7 +124,7 @@ onMounted(() => {
     width: 100%;
     padding-top: 120px;
 
-    .bline:hover {
+    .activeMenu {
         border-bottom: 2px solid #00FFC2;
     }
 
