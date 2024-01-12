@@ -77,12 +77,12 @@ export class SaleParams extends Struct({
     /** 
      * Start time stamp
      */
-    startTime: UInt64,
+    startTime: UInt32,
 
     /**
      * End time stamp
      */
-    endTime: UInt64,
+    endTime: UInt32,
 
     cliffTime: UInt32,
     cliffAmountRate: UInt64,
@@ -174,10 +174,10 @@ export class SaleParams extends Struct({
             maximumBuy: UInt64.from(dto.maximumBuy),
 
 
-            startTime: UInt64.from(dto.startTime),
+            startTime: UInt32.from(dto.startTime),
 
 
-            endTime: UInt64.from(dto.endTime),
+            endTime: UInt32.from(dto.endTime),
 
             cliffTime: UInt32.from(dto.cliffTime),
             cliffAmountRate: UInt64.from(dto.cliffAmountRate),
@@ -271,7 +271,13 @@ export class RedeemEvent extends Struct({
     saleContribution: SaleContribution
 }) { }
 
-
+export class TokenTransferEvent extends Struct({
+    tokenAddress: PublicKey,
+    tokenId: Field,
+    from: PublicKey,
+    to: PublicKey,
+    value: UInt64
+}) { }
 
 /**
  * Merkle tree witness for the sale whitelist

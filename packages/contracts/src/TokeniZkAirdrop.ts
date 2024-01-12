@@ -33,7 +33,7 @@ export class AirdropParams extends Struct({
     /** 
      * Start time stamp
      */
-    startTime: UInt64,
+    startTime: UInt32,
 
     cliffTime: UInt32,
     cliffAmountRate: UInt64,
@@ -88,7 +88,7 @@ export class AirdropParams extends Struct({
 
             whitelistTreeRoot: Field(dto.whitelistTreeRoot),
 
-            startTime: UInt64.from(dto.startTime),
+            startTime: UInt32.from(dto.startTime),
 
             cliffTime: UInt32.from(dto.cliffTime),
             cliffAmountRate: UInt64.from(dto.cliffAmountRate),
@@ -194,9 +194,7 @@ export class TokeniZkAirdrop extends SmartContract {
         existingHash.assertEquals(hash0);
 
         // check startTime
-        Provable.log('airdropParams.startTime: ', airdropParams.startTime);
-        Provable.log('this.network.timestamp: ', this.network.timestamp.get());
-        this.network.timestamp.requireBetween(airdropParams.startTime, UInt64.MAXINT());
+        this.network.blockchainLength.requireBetween(airdropParams.startTime, UInt32.MAXINT());
 
         // check whitelist
         membershipMerkleWitness.calculateRoot(Poseidon.hash(this.sender.toFields()), leafIndex)
