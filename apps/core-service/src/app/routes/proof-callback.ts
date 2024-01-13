@@ -8,7 +8,7 @@ import { Mina, PrivateKey, PublicKey } from "o1js";
 import fs from "fs";
 import { getLogger } from "@/lib/logUtils";
 import config from "@/lib/config";
-import { Sale } from "@tokenizk/entities";
+import { ClientProveTask, Sale } from "@tokenizk/entities";
 import { $axiosProofGenerator } from "@/lib";
 import { getDateString } from "@/lib/timeUtils";
 
@@ -75,8 +75,13 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
                 payload: {
                     feePayer: PrivateKey.fromBase58(config.txFeePayerPrivateKey).toPublicKey().toBase58(),
                     fee: config.l1TxFee,
-                    saleParams: presaleParams,
-                    saleRollupProof: payload
+                    tokenAddress: presale.tokenAddress,
+                    contractAddress: presale.saleAddress,
+
+                    methodParams: {
+                        saleParams: presaleParams,
+                        saleRollupProof: payload
+                    }
                 }
             } as ProofTaskDto<any, any>;
 
@@ -128,8 +133,14 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
             // TODO log it
             logger.info('whenL1TxComeback failed!', 'reason: ', JSON.stringify(reason));
         });
-    }
+    } else {
+        const clientProveTaskRepo = connection.getRepository(ClientProveTask)
 
+        const clientProveTask = (await clientProveTaskRepo.findByIds([index.id]))[0];
+        clientProveTask.result = JSON.stringify(payload);
+        clientProveTask.status = 1;
+        await clientProveTaskRepo.save(clientProveTask);
+    }
     return {
         code: 0,
         data: '',
