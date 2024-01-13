@@ -1,13 +1,15 @@
-import { PublicKey, UInt32 } from 'o1js';
+import { PublicKey, UInt32, fetchAccount, fetchLastBlock } from 'o1js';
 import { getConnection } from 'typeorm';
-import { BasiceToken, FactoryEventFetchRecord, Sale, TokenFactory, User } from '@tokenizk/entities';
-import { ConfigLauchpadPlatformParamsEvent, CreateBasicTokenEvent, CreateSaleEvent, CreateRedeemAccount, TokeniZkFactory } from '@tokenizk/contracts';
+import { Airdrop, BasiceToken, FactoryEventFetchRecord, Sale, TokenFactory, User } from '@tokenizk/entities';
+import { ConfigLauchpadPlatformParamsEvent, CreateBasicTokenEvent, CreateSaleEvent, CreateRedeemAccount, TokeniZkFactory, CreateAirdropEvent } from '@tokenizk/contracts';
 import { EventsStandardResponse } from "@tokenizk/types";
 import { getLogger } from "@/lib/logUtils";
 import { initORM } from "./lib/orm";
+import { activeMinaInstance, syncNetworkStatus } from '@tokenizk/util';
 
 const logger = getLogger('standardFetchFactoryEvents');
-
+// init 
+await activeMinaInstance();
 await initORM();
 
 export async function standardFetchFactoryEvents() {
@@ -32,10 +34,14 @@ export async function standardFetchFactoryEvents() {
                 factoryEventFetchRecord = new FactoryEventFetchRecord();
                 factoryEventFetchRecord.factoryAddress = factory.factoryAddress;
                 factoryEventFetchRecord.factoryId = factory.id;
-                factoryEventFetchRecord.blockHeight = 0;
+                factoryEventFetchRecord.blockHeight = startBlock;
             }
 
-            const tokenzkFactoryContract = new TokeniZkFactory(PublicKey.fromBase58(factory.factoryAddress));
+            // await syncNetworkStatus();
+
+            const factoryAddr = PublicKey.fromBase58(factory.factoryAddress);
+            await fetchAccount({publicKey: factoryAddr});
+            const tokenzkFactoryContract = new TokeniZkFactory(factoryAddr);
 
             // fetch events
             const eventList: EventsStandardResponse[] = await tokenzkFactoryContract.fetchEvents(new UInt32(startBlock));
@@ -75,7 +81,7 @@ export async function standardFetchFactoryEvents() {
 
                     const basiceToken = ((await queryRunner.manager.find(BasiceToken, {
                         txHash,
-                        tokenAddress: createBasicTokenEvent.basicTokenAddress.toBase58()
+                        address: createBasicTokenEvent.basicTokenAddress.toBase58()
                     })) ?? [])[0];
 
                     if (basiceToken) {
@@ -87,20 +93,30 @@ export async function standardFetchFactoryEvents() {
                     }
 
                 } else if (e.type == 'createPresale' || e.type == 'createFairsale' || e.type == 'createPrivateSale') {
-                    const createPresaleEvent: CreateSaleEvent = e.event.data;
+                    const createSaleEvent: CreateSaleEvent = e.event.data;
 
                     const sale = (await queryRunner.manager.find(Sale, {
-                        tokenAddress: createPresaleEvent.basicTokenAddress.toBase58(),
-                        saleAddress: createPresaleEvent.saleContractAddress.toBase58()
+                        tokenAddress: createSaleEvent.basicTokenAddress.toBase58(),
+                        saleAddress: createSaleEvent.saleContractAddress.toBase58()
                     }))![0];
 
-                    sale.feeRate = createPresaleEvent.fee.toString();
+                    sale.feeRate = createSaleEvent.fee.toString();
                     sale.status = 1;
-                    // TODO should fill with all saleparams
-                    //
-                    // 
-                    //
-                    // 
+                    sale.txHash = txHash;
+                    // must update the params!
+                    sale.totalSaleSupply = Number(createSaleEvent.saleParams.totalSaleSupply.toString());
+                    sale.saleRate = Number(createSaleEvent.saleParams.saleRate.toString());
+                    sale.whitelistTreeRoot = createSaleEvent.saleParams.whitelistTreeRoot.toString();
+                    sale.softCap = Number(createSaleEvent.saleParams.softCap.toString());
+                    sale.hardCap = Number(createSaleEvent.saleParams.hardCap.toString());
+                    sale.minimumBuy = Number(createSaleEvent.saleParams.minimumBuy.toString());
+                    sale.maximumBuy = Number(createSaleEvent.saleParams.maximumBuy.toString());
+                    sale.startTimestamp = Number(createSaleEvent.saleParams.startTime.toString());
+                    sale.endTimestamp = Number(createSaleEvent.saleParams.endTime.toString());
+                    sale.cliffTime = Number(createSaleEvent.saleParams.cliffTime.toString());
+                    sale.cliffAmountRate = Number(createSaleEvent.saleParams.cliffAmountRate.toString());
+                    sale.vestingPeriod = Number(createSaleEvent.saleParams.vestingPeriod.toString());
+                    sale.vestingIncrement = Number(createSaleEvent.saleParams.vestingIncrement.toString());
 
                     await queryRunner.manager.save(sale);
 
@@ -115,11 +131,29 @@ export async function standardFetchFactoryEvents() {
                     user.nullifierRoot = redeemTokenEvent.nullifierRoot.toString();
                     await queryRunner.manager.save(user);
 
+                } else if (e.type == 'createAirdrop') {
+                    const createAirdropEvent: CreateAirdropEvent = e.event.data;
+
+                    const airdrop = (await queryRunner.manager.find(Airdrop, {
+                        tokenAddress: createAirdropEvent.basicTokenAddress.toBase58(),
+                        airdropAddress: createAirdropEvent.airdropContractAddress.toBase58()
+                    }))![0];
+
+                    airdrop.feeRate = createAirdropEvent.fee.toString();
+                    airdrop.status = 1;
+                    airdrop.txHash = txHash;
+                    // must update the params
+                    airdrop.totalAirdropSupply = Number(createAirdropEvent.airdropParams.totalAirdropSupply.toString());
+                    airdrop.whitelistTreeRoot = createAirdropEvent.airdropParams.whitelistTreeRoot.toString();
+                    airdrop.startTimestamp = Number(createAirdropEvent.airdropParams.startTime.toString());
+                    airdrop.cliffTime = Number(createAirdropEvent.airdropParams.cliffTime.toString());
+                    airdrop.cliffAmountRate = Number(createAirdropEvent.airdropParams.cliffAmountRate.toString());
+                    airdrop.vestingPeriod = Number(createAirdropEvent.airdropParams.vestingPeriod.toString());
+                    airdrop.vestingIncrement = Number(createAirdropEvent.airdropParams.vestingIncrement.toString());
+
+                    await queryRunner.manager.save(airdrop);
                 }
 
-                // save to saleEventFetchRecord
-                factoryEventFetchRecord.blockHeight = blockHeight;
-                await queryRunner.manager.save(factoryEventFetchRecord);
             }
 
             if (eventList.length > 0) {
@@ -146,3 +180,4 @@ export async function standardFetchFactoryEvents() {
 
 }
 
+await standardFetchFactoryEvents();

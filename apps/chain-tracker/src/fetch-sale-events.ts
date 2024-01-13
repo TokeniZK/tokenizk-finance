@@ -70,7 +70,7 @@ export async function standardFetchSaleEvents() {
                 if (sale.saleType == SaleType.PRESALE) {
                     eventList.push(...(await presaleMinaFundHolderContract!.fetchEvents(new UInt32(startBlock))) ?? []);
                 }
-                eventList.sort((a, b) => a.blockHeight - b.blockHeight);
+                eventList.sort((a, b) => (a.blockHeight as any as number) - (b.blockHeight as any as number));
 
                 for (let i = 0; i < eventList.length; i++) {
                     const e = eventList[i];
@@ -100,26 +100,31 @@ export async function standardFetchSaleEvents() {
                     } else if (e.type == 'contribute') {
                         const contributionEvent: ContributionEvent = e.event.data;
 
-                        const user = new UserTokenSale();
-                        user.contributeTxHash = e.event.transactionInfo.transactionHash;
-                        user.contributorAddress = contributionEvent.contributorAddress.toBase58();
+                        const userSale = await queryRunner.manager.findOne(UserTokenSale, {
+                            saleAddress: sale.saleAddress,
+                            tokenAddress: sale.tokenAddress,
+                            contributorAddress: contributionEvent.contributorAddress.toBase58(),
+                        });
+
+                        const user = userSale ?? new UserTokenSale();
                         user.saleId = sale.id;
                         user.saleAddress = sale.saleAddress;
                         user.tokenAddress = sale.tokenAddress;
                         user.tokenId = contributionEvent.tokenId.toString();
+                        user.contributeTxHash = e.event.transactionInfo.transactionHash;
+                        user.contributorAddress = contributionEvent.contributorAddress.toBase58();
                         user.contributeBlockHeight = blockHeight;
                         user.contributeCurrencyAmount = contributionEvent.minaAmount.toString();
-
                         await queryRunner.manager.save(user);
 
                     } else if (e.type == 'claimToken') {
                         const claimTokenEvent: ClaimTokenEvent = e.event.data;
 
-                        const user = (await queryRunner.manager.find(UserTokenSale, {
+                        const user = (await queryRunner.manager.findOne(UserTokenSale, {
                             tokenAddress: sale.tokenAddress,
                             saleAddress: sale.saleAddress,
                             contributorAddress: claimTokenEvent.presaleContribution.contributorAddress.toBase58()
-                        }))![0];
+                        }))!;
                         user.claimTxHash = e.event.transactionInfo.transactionHash;
                         user.redeemOrClaimBlockHeight = blockHeight;
                         user.claimAmount = claimTokenEvent.presaleContribution.minaAmount.toString();
@@ -131,21 +136,17 @@ export async function standardFetchSaleEvents() {
                     } else if (e.type == 'redeem') {
                         const redeemTokenEvent: RedeemEvent = e.event.data;
 
-                        const user = (await queryRunner.manager.find(UserTokenSale, {
+                        const user = (await queryRunner.manager.findOne(UserTokenSale, {
                             tokenAddress: sale.tokenAddress,
                             saleAddress: sale.saleAddress,
                             contributorAddress: redeemTokenEvent.saleContribution.contributorAddress.toBase58()
-                        }))![0];
+                        }))!;
                         user.redeemTxHash = e.event.transactionInfo.transactionHash;
                         user.redeemOrClaimBlockHeight = blockHeight;
                         await queryRunner.manager.save(user);
 
                         ifNotifySyncNullifier = true;
                     }
-
-                    // save to saleEventFetchRecord
-                    saleEventFetchRecord.blockHeight = blockHeight;
-                    await queryRunner.manager.save(saleEventFetchRecord);
                 }
 
                 if (eventList.length > 0) {
