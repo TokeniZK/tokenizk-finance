@@ -413,15 +413,20 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             const factoryAddress = appState.tokeniZkFactoryAddress;
             const basicTokenZkAppAddress = tokenAddress;
 
+            saleDto.saleRate = saleDto.saleRate * (10 ** 9);
+            saleDto.maximumBuy = saleDto.maximumBuy * (10 ** 9);
+            saleDto.minimumBuy = saleDto.minimumBuy * (10 ** 9);
+            saleDto.softCap = saleDto.softCap * (10 ** 9);
+            saleDto.hardCap = saleDto.hardCap * (10 ** 9);
             const saleParams = {
                 tokenAddress: saleDto.tokenAddress,
                 totalSaleSupply: saleDto.totalSaleSupply,// TODO consider if need * (10 ** 9)!!!
                 saleRate: saleDto.saleRate,
                 whitelistTreeRoot: saleDto.whitelistTreeRoot,
-                softCap: saleDto.softCap * (10 ** 9),
-                hardCap: saleDto.hardCap * (10 ** 9),
-                minimumBuy: saleDto.minimumBuy * (10 ** 9),
-                maximumBuy: saleDto.maximumBuy * (10 ** 9),
+                softCap: saleDto.softCap,
+                hardCap: saleDto.hardCap,
+                minimumBuy: saleDto.minimumBuy,
+                maximumBuy: saleDto.maximumBuy,
                 startTime: saleDto.startTimestamp,
                 endTime: saleDto.endTimestamp,
                 cliffTime: saleDto.cliffTime,
