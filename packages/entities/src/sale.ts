@@ -125,6 +125,9 @@ export class Sale {
     contributorsMaintainFlag: number
 
     @Column()
+    contributorsMaintainTxHash: string
+
+    @Column()
     logoUrl: string
 
     @Column()
