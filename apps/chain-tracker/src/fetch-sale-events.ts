@@ -6,9 +6,10 @@ import { EventsStandardResponse, SaleType, SaleStatus } from "@tokenizk/types";
 import { getLogger } from "@/lib/logUtils";
 import { initORM } from "./lib/orm";
 import { $axiosCore } from './lib/api';
+import { activeMinaInstance } from '@tokenizk/util';
 
 const logger = getLogger('standardFetchSaleEvents');
-
+await activeMinaInstance();
 await initORM();
 // Task:
 
@@ -50,6 +51,8 @@ export async function standardFetchSaleEvents() {
                     startBlock = saleEventFetchRecord.blockHeight + 1;
                 } else {
                     saleEventFetchRecord = new SaleEventFetchRecord();
+                    saleEventFetchRecord.type = sale.saleType;
+                    saleEventFetchRecord.saleId = sale.id;
                     saleEventFetchRecord.tokenAddress = sale.tokenAddress;
                     saleEventFetchRecord.saleAddress = sale.saleAddress;
                     saleEventFetchRecord.blockHeight = 0;
@@ -75,6 +78,7 @@ export async function standardFetchSaleEvents() {
                 for (let i = 0; i < eventList.length; i++) {
                     const e = eventList[i];
                     const blockHeight = Number(e.blockHeight.toBigint());
+                    const txHash = e.event.transactionInfo.transactionHash;
 
                     if (e.type == 'configureSaleParams') {
                         const saleParamsConfigurationEvent: SaleParamsConfigurationEvent = e.event.data;
@@ -106,16 +110,16 @@ export async function standardFetchSaleEvents() {
                             contributorAddress: contributionEvent.contributorAddress.toBase58(),
                         });
 
-                        const user = userSale ?? new UserTokenSale();
-                        user.saleId = sale.id;
-                        user.saleAddress = sale.saleAddress;
-                        user.tokenAddress = sale.tokenAddress;
-                        user.tokenId = contributionEvent.tokenId.toString();
-                        user.contributeTxHash = e.event.transactionInfo.transactionHash;
-                        user.contributorAddress = contributionEvent.contributorAddress.toBase58();
-                        user.contributeBlockHeight = blockHeight;
-                        user.contributeCurrencyAmount = contributionEvent.minaAmount.toString();
-                        await queryRunner.manager.save(user);
+                        const userSale1 = userSale ?? new UserTokenSale();
+                        userSale1.saleId = sale.id;
+                        userSale1.saleAddress = sale.saleAddress;
+                        userSale1.tokenAddress = sale.tokenAddress;
+                        userSale1.tokenId = contributionEvent.tokenId.toString();
+                        userSale1.contributeTxHash = txHash;
+                        userSale1.contributorAddress = contributionEvent.contributorAddress.toBase58();
+                        userSale1.contributeBlockHeight = blockHeight;
+                        userSale1.contributeCurrencyAmount = contributionEvent.minaAmount.toString();
+                        await queryRunner.manager.save(userSale1);
 
                     } else if (e.type == 'claimToken') {
                         const claimTokenEvent: ClaimTokenEvent = e.event.data;
@@ -125,9 +129,9 @@ export async function standardFetchSaleEvents() {
                             saleAddress: sale.saleAddress,
                             contributorAddress: claimTokenEvent.presaleContribution.contributorAddress.toBase58()
                         }))!;
-                        user.claimTxHash = e.event.transactionInfo.transactionHash;
+                        user.claimTxHash = txHash;
                         user.redeemOrClaimBlockHeight = blockHeight;
-                        user.claimAmount = claimTokenEvent.presaleContribution.minaAmount.toString();
+                        user.claimAmount = claimTokenEvent.presaleContribution.minaAmount.mul(sale.saleRate).toString();
 
                         await queryRunner.manager.save(user);
 
@@ -141,11 +145,14 @@ export async function standardFetchSaleEvents() {
                             saleAddress: sale.saleAddress,
                             contributorAddress: redeemTokenEvent.saleContribution.contributorAddress.toBase58()
                         }))!;
-                        user.redeemTxHash = e.event.transactionInfo.transactionHash;
+                        user.redeemTxHash = txHash;
                         user.redeemOrClaimBlockHeight = blockHeight;
                         await queryRunner.manager.save(user);
 
                         ifNotifySyncNullifier = true;
+                    } else if (e.type == 'maintainContributors') {
+                        sale.contributorsMaintainFlag = 1;
+                        sale.contributorsMaintainTxHash = txHash;
                     }
                 }
 
@@ -156,6 +163,8 @@ export async function standardFetchSaleEvents() {
 
                 await queryRunner.commitTransaction();
             } catch (err) {
+                console.error(err);
+                logger.error(err);
                 await queryRunner.rollbackTransaction();
             } finally {
                 await queryRunner.release();
@@ -184,3 +193,4 @@ export async function standardFetchSaleEvents() {
 
 }
 
+await standardFetchSaleEvents();
