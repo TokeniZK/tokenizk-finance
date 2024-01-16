@@ -356,6 +356,36 @@ const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string
     vestingIncrement: number
 }, feePayerAddress: string, txFee: number) => {
     try {
+
+                // private sale
+                if (saleParams.totalSaleSupply == 0 && await compileTokeniZkFactory()) {//PrivateSale
+                    await fetchAccount({ publicKey: feePayerAddress });
+                    await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
+        
+                    const feePayer = PublicKey.fromBase58(feePayerAddress);
+                    const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
+        
+                    const saleParams1 = SaleParams.fromDto(saleParams);
+                    let tx = await Mina.transaction(
+                        {
+                            sender: feePayer,
+                            fee: txFee,
+                            memo: 'Deploy PrivateSale contract',
+                        },
+                        () => {
+                            AccountUpdate.fundNewAccount(feePayer, 1);
+                            tokenFactoryZkApp.createPrivateSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.privateSaleContractVk, saleParams1);
+                        }
+                    );
+        
+                    await tx.prove();
+        
+                    const txJson = tx.toJSON();
+                    console.log('generated tx: ' + txJson);
+        
+                    return txJson;
+                }
+        
         if (await compileTokeniZkBasicToken()) {
             await fetchAccount({ publicKey: feePayerAddress });
             await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
