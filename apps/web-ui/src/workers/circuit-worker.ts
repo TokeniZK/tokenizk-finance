@@ -386,66 +386,54 @@ const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string
                     return txJson;
                 }
         
-        if (await compileTokeniZkBasicToken()) {
-            await fetchAccount({ publicKey: feePayerAddress });
-            await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
-            await fetchAccount({ publicKey: basicTokenZkAppAddress });
-
-            const feePayer = PublicKey.fromBase58(feePayerAddress);
-
-            const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(PublicKey.fromBase58(basicTokenZkAppAddress));
-            const saleParams1 = SaleParams.fromDto(saleParams);
-
-            const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
-
-            let tx: any;
-            if (saleParams.softCap == 0) {// Fairsale
-                tx = await Mina.transaction(
-                    {
-                        sender: feePayer,
-                        fee: txFee,
-                        memo: 'Deploy Fairsale contract',
-                    },
-                    () => {
-                        AccountUpdate.fundNewAccount(feePayer, 1);
-                        tokeniZkBasicTokenZkApp.createFairSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.fairSaleContractVk, saleParams1);
-                    }
-                );
-
-            } else if (saleParams.totalSaleSupply == 0) {//PrivateSale
-                tx = await Mina.transaction(
-                    {
-                        sender: feePayer,
-                        fee: txFee,
-                        memo: 'Deploy PrivateSale contract',
-                    },
-                    () => {
-                        AccountUpdate.fundNewAccount(feePayer, 1);
-                        tokenFactoryZkApp.createPrivateSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.privateSaleContractVk, saleParams1);
-                    }
-                );
-
-            } else {// presale
-                tx = await Mina.transaction(
-                    {
-                        sender: feePayer,
-                        fee: txFee,
-                        memo: 'Deploy Presale contract',
-                    },
-                    () => {
-                        AccountUpdate.fundNewAccount(feePayer, 2);
-                        tokeniZkBasicTokenZkApp.createPresale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.presaleContractVk, saleParams1, TokeniZkFactory.presaleMinaFundHolderVk);
-                    }
-                );
-            }
-
-            await tx.prove();
-
-            const txJson = tx.toJSON();
-            console.log('generated tx: ' + txJson);
-
-            return txJson;
-        }
+                // belows are presale & fairsale
+                if (await compileTokeniZkBasicToken()) {
+                    await fetchAccount({ publicKey: feePayerAddress });
+                    await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
+                    await fetchAccount({ publicKey: basicTokenZkAppAddress });
+        
+                    const feePayer = PublicKey.fromBase58(feePayerAddress);
+        
+                    const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(PublicKey.fromBase58(basicTokenZkAppAddress));
+                    const saleParams1 = SaleParams.fromDto(saleParams);
+        
+                    const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
+        
+                    let tx: any;
+                    if (saleParams.softCap == 0) {// Fairsale
+                        tx = await Mina.transaction(
+                            {
+                                sender: feePayer,
+                                fee: txFee,
+                                memo: 'Deploy Fairsale contract',
+                            },
+                            () => {
+                                AccountUpdate.fundNewAccount(feePayer, 1);
+                                tokeniZkBasicTokenZkApp.createFairSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.fairSaleContractVk, saleParams1);
+                            }
+                        );
+        
+                    } else {// presale
+                        tx = await Mina.transaction(
+                            {
+                                sender: feePayer,
+                                fee: txFee,
+                                memo: 'Deploy Presale contract',
+                            },
+                            () => {
+                                AccountUpdate.fundNewAccount(feePayer, 2);
+                                tokeniZkBasicTokenZkApp.createPresale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.presaleContractVk, saleParams1, TokeniZkFactory.presaleMinaFundHolderVk);
+                            }
+                        );
+                    }
+        
+                    await tx.prove();
+        
+                    const txJson = tx.toJSON();
+                    console.log('generated tx: ' + txJson);
+        
+                    return txJson;
+           }
     } catch (error) {
         console.error(error);
     }
