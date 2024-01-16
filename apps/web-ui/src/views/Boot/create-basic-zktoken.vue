@@ -13,6 +13,8 @@ import { generateTokenKey } from '@/utils/keys-gen';
 import { UploadFilled } from '@element-plus/icons-vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
+import { checkTx } from '@/utils/txUtils';
+
 
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
@@ -23,6 +25,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 
 const { appState, showLoadingMask, closeLoadingMask } = useStatusStore();
+const zkTxLinkPrefix = ref(import.meta.env.VITE_EXPLORER_TX_URL);
 
 // 组件挂载完成后执行的函数
 onMounted(() => {
@@ -179,6 +182,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             const txFee = 0.3 * (10 ** 9)
             const txJson = await CircuitControllerState.remoteController?.createBasicToken(factoryAddress, basicTokenZkAppAddress, totalSupply, feePayerAddress, txFee);
 
+            if (!txJson) {
+                showLoadingMask({ id: maskId, text: 'witness calculation failed...', closable: true });
+
+                // closeLoadingMask(maskId);
+                return;
+            }
             let tx = Mina.Transaction.fromJSON(JSON.parse(txJson!));
             const targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == tokenAddress);
             targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
@@ -198,17 +207,35 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             // send back to backend for recording
             showLoadingMask({ id: maskId, text: 'submit to backend...' });
             const rs = await submitToken(tokenDtoForm);// TODO!!! 本尊
-            if (rs) {
-                closeLoadingMask(maskId);
-
-                getFlag();
-
-                goToTop();
-            } else {
+            if (!rs) {
                 showLoadingMask({ id: maskId, text: 'submit to backend failed...' });
             }
 
+            try {
+                showLoadingMask({ id: maskId, text: `waiting for tx confirmation: ${zkTxLinkPrefix.value.concat(txHash)}` });
 
+                // check tx is confirmed
+                await checkTx(txHash);
+
+                showLoadingMask({ id: maskId, text: 'tx is confirmed!' });
+
+            } catch (error) {
+                console.error(error);
+                showLoadingMask({ id: maskId, text: 'tx failed! please retry later.' });
+                ElMessage({
+                    showClose: true,
+                    type: 'warning',
+                    message: `tx failed! please retry later.`,
+                });
+                closeLoadingMask(maskId);
+
+                return;
+            }
+            closeLoadingMask(maskId);
+
+            getFlag();
+
+            goToTop();
         } else {
             console.log('error submit!', fields)
         }
@@ -317,9 +344,6 @@ const checkIfDeployed = async () => {
 
                         </el-row>
 
-
-
-
                         <el-form-item>
                             <el-button type="primary" @click="submitForm(ruleFormRef)"
                                 :disabled="hasDeployedYet || !appState.connectedWallet58"> Create
@@ -328,6 +352,7 @@ const checkIfDeployed = async () => {
                         </el-form-item>
 
                     </el-form>
+
                 </el-col>
             </el-row>
 
@@ -368,14 +393,17 @@ const checkIfDeployed = async () => {
                     </el-row>
 
                     <el-button type="primary" size="large">
-                        <router-link to="/create-sale-launch?saleType=0" style="color: #fff;"> Create PreSale</router-link>
+                        <router-link to="/create-token-sale?saleType=0" style="color: #fff;"> Create PreSale </router-link>
                     </el-button>
 
                     <el-button type="primary" size="large">
-                        <router-link to="/create-sale-launch?saleType=1" style="color: #fff;"> Create Fair
+                        <router-link to="/create-token-sale?saleType=1" style="color: #fff;"> Create Fair
                             Sale</router-link>
                     </el-button>
 
+                    <el-button type="primary" size="large">
+                        <router-link to="/create-airdrop" style="color: #fff;"> Create Airdrop</router-link>
+                    </el-button>
                 </el-col>
             </el-row>
 
@@ -396,6 +424,7 @@ const checkIfDeployed = async () => {
     .tokenTable {
         background-color: #fff;
         padding: 20px;
+        border-radius: 10px;
     }
 
     .el-form-item {
