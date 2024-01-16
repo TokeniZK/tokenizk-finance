@@ -2,12 +2,13 @@
 import { reactive, ref, onMounted, computed, watch, onUpdated } from 'vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { useConnectStatusStore } from '@/stores/connectStatus'
-import { type AirdropReq, type AirdropDto, type TokenDto } from "@tokenizk/types";
+import { type SaleReq, type SaleDto, type TokenDto } from "@tokenizk/types";
 import { useStatusStore, type AppState } from "@/stores";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { queryToken } from "@/apis/token-api";
 import { Encoding, Field, Mina, PrivateKey, Scalar, Signature, PublicKey, fetchLastBlock } from 'o1js';
-import { AirdropParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
+import { SaleParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
+import { submitSale, querySale } from '@/apis/sale-api';
 import { calcWhitelistTreeRoot } from '@/utils/whitelist-tree-calc';
 import { download as downloadAsFile } from '@/utils/sale-key-download';
 import { useRoute, useRouter } from 'vue-router';
@@ -16,7 +17,6 @@ import { generateTokenKey, generateLaunchContractKey } from '@/utils/keys-gen';
 import { UploadFilled } from '@element-plus/icons-vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
-import { queryAirdrop, submitAirdrop } from '@/apis/airdrop-api';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 
 const upload = ref<UploadInstance>()
@@ -40,29 +40,36 @@ router.beforeEach((to, from, next) => {
 });
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
-const zkTxLinkPrefix = ref(import.meta.env.VITE_EXPLORER_TX_URL);
 
-let airdropDtoInit: AirdropDto = {
+let saleDtoInit: SaleDto = {
     id: 0,
-    type: 0,
+    saleType: 0,
     txHash: '',
     status: 0,
-    tokenAddress: appState.tokeniZkBasicTokenKeyPair?.value as string, // TODO consider if publickey.empty for privateAirdrop
-    tokenName: '',
+    tokenAddress: appState.tokeniZkBasicTokenKeyPair?.value as string, // TODO consider if publickey.empty for privateSale
     tokenSymbol: null as any as string,
-    airdropName: '',
-    airdropAddress: null as any as string,
-    totalAirdropSupply: null as any as number,
+    saleName: '',
+    saleAddress: null as any as string,
+    totalSaleSupply: null as any as number,
     currency: 'MINA',
     feeRate: '100',
+    saleRate: null as any as number,
     whitelistTreeRoot: '0',
     whitelistMembers: '',
-    startTimestamp: new Date().getTime(),
-    endTimestamp: new Date().getTime(),
+    softCap: null as any as number,
+    hardCap: null as any as number,
+    minimumBuy: null as any as number,
+    maximumBuy: null as any as number,
+    startTimestamp: 0,
+    endTimestamp: 0,
     cliffTime: null as any as number,
     cliffAmountRate: null as any as number,
     vestingPeriod: null as any as number,
     vestingIncrement: null as any as number,
+    contributorsFetchFlag: 0,
+    contributorsTreeRoot: null as any as string,
+    totalContributorNum: 0,
+    contributorsMaintainFlag: 0,
     logoUrl: '',
     website: '',
     facebook: '',
@@ -74,8 +81,10 @@ let airdropDtoInit: AirdropDto = {
     description: '',
     updatedAt: new Date().getTime(),
     createdAt: new Date().getTime(),
+    tokenName: '',
     star: 0,
     teamName: '',
+    totalContributedMina: 0
 };
 
 const tokenDtoInit: TokenDto = {
@@ -86,8 +95,8 @@ const tokenDtoInit: TokenDto = {
     status: 0,
     address: '',
     name: '',
-    zkappUri: '',
     logoUrl: '',
+    zkappUri: '',
     totalSupply: 0,
     totalAmountInCirculation: 0,
     updatedAt: 0,
@@ -96,23 +105,25 @@ const tokenDtoInit: TokenDto = {
 
 const ruleFormRef = ref<FormInstance>()
 
-let airdropDto = reactive<AirdropDto>(airdropDtoInit)
+let saleDto = reactive<SaleDto>(saleDtoInit)
 let tokenDto = reactive<TokenDto>(tokenDtoInit)
 
 let saleStartDateTime = ref(new Date());
-let saleStartBlockInfo = reactive({ current: 0, target: 0 });
-const changeAirdropStartDateTime = async (choosedDate: number) => {
-    const maskId = 'changeAirdropStartDateTime';
+let startTargetBlockHeight = ref(0);
+const changeSaleStartDateTime = async (choosedDate: number) => {
+    if (!choosedDate) {
+        choosedDate = Date.now();
+    }
+    const maskId = 'changeSaleStartDateTime';
     showLoadingMask({ id: maskId, text: 'fetching latest block...' });
     try {
         if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
             appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
             appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
         }
+        startTargetBlockHeight.value = appState.latestBlockInfo!.blockchainLength + Math.floor((choosedDate - Date.now()) / (3 * 60 * 1000)) + 1;
+        saleDto.startTimestamp = startTargetBlockHeight.value;
 
-        saleStartBlockInfo.current = Number(appState.latestBlockInfo.blockchainLength.toString());
-        saleStartBlockInfo.target = Number(appState.latestBlockInfo.blockchainLength.toString()) + Math.floor((choosedDate - Date.now()) / (3 * 60 * 1000)) + 1;
-        airdropDto.startTimestamp = saleStartBlockInfo.target;
     } catch (error) {
         ElMessage.error({ message: 'fetching latest block failed' });
     }
@@ -120,8 +131,33 @@ const changeAirdropStartDateTime = async (choosedDate: number) => {
     closeLoadingMask(maskId);
 }
 
+let saleEndDateTime = ref(new Date());
+let endTargetBlockHeight = ref(0);
+const changeSaleEndDateTime = async (choosedDate: number) => {
+    if (!choosedDate) {
+        choosedDate = Date.now();
+    }
+    const maskId = 'changeSaleEndDateTime';
+    showLoadingMask({ id: maskId, text: 'fetching latest block...' });
+    try {
+        if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
+            appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
+            appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
+        }
+
+        endTargetBlockHeight.value = appState.latestBlockInfo!.blockchainLength + Math.floor((choosedDate - Date.now()) / (3 * 60 * 1000)) + 1;
+        saleDto.endTimestamp = endTargetBlockHeight.value;
+
+    } catch (error) {
+        ElMessage.error({ message: 'fetching latest block failed' });
+    }
+
+    closeLoadingMask(maskId);
+}
+const zkTxLinkPrefix = ref(import.meta.env.VITE_EXPLORER_TX_URL);
+
 // 正则
-const rules = reactive<FormRules<AirdropDto>>({
+const rules = reactive<FormRules<SaleDto>>({
 
     // 步骤1
     tokenAddress: [
@@ -145,19 +181,30 @@ const rules = reactive<FormRules<AirdropDto>>({
         },
     ],
 
-    airdropName: [
+    saleName: [
         {
             required: true,
-            message: 'Please input Airdrop Name',
+            message: 'Please input Sale Name',
             trigger: 'blur',
         },
     ],
 
-    totalAirdropSupply: [
+    totalSaleSupply: [
         {
             type: 'number',
             required: true,
-            message: 'Total Airdrop Supply must be number type',
+            message: 'Total Sale Supply must be number type',
+            trigger: 'blur'
+        },
+    ],
+
+
+    // 步骤2
+    saleRate: [
+        {
+            type: 'number',
+            required: true,
+            message: 'saleRate must be number type',
             trigger: 'blur'
         },
     ],
@@ -169,6 +216,43 @@ const rules = reactive<FormRules<AirdropDto>>({
             trigger: 'blur',
         },
     ],
+
+    softCap: [
+        {
+            type: 'number',
+            required: true,
+            message: 'softCap must be number type',
+            trigger: 'blur'
+        },
+    ],
+
+    hardCap: [
+        {
+            type: 'number',
+            required: true,
+            message: 'hardCap must be number type',
+            trigger: 'blur'
+        },
+    ],
+
+    minimumBuy: [
+        {
+            type: 'number',
+            required: true,
+            message: 'minimumBuy must be number type',
+            trigger: 'blur'
+        },
+    ],
+
+    maximumBuy: [
+        {
+            type: 'number',
+            required: true,
+            message: 'maximumBuy must be number type',
+            trigger: 'blur'
+        },
+    ],
+
     startTimestamp: [
         {
             type: 'date',
@@ -195,6 +279,8 @@ const rules = reactive<FormRules<AirdropDto>>({
             trigger: 'blur'
         },
     ],
+
+
     logoUrl: [
         {
             required: true,
@@ -206,31 +292,31 @@ const rules = reactive<FormRules<AirdropDto>>({
       website: [
           { required: true, message: 'Please input website address', trigger: 'blur' },
       ],
-   
+ 
       facebook: [
           { required: true, message: 'Please input facebook address', trigger: 'blur' },
       ],
-   
+ 
       twitter: [
           { required: true, message: 'Please input twitter address', trigger: 'blur' },
       ],
-   
+ 
       github: [
           { required: true, message: 'Please input github address', trigger: 'blur' },
       ],
-   
+ 
       telegram: [
           { required: true, message: 'Please input telegram address', trigger: 'blur' },
       ],
-   
+ 
       discord: [
           { required: true, message: 'Please input discord address', trigger: 'blur' },
       ],
-   
+ 
       reddit: [
           { required: true, message: 'Please input reddit address', trigger: 'blur' },
       ],
-   
+ 
       description: [
           { required: true, message: 'Please input Description', trigger: 'blur' },
       ],
@@ -255,13 +341,28 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
 
         if (valid) {
-            let saleTag = 'Airdrop';
-            const maskId = 'createAirdrop';
+            let saleTag = '';
+            if (saleType.value == 1) {
+                saleDto.hardCap = 0;
+                saleDto.softCap = 0;
+                saleDto.saleRate = 0;
+                saleTag = 'FairSale'
+
+            } else if (saleType.value == 2) {
+                saleDto.totalSaleSupply = 0;
+                saleDto.saleRate = 0;
+                saleTag = 'PrivateSale'
+
+            } else {
+                saleTag = 'Presale'
+            }
+
+            const maskId = 'createSale';
 
             /* TODO no need compile step!
             // check if circuit has been compiled, if not , prompt: wait
             if (!appState.tokenizkPresaleCompiled) {
-      
+
                 showLoadingMask({ id: maskId, text: 'compiling TokeniZkPresale circuit...' });
                 // const flag = await CircuitControllerState.remoteController?.compileTokeniZkPresale()
                 const flag = await CircuitControllerState.remoteController?.createPresale()
@@ -271,27 +372,26 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                         type: 'warning',
                         message: `circuit compile failed!`,
                     });
-      
+
                     closeLoadingMask(maskId);
                     return;
                 }
-      
+
                 appState.tokenizkPresaleCompiled = true;
             }
             */
-
             // calc whitelist tree root
-            if (airdropDto.whitelistMembers) {
+            if (saleDto.whitelistMembers) {
                 showLoadingMask({ id: maskId, text: 'constructing whitelist tree...' });
 
-                console.log('members: ' + airdropDto.whitelistMembers);
+                console.log('members: ' + saleDto.whitelistMembers);
 
-                const members = airdropDto.whitelistMembers.trim().split(',');
-                airdropDto.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
+                const members = saleDto.whitelistMembers.trim().split(',');
+                saleDto.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
 
-                console.log('whitelistTreeRoot: ' + airdropDto.whitelistTreeRoot);
+                console.log('whitelistTreeRoot: ' + saleDto.whitelistTreeRoot);
             } else {
-                airdropDto.whitelistTreeRoot = '0';
+                saleDto.whitelistTreeRoot = '0';
             }
 
             showLoadingMask({ id: maskId, text: 'generating presale KeyPair ...' });
@@ -299,53 +399,69 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             const tokenKey = PrivateKey.fromBase58(appState.tokeniZkBasicTokenKeyPair?.key!);
             const tokenAddress = appState.tokeniZkBasicTokenKeyPair?.value;
 
-            const airdropDtoList = await queryAirdrop({ tokenAddress } as AirdropReq);
-            const accountIndex = airdropDtoList?.length;
-            const signData = import.meta.env.VITE_AIRDROP_KEY_SIGNING_DATA;
+            const signData = saleType.value == 0 ? import.meta.env.VITE_PRESALE_KEY_SIGNING_DATA : (saleType.value == 1 ? import.meta.env.VITE_FAIRSALE_KEY_SIGNING_DATA : import.meta.env.VITE_PRIVATESALE_KEY_SIGNING_DATA)
+
+            const saleDtoList = await querySale({ tokenAddress } as SaleReq);
+            const accountIndex = saleDtoList?.length;
             console.log(`token's sale accountIndex: ${accountIndex}`);
-            const { privateKey: airdropKey, publicKey: airdropAddress0 } = await generateLaunchContractKey(tokenKey, signData, accountIndex);
-            const airdropAddress = airdropAddress0.toBase58();
-            airdropDto.airdropAddress = airdropAddress;
-            // downloadAsFile(`{"presaleKey": ${saleKey.toBase58()}, "preairdropAddress": ${airdropAddress}}`, 'TokenizkPresale-Key.json');
+            const { privateKey: saleKey, publicKey: saleAddress0 } = await generateLaunchContractKey(tokenKey, signData, accountIndex);
+            const saleAddress = saleAddress0.toBase58();
+            saleDto.saleAddress = saleAddress;
+            // downloadAsFile(`{"presaleKey": ${saleKey.toBase58()}, "presaleAddress": ${saleAddress}}`, 'TokenizkPresale-Key.json');
 
             showLoadingMask({ id: maskId, text: 'witness calculating...' });
             const factoryAddress = appState.tokeniZkFactoryAddress;
             const basicTokenZkAppAddress = tokenAddress;
 
-            const airdropParams = {
-                tokenAddress: airdropDto.tokenAddress,
-                totalAirdropSupply: airdropDto.totalAirdropSupply,// TODO consider if need * (10 ** 9)!!!
-                totalMembersNumber: airdropDto.whitelistMembers.split(',').length,
-                whitelistTreeRoot: airdropDto.whitelistTreeRoot,
-                startTime: airdropDto.startTimestamp,
-                cliffTime: airdropDto.cliffTime,
-                cliffAmountRate: airdropDto.cliffAmountRate,
-                vestingPeriod: airdropDto.vestingPeriod, // 0 is not allowed, default value is 1
-                vestingIncrement: airdropDto.vestingIncrement
+            saleDto.saleRate = saleDto.saleRate * (10 ** 9);
+            saleDto.maximumBuy = saleDto.maximumBuy * (10 ** 9);
+            saleDto.minimumBuy = saleDto.minimumBuy * (10 ** 9);
+            saleDto.softCap = saleDto.softCap * (10 ** 9);
+            saleDto.hardCap = saleDto.hardCap * (10 ** 9);
+            const saleParams = {
+                tokenAddress: saleDto.tokenAddress,
+                totalSaleSupply: saleDto.totalSaleSupply,// TODO consider if need * (10 ** 9)!!!
+                saleRate: saleDto.saleRate,
+                whitelistTreeRoot: saleDto.whitelistTreeRoot,
+                softCap: saleDto.softCap,
+                hardCap: saleDto.hardCap,
+                minimumBuy: saleDto.minimumBuy,
+                maximumBuy: saleDto.maximumBuy,
+                startTime: saleDto.startTimestamp,
+                endTime: saleDto.endTimestamp,
+                cliffTime: saleDto.cliffTime,
+                cliffAmountRate: saleDto.cliffAmountRate,
+                vestingPeriod: saleDto.vestingPeriod, // 0 is not allowed, default value is 1
+                vestingIncrement: saleDto.vestingIncrement
             };
 
             const feePayerAddress = appState.connectedWallet58;
-            const txFee = 0.31 * (10 ** 9)
-            let txJson = await CircuitControllerState.remoteController?.createAirdrop(factoryAddress, basicTokenZkAppAddress!,
-                airdropAddress, airdropParams, feePayerAddress, txFee);
+            const txFee = 0.21 * (10 ** 9)
+            let txJson = await CircuitControllerState.remoteController?.createSale(factoryAddress, basicTokenZkAppAddress!, saleAddress, saleParams, feePayerAddress, txFee);
 
             if (txJson) {
 
                 showLoadingMask({ id: maskId, text: 'submitting to backend...' });
                 // send back to backend for recording
-                const rs = await submitAirdrop(airdropDto);// TODO!!! 本尊
+                const rs = await submitSale(saleDto);// TODO!!! 本尊
                 if (rs) {
                     try {
                         showLoadingMask({ id: maskId, text: 'sending transaction...' });
 
                         let tx = Mina.Transaction.fromJSON(JSON.parse(txJson!));
-                        let airdropTargetAUList = tx.transaction.accountUpdates.filter(e => (e.body.publicKey.toBase58() == airdropAddress || e.body.publicKey.toBase58() == tokenAddress)
-                            && e.body.authorizationKind.isSigned.toBoolean());
-                        airdropTargetAUList.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-                        tx = tx.sign([airdropKey, tokenKey]);
+
+                        let targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == saleAddress && e.body.authorizationKind.isSigned.toBoolean());
+                        targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
+                        tx = tx.sign([saleKey]);
+
+                        if (saleType.value != 2) {// skip private sale
+                            targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == tokenAddress && e.body.authorizationKind.isSigned.toBoolean());
+                            targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
+                            tx = tx.sign([tokenKey]);
+                        }
 
                         txJson = tx.toJSON();
-                        console.log('createAirdrop txJson: ' + txJson);
+                        console.log('createSale txJson: ' + txJson);
 
                         const { hash: txHash } = await window.mina.sendTransaction({
                             transaction: txJson,
@@ -355,7 +471,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                             },
                         });
                         console.log('tx send success, txHash: ', txHash);
-                        airdropDto.txHash = txHash;
+                        saleDto.txHash = txHash;
 
                         try {
                             showLoadingMask({ id: maskId, text: `waiting for tx confirmation: ${zkTxLinkPrefix.value.concat(txHash)}` });
@@ -379,10 +495,17 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                         }
 
                         // record
-                        appState.tokeniZkAirdropKeyPairs?.push({ key: airdropKey.toBase58(), value: airdropAddress });
+                        if (saleType.value == 1) {
+                            appState.tokeniZkFairSaleKeyPairs?.push({ key: saleKey.toBase58(), value: saleAddress });
+                        } else if (saleType.value == 2) {
+                            appState.tokeniZkPrivateSaleKeyPairs?.push({ key: saleKey.toBase58(), value: saleAddress });
+                        } else {
+                            appState.tokeniZkPreSaleKeyPairs?.push({ key: saleKey.toBase58(), value: saleAddress });
+                        }
+                        router.replace(`/sale-datails?saleAddress=${saleAddress}&tokenAddress=${tokenAddress}`);
 
-                        router.replace(`/airdrop-datails?airdropAddress=${airdropAddress}&tokenAddress=${tokenAddress}`);
-
+                        // send back to backend for recording
+                        await submitSale(saleDto);// TODO!!! 本尊
                     } catch (error) {
                         console.error(error);
                     }
@@ -423,9 +546,9 @@ const nextX = () => {
     if (flagX.value >= 3) {
         flagX.value = 3
     } else {
-        // if (airdropDto.currency !== 'MINA' &&  )
-        console.log(123, airdropDto.currency, 123);
-        console.log(456, airdropDto.feeRate, 123);
+        // if (saleDto.currency !== 'MINA' &&  )
+        console.log(123, saleDto.currency, 123);
+        console.log(456, saleDto.feeRate, 123);
 
         flagX.value++
         goToTop()
@@ -458,18 +581,13 @@ const prev = () => {
     }
 }
 
+
 const dialogTableVisible = ref(false)
 
 // 组件挂载完成后执行的函数
 onMounted(async () => {
-    if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
-        appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
-        appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
-    }
 
-    saleStartBlockInfo.current = Number(appState.latestBlockInfo.blockchainLength.toString());
-    saleStartBlockInfo.target = Number(appState.latestBlockInfo.blockchainLength.toString());
-    airdropDto.startTimestamp = saleStartBlockInfo.target;
+
 
     // 进入当前组件都会回到顶部
     window.scrollTo({
@@ -482,7 +600,7 @@ watch(() => appState.connectedWallet58, async (newAddress, oldValue) => {
     if (!appState.connectedWallet58) {
         flagX.value = 0;
         tokenDto = reactive<TokenDto>(tokenDtoInit);
-        airdropDto = reactive<AirdropDto>(airdropDtoInit);
+        saleDto = reactive<SaleDto>(saleDtoInit);
         active.value = 0;
 
         ElMessage({
@@ -517,25 +635,26 @@ watch(() => appState.connectedWallet58, async (newAddress, oldValue) => {
         tokenDto.updatedAt = tokenInfo?.updatedAt;
         tokenDto.createdAt = tokenInfo?.createdAt;
 
-        airdropDto.tokenAddress = appState.tokeniZkBasicTokenKeyPair!.value!;
-        airdropDto.tokenSymbol = tokenInfo?.symbol;
+        saleDto.tokenAddress = appState.tokeniZkBasicTokenKeyPair!.value!;
+        saleDto.tokenSymbol = tokenInfo?.symbol;
     }
 }, { immediate: true })
 
-let checkIfTokenExist = computed(() => !airdropDto.tokenSymbol);
+let checkIfTokenExist = computed(() => !saleDto.tokenSymbol);
 
 const title = computed(() => {
-    return `Create Airdrop Launch`
+    return `Create ${saleType.value == 0 ? 'PreSale' : (saleType.value == 1 ? 'FairSale' : 'PrivateSale')} Launch`
 })
 
 </script>
 
 <template>
-    <el-row class="row-bg create-new-airdrop" justify="center">
+    <el-row class="row-bg create-token-sale" justify="center">
+
         <el-col :span="24">
 
             <el-row>
-                <div class="create-Airdrop-title">
+                <div class="create-basic-zktoken-title">
                     <h1>{{ title }}</h1>
                 </div>
             </el-row>
@@ -548,7 +667,7 @@ const title = computed(() => {
                         <el-step title="Verify Token" description="Enter the token address and verify" />
 
                         <el-step title="Launchpad Info"
-                            description="Enter the launchpad information that you want to raise , that should be enter all details about your airdrop" />
+                            description="Enter the launchpad information that you want to raise , that should be enter all details about your sale" />
 
                         <el-step title="Add Additional Info" description="Let people know who you are" />
 
@@ -565,12 +684,11 @@ const title = computed(() => {
                     <el-row>
                         <el-col :span="24">
 
-                            <el-form ref="ruleFormRef" :model="airdropDto" :rules="rules" label-width="120px"
+                            <el-form ref="ruleFormRef" :model="saleDto" :rules="rules" label-width="120px"
                                 class="demo-ruleForm" size="large" status-icon label-position="top">
 
                                 <!-- 步骤1 -->
                                 <el-row class="row-bg formTable1" v-show="flagX === 0">
-
                                     <el-col :span="11" v-if="(checkIfTokenExist || !appState.connectedWallet58)">
                                         <router-link to="/create-zk-token">
                                             <span style="color: #009688;">Create zkToken</span>
@@ -585,7 +703,7 @@ const title = computed(() => {
                                                 <el-row>
                                                     <el-col :span="8" hidden="true">
                                                         <el-form-item label="Token address" prop="tokenAddress">
-                                                            <el-input v-model.trim="airdropDto.tokenAddress"
+                                                            <el-input v-model.trim="saleDto.tokenAddress"
                                                                 placeholder="Ex: Mina" />
                                                         </el-form-item>
                                                     </el-col>
@@ -613,19 +731,18 @@ const title = computed(() => {
                                         </el-row>
 
                                         <el-form-item label="Currency" prop="currency">
-                                            <el-radio-group v-model="airdropDto.currency">
+                                            <el-radio-group v-model="saleDto.currency">
                                                 <el-radio label="MINA" />
                                             </el-radio-group>
                                         </el-form-item>
 
                                         <el-form-item label="Creation Fee Options" prop="feeRate">
-                                            <el-radio-group v-model="airdropDto.feeRate">
+                                            <el-radio-group v-model="saleDto.feeRate">
                                                 <el-radio label="100">100 MINA</el-radio>
                                                 <!-- <el-radio label="0">Other</el-radio> -->
                                             </el-radio-group>
                                         </el-form-item>
                                     </el-col>
-
                                 </el-row>
 
                                 <!-- 步骤2 -->
@@ -636,36 +753,88 @@ const title = computed(() => {
 
                                         <el-row class="row-bg">
                                             <el-col :span="11">
-                                                <el-form-item label="Airdrop Name" prop="airdropName">
-                                                    <el-input v-model="airdropDto.airdropName" placeholder="Ex: Mina" />
+                                                <el-form-item label="Sale Name" prop="saleName">
+                                                    <el-input v-model="saleDto.saleName" placeholder="Ex: Mina" />
                                                 </el-form-item>
                                             </el-col>
 
                                             <el-col :span="1"></el-col>
 
                                             <el-col :span="12">
-                                                <el-form-item label="Airdrop Total Supply" prop="totalAirdropSupply">
-                                                    <el-input v-model.number.trim="airdropDto.totalAirdropSupply"
+                                                <el-form-item label="Sale Total Supply" prop="totalSaleSupply">
+                                                    <el-input v-model.number.trim="saleDto.totalSaleSupply"
                                                         placeholder="0" />
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
+
+                                        <el-form-item label="Presale rate" prop="saleRate" v-if="saleType == 0">
+                                            <el-input v-model.number.trim="saleDto.saleRate" placeholder="0" />
+                                            <div class="form-notes">If I spend 1 Mina how many tokens will I
+                                                receive?</div>
+                                        </el-form-item>
+
+
+                                        <el-row class="row-bg">
+                                            <el-col :span="11">
+                                                <el-form-item label="SoftCap (Mina)" prop="softCap">
+                                                    <el-input v-model.number.trim="saleDto.softCap" placeholder="0" />
+                                                    <div class="form-notes"> Softcap must be >= 25% of Hardcap!</div>
+                                                </el-form-item>
+                                            </el-col>
+
+                                            <el-col :span="1"></el-col>
+
+                                            <el-col :span="12">
+                                                <el-form-item label="HardCap (Mina)" prop="hardCap">
+                                                    <el-input v-model.number.trim="saleDto.hardCap" placeholder="0" />
+                                                    <div class="form-notes"> Setting max contribution?</div>
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+
+
+                                        <el-row class="row-bg">
+                                            <el-col :span="11">
+                                                <el-form-item label="Minimum buy (Mina)" prop="minimumBuy">
+                                                    <el-input v-model.number.trim="saleDto.minimumBuy" placeholder="0" />
+                                                </el-form-item>
+                                            </el-col>
+
+                                            <el-col :span="1"></el-col>
+
+                                            <el-col :span="12">
+                                                <el-form-item label="Maximum buy (Mina)" prop="maximumBuy">
+                                                    <el-input v-model.number.trim="saleDto.maximumBuy" placeholder="0" />
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+
 
                                         <el-row class="row-bg">
                                             <el-col :span="12">
                                                 <el-form-item label="Start Time" required style="width: 100%">
                                                     <el-date-picker v-model="saleStartDateTime" type="datetime"
                                                         placeholder="Pick a Date" format="YYYY/MM/DD HH:mm:ss"
-                                                        value-format="x" @change="changeAirdropStartDateTime" />
-                                                    <div v-if="saleStartBlockInfo.current != 0">(start at blockHeight: {{
-                                                        saleStartBlockInfo.target }})</div>
+                                                        value-format="x" @change="changeSaleStartDateTime" />
+                                                    <div v-if="startTargetBlockHeight != 0">(start at blockHeight: {{
+                                                        startTargetBlockHeight }})</div>
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <el-form-item label="End Time" required style="width: 100%">
+                                                    <el-date-picker v-model="saleEndDateTime" type="datetime"
+                                                        placeholder="Pick a Date" format="YYYY/MM/DD HH:mm:ss"
+                                                        value-format="x" @change="changeSaleEndDateTime" />
+                                                    <div v-if="endTargetBlockHeight != 0">(End at blockHeight: {{
+                                                        endTargetBlockHeight }})</div>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
 
 
                                         <el-form-item label="Whitelist" prop="whitelistMembers">
-                                            <el-input v-model.trim="airdropDto.whitelistMembers" type="textarea"
+                                            <el-input v-model.trim="saleDto.whitelistMembers" type="textarea"
                                                 :autosize="{ minRows: 2, maxRows: 1000 }"
                                                 placeholder="Please input as comma-sperated Mina wallet addresses" />
                                         </el-form-item>
@@ -676,8 +845,7 @@ const title = computed(() => {
                                             <el-row class="row-bg">
                                                 <el-col :span="11">
                                                     <el-form-item label="cliffTime" prop="cliffTime">
-                                                        <el-input v-model.number.trim="airdropDto.cliffTime"
-                                                            placeholder="0" />
+                                                        <el-input v-model.number.trim="saleDto.cliffTime" placeholder="0" />
                                                     </el-form-item>
                                                 </el-col>
 
@@ -685,7 +853,7 @@ const title = computed(() => {
 
                                                 <el-col :span="12">
                                                     <el-form-item label="cliffAmountRate" prop="cliffAmountRate">
-                                                        <el-input v-model.number.trim="airdropDto.cliffAmountRate"
+                                                        <el-input v-model.number.trim="saleDto.cliffAmountRate"
                                                             placeholder="0" />
                                                     </el-form-item>
                                                 </el-col>
@@ -694,7 +862,7 @@ const title = computed(() => {
                                             <el-row class="row-bg">
                                                 <el-col :span="11">
                                                     <el-form-item label="vestingPeriod(>=1)" prop="vestingPeriod">
-                                                        <el-input v-model.number.trim="airdropDto.vestingPeriod"
+                                                        <el-input v-model.number.trim="saleDto.vestingPeriod"
                                                             placeholder="0" />
                                                     </el-form-item>
                                                 </el-col>
@@ -703,7 +871,7 @@ const title = computed(() => {
 
                                                 <el-col :span="12">
                                                     <el-form-item label="vestingIncrement" prop="vestingIncrement">
-                                                        <el-input v-model.number.trim="airdropDto.vestingIncrement"
+                                                        <el-input v-model.number.trim="saleDto.vestingIncrement"
                                                             placeholder="0" />
                                                     </el-form-item>
                                                 </el-col>
@@ -723,10 +891,10 @@ const title = computed(() => {
                                             <el-col :span="11">
                                                 <el-form-item label="Logo" prop="logoUrl">
 
-                                                    <el-input v-model.trim="airdropDto.logoUrl"
+                                                    <el-input v-model.trim="saleDto.logoUrl"
                                                         placeholder="Ex: https://..." />
                                                     <!--
-                                                    <el-upload class="upload-demo" drag v-model="airdropDto.logoUrl"
+                                                    <el-upload class="upload-demo" drag v-model="saleDto.logoUrl"
                                                         action="https://tokenizk.finance/" multiple :limit="1"
                                                         :on-exceed="handleExceed">
                                                         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
@@ -751,7 +919,7 @@ const title = computed(() => {
 
                                             <el-col :span="12">
                                                 <el-form-item label="Website" prop="website">
-                                                    <el-input v-model.trim="airdropDto.website"
+                                                    <el-input v-model.trim="saleDto.website"
                                                         placeholder="Ex: https://..." />
                                                 </el-form-item>
                                             </el-col>
@@ -760,7 +928,7 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="Facebook" prop="facebook">
-                                                    <el-input v-model.trim="airdropDto.facebook"
+                                                    <el-input v-model.trim="saleDto.facebook"
                                                         placeholder="Ex: https://facebook.com/..." />
                                                 </el-form-item>
                                             </el-col>
@@ -768,7 +936,7 @@ const title = computed(() => {
 
                                             <el-col :span="12">
                                                 <el-form-item label="Twitter" prop="twitter">
-                                                    <el-input v-model.trim="airdropDto.twitter"
+                                                    <el-input v-model.trim="saleDto.twitter"
                                                         placeholder="Ex: https://twitter.com/..." />
                                                 </el-form-item>
                                             </el-col>
@@ -777,7 +945,7 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="Github" prop="github">
-                                                    <el-input v-model.trim="airdropDto.github"
+                                                    <el-input v-model.trim="saleDto.github"
                                                         placeholder="Ex: https://github.com/..." />
                                                 </el-form-item>
                                             </el-col>
@@ -785,7 +953,7 @@ const title = computed(() => {
 
                                             <el-col :span="12">
                                                 <el-form-item label="Telegram" prop="telegram">
-                                                    <el-input v-model.trim="airdropDto.telegram"
+                                                    <el-input v-model.trim="saleDto.telegram"
                                                         placeholder="Ex: https://t.me/..." />
                                                 </el-form-item>
                                             </el-col>
@@ -794,7 +962,7 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="Discord" prop="discord">
-                                                    <el-input v-model.trim="airdropDto.discord"
+                                                    <el-input v-model.trim="saleDto.discord"
                                                         placeholder="Ex: https://discord.com/" />
                                                 </el-form-item>
                                             </el-col>
@@ -803,14 +971,14 @@ const title = computed(() => {
 
                                             <el-col :span="12">
                                                 <el-form-item label="Reddit" prop="reddit">
-                                                    <el-input v-model.trim="airdropDto.reddit"
+                                                    <el-input v-model.trim="saleDto.reddit"
                                                         placeholder="Ex: https://reddit.com/..." />
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
 
                                         <el-form-item label="Description" prop="description">
-                                            <el-input v-model="airdropDto.description" type="textarea"
+                                            <el-input v-model="saleDto.description" type="textarea"
                                                 placeholder="Ex: This is the best project..." />
                                         </el-form-item>
 
@@ -823,47 +991,46 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="12">Token name</el-col>
-                                            <el-col :span="12">{{ airdropDto.tokenSymbol }}</el-col>
+                                            <el-col :span="12">{{ saleDto.tokenSymbol }}</el-col>
                                         </el-row>
-
                                         <el-row>
                                             <el-col :span="12">Token address</el-col>
-                                            <el-col :span="12">{{ airdropDto.tokenAddress }}</el-col>
+                                            <el-col :span="12">{{ saleDto.tokenAddress }}</el-col>
                                         </el-row>
-
                                         <el-row class="row-bg">
-                                            <el-col :span="12">Airdrop name</el-col>
-                                            <el-col :span="12">{{ airdropDto.airdropName }}</el-col>
+                                            <el-col :span="12">Sale name</el-col>
+                                            <el-col :span="12">{{ saleDto.saleName }}</el-col>
                                         </el-row>
-
                                         <el-row>
-                                            <el-col :span="12">Airdrop contract address</el-col>
-                                            <el-col :span="12">{{ (airdropDto.airdropAddress != null ||
-                                                airdropDto.airdropAddress !=
-                                                '') ? airdropDto.airdropAddress : `click 'confirm' to generate` }}</el-col>
+                                            <el-col :span="12">Sale contract address</el-col>
+                                            <el-col :span="12">{{ (saleDto.saleAddress != null || saleDto.saleAddress !=
+                                                '') ? saleDto.saleAddress : `click 'confirm' to generate` }}</el-col>
                                         </el-row>
-
                                         <el-row>
-                                            <el-col :span="12">Airdrop Total Supply</el-col>
-                                            <el-col :span="12">{{ airdropDto.totalAirdropSupply }}</el-col>
+                                            <el-col :span="12">Sale Supply</el-col>
+                                            <el-col :span="12">{{ saleDto.totalSaleSupply }}</el-col>
                                         </el-row>
-
                                         <!-- 注意 下面两项 -->
                                         <el-row>
-                                            <el-col :span="12">Airdrop currency</el-col>
-                                            <el-col :span="12">{{ airdropDto.currency }}</el-col>
+                                            <el-col :span="12">Sale currency</el-col>
+                                            <el-col :span="12">{{ saleDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Airdrop creation fee</el-col>
-                                            <el-col :span="12">{{ airdropDto.feeRate }}</el-col>
+                                            <el-col :span="12">Sale creation fee</el-col>
+                                            <el-col :span="12">{{ saleDto.feeRate }}</el-col>
+                                        </el-row>
+
+                                        <el-row v-show="saleDto.saleRate">
+                                            <el-col :span="12">Sale Rate</el-col>
+                                            <el-col :span="12">{{ saleDto.saleRate }}</el-col>
                                         </el-row>
 
                                         <el-row
-                                            :hidden="airdropDto.whitelistMembers == null || airdropDto.whitelistMembers == ''">
-                                            <el-col :span="12">Airdrop whitelist</el-col>
+                                            :hidden="saleDto.whitelistMembers == null || saleDto.whitelistMembers == ''">
+                                            <el-col :span="12">Sale whitelist</el-col>
                                             <el-col :span="12">
-                                                <!-- {{ airdropDto.whitelistMembers }} -->
+                                                <!-- {{ saleDto.whitelistMembers }} -->
 
                                                 <div>
                                                     <el-button text @click="dialogTableVisible = true" type="success"
@@ -875,7 +1042,7 @@ const title = computed(() => {
                                                         style="width:600px">
                                                         <ul>
                                                             <el-scrollbar max-height="400px">
-                                                                <li v-for="item in airdropDto.whitelistMembers.split(',')"
+                                                                <li v-for="item in saleDto.whitelistMembers.split(',')"
                                                                     :key="item.index"
                                                                     class="whiteListUl scrollbar-demo-item">{{ item }}
                                                                 </li>
@@ -887,68 +1054,84 @@ const title = computed(() => {
                                             </el-col>
                                         </el-row>
 
-                                        <el-row>
-                                            <el-col :span="12">Start at Block Height</el-col>
-                                            <el-col :span="12">{{ airdropDto.startTimestamp }} ( about <span
-                                                    style="color:green">{{ new
-                                                        Date(saleStartDateTime) }}</span> )</el-col>
+                                        <el-row v-show="saleDto.softCap">
+                                            <el-col :span="12">Softcap</el-col>
+                                            <el-col :span="12">{{ saleDto.softCap }}</el-col>
                                         </el-row>
 
-                                        <!-- <el-row>
-                                            <el-col :span="12">End Time</el-col>
-                                            <el-col :span="12">{{ new Date(airdropDto.endTimestamp) }}</el-col>
-                                        </el-row> -->
+                                        <el-row v-show="saleDto.hardCap">
+                                            <el-col :span="12">HardCap</el-col>
+                                            <el-col :span="12">{{ saleDto.hardCap }}</el-col>
+                                        </el-row>
 
                                         <el-row>
+                                            <el-col :span="12">Minimum buy</el-col>
+                                            <el-col :span="12">{{ saleDto.minimumBuy }}</el-col>
+                                        </el-row>
+
+                                        <el-row>
+                                            <el-col :span="12">Maximum buy</el-col>
+                                            <el-col :span="12">{{ saleDto.maximumBuy }}</el-col>
+                                        </el-row>
+
+                                        <el-row>
+                                            <el-col :span="12">Start Time</el-col>
+                                            <el-col :span="12">{{ new Date(saleDto.startTimestamp) }}</el-col>
+                                        </el-row>
+                                        <el-row>
+                                            <el-col :span="12">End Time</el-col>
+                                            <el-col :span="12">{{ new Date(saleDto.endTimestamp) }}</el-col>
+                                        </el-row>
+                                        <el-row>
                                             <el-col :span="12">Liquidity cliffTime</el-col>
-                                            <el-col :span="12">{{ airdropDto.cliffTime }}</el-col>
+                                            <el-col :span="12">{{ saleDto.cliffTime }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">Liquidity cliffAmountRate</el-col>
-                                            <el-col :span="12">{{ airdropDto.cliffAmountRate }}</el-col>
+                                            <el-col :span="12">{{ saleDto.cliffAmountRate }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">Liquidity vestingPeriod</el-col>
-                                            <el-col :span="12">{{ airdropDto.vestingPeriod }}</el-col>
+                                            <el-col :span="12">{{ saleDto.vestingPeriod }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">Liquidity vestingIncrement</el-col>
-                                            <el-col :span="12">{{ airdropDto.vestingIncrement }}</el-col>
+                                            <el-col :span="12">{{ saleDto.vestingIncrement }}</el-col>
                                         </el-row>
 
 
                                         <el-row>
                                             <el-col :span="12">logoUrl</el-col>
-                                            <el-col :span="12">{{ airdropDto.logoUrl }}</el-col>
+                                            <el-col :span="12">{{ saleDto.logoUrl }}</el-col>
                                         </el-row>
 
                                         <el-row>
                                             <el-col :span="12">Website</el-col>
-                                            <el-col :span="12">{{ airdropDto.website }}</el-col>
+                                            <el-col :span="12">{{ saleDto.website }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">facebook</el-col>
-                                            <el-col :span="12">{{ airdropDto.facebook }}</el-col>
+                                            <el-col :span="12">{{ saleDto.facebook }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">github</el-col>
-                                            <el-col :span="12">{{ airdropDto.github }}</el-col>
+                                            <el-col :span="12">{{ saleDto.github }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">twitter</el-col>
-                                            <el-col :span="12">{{ airdropDto.twitter }}</el-col>
+                                            <el-col :span="12">{{ saleDto.twitter }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">telegram</el-col>
-                                            <el-col :span="12">{{ airdropDto.telegram }}</el-col>
+                                            <el-col :span="12">{{ saleDto.telegram }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">discord</el-col>
-                                            <el-col :span="12">{{ airdropDto.discord }}</el-col>
+                                            <el-col :span="12">{{ saleDto.discord }}</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">reddit</el-col>
-                                            <el-col :span="12">{{ airdropDto.reddit }}</el-col>
+                                            <el-col :span="12">{{ saleDto.reddit }}</el-col>
                                         </el-row>
 
                                     </el-col>
@@ -987,7 +1170,7 @@ const title = computed(() => {
 </template>
 
 <style lang="less" scoped>
-.create-new-airdrop {
+.create-token-sale {
     width: 100%;
     padding: 10% 15%;
 
@@ -1087,5 +1270,7 @@ const title = computed(() => {
     .el-row {
         margin-bottom: 20px;
     }
+
 }
 </style>
+@/apis/sale-api
