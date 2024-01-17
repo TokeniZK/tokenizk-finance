@@ -12,6 +12,10 @@ const logger = getLogger('standardFetchFactoryEvents');
 await activeMinaInstance();
 await initORM();
 
+
+const periodRange = 1.5 * 60 * 1000
+await standardFetchFactoryEvents();
+setInterval(standardFetchFactoryEvents, periodRange); // exec/1.5mins
 export async function standardFetchFactoryEvents() {
     logger.info('start fetch factory events by Standard...');
 
@@ -120,15 +124,6 @@ export async function standardFetchFactoryEvents() {
 
                     await queryRunner.manager.save(sale);
 
-                    if (e.type == 'createPresale' || e.type == 'createFairsale') {
-                        const token = (await queryRunner.manager.findOne(BasiceToken, {
-                            address: createSaleEvent.basicTokenAddress.toBase58()
-                        }))!;
-
-                        token.totalAmountInCirculation += sale.totalSaleSupply;
-
-                        await queryRunner.manager.save(token);
-                    }
                 } else if (e.type == 'createRedeemAccount') {
                     const redeemTokenEvent: CreateRedeemAccount = e.event.data;
 
@@ -189,5 +184,3 @@ export async function standardFetchFactoryEvents() {
     }
 
 }
-
-await standardFetchFactoryEvents();
