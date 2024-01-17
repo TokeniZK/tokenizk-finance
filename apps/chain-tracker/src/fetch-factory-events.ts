@@ -124,6 +124,15 @@ export async function standardFetchFactoryEvents() {
 
                     await queryRunner.manager.save(sale);
 
+                    if (e.type == 'createPresale' || e.type == 'createFairsale') {
+                        const token = (await queryRunner.manager.findOne(BasiceToken, {
+                            address: createSaleEvent.basicTokenAddress.toBase58()
+                        }))!;
+
+                        token.totalAmountInCirculation += sale.totalSaleSupply;
+
+                        await queryRunner.manager.save(token);
+                    }
                 } else if (e.type == 'createRedeemAccount') {
                     const redeemTokenEvent: CreateRedeemAccount = e.event.data;
 
