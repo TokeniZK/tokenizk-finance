@@ -649,12 +649,12 @@ const title = computed(() => {
 </script>
 
 <template>
-    <el-row class="row-bg create-normal-launch" justify="center">
+    <el-row class="row-bg create-token-sale" justify="center">
 
         <el-col :span="24">
 
             <el-row>
-                <div class="create-ZkToken-title">
+                <div class="create-basic-zktoken-title">
                     <h1>{{ title }}</h1>
                 </div>
             </el-row>
@@ -1170,7 +1170,7 @@ const title = computed(() => {
 </template>
 
 <style lang="less" scoped>
-.create-normal-launch {
+.create-token-sale {
     width: 100%;
     padding: 10% 15%;
 
