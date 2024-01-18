@@ -19,6 +19,7 @@ import {
 } from './constants';
 
 
+
 export class VestingParams extends Struct({
     cliffTime: UInt32,
     cliffAmountRate: UInt64,
@@ -90,7 +91,13 @@ export class SaleParams extends Struct({
     vestingIncrement: UInt64
 }) {
     hash() {
-        return Poseidon.hash([
+        return Poseidon.hash(
+            this.toFields()
+        );
+    }
+
+    toFields() {
+        return [
             ...this.tokenAddress.toFields(),
             ...this.totalSaleSupply.toFields(),
             ...this.saleRate.toFields(),
@@ -105,8 +112,7 @@ export class SaleParams extends Struct({
             ...this.cliffAmountRate.toFields(),
             ...this.vestingPeriod.toFields(),
             ...this.vestingIncrement.toFields(),
-        ]
-        );
+        ];
     }
 
     vestingParamsHash() {
@@ -217,6 +223,21 @@ export class SaleContribution extends Struct({
             ...this.contributorAddress.toFields(),
             ...this.minaAmount.toFields()
         ];
+    }
+
+    static fromFields(fields: Field[]) {
+        const tokenAddress = PublicKey.fromFields([fields[0], fields[1]]);
+        const tokenId = fields[2];
+        const saleContractAddress = PublicKey.fromFields([fields[3], fields[4]]);
+        const contributorAddress = PublicKey.fromFields([fields[5], fields[6]]);
+        const minaAmount = UInt64.from(fields[7]);
+        return new SaleContribution({
+            tokenAddress,
+            tokenId,
+            saleContractAddress,
+            contributorAddress,
+            minaAmount
+        });
     }
 }
 
@@ -412,4 +433,53 @@ export class SaleActionBatch extends Struct({
                 .toString(),
         };
     }
+
+    static fromDto(actionBatch: {
+        actions: {
+            tokenAddress: string,
+            tokenId: string,
+            saleContractAddress: string,
+            contributorAddress: string,
+            minaAmount: string
+        }[],
+        merkleWitnesses: { path: string[] }[]
+    }) {
+        const { actions: actions0, merkleWitnesses: merkleWitnesses0 } = actionBatch;
+        if (actions0.length != SALE_ACTION_BATCH_SIZE || merkleWitnesses0.length != SALE_ACTION_BATCH_SIZE) {
+            throw new Error('actionBatch is invalid!');
+        }
+
+        const actionsX = actions0.map(a => {
+            if (a.tokenAddress == PublicKey.empty().toBase58()) {
+                return SaleContribution.dummy()
+            }
+            return new SaleContribution({
+                tokenAddress: PublicKey.fromBase58(a.tokenAddress),
+                tokenId: Field.from(a.tokenId),
+                saleContractAddress: PublicKey.fromBase58(a.saleContractAddress),
+                contributorAddress: PublicKey.fromBase58(a.contributorAddress),
+                minaAmount: UInt64.from(a.minaAmount),
+            });
+        });
+        const merkleWitnessesX = merkleWitnesses0.map(m => ContributorsMembershipMerkleWitness.fromJSON(m));
+
+        return new SaleActionBatch({ actions: actionsX, merkleWitnesses: merkleWitnessesX });
+
+    }
+
 }
+
+
+export class ClaimTokenEvent extends Struct({
+    saleContribution: SaleContribution
+}) { }
+
+
+export class MaintainContributorsEvent extends Struct({
+    fromActionState0: Field,
+    contributorTreeRoot0: Field,
+    totalContributedMina0: UInt64,
+    fromActionState1: Field,
+    contributorTreeRoot1: Field,
+    totalContributedMina1: UInt64
+}) { }

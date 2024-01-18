@@ -18,16 +18,16 @@ import {
     Bool,
 } from 'o1js';
 import { SaleRollupProof } from './sale-rollup-prover';
-import { SaleContribution, SaleParams, SaleParamsConfigurationEvent, ContributionEvent, RedeemEvent } from './sale-models';
-import { WhitelistMembershipMerkleWitness, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
+import {
+    SaleContribution, SaleParams, SaleParamsConfigurationEvent, ContributionEvent,
+    RedeemEvent, ClaimTokenEvent, MaintainContributorsEvent
+} from './sale-models';
+import {
+    WhitelistMembershipMerkleWitness, SaleContributorMembershipWitnessData,
+    UserLowLeafWitnessData, UserNullifierMerkleWitness
+} from './sale-models';
 import { RedeemAccount } from './TokeniZkUser';
 import { TokeniZkBasicToken } from './TokeniZkBasicToken';
-
-
-export class ClaimTokenEvent extends Struct({
-    presaleContribution: SaleContribution
-}) { }
-
 
 export class TokeniZkPresale extends SmartContract {
 
@@ -73,6 +73,7 @@ export class TokeniZkPresale extends SmartContract {
         configureSaleParams: SaleParamsConfigurationEvent,
         contribute: ContributionEvent,
         claimToken: ClaimTokenEvent,
+        maintainContributors: MaintainContributorsEvent,
     }
 
     /**
@@ -114,7 +115,7 @@ export class TokeniZkPresale extends SmartContract {
     @method
     configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
         // cannot be changed after ('startTime' - 60 * 60 * 1000)
-        this.network.timestamp.assertBetween(saleParams0.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
+        this.network.blockchainLength.requireBetween(saleParams0.startTime.sub(10), UInt32.MAXINT());
 
         // check if presale params is aligned with the existing ones
         const hash0 = saleParams0.hash();
@@ -123,7 +124,7 @@ export class TokeniZkPresale extends SmartContract {
         saleParams0.tokenAddress.assertEquals(saleParams1.tokenAddress);
         saleParams0.totalSaleSupply.assertEquals(saleParams1.totalSaleSupply);
 
-        this.network.timestamp.assertBetween(saleParams1.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
+        this.network.blockchainLength.requireBetween(saleParams1.startTime.sub(10), UInt32.MAXINT());
 
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
@@ -174,8 +175,8 @@ export class TokeniZkPresale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(
             saleParams.hash()
         );
-        // check network timestamp
-        this.network.timestamp.assertBetween(saleParams.startTime, saleParams.endTime);
+        // check network timestamp  TODO !!!!! need to uncomment!!
+        // this.network.blockchainLength.requireBetween(saleParams.startTime, saleParams.endTime);
 
         // check [minimumBuy, maximumBuy]
         minaAmount.assertGreaterThanOrEqual(saleParams.minimumBuy);
@@ -231,7 +232,7 @@ export class TokeniZkPresale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        // this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT()); TODO need uncomment here 
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
 
         // check actionState
         this.account.actionState.assertEquals(
@@ -253,6 +254,16 @@ export class TokeniZkPresale extends SmartContract {
         // transfer partial MINA-fee to TokeniZK platform
         // TODO at next version TODO
         ///////////////////////////////////////////////////////
+
+        this.emitEvent('maintainContributors', new MaintainContributorsEvent({
+            fromActionState0: saleRollupProof.publicOutput.source.currentActionsHash,
+            contributorTreeRoot0: saleRollupProof.publicOutput.source.membershipTreeRoot,
+            totalContributedMina0: saleRollupProof.publicOutput.source.currentMinaAmount,
+
+            fromActionState1: saleRollupProof.publicOutput.target.currentActionsHash,
+            contributorTreeRoot1: saleRollupProof.publicOutput.target.membershipTreeRoot,
+            totalContributedMina1: saleRollupProof.publicOutput.target.currentMinaAmount
+        }));
     }
 
     /**
@@ -272,7 +283,7 @@ export class TokeniZkPresale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        // this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT()); TODO need uncomment here
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
 
         // check softcap
         const totalContributedMina = this.totalContributedMina.getAndRequireEquals();
@@ -294,7 +305,7 @@ export class TokeniZkPresale extends SmartContract {
         );
 
         this.emitEvent('claimToken', new ClaimTokenEvent({
-            presaleContribution: saleContribution
+            saleContribution: saleContribution
         }));
     }
 
@@ -314,7 +325,7 @@ export class TokeniZkPresale extends SmartContract {
         const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
-        // this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT()); TODO need uncomment here
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
 
         // check softcap
         const totalContributedMina = this.totalContributedMina.getAndRequireEquals();
@@ -347,6 +358,7 @@ export class PresaleMinaFundHolder extends SmartContract {
     @state(PublicKey)
     public tokenContractAddress = State<PublicKey>();
 
+
     /**
      * redeem MINA back from sale contract account
      * @param saleParams 
@@ -356,16 +368,29 @@ export class PresaleMinaFundHolder extends SmartContract {
      */
     @method
     redeem(saleParams: SaleParams,
+        totalContributedMina: UInt64,
+        contributorTreeRoot: Field,
         saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
         lowLeafWitness: UserLowLeafWitnessData,
         oldNullWitness: UserNullifierMerkleWitness) {
 
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
+
         const tokenAddress = this.tokenContractAddress.getAndRequireEquals();
-        const saleContract = new TokeniZkPresale(this.address, TokenId.derive(tokenAddress));
-        // check if meet redeeming conditions
-        saleContract.redeemCheck(saleParams, saleContributorMembershipWitnessData);
+        const saleAU = AccountUpdate.create(this.address, TokenId.derive(tokenAddress));
+        AccountUpdate.assertEquals(saleAU.body.preconditions.account.state[0], saleParams.hash());
+
+        totalContributedMina.assertLessThan(saleParams.softCap);
+        AccountUpdate.assertEquals(saleAU.body.preconditions.account.state[5], totalContributedMina.toFields()[0]);
+
+        AccountUpdate.assertEquals(
+            saleAU.body.preconditions.account.state[2],
+            contributorTreeRoot
+        );
+        saleContributorMembershipWitnessData.checkMembershipAndAssert(contributorTreeRoot);
+
         const tokenContract = new TokeniZkBasicToken(tokenAddress);
-        tokenContract.approveAnyAccountUpdate(saleContract.self);
+        tokenContract.approveAnyAccountUpdate(saleAU);
 
         const presaleContribution = saleContributorMembershipWitnessData.leafData;
         const contributorAddress = presaleContribution.contributorAddress;
@@ -384,4 +409,37 @@ export class PresaleMinaFundHolder extends SmartContract {
             saleContribution: presaleContribution
         }));
     }
+
+    /* !!!could work originally !!!
+      @method
+      redeem(saleParams: SaleParams,
+          saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
+          lowLeafWitness: UserLowLeafWitnessData,
+          oldNullWitness: UserNullifierMerkleWitness) {
+  
+          const tokenAddress = this.tokenContractAddress.getAndRequireEquals();
+          const saleContract = new TokeniZkPresale(this.address, TokenId.derive(tokenAddress));
+          // check if meet redeeming conditions
+          saleContract.redeemCheck(saleParams, saleContributorMembershipWitnessData);
+          const tokenContract = new TokeniZkBasicToken(tokenAddress);
+          tokenContract.approveAnyAccountUpdate(saleContract.self);
+  
+          const presaleContribution = saleContributorMembershipWitnessData.leafData;
+          const contributorAddress = presaleContribution.contributorAddress;
+          const minaAmount = presaleContribution.minaAmount;
+  
+          const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
+          redeemAccount.updateState(
+              presaleContribution.hash(),
+              lowLeafWitness,
+              oldNullWitness
+          );
+  
+          this.send({ to: contributorAddress, amount: minaAmount });
+  
+          this.emitEvent('redeem', new RedeemEvent({
+              saleContribution: presaleContribution
+          }));
+      }
+      */
 }

@@ -366,7 +366,7 @@ export class TokeniZkFactory extends SmartContract {
     }
 
     @method
-    public createPrivateSale(lauchpadPlatformParams: LauchpadPlatformParams, saleAddress: PublicKey, privateSaleVk: VerificationKey, saleParams: SaleParams) {
+    public createPrivateSale(lauchpadPlatformParams: LauchpadPlatformParams, saleParams: SaleParams, tokenAddr: PublicKey, saleAddress: PublicKey, privateSaleVk: VerificationKey) {
         // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
         lauchpadPlatformParams.hash().assertEquals(lauchpadPlatformParamsHash);
@@ -374,7 +374,7 @@ export class TokeniZkFactory extends SmartContract {
 
         let zkapp = AccountUpdate.createSigned(saleAddress);
 
-        saleParams.tokenAddress.assertEquals(PublicKey.empty());// no need at private sale
+        // saleParams.tokenAddress.assertEquals(PublicKey.empty());// no need at private sale
         saleParams.totalSaleSupply.assertEquals(UInt64.from(0));// no need at private sale
         saleParams.saleRate.assertEquals(UInt64.from(0));// no need at private sale
         saleParams.hardCap.assertLessThanOrEqual(saleParams.softCap.mul(4));
@@ -403,7 +403,7 @@ export class TokeniZkFactory extends SmartContract {
         feePayer.send({ to: feeReceiverAU, amount: lauchpadPlatformParams.privateSaleCreationFee });
 
         this.emitEvent('createPrivateSale', new CreateSaleEvent({
-            basicTokenAddress: PublicKey.empty(),// no token at private sale
+            basicTokenAddress: tokenAddr,// no token at private sale
             saleContractAddress: saleAddress,
             fee: lauchpadPlatformParams.privateSaleCreationFee,
             saleParams

@@ -32,7 +32,7 @@ await ctx.initMinaNetwork();
 // ================
 
 // let feePayerKey = Local.testAccounts[0].privateKey;
-let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEDgneTyC6VimEUWF4jrreDaR4ntSvJdjw6ckfDQCtMG5aJtMGP') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
+let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEN6uX7e5219b1eMdLqyvPveU6iB7AmdrHEGmuPZGdkH7Kj5GHz') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
 let feePayer = feePayerKey.toPublicKey();
 if (process.env.TEST_ON_BERKELEY === 'true') {
     const feePayerAcctInfo = await fetchAccount({ publicKey: feePayer });
@@ -95,14 +95,14 @@ console.time('compile (TokeniZkFactory)');
 const factoryVK = (await TokeniZkFactory.compile()).verificationKey;
 console.timeEnd('compile (TokeniZkFactory)');
 console.log(`factoryVK.hash: ${factoryVK.hash}`)
-fs.writeFileSync('./deploy/verification-keys/TokeniZkFactory-VK.json', JSON.stringify(factoryVK));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/TokeniZkFactory-VK.json', JSON.stringify(factoryVK));
 
 console.time('compile (TokeniZkBasicToken)');
 const tokeniZkBasicTokenVK = (await TokeniZkBasicToken.compile()).verificationKey;
 TokeniZkFactory.basicTokenVk = tokeniZkBasicTokenVK;
 console.log('TokeniZkFactory.basicTokenVk: ' + TokeniZkFactory.basicTokenVk.hash);
 console.timeEnd('compile (TokeniZkBasicToken)');
-fs.writeFileSync('./deploy/verification-keys/TokeniZkBasicToken-VK.json', JSON.stringify(tokeniZkBasicTokenVK));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/TokeniZkBasicToken-VK.json', JSON.stringify(tokeniZkBasicTokenVK));
 
 
 let tokenFactoryZkApp = new TokeniZkFactory(tokenFactoryZkAppAddress);
@@ -113,47 +113,47 @@ let tokenId = basicTokenZkApp.token.id;
 console.time('compile (SaleRollupProver)');
 const saleRollupProverVK = (await SaleRollupProver.compile()).verificationKey;
 console.timeEnd('compile (SaleRollupProver)');
-fs.writeFileSync('./deploy/verification-keys/SaleRollupProver-VK.json', JSON.stringify(saleRollupProverVK));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/SaleRollupProver-VK.json', JSON.stringify(saleRollupProverVK));
 
 console.time('compile (TokeniZkPresale)');
 const tokeniZkPresaleVK = (await TokeniZkPresale.compile()).verificationKey;
 TokeniZkFactory.presaleContractVk = tokeniZkPresaleVK;
 console.log('TokeniZkFactory.presaleContractVk: ' + TokeniZkFactory.presaleContractVk.hash);
 console.timeEnd('compile (TokeniZkPresale)');
-fs.writeFileSync('./deploy/verification-keys/TokeniZkPresale-VK.json', JSON.stringify(tokeniZkPresaleVK));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/TokeniZkPresale-VK.json', JSON.stringify(tokeniZkPresaleVK));
 
 
 console.time('compile (TokeniZkFairSale)');
 const tokeniZkFairsaleVK = (await TokeniZkFairSale.compile()).verificationKey;
 TokeniZkFactory.fairSaleContractVk = tokeniZkFairsaleVK;
 console.timeEnd('compile (TokeniZkFairSale)');
-fs.writeFileSync('./deploy/verification-keys/TokeniZkFairSale-VK.json', JSON.stringify(tokeniZkFairsaleVK));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/TokeniZkFairSale-VK.json', JSON.stringify(tokeniZkFairsaleVK));
 
 console.time('compile (TokeniZkPrivateSale)');
 const tokeniZkPrivatesaleVK = (await TokeniZkPrivateSale.compile()).verificationKey;
 TokeniZkFactory.privateSaleContractVk = tokeniZkPrivatesaleVK;
 console.timeEnd('compile (TokeniZkPrivateSale)');
-fs.writeFileSync('./deploy/verification-keys/TokeniZkPrivateSale-VK.json', JSON.stringify(tokeniZkPrivatesaleVK));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/TokeniZkPrivateSale-VK.json', JSON.stringify(tokeniZkPrivatesaleVK));
 
 console.time('compile (TokeniZkAirdrop)');
 const tokeniZkAirdropVK = (await TokeniZkAirdrop.compile()).verificationKey;
 TokeniZkFactory.airdropVk = tokeniZkAirdropVK;
 console.timeEnd('compile (TokeniZkAirdrop)');
-fs.writeFileSync('./deploy/verification-keys/TokeniZkAirdrop-VK.json', JSON.stringify(tokeniZkAirdropVK));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/TokeniZkAirdrop-VK.json', JSON.stringify(tokeniZkAirdropVK));
 
 console.time('compile (RedeemAccount)');
 await RedeemAccount.compile();
 const redeemAccountVk = (await RedeemAccount.compile()).verificationKey;
 TokeniZkFactory.redeemAccountVk = redeemAccountVk;
 console.timeEnd('compile (RedeemAccount)');
-fs.writeFileSync('./deploy/verification-keys/RedeemAccount-VK.json', JSON.stringify(redeemAccountVk));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/RedeemAccount-VK.json', JSON.stringify(redeemAccountVk));
 
 console.time('compile (PresaleMinaFundHolder)');
 await PresaleMinaFundHolder.compile();
 const presaleMinaFundHolderVK = (await PresaleMinaFundHolder.compile()).verificationKey;
 TokeniZkFactory.presaleMinaFundHolderVk = presaleMinaFundHolderVK;
 console.timeEnd('compile (PresaleMinaFundHolder)');
-fs.writeFileSync('./deploy/verification-keys/PresaleMinaFundHolder-VK.json', JSON.stringify(presaleMinaFundHolderVK));
+fs.writeFileSync('./deploy/TestWorld/verification-keys/PresaleMinaFundHolder-VK.json', JSON.stringify(presaleMinaFundHolderVK));
 
 console.log('-------------------------------------------');
 // log vk hash
@@ -195,7 +195,7 @@ console.log('lauchpadPlatformParams: ' + JSON.stringify(lauchpadPlatformParams))
 console.log('lauchpadPlatformParams.hash(): ' + lauchpadPlatformParams.hash());
 
 
-fs.writeFileSync('./deploy/tokenizk-factory-keypair-params.json',
+fs.writeFileSync('./deploy/TestWorld/tokenizk-factory-keypair-params.json',
     JSON.stringify({
         key: tokenFactoryZkAppKey.toBase58(),
         value: tokenFactoryZkAppAddress.toBase58(),

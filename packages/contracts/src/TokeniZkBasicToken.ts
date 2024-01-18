@@ -24,7 +24,7 @@ import {
 } from 'o1js';
 import { LauchpadPlatformParams, TokeniZkFactory } from './TokeniZkFactory';
 import { CONTRIBUTORS_TREE_ROOT, STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
-import { SaleParams, VestingParams } from './sale-models';
+import { SaleParams, TokenTransferEvent, VestingParams } from './sale-models';
 import { AirdropParams } from './TokeniZkAirdrop';
 
 
@@ -32,6 +32,9 @@ const SUPPLY = UInt64.from(10n ** 18n);
 
 export class TokeniZkBasicToken extends SmartContract {
 
+    events = {
+        tokenTransferEvent: TokenTransferEvent,
+    }
     /**
      * Total supply of tokens
      */
@@ -143,7 +146,7 @@ export class TokeniZkBasicToken extends SmartContract {
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
         saleParams.softCap.mul(4).assertGreaterThanOrEqual(saleParams.hardCap);
         saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
-        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 5 * 60 * 1000)); // at least last for 10 blocks
+        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10)); // at least last for 10 blocks
         saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], saleParams.hash());
@@ -190,7 +193,7 @@ export class TokeniZkBasicToken extends SmartContract {
         saleParams.tokenAddress.assertEquals(this.address);
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
         saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
-        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 5 * 60 * 1000)); // at least last for 10 blocks
+        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10)); // at least last for 10 blocks
         saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
         saleParams.saleRate.assertEquals(UInt64.from(0));// !
         saleParams.softCap.assertEquals(UInt64.from(0));// !
@@ -317,6 +320,13 @@ export class TokeniZkBasicToken extends SmartContract {
     @method
     transferToken(from: PublicKey, to: PublicKey, value: UInt64) {
         this.token.send({ from, to, amount: value });
+        this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
+            tokenAddress: this.address,
+            tokenId: this.token.id,
+            from: from,
+            to: to,
+            value: value
+        }));
     }
 
     /**
@@ -354,6 +364,15 @@ export class TokeniZkBasicToken extends SmartContract {
             tokenId
         );
         receiverAccountUpdate.balance.addInPlace(amount);
+
+
+        this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
+            tokenAddress: this.address,
+            tokenId: this.token.id,
+            from: senderAccountUpdate.publicKey,
+            to: receiverAccountUpdate.publicKey,
+            value: amount
+        }));
     }
 
     /**
@@ -421,6 +440,15 @@ export class TokeniZkBasicToken extends SmartContract {
         Provable.log('t6');
 
         receiverAccountUpdate.requireSignature();
+
+
+        this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
+            tokenAddress: this.address,
+            tokenId: this.token.id,
+            from: senderAccountUpdate.publicKey,
+            to: receiverAccountUpdate.publicKey,
+            value: amount
+        }));
     }
 
     /**

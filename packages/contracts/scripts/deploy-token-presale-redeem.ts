@@ -22,6 +22,7 @@ import {
     UInt32,
     fetchAccount,
     Reducer,
+    fetchLastBlock
 } from 'o1js';
 
 import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, AirdropParams, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, UserNullifierMerkleWitness, AirdropClaim, SaleContribution, SaleContributorMembershipWitnessData, SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleRollupState } from "../src";
@@ -246,6 +247,13 @@ const whitelistTreeRoot = await whitelistTree.getRoot(true);
 await whitelistTree.commit();
 
 console.log('============= deploy TokeniZkPresale =============');
+if (process.env.TEST_ON_BERKELEY === 'true') {
+    await fetchAccount({ publicKey: basicTokenZkAppAddress });
+    await fetchLastBlock();
+    console.log('sync Berkeley Network status: done!');
+}
+console.log('current network state: ', JSON.stringify(Mina.activeInstance.getNetworkState()));
+const currentBlockHeight = Mina.activeInstance.getNetworkState().blockchainLength;
 
 const presaleParams = new SaleParams({
     tokenAddress: basicTokenZkAppAddress,
@@ -256,8 +264,8 @@ const presaleParams = new SaleParams({
     hardCap: UInt64.from(9 * (10 ** 9)),
     minimumBuy: UInt64.from(1 * (10 ** 9)),
     maximumBuy: UInt64.from(3 * (10 ** 9)),
-    startTime: UInt64.from(new Date().getTime() - 20 * 5 * 60 * 1000),
-    endTime: UInt64.from(new Date().getTime() + 20 * 5 * 60 * 1000),
+    startTime: currentBlockHeight,
+    endTime: currentBlockHeight.add(11),
     cliffTime: UInt32.from(1),// slot
     cliffAmountRate: UInt64.from(25),
     vestingPeriod: UInt32.from(5), // default value is 1
@@ -558,6 +566,8 @@ const saleContributorMembershipWitnessData = new SaleContributorMembershipWitnes
 console.log(`presale contract balance before redeem: ${Mina.getBalance(presaleZkAppAddress)}`);
 console.log(`redeemAccountZkAppAddress balance before redeem: ${Mina.getBalance(redeemAccountZkAppAddress)}`);
 
+const totalContributedMina = contributeMinaAmount.add(contributeMinaAmount2);
+const contributorTreeRoot = await contributorsTree.getRoot(true);
 const presaleMinaFundHolderZkapp = new PresaleMinaFundHolder(presaleZkAppAddress);
 tx = await Mina.transaction(
     {
@@ -566,7 +576,8 @@ tx = await Mina.transaction(
         memo: 'redeem MINA',
     },
     () => {
-        presaleMinaFundHolderZkapp.redeem(presaleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
+        //presaleMinaFundHolderZkapp.redeem(presaleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
+        presaleMinaFundHolderZkapp.redeem(presaleParams, totalContributedMina, contributorTreeRoot, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
     }
 );
 await ctx.submitTx(tx, {
