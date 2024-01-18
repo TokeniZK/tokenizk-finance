@@ -1,6 +1,6 @@
 
 export interface AirdropReq {
-    airdropType?: string;
+    airdropType?: number;
     airdropName?: string;
     airdropAddress?: string;
     tokenAddress?: string;

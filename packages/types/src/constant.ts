@@ -40,6 +40,7 @@ export enum ClientProofReqType {
     FAIRSALE_CLAIM_TOKEN,
 
     PRIVATESALE_CONTRIBUTE,
+    PRIVATESALE_REDEEM_FUND,
 }
 
 export enum SaleType {
