@@ -4,6 +4,8 @@ import { useStatusStore } from "@/stores"
 import type { AirdropDto } from '@tokenizk/types/src/airdrop-dto'
 import { useRoute, useRouter } from 'vue-router'
 import AirdropBlock from '@/components/airdrop-block.vue'
+import { queryAirdrop } from '@/apis/airdrop-api'
+import { syncLatestBlock } from '@/utils/txUtils'
 
 const route = useRoute();
 const type = route.query.type;
@@ -20,11 +22,6 @@ watch(() => appState.connectedWallet58, async (value, oldValue) => {
 type AirdropDtoExtend = AirdropDto & { projectStatus: string }
 type AirdropUserDtoExtend = {
   airdropDto: AirdropDtoExtend,
-  // userContribute: {
-  //   txHash: string;
-  //   contributeTimestamp: string;
-  //   contributedCurrencyAmount: string;
-  // }
 }
 
 let fetchResult: AirdropUserDtoExtend[] = [];
@@ -32,142 +29,34 @@ let fetchResult: AirdropUserDtoExtend[] = [];
 const myAirdropsList = reactive({ airdropList: fetchResult });
 
 // 转换项目的状态
-// const transformProjectStatus = (itmes: AirdropDtoExtend[]) => {
-//   let currentTime = new Date().getTime();
+const transformProjectStatus = async (itmes: AirdropDtoExtend[]) => {
+  if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 1.5 * 60 * 1000) {
+    appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
+    appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
+  }
 
-//   itmes.forEach(item => {
-//     if (item.airdropDto.startTimestamp > currentTime) {
-//       item.airdropDto.projectStatus = 'Upcoming'
-//     } else if (item.airdropDto.startTimestamp <= currentTime && item.airdropDto.endTimestamp > currentTime) {
-//       item.airdropDto.projectStatus = 'Ongoing'
-//     } else if (item.airdropDto.endTimestamp < currentTime) {
-//       item.airdropDto.projectStatus = 'Ended'
-//     } else {
-//       item.airdropDto.projectStatus = 'All Status'
-//     }
-//   });
-// }
+  const currentBlockHeight = appState.latestBlockInfo!.blockchainLength;
+  itmes.forEach(item => {
+    if (item.startTimestamp > currentBlockHeight) {
+      item.projectStatus = 'Upcoming'
+    } else if (item.startTimestamp <= currentBlockHeight && item.endTimestamp > currentBlockHeight) {
+      item.projectStatus = 'Ongoing'
+    } else if (item.endTimestamp < currentBlockHeight) {
+      item.projectStatus = 'Ended'
+    } else {
+      item.projectStatus = 'All Status'
+    }
+  });
+}
 
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(async () => {
-  // myContributionsList.saleList = await querySaleUserContribution(type, appState.connectedWallet58!);
-  // 临时数据 本尊
-  fetchResult = [{
-    airdropDto: {
-      id: 0,
-      type: 1,
-      txHash: '0x123456789',
-      status: 1,
-      tokenName: 'OZ',
-      tokenAddress: 'B62xxxt',
-      tokenSymbol: 'TZ',
-      airdropName: 'Oggy Inu 2.0',
-      airdropAddress: 'B62xxs',
-      star: 4,
-      totalAirdropSupply: 20,
-      currency: 'Mina',
-      feeRate: '5%',
-      whitelistTreeRoot: '45678ityuioghjk',
-      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-      projectStatus: '',
-      cliffTime: 300,
-      cliffAmountRate: 3,
-      vestingPeriod: 4,
-      vestingIncrement: 5,
-      teamName: 'Tokenizk Team',
-      logoUrl: '/src/assets/images/1.png',
-      website: 'https://tokenizk.finance/',
-      facebook: 'https://tokenizk.finance/',
-      github: 'https://tokenizk.finance/',
-      twitter: 'https://tokenizk.finance/',
-      telegram: 'https://tokenizk.finance/',
-      discord: 'https://tokenizk.finance/',
-      reddit: 'https://tokenizk.finance/',
-      description: 'The Launchpad focusing on ZK-Token for Everyone!',
-      updatedAt: new Date().getTime(),
-      createdAt: new Date().getTime(),
-    },
-  },
-  {
-    airdropDto: {
-      id: 0,
-      type: 1,
-      txHash: '0x123456789',
-      status: 1,
-      tokenName: 'OZ',
-      tokenAddress: 'B62xxxt',
-      tokenSymbol: 'TZ',
-      airdropName: 'Oggy Inu 2.0',
-      airdropAddress: 'B62xxs',
-      star: 4,
-      totalAirdropSupply: 20,
-      currency: 'Mina',
-      feeRate: '5%',
-      whitelistTreeRoot: '45678ityuioghjk',
-      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-      projectStatus: '',
-      cliffTime: 300,
-      cliffAmountRate: 3,
-      vestingPeriod: 4,
-      vestingIncrement: 5,
-      teamName: 'Tokenizk Team',
-      logoUrl: '/src/assets/images/1.png',
-      website: 'https://tokenizk.finance/',
-      facebook: 'https://tokenizk.finance/',
-      github: 'https://tokenizk.finance/',
-      twitter: 'https://tokenizk.finance/',
-      telegram: 'https://tokenizk.finance/',
-      discord: 'https://tokenizk.finance/',
-      reddit: 'https://tokenizk.finance/',
-      description: 'The Launchpad focusing on ZK-Token for Everyone!',
-      updatedAt: new Date().getTime(),
-      createdAt: new Date().getTime(),
-    },
-  },
-  {
-    airdropDto: {
-      id: 0,
-      type: 1,
-      txHash: '0x123456789',
-      status: 1,
-      tokenName: 'OZ',
-      tokenAddress: 'B62xxxt',
-      tokenSymbol: 'TZ',
-      airdropName: 'Oggy Inu 2.0',
-      airdropAddress: 'B62xxs',
-      star: 4,
-      totalAirdropSupply: 20,
-      currency: 'Mina',
-      feeRate: '5%',
-      whitelistTreeRoot: '45678ityuioghjk',
-      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-      projectStatus: '',
-      cliffTime: 300,
-      cliffAmountRate: 3,
-      vestingPeriod: 4,
-      vestingIncrement: 5,
-      teamName: 'Tokenizk Team',
-      logoUrl: '/src/assets/images/1.png',
-      website: 'https://tokenizk.finance/',
-      facebook: 'https://tokenizk.finance/',
-      github: 'https://tokenizk.finance/',
-      twitter: 'https://tokenizk.finance/',
-      telegram: 'https://tokenizk.finance/',
-      discord: 'https://tokenizk.finance/',
-      reddit: 'https://tokenizk.finance/',
-      description: 'The Launchpad focusing on ZK-Token for Everyone!',
-      updatedAt: new Date().getTime(),
-      createdAt: new Date().getTime(),
-    },
-  }];
-
-  // transformProjectStatus(fetchResult);
+  const req: AirdropReq = {
+    airdropType: 0,
+    tokenAddress: appState.tokeniZkBasicTokenKeyPair.value
+  };
+  fetchResult = await queryAirdrop(req);
+  await transformProjectStatus(fetchResult);
 
   myAirdropsList.airdropList = fetchResult;
 
@@ -182,12 +71,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-row class="row-bg my-airdrop">
-
+  <el-row class="row-bg my-airdrop" v-if="myAirdropsList.airdropList.length > 0">
     <el-col :span="24">
-
-      <!-- 搜索、过滤器 -->
-
 
       <!-- 每个项目 -->
       <el-row class="row-bg" justify="center">
@@ -195,8 +80,8 @@ onMounted(async () => {
 
           <ul class="my-airdrop-ul">
 
-            <li v-for="item in myAirdropsList.airdropList" :key="item.airdropDto.id" style="margin-bottom: 40px;">
-              
+            <li v-for="item in myAirdropsList.airdropList" :key="item.id" style="margin-bottom: 40px;">
+
               <AirdropBlock :airdropDto="item" />
 
             </li>
@@ -207,15 +92,27 @@ onMounted(async () => {
       </el-row>
 
     </el-col>
+  </el-row>
 
+
+  <el-row class="my-airdrop" v-else>
+    <el-col :span="24" class="tokenTable">
+
+      <div>
+        You have not created any airdrops yet. Please go create ones : <br>
+        <router-link to="/create-new-airdrop">
+          <el-button type="primary" class="JumpBtn">Create Airdrop</el-button>
+        </router-link>
+      </div>
+
+    </el-col>
   </el-row>
 </template>
 
 <style lang="less" scoped>
 .my-airdrop {
   width: 100%;
-  padding-top: 10px;
-  padding-bottom: 50px;
+  padding: 0 15%;
 
   .input-with-select .el-input-group__prepend {
     background-color: var(--el-fill-color-blank);
@@ -226,6 +123,18 @@ onMounted(async () => {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
+  }
+
+  .tokenTable {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+
+    .JumpBtn {
+      margin-top: 20px;
+      margin-left: 20px;
+    }
   }
 
 }

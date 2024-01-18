@@ -6,7 +6,7 @@ import Home from '@/views/Home/index.vue'
 import PreSales from '@/views/PreSales/pre-Sales.vue'
 import AllLaunchpads from '@/views/PreSales/components/all-launchpads.vue'
 import MyContributions from '@/views/PreSales/components/my-contributions.vue'
-import PresaleDetails from '@/views/PreSales/components/presale-details.vue'
+import SaleDetails from '@/views/PreSales/components/sale-details.vue'
 
 // import PrivateSales from '@/views/PrivateSales/private-sales.vue'
 // import AllPrivateSales from '@/views/PrivateSales/components/all-private-sales.vue'
@@ -18,10 +18,9 @@ import AllAirdrops from '@/views/AirDrop/components/all-airdrops.vue'
 import MyAirdrops from '@/views/AirDrop/components/my-airdrops.vue'
 import AirdropDetails from '@/views/AirDrop/components/airdrop-details.vue'
 
-import CreateZkToken from '@/views/Boot/create-ZkToken.vue'
-import CreateNormalLaunch from '@/views/Boot/create-Normal-Launch.vue'
-// import CreateFairLaunch from '@/views/Boot/create-fair-launch.vue'
-// import CreatePrivateSale from '@/views/Boot/create-private-sale.vue'
+import CreateZkToken from '@/views/Boot/create-basic-zktoken.vue'
+import CreateTokenSale from '@/views/Boot/create-token-sale.vue'
+import CreatePrivateSale from '@/views/Boot/create-private-sale.vue'
 import CreateAirdrop from '@/views/Boot/create-new-airdrop.vue'
 
 import Wallet from '@/views/Wallet/wallet.vue'
@@ -41,139 +40,143 @@ import AddFans from '../views/Add-fans.vue'
 import PraiseAndCollection from '@/views/Praise-and-Collection.vue'
 import PrivateMessage from '../views/Private-Message.vue'
 import SystemNotifications from '../views/System-Notifications.vue'
-import MessageSettings from '../views/Message-Settings.vue'
+// import MessageSettings from '../views/Message-Settings.vue'
 
 const routes = [
-  {
-    path: '/',
-    component: Layout,
-    children: [
-      {
-        path: '',
-        component: Home
-      },
-      {
-        path: '/sales',
-        component: PreSales,
+    {
+        path: '/',
+        component: Layout,
         children: [
-          {
-            path: '',
-            component: AllLaunchpads
-          },
-          {
-            path: '/sales/my-contributions',
-            component: MyContributions
-          }
-        ]
-      },
-      {
-        path: '/sale-datails',
-        component: PresaleDetails
-      },
-      {
-        path: '/airdrop-list',
-        component: AirdropList,
-        children: [
-          {
-            path: '',
-            component: AllAirdrops
-          },
-          {
-            path: '/airdrop-list/my-airdrop',
-            component: MyAirdrops
-          }
-        ]
-      },
-      {
-        path: '/airdrop-datails',
-        component: AirdropDetails
-      },
-      {
-        path: '/wallet',
-        component: Wallet
-      },
-      {
-        path: '/my-launches',
-        component: MyLaunches,
-        children: [
-          {
-            path: '',
-            component: MyLaunchesTokens
-          },
-          {
-            path: '/my-launches/sales',
-            component: MyLaunchesSales
-          },
-          {
-            path: '/my-launches/airdrops',
-            component: MyLaunchesAirdrops
-          }
-        ]
-      },
-      {
-        path: '/create-zk-token',
-        component: CreateZkToken
-      },
-      {
-        path: '/create-sale-launch',
-        component: CreateNormalLaunch
-      },
-      {
-        path: '/create-new-airdrop',
-        component: CreateAirdrop
-      },
-      {
-        path: '/create-lock',
-        component: CreateLock
-      },
-      {
-        path: '/create-zk-nft',
-        component: CreateZkNFT
-      },
-      {
-        path: '/services',
-        component: Services
-      },
-      {
-        path: '/team',
-        component: Team
-      },
-      {
-        path: '/faq',
-        component: FAQ
-      },
-      {
-        path: '/comments',
-        component: Comments
-      },
-      {
-        path: '/add-fans',
-        component: AddFans
-      },
-      {
-        path: '/praise-and-collection',
-        component: PraiseAndCollection
-      },
-      {
-        path: '/private-message',
-        component: PrivateMessage
-      },
-      {
-        path: '/system-notifications',
-        component: SystemNotifications
-      },
-      {
-        path: '/message-settings',
-        component: MessageSettings
-      },
+            {
+                path: '',
+                component: Home
+            },
+            {
+                path: '/sales',
+                component: PreSales,
+                children: [
+                    {
+                        path: '',
+                        component: AllLaunchpads
+                    },
+                    {
+                        path: '/sales/my-contributions',
+                        component: MyContributions
+                    }
+                ]
+            },
+            {
+                path: '/sale-datails',
+                component: SaleDetails
+            },
+            {
+                path: '/airdrop-list',
+                component: AirdropList,
+                children: [
+                    {
+                        path: '',
+                        component: AllAirdrops
+                    },
+                    {
+                        path: '/airdrop-list/my-airdrop',
+                        component: MyAirdrops
+                    }
+                ]
+            },
+            {
+                path: '/airdrop-datails',
+                component: AirdropDetails
+            },
+            {
+                path: '/wallet',
+                component: Wallet
+            },
+            {
+                path: '/my-launches',
+                component: MyLaunches,
+                children: [
+                    {
+                        path: '',
+                        component: MyLaunchesTokens
+                    },
+                    {
+                        path: '/my-launches/sales',
+                        component: MyLaunchesSales
+                    },
+                    {
+                        path: '/my-launches/airdrops',
+                        component: MyLaunchesAirdrops
+                    }
+                ]
+            },
+            {
+                path: '/create-zk-token',
+                component: CreateZkToken
+            },
+            {
+                path: '/create-token-sale',
+                component: CreateTokenSale
+            },
+            {
+                path: '/create-private-sale',
+                component: CreatePrivateSale
+            },
+            {
+                path: '/create-new-airdrop',
+                component: CreateAirdrop
+            },
+            {
+                path: '/create-lock',
+                component: CreateLock
+            },
+            {
+                path: '/create-zk-nft',
+                component: CreateZkNFT
+            },
+            {
+                path: '/services',
+                component: Services
+            },
+            {
+                path: '/team',
+                component: Team
+            },
+            {
+                path: '/faq',
+                component: FAQ
+            },
+            {
+                path: '/comments',
+                component: Comments
+            },
+            {
+                path: '/add-fans',
+                component: AddFans
+            },
+            {
+                path: '/praise-and-collection',
+                component: PraiseAndCollection
+            },
+            {
+                path: '/private-message',
+                component: PrivateMessage
+            },
+            {
+                path: '/system-notifications',
+                component: SystemNotifications
+            },
+            // {
+            //     path: '/message-settings',
+            //     component: MessageSettings
+            // },
 
-    ]
-  },
+        ]
+    },
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes,
 })
 
 export default router

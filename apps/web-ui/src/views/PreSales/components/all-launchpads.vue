@@ -4,6 +4,11 @@ import { Search } from '@element-plus/icons-vue'
 import { type SaleDto, type SaleReq } from '@tokenizk/types'
 import SaleBlock from '../../../components/sale-block.vue'
 import { useRoute, useRouter } from 'vue-router';
+import { querySale } from '@/apis/sale-api';
+import { CircuitControllerState, useStatusStore } from '@/stores';
+import { syncLatestBlock } from '@/utils/txUtils';
+
+const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 
 let route = useRoute();
@@ -13,6 +18,9 @@ const router = useRouter();
 router.beforeEach((to, from, next) => {
     const query = to.query;
     saleType.value = query.saleType as any as number;
+
+    getSearchProjects();
+
     next();
 });
 
@@ -80,26 +88,41 @@ const sortByOptions = [
 ]
 
 // 每次点击 搜索按钮 时，重置 过滤选项 和 排序选项
-const searchProjects = () => {
+const searchProjects = async () => {
     if (keyWord.value) {
         filterBy.value = '0'
         sortBy.value = '0'
 
         // trigger api
-        getSearchProjects();
+        await getSearchProjects();
+    }
+}
+
+const inputChangeTigger = async () => {
+    if (!keyWord.value) {
+        filterBy.value = '0'
+        sortBy.value = '0'
+
+        // trigger api
+        await getSearchProjects();
     }
 }
 
 // 转换项目的状态
-const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
-    let currentTime = new Date().getTime();
+const transformProjectStatus = async (itmes: SaleDtoExtend[]) => {
 
+    if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
+        appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
+        appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
+    }
+
+    const currentBlockHeight = appState.latestBlockInfo!.blockchainLength;
     itmes.forEach(item => {
-        if (item.startTimestamp > currentTime) {
+        if (item.startTimestamp > currentBlockHeight) {
             item.projectStatus = 'Upcoming'
-        } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
+        } else if (item.startTimestamp <= currentBlockHeight && item.endTimestamp > currentBlockHeight) {
             item.projectStatus = 'Ongoing'
-        } else if (item.endTimestamp < currentTime) {
+        } else if (item.endTimestamp < currentBlockHeight) {
             item.projectStatus = 'Ended'
         } else {
             item.projectStatus = 'All Status'
@@ -154,179 +177,12 @@ const getSearchProjects = async () => {
         saleType: saleType.value,
         saleName: keyWord.value
     } as any as SaleReq;
-    // fetchResult = (await querySale(saleReq)) as SaleDtoExtend[];
-    // 临时数据 本尊
-    fetchResult = [
-        {
-            id: 0,
-            saleType: 1,
-            txHash: '0x333123456789',
-            status: 1,
 
-            tokenName: 'TxZ',
-            tokenAddress: 'B62qqJEi4QGEqy4Po72s16BSa8oPnXQzHRk2eErETU4PucrMqaCKL88',
-            tokenSymbol: 'TxZ',
-
-            saleName: 'ZHI Inu 2.0',
-            saleAddress: 'B62qrWrGd7iCwXf9ucNxL2kyw8s63Uz7ovHtKMkRwfRREWAWtvXjkFy',
-
-            star: 4,
-
-            totalSaleSupply: 20,
-            currency: 'Mina',
-            feeRate: '5%',
-            saleRate: 10,
-            whitelistTreeRoot: '45678ityuioghjk',
-            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-            totalContributorNum: 3,
-            softCap: 21,
-            hardCap: 60,
-            minimumBuy: 0.1,
-            maximumBuy: 1,
-            startTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
-            endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-            projectStatus: '',
-
-            cliffTime: 300,
-            cliffAmountRate: 3,
-            vestingPeriod: 3,
-            vestingIncrement: 10,
-            contributorsFetchFlag: 0,
-            contributorsTreeRoot: '',
-            contributorsMaintainFlag: 0,
-            totalContributedMina: 11,
-            teamName: 'Zhi Tokenizk Team',
-            logoUrl: '/src/assets/images/1.png',
-            website: 'https://tokenizk.finance/',
-            facebook: 'https://tokenizk.finance/',
-            github: 'https://tokenizk.finance/',
-            twitter: 'https://tokenizk.finance/',
-            telegram: 'https://tokenizk.finance/',
-            discord: 'https://tokenizk.finance/',
-            reddit: 'https://tokenizk.finance/',
-            description: 'The Launchpad focusing on ZK-Token for Everyone!',
-            updatedAt: 1703641015995,
-            createdAt: 1703691251595,
-
-            progressBarStatus: 'success',
-            progressPercent: 0,
-
-        },
-        {
-            id: 0,
-            saleType: 1,
-            txHash: '0x123456789',
-            status: 1,
-
-            tokenName: 'TZ',
-            tokenAddress: 'B62qqJEi4QGEqy4Po72s16BSa8oPnXQzHRk2eErETU4PucrMqaCKL88',
-            tokenSymbol: 'TZ',
-
-            saleName: 'Oggy Inu 2.0',
-            saleAddress: 'B62qrWrGd7iCwXf9ucNxL2kyw8s63Uz7ovHtKMkRwfRREWAWtvXjkFy',
-
-            star: 4,
-
-            totalSaleSupply: 20,
-            currency: 'Mina',
-            feeRate: '5%',
-            saleRate: 10,
-            whitelistTreeRoot: '45678ityuioghjk',
-            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-            totalContributedMina: 80,
-            totalContributorNum: 3,
-            softCap: 11,
-            hardCap: 90,
-            minimumBuy: 0.1,
-            maximumBuy: 1,
-            startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-            endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-            projectStatus: '',
-
-            cliffTime: 300,
-            cliffAmountRate: 3,
-            vestingPeriod: 4,
-            vestingIncrement: 5,
-            contributorsFetchFlag: 0,
-            contributorsTreeRoot: '',
-            contributorsMaintainFlag: 0,
-
-            teamName: 'Tokenizk Team',
-            logoUrl: '/src/assets/images/2.png',
-            website: 'https://tokenizk.finance/',
-            facebook: 'https://tokenizk.finance/',
-            github: 'https://tokenizk.finance/',
-            twitter: 'https://tokenizk.finance/',
-            telegram: 'https://tokenizk.finance/',
-            discord: 'https://tokenizk.finance/',
-            reddit: 'https://tokenizk.finance/',
-            description: 'The Launchpad focusing on ZK-Token for Everyone!',
-            updatedAt: new Date().getTime(),
-            createdAt: new Date().getTime(),
-
-            progressBarStatus: 'success',
-            progressPercent: 0
-        },
-        {
-            id: 0,
-            saleType: 1,
-            txHash: '0x123456789',
-            status: 1,
-
-            tokenName: 'TZ',
-            tokenAddress: 'B62qqJEi4QGEqy4Po72s16BSa8oPnXQzHRk2eErETU4PucrMqaCKL88',
-            tokenSymbol: 'TZ',
-
-            saleName: 'XX Inu 2.0',
-            saleAddress: 'B62qrWrGd7iCwXf9ucNxL2kyw8s63Uz7ovHtKMkRwfRREWAWtvXjkFy',
-
-            star: 4,
-
-            totalSaleSupply: 20,
-            currency: 'Mina',
-            feeRate: '5%',
-            saleRate: 10,
-            whitelistTreeRoot: '45678ityuioghjk',
-            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-            softCap: 101,
-            hardCap: 300,
-            minimumBuy: 0.1,
-            maximumBuy: 1,
-            startTimestamp: new Date().getTime() - 10 * 24 * 60 * 60 * 1000,
-            endTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
-            projectStatus: '',
-
-            cliffTime: 300,
-            cliffAmountRate: 3,
-            vestingPeriod: 12,
-            vestingIncrement: 10,
-            contributorsFetchFlag: 0,
-            contributorsTreeRoot: '',
-            contributorsMaintainFlag: 0,
-            totalContributedMina: 100,
-            totalContributorNum: 3,
-            teamName: 'Tokenizk Team',
-            logoUrl: '/src/assets/images/3.png',
-            website: 'https://tokenizk.finance/',
-            facebook: 'https://tokenizk.finance/',
-            github: 'https://tokenizk.finance/',
-            twitter: 'https://tokenizk.finance/',
-            telegram: 'https://tokenizk.finance/',
-            discord: 'https://tokenizk.finance/',
-            reddit: 'https://tokenizk.finance/',
-            description: 'The Launchpad focusing on ZK-Token for Everyone!',
-            updatedAt: new Date().getTime(),
-            createdAt: new Date().getTime(),
-
-            progressBarStatus: 'success',
-            progressPercent: 0
-        },
-    ];
+    fetchResult = (await querySale(saleReq)) as SaleDtoExtend[];
 
     calcProjectProgress(fetchResult);
     // 转换项目状态
-    transformProjectStatus(fetchResult);
+    await transformProjectStatus(fetchResult);
     // sort 相等运算符会转类型、 最后一项没使用Number做转换
     sortProjects(sortByOptions[0].value, fetchResult);
 
@@ -335,27 +191,23 @@ const getSearchProjects = async () => {
 }
 
 // 根据 用户选择 filterBy的选项  过滤数据
-const triggerFilterProjects = () => {
+const triggerFilterProjects = async () => {
     // 计算项目状态
-    transformProjectStatus(fetchResult);
+    await transformProjectStatus(fetchResult);
 
     if (filterBy.value === '0') {
-        // TODO 
-        // renderSaleBlock = fetchResult.filter(item => {
-        //     return item.projectStatus === 'All Status'
-        // })
         renderSaleBlock = fetchResult
 
-    }else if (filterBy.value === '1'){
-        renderSaleBlock = fetchResult.filter(item => { 
+    } else if (filterBy.value === '1') {
+        renderSaleBlock = fetchResult.filter(item => {
+            return item.projectStatus === 'Upcoming'
+        });
+    } else if (filterBy.value === '2') {
+        renderSaleBlock = fetchResult.filter(item => {
             return item.projectStatus === 'Ongoing'
         });
-    }else if (filterBy.value === '2'){
-        renderSaleBlock = fetchResult.filter(item => { 
-            return item.projectStatus === 'Ongoing'
-        });
-    }else if (filterBy.value === '3'){
-        renderSaleBlock = fetchResult.filter(item => { 
+    } else if (filterBy.value === '3') {
+        renderSaleBlock = fetchResult.filter(item => {
             return item.projectStatus === 'Ended'
         });
     }
@@ -377,7 +229,8 @@ const triggerSortProjects = () => {
 
 
 // 组件挂载完成后执行的函数  请求数据  
-onMounted(() => {
+onMounted(async () => {
+
     getSearchProjects();
 
     // 进入当前组件都会回到顶部
@@ -402,7 +255,8 @@ onMounted(() => {
                     <div style="height: 19.59px;"></div>
 
                     <div class="mt-4">
-                        <el-input v-model="keyWord" placeholder="Please input" class="input-with-select" size="large">
+                        <el-input v-model="keyWord" placeholder="Please input" class="input-with-select" size="large"
+                            @input="inputChangeTigger">
                             <template #append>
                                 <el-button :icon="Search" @click="searchProjects" />
                             </template>
@@ -437,7 +291,7 @@ onMounted(() => {
 
                         <li v-for="item in presaleProjects.saleList" :key="item.id" style="margin-bottom: 40px;">
 
-                            <SaleBlock :saleDto="item"/>
+                            <SaleBlock :saleDto="item" />
 
                         </li>
 

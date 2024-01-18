@@ -5,16 +5,13 @@ import { type AirdropDto } from '@tokenizk/types/src/airdrop-dto'
 import { type AirdropReq } from '@tokenizk/types/src/airdrop-req'
 import AirdropBlock from '@/components/airdrop-block.vue'
 import { useRoute, useRouter } from 'vue-router';
+import { queryAirdrop } from '@/apis/airdrop-api'
+import { CircuitControllerState, useStatusStore } from '@/stores';
+import { syncLatestBlock } from '@/utils/txUtils'
 
-let route = useRoute();
-let type = ref(route.query.type as any as number);
+const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
-const router = useRouter();
-router.beforeEach((to, from, next) => {
-  const query = to.query;
-  type.value = query.type as any as number;
-  next();
-});
+let type = 0;
 
 type AirdropDtoExtend = AirdropDto & { projectStatus: string }
 
@@ -60,6 +57,16 @@ const sortByOptions = [
   }
 ]
 
+const inputChangeTigger = async () => {
+  if (!keyWord.value) {
+    filterBy.value = '0'
+    sortBy.value = '0'
+
+    // trigger api
+    await getSearchProjects();
+  }
+}
+
 // 每次点击 搜索按钮 时，重置 过滤选项 和 排序选项
 const searchProjects = () => {
   if (keyWord.value) {
@@ -72,15 +79,20 @@ const searchProjects = () => {
 }
 
 // 转换项目的状态
-const transformProjectStatus = (itmes: AirdropDtoExtend[]) => {
-  let currentTime = new Date().getTime();
+const transformProjectStatus = async (itmes: AirdropDtoExtend[]) => {
 
+  if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
+    appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
+    appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
+  }
+
+  const currentBlockHeight = appState.latestBlockInfo!.blockchainLength;
   itmes.forEach(item => {
-    if (item.startTimestamp > currentTime) {
+    if (item.startTimestamp > currentBlockHeight) {
       item.projectStatus = 'Upcoming'
-    } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
+    } else if (item.startTimestamp <= currentBlockHeight && item.endTimestamp > currentBlockHeight) {
       item.projectStatus = 'Ongoing'
-    } else if (item.endTimestamp < currentTime) {
+    } else if (item.endTimestamp < currentBlockHeight) {
       item.projectStatus = 'Ended'
     } else {
       item.projectStatus = 'All Status'
@@ -111,122 +123,14 @@ let keyWord = ref('')
 const getSearchProjects = async () => {
 
   const airdropReq = {
-    type: type.value,
+    airdropType: type.value,
     airdropName: keyWord.value
   } as any as AirdropReq;
 
-  // 临时数据 本尊
-  fetchResult = [{
-    id: 0,
-    type: 1,
-    txHash: '0x333123456789',
-    status: 1,
-    tokenName: 'TxZ',
-    tokenAddress: 'B62xxxt',
-    tokenSymbol: 'TxZ',
-    airdropName: 'ZHI Inu 2.0',
-    airdropAddress: 'B62xxs',
-    star: 4,
-    totalAirdropSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-    startTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
-    endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-    projectStatus: '',
-    cliffTime: 3,
-    cliffAmountRate: 3,
-    vestingPeriod: 3,
-    vestingIncrement: 10,
-    teamName: 'Zhi Tokenizk Team',
-    logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: new Date().getTime(),
-    createdAt: new Date().getTime(),
-  },
-  {
-    id: 0,
-    type: 1,
-    txHash: '0x123456789',
-    status: 1,
-    tokenName: 'OZ',
-    tokenAddress: 'B62xxxt',
-    tokenSymbol: 'TZ',
-    airdropName: 'Oggy Inu 2.0',
-    airdropAddress: 'B62xxs',
-    star: 4,
-    totalAirdropSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-    startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-    endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-    projectStatus: '',
-    cliffTime: 300,
-    cliffAmountRate: 3,
-    vestingPeriod: 4,
-    vestingIncrement: 5,
-    teamName: 'Tokenizk Team',
-    logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: new Date().getTime(),
-    createdAt: new Date().getTime(),
-  },
-  {
-    id: 0,
-    type: 1,
-    txHash: '0x123456789',
-    status: 1,
-    tokenName: 'XZ',
-    tokenAddress: 'B62xxxt',
-    tokenSymbol: 'TZ',
-    airdropName: 'XX Inu 2.0',
-    airdropAddress: 'B62xxs',
-    star: 4,
-    totalAirdropSupply: 20,
-    currency: 'Mina',
-    feeRate: '5%',
-    whitelistTreeRoot: '45678ityuioghjk',
-    whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-    startTimestamp: new Date().getTime() - 10 * 24 * 60 * 60 * 1000,
-    endTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
-    projectStatus: '',
-    cliffTime: 300,
-    cliffAmountRate: 3,
-    vestingPeriod: 12,
-    vestingIncrement: 10,
-    teamName: 'Tokenizk Team',
-    logoUrl: '/src/assets/images/1.png',
-    website: 'https://tokenizk.finance/',
-    facebook: 'https://tokenizk.finance/',
-    github: 'https://tokenizk.finance/',
-    twitter: 'https://tokenizk.finance/',
-    telegram: 'https://tokenizk.finance/',
-    discord: 'https://tokenizk.finance/',
-    reddit: 'https://tokenizk.finance/',
-    description: 'The Launchpad focusing on ZK-Token for Everyone!',
-    updatedAt: new Date().getTime(),
-    createdAt: new Date().getTime(),
-  }];
+  fetchResult = await queryAirdrop(airdropReq);
 
   // 转换项目状态
-  transformProjectStatus(fetchResult);
+  await transformProjectStatus(fetchResult);
   // sort 相等运算符会转类型、 最后一项没使用Number做转换
   sortProjects(sortByOptions[0].value, fetchResult);
 
@@ -235,17 +139,11 @@ const getSearchProjects = async () => {
 }
 
 // 根据 用户选择 filterBy的选项  过滤数据
-const triggerFilterProjects = () => {
+const triggerFilterProjects = async () => {
   // 计算项目状态
-  transformProjectStatus(fetchResult);
+  await transformProjectStatus(fetchResult);
 
-  if (filterBy.value === '4') {
-    // TODO 
-    fetchResult.filter(item => {
-      return item.projectStatus === 'All Status'
-    })
-
-  } else if (filterBy.value === '0') {
+  if (filterBy.value === '0') {
     renderAirdropBlock = fetchResult
   } else {
     renderAirdropBlock = fetchResult.filter(item => {
@@ -261,6 +159,7 @@ const triggerFilterProjects = () => {
 
   // sort
   sortProjects(sortBy.value, renderAirdropBlock);
+  renderAirdropBlock = JSON.parse(JSON.stringify(renderAirdropBlock));
 
   airdropProjects.airdropList = renderAirdropBlock;
 }
@@ -273,7 +172,6 @@ const triggerSortProjects = () => {
   renderAirdropBlock = JSON.parse(JSON.stringify(renderAirdropBlock));
   airdropProjects.airdropList = renderAirdropBlock;
 }
-
 
 // 组件挂载完成后执行的函数 
 onMounted(() => {
@@ -302,7 +200,8 @@ onMounted(() => {
           <div style="height: 19.59px;"></div>
 
           <div class="mt-4">
-            <el-input v-model="keyWord" placeholder="Please input" class="input-with-select" size="large">
+            <el-input v-model="keyWord" placeholder="Please input" class="input-with-select" size="large"
+              @input="inputChangeTigger">
               <template #append>
                 <el-button :icon="Search" @click="searchProjects" />
               </template>
@@ -316,7 +215,7 @@ onMounted(() => {
           <div>Filter By</div>
           <el-select v-model="filterBy" class="m-2 filterBy" placeholer="Select" size="large">
             <el-option v-for="item in filterByOptions" :key="item.value" :label="item.label" :value="item.value"
-              @click="triggerFilterProjects()" />
+              @click="triggerFilterProjects" />
           </el-select>
         </el-col>
 
@@ -324,7 +223,7 @@ onMounted(() => {
           <div>Sort By</div>
           <el-select v-model="sortBy" class="m-2 sortBy" placeholder="Select" size="large">
             <el-option v-for="item in sortByOptions" :key="item.value" :label="item.label" :value="item.value"
-              @click="triggerSortProjects()" />
+              @click="triggerSortProjects" />
           </el-select>
         </el-col>
 
@@ -341,7 +240,7 @@ onMounted(() => {
               <AirdropBlock :airdropDto="item" />
 
             </li>
-            
+
           </ul>
 
         </el-col>

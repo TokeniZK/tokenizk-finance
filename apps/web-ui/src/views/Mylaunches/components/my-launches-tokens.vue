@@ -45,7 +45,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <el-row class="row-bg my-launches-tokens">
+    <el-row class="row-bg my-launches-tokens" v-if="tokenDtoForm.tokenDto.name">
         <el-col :span="24" class="tokenTable">
             <el-row>
                 <el-col :span="8">Name :</el-col>
@@ -73,6 +73,18 @@ onMounted(async () => {
             </el-row>
         </el-col>
     </el-row>
+
+    <el-row class="row-bg my-launches-tokens" v-else>
+        <el-col :span="24" class="tokenTable">
+
+            <div>You have not created any token yet. please go : <br>
+                <router-link to="/create-zk-token">
+                    <el-button type="primary" class="JumpBtn">Create zkToken</el-button>
+                </router-link>
+            </div>
+
+        </el-col>
+    </el-row>
 </template>
 
 <style lang="less" scoped>
@@ -84,6 +96,12 @@ onMounted(async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
+        text-align: center;
+
+        .JumpBtn {
+            margin-top: 20px;
+            margin-left: 20px;
+        }
     }
 
     .el-row {

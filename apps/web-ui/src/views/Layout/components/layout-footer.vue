@@ -42,7 +42,7 @@
                                     </a>
 
                                     <a href="javascript:void(0);">
-                                        <i class="iconfont icon-discord1"></i>
+                                        <i class="iconfont icon-discord"></i>
                                     </a>
 
                                     <a href="javascript:void(0);">
@@ -151,7 +151,7 @@
             background-color: #03142c;
         }
 
-        .icon-discord1,
+        .icon-discord,
         .icon-bird,
         .icon-telegram,
         .icon-redditsquare,
@@ -162,7 +162,7 @@
             color: #ffffffa7;
         }
 
-        .icon-discord1:hover,
+        .icon-discord:hover,
         .icon-bird:hover,
         .icon-telegram:hover,
         .icon-redditsquare:hover,

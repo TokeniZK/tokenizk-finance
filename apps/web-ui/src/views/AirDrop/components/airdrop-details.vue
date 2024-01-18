@@ -39,7 +39,7 @@ const transformProjectStatus = (itmes: AirdropDtoExtend[]) => {
 // 项目进度条
 const calcProjectProgress = (itmes: AirdropDtoExtend[]) => {
     itmes.forEach(item => {
-        item.progressPercent = computed(() => Number((item.totalClaimedMemberNumber / item.whitelistMembers.split(',').length).toFixed(1))) as any as number;
+        item.progressPercent = computed(() => Number((item.totalClaimedMemberNumber / item.whitelistMembers.split(',').length * 100).toFixed(1))) as any as number;
         if ((item.progressPercent as any as ComputedRef).value >= 80) {
             item.progressBarStatus = 'exception'
         } else if ((item.progressPercent as any as ComputedRef).value >= 60) {
@@ -89,6 +89,7 @@ watch(() => appState.connectedWallet58, async (value, oldValue) => {
     if (appState.connectedWallet58) {
         currentAirdropClaimerDto.currentUser = airdropClaimersDetailDto.claimerList.filter(
             a => a.userAddress == appState.connectedWallet58)[0] ?? ({} as AirdropClaimerDto);
+        currentUserIsInWhiteList.value = airdropClaimersDetailDto.airdropDto.whitelistMembers.includes(appState.connectedWallet58);
     } else {
         currentAirdropClaimerDto.currentUser = {} as AirdropClaimerDto;
     }
@@ -96,9 +97,11 @@ watch(() => appState.connectedWallet58, async (value, oldValue) => {
 
 const currentUserHasClaimed = ref(false);
 watch(() => currentAirdropClaimerDto.currentUser, async (value, oldValue) => {
-    currentUserHasClaimed.value = (currentAirdropClaimerDto.currentUser.airdropAddress != null && currentAirdropClaimerDto.currentUser.airdropAddress != undefined);
+    currentUserHasClaimed.value = (currentAirdropClaimerDto.currentUser.airdropAddress != null
+        && currentAirdropClaimerDto.currentUser.airdropAddress != undefined);
 }, { immediate: true, deep: true });
 
+const currentUserIsInWhiteList = ref(false);
 
 const init = async () => {
     // query airdrop and current user
@@ -128,6 +131,8 @@ const init = async () => {
     if (appState.connectedWallet58) {
         currentAirdropClaimerDto.currentUser = airdropClaimersDetailDto.claimerList.filter(
             a => a.userAddress === appState.connectedWallet58)[0] ?? ({} as AirdropClaimerDto);
+
+        currentUserIsInWhiteList.value = airdropClaimersDetailDto.airdropDto.whitelistMembers.includes(appState.connectedWallet58);
     }
 
     checkAirdropStatusDynamically();
@@ -206,18 +211,8 @@ const claimTokens = async () => {
                 transaction: txJson
             });
             console.log('tx send success, txHash: ', txHash);
-            /*
-            await new Promise<void>((resolve, reject) => {
-                setTimeout(async () => {
-                    redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58! });
-                    if (!redeemAccount.account!.zkapp) {
-                        resolve();
-                    }
-                }, 1.5 *60*1000);
-            })
-            */
             try {
-                showLoadingMask({ id: maskId, text: `waiting for tx confirmation: ${addressLinkPrefix.value.concat(txHash)}` });
+                showLoadingMask({ id: maskId, text: `waiting for tx confirmation: `, link: `${zkTxLinkPrefix.value.concat(txHash)}` });
 
                 // check tx is confirmed
                 await checkTx(txHash);
@@ -238,7 +233,7 @@ const claimTokens = async () => {
             }
         }
 
-        showLoadingMask({ id: maskId, text: 'compiling TokeniZkAirdrop...' });
+        // showLoadingMask({ id: maskId, text: 'compiling TokeniZkAirdrop...' });
         const flag = true// await CircuitControllerState.remoteController!.compileTokeniZkAirdrop();
         if (!flag) {
             ElMessage({
@@ -279,9 +274,8 @@ const claimTokens = async () => {
                     airdropId: airdropDto.id,
                     airdropAddress: airdropDto.airdropAddress,
                     tokenAddress: airdropDto.tokenAddress,
-                    userAddress: currentAirdropClaimerDto.currentUser.userAddress,
-                    claimTxHash: currentAirdropClaimerDto.currentUser.claimTxHash,
-                    claimAmount: airdropDto.totalAirdropSupply / airdropDto.whitelistMembers.split(',').length,
+                    userAddress: appState.connectedWallet58,
+                    claimAmount: Math.floor(airdropDto.totalAirdropSupply / airdropDto.whitelistMembers.split(',').length),
                 } as any as AirdropClaimerDto;
                 const rs0 = await submitAirdropClaim(airdropClaimerDto0);
                 if (!rs0) {
@@ -305,10 +299,8 @@ const claimTokens = async () => {
 
                     // send back to backend for recording
                     showLoadingMask({ id: maskId, text: 'submit to backend...' });
-                    const airdropClaimerDto = {
-                        claimTxHash: currentAirdropClaimerDto.currentUser.claimTxHash,
-                    } as any as AirdropClaimerDto;
-                    const rs = await submitAirdropClaim(airdropClaimerDto);
+                    airdropClaimerDto0.claimTxHash = txHash;
+                    const rs = await submitAirdropClaim(airdropClaimerDto0);
                     if (!rs) {
                         ElMessage({
                             showClose: true,
@@ -331,6 +323,12 @@ const claimTokens = async () => {
         }
 
         closeLoadingMask(maskId);
+    } else {
+        ElMessage({
+            showClose: true,
+            type: 'warning',
+            message: 'You are not in Whitelist!',
+        });
     }
 }
 
@@ -338,6 +336,7 @@ const claimTokens = async () => {
 const dialogTableVisible = ref(false)
 let whiteListArr = reactive({ whitelist: [] as string[] });
 
+const zkTxLinkPrefix = ref(import.meta.env.VITE_EXPLORER_TX_URL);
 const airdropAddressLinkPrefix = ref(import.meta.env.VITE_EXPLORER_ACCOUNT_URL);
 const tokenAddressLinkPrefix = ref(import.meta.env.VITE_EXPLORER_ACCOUNT_URL);
 
@@ -400,7 +399,7 @@ onUnmounted(() => {
 
                             <a :href="airdropClaimersDetailDto.airdropDto.twitter"
                                 v-show="airdropClaimersDetailDto.airdropDto.twitter" target="_blank">
-                                <i class="iconfont icon-discord1"></i>
+                                <i class="iconfont icon-discord"></i>
                             </a>
 
                             <a :href="airdropClaimersDetailDto.airdropDto.twitter"
@@ -470,7 +469,7 @@ onUnmounted(() => {
                                 </el-row>
                             </el-col>
                         </el-row>
-
+                        <!-- 
                         <el-row justify="space-between" class="tableLine">
                             <el-col :span="8">
                                 <el-row class="titleName">
@@ -483,7 +482,7 @@ onUnmounted(() => {
                                 </el-row>
                             </el-col>
                         </el-row>
-
+                        -->
                         <el-row justify="space-between" class="tableLine">
                             <el-col :span="6">
                                 <el-row class="titleName">
@@ -512,11 +511,12 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
-                                    {{ airdropClaimersDetailDto.airdropDto.totalAirdropSupply }}
+                                    {{ airdropClaimersDetailDto.airdropDto.totalAirdropSupply }} {{
+                                        airdropClaimersDetailDto.airdropDto.tokenSymbol }}
                                 </el-row>
                             </el-col>
                         </el-row>
-
+                        <!-- 
                         <el-row justify="space-between" class="tableLine">
                             <el-col :span="8">
                                 <el-row class="titleName">
@@ -529,7 +529,7 @@ onUnmounted(() => {
                                 </el-row>
                             </el-col>
                         </el-row>
-
+ -->
                         <el-row justify="space-between" class="tableLine">
                             <el-col :span="8">
                                 <el-row class="titleName">
@@ -538,7 +538,7 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
-                                    {{ airdropClaimersDetailDto.airdropDto.feeRate }}
+                                    {{ airdropClaimersDetailDto.airdropDto.feeRate / (10 ** 9) }} MINA
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -584,7 +584,9 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
-                                    {{ new Date(airdropClaimersDetailDto.airdropDto.startTimestamp) }}
+                                    {{ airdropClaimersDetailDto.airdropDto.startTimestamp }} (about {{ new Date(Date.now() +
+                                        (airdropClaimersDetailDto.airdropDto.startTimestamp -
+                                            Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000) }})
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -597,7 +599,8 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
-                                    {{ airdropClaimersDetailDto.airdropDto.cliffTime }}
+                                    {{ airdropClaimersDetailDto.airdropDto.cliffTime }} slots (about {{
+                                        airdropClaimersDetailDto.airdropDto.cliffTime * 3 }} minutes)
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -610,7 +613,15 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
-                                    {{ airdropClaimersDetailDto.airdropDto.cliffAmountRate }}
+                                    {{ airdropClaimersDetailDto.airdropDto.cliffAmountRate }}%
+                                    <span v-if="airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != '0'">(about
+                                        {{
+                                            (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
+                                                airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length) *
+                                                (airdropClaimersDetailDto.airdropDto.cliffAmountRate / 100)).toFixed(2)
+                                        }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }}
+
+                                        )</span>
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -623,7 +634,8 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
-                                    {{ airdropClaimersDetailDto.airdropDto.vestingPeriod }}
+                                    {{ airdropClaimersDetailDto.airdropDto.vestingPeriod }} slots (about {{
+                                        airdropClaimersDetailDto.airdropDto.vestingPeriod * 3 }} minutes)
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -636,7 +648,11 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
-                                    {{ airdropClaimersDetailDto.airdropDto.vestingIncrement }}
+                                    {{ airdropClaimersDetailDto.airdropDto.vestingIncrement }}%(about {{
+                                        (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
+                                            airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length) *
+                                            (airdropClaimersDetailDto.airdropDto.vestingIncrement / 100)).toFixed(2)
+                                    }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }})
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -786,15 +802,26 @@ onUnmounted(() => {
                     </el-row>
 
                     <div>
-                        <el-row v-if="(!currentUserHasClaimed) && appState.connectedWallet58">
+                        <el-row
+                            v-if="(!currentUserHasClaimed) && appState.connectedWallet58 && airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != '0' && currentUserIsInWhiteList">
                             You could claim {{
                                 Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
                                     airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length)
                             }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }}!
                         </el-row>
-                        <el-row>
+                        <el-row v-if="currentUserHasClaimed">
+                            You has claimed {{
+                                Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
+                                    airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length)
+                            }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }}!
+                        </el-row>
+                        <el-row
+                            v-if='!appState.connectedWallet58 || (appState.connectedWallet58 && currentUserIsInWhiteList && !currentUserHasClaimed)'>
                             <el-button type="primary" :disabled="contributionBtnDisabled" @click="claimTokens">claim your
                                 Tokens</el-button>
+                        </el-row>
+                        <el-row v-if="appState.connectedWallet58 && !currentUserIsInWhiteList">
+                            <span style="color: red;">Opps! You are NOT in whitelist.</span>
                         </el-row>
                     </div>
 
@@ -877,7 +904,7 @@ onUnmounted(() => {
         background-color: #fff;
         padding: 30px 15px;
 
-        .icon-discord1,
+        .icon-discord,
         .icon-bird,
         .icon-telegram,
         .icon-redditsquare,
@@ -888,7 +915,7 @@ onUnmounted(() => {
             color: #00c798;
         }
 
-        .icon-discord1:hover,
+        .icon-discord:hover,
         .icon-bird:hover,
         .icon-telegram:hover,
         .icon-redditsquare:hover,

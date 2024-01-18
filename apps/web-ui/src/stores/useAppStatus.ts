@@ -6,17 +6,17 @@ export type AppState = {
     minaNetwork: string;
     explorerUrl: string;
 
-    tokeniZkFactoryAddress: string;
-    tokeniZkPresaleAddress: string;
-    tokeniZkFairsaleAddress: string;
-    tokeniZkPrivatesaleAddress: string; 
-
     connectedWallet58: string | null;
-    saleAddress: string | null;
 
-    sdkExist: boolean;
-    syncerStarted: boolean;
-    apiExist: boolean;
+    tokeniZkFactoryAddress: string;
+    tokeniZkBasicTokenKeyPair: { key: string, value: string } | null;
+    tokeniZkPreSaleKeyPairs: { key: string, value: string }[] | null;
+    tokeniZkFairSaleKeyPairs: { key: string, value: string }[] | null;
+    tokeniZkPrivateSaleKeyPairs: { key: string, value: string }[] | null;
+    tokeniZkAirdropKeyPairs: { key: string, value: string }[] | null;
+
+    fetchLatestBlockInfoTimestamp: number;
+    latestBlockInfo: { blockchainLength: number };
 
     tokenizkFactoryCompiled: boolean,
     tokenizkBasicTokenCompiled: boolean,
@@ -30,6 +30,7 @@ export type AppState = {
         closable: boolean;
         showLoading: boolean;
         loadingText: string | undefined;
+        loadingLink: string | undefined;
     };
 };
 
@@ -37,17 +38,19 @@ export const useStatusStore = defineStore('appStatus', () => {
 
     const appState = reactive<AppState>(
         {
-            minaNetwork: "Berkeley",
-            explorerUrl: "https://minascan.io/berkeley/zk-tx/",
-            tokeniZkFactoryAddress: import.meta.env.VITE_TOKENIZK_FACTORY_ADDR,
-            tokeniZkPresaleAddress: import.meta.env.VITE_TOKENIZK_PRESALE_ADDR,
-            tokeniZkFairsaleAddress: import.meta.env.VITE_TOKENIZK_FAIRSALE_ADDR,
-            tokeniZkPrivatesaleAddress: import.meta.env.VITE_TOKENIZK_PRIVATESALE_ADDR,
-            sdkExist: false,
-            syncerStarted: false,
-            apiExist: false,
+            minaNetwork: '',
+            explorerUrl: '',
+            tokeniZkFactoryAddress: '',
+            tokeniZkBasicTokenKeyPair: {} as { key: string, value: string },
+            tokeniZkPreSaleKeyPairs: [],
+            tokeniZkFairSaleKeyPairs: [],
+            tokeniZkPrivateSaleKeyPairs: [],
+            tokeniZkAirdropKeyPairs: [],
+
+            fetchLatestBlockInfoTimestamp: 0,
+            latestBlockInfo: { blockchainLength: 0 },
+
             connectedWallet58: null,
-            saleAddress: null,
             tokenizkFactoryCompiled: false,
             tokenizkBasicTokenCompiled: false,
             saleRollupProverCompiled: false,
@@ -60,6 +63,7 @@ export const useStatusStore = defineStore('appStatus', () => {
                 closable: false, // Users can close by clicking
                 showLoading: false,
                 loadingText: "App Initializing...",
+                loadingLink: undefined
             },
         }
     )
@@ -69,6 +73,14 @@ export const useStatusStore = defineStore('appStatus', () => {
     };
     const setConnectedWallet = (address58: string | null) => {
         appState.connectedWallet58 = address58;
+        if (!address58) {
+            appState.tokeniZkBasicTokenKeyPair = {} as { key: string, value: string };
+            appState.tokeniZkPreSaleKeyPairs = [];
+            appState.tokeniZkFairSaleKeyPairs = [];
+            appState.tokeniZkPrivateSaleKeyPairs = [];
+            appState.tokeniZkAirdropKeyPairs = [];
+
+        }
     };
     const setStartCompileTokenizkFactory = (start: boolean) => {
         appState.tokenizkFactoryCompiled = start;
@@ -90,10 +102,12 @@ export const useStatusStore = defineStore('appStatus', () => {
     };
     const showLoadingMask = ({
         text,
+        link,
         id,
         closable,
     }: {
         text?: string;
+        link?: string;
         id?: string;
         closable?: boolean;
     }) => {
@@ -101,7 +115,7 @@ export const useStatusStore = defineStore('appStatus', () => {
             id = "mask";
         }
         if (closable === undefined) {
-            closable = true;
+            closable = false;
         }
         appState.mask = {
             id,
@@ -109,6 +123,7 @@ export const useStatusStore = defineStore('appStatus', () => {
             closable,
             showLoading: true,
             loadingText: text,
+            loadingLink: link,
         };
     };
 
@@ -120,6 +135,7 @@ export const useStatusStore = defineStore('appStatus', () => {
                 closable: true,
                 showLoading: false,
                 loadingText: undefined,
+                loadingLink: undefined
             };
         }
     };

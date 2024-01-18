@@ -4,9 +4,9 @@ import { useStatusStore } from "@/stores"
 import type { AirdropDto } from '@tokenizk/types/src/airdrop-dto'
 import { useRoute, useRouter } from 'vue-router'
 import AirdropBlock from '@/components/airdrop-block.vue'
+import { queryAirdropUserContribution } from '@/apis/airdrop-api'
 
-const route = useRoute();
-const type = route.query.type;
+const type = 0;
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -50,137 +50,7 @@ const myAirdropsList = reactive({ airdropList: fetchResult });
 
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(async () => {
-  // myContributionsList.saleList = await querySaleUserContribution(type, appState.connectedWallet58!);
-  // 临时数据 本尊
-  fetchResult = [{
-    airdropDto: {
-      id: 0,
-      type: 1,
-      txHash: '0x123456789',
-      status: 1,
-      tokenName: 'OZ',
-      tokenAddress: 'B62xxxt',
-      tokenSymbol: 'TZ',
-      airdropName: 'Oggy Inu 2.0',
-      airdropAddress: 'B62xxs',
-      star: 4,
-      totalAirdropSupply: 20,
-      currency: 'Mina',
-      feeRate: '5%',
-      whitelistTreeRoot: '45678ityuioghjk',
-      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-      projectStatus: '',
-      cliffTime: 300,
-      cliffAmountRate: 3,
-      vestingPeriod: 4,
-      vestingIncrement: 5,
-      teamName: 'Tokenizk Team',
-      logoUrl: '/src/assets/images/1.png',
-      website: 'https://tokenizk.finance/',
-      facebook: 'https://tokenizk.finance/',
-      github: 'https://tokenizk.finance/',
-      twitter: 'https://tokenizk.finance/',
-      telegram: 'https://tokenizk.finance/',
-      discord: 'https://tokenizk.finance/',
-      reddit: 'https://tokenizk.finance/',
-      description: 'The Launchpad focusing on ZK-Token for Everyone!',
-      updatedAt: new Date().getTime(),
-      createdAt: new Date().getTime(),
-    },
-    // userContribute: {
-    //   txHash: '',
-    //   contributeTimestamp: '',
-    //   contributedCurrencyAmount: ''
-    // }
-  },
-  {
-    airdropDto: {
-      id: 0,
-      type: 1,
-      txHash: '0x123456789',
-      status: 1,
-      tokenName: 'OZ',
-      tokenAddress: 'B62xxxt',
-      tokenSymbol: 'TZ',
-      airdropName: 'Oggy Inu 2.0',
-      airdropAddress: 'B62xxs',
-      star: 4,
-      totalAirdropSupply: 20,
-      currency: 'Mina',
-      feeRate: '5%',
-      whitelistTreeRoot: '45678ityuioghjk',
-      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-      projectStatus: '',
-      cliffTime: 300,
-      cliffAmountRate: 3,
-      vestingPeriod: 4,
-      vestingIncrement: 5,
-      teamName: 'Tokenizk Team',
-      logoUrl: '/src/assets/images/1.png',
-      website: 'https://tokenizk.finance/',
-      facebook: 'https://tokenizk.finance/',
-      github: 'https://tokenizk.finance/',
-      twitter: 'https://tokenizk.finance/',
-      telegram: 'https://tokenizk.finance/',
-      discord: 'https://tokenizk.finance/',
-      reddit: 'https://tokenizk.finance/',
-      description: 'The Launchpad focusing on ZK-Token for Everyone!',
-      updatedAt: new Date().getTime(),
-      createdAt: new Date().getTime(),
-    },
-    // userContribute: {
-    //   txHash: '',
-    //   contributeTimestamp: '',
-    //   contributedCurrencyAmount: ''
-    // }
-  },
-  {
-    airdropDto: {
-      id: 0,
-      type: 1,
-      txHash: '0x123456789',
-      status: 1,
-      tokenName: 'OZ',
-      tokenAddress: 'B62xxxt',
-      tokenSymbol: 'TZ',
-      airdropName: 'Oggy Inu 2.0',
-      airdropAddress: 'B62xxs',
-      star: 4,
-      totalAirdropSupply: 20,
-      currency: 'Mina',
-      feeRate: '5%',
-      whitelistTreeRoot: '45678ityuioghjk',
-      whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-      startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-      endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-      projectStatus: '',
-      cliffTime: 300,
-      cliffAmountRate: 3,
-      vestingPeriod: 4,
-      vestingIncrement: 5,
-      teamName: 'Tokenizk Team',
-      logoUrl: '/src/assets/images/1.png',
-      website: 'https://tokenizk.finance/',
-      facebook: 'https://tokenizk.finance/',
-      github: 'https://tokenizk.finance/',
-      twitter: 'https://tokenizk.finance/',
-      telegram: 'https://tokenizk.finance/',
-      discord: 'https://tokenizk.finance/',
-      reddit: 'https://tokenizk.finance/',
-      description: 'The Launchpad focusing on ZK-Token for Everyone!',
-      updatedAt: new Date().getTime(),
-      createdAt: new Date().getTime(),
-    },
-    // userContribute: {
-    //   txHash: '',
-    //   contributeTimestamp: '',
-    //   contributedCurrencyAmount: ''
-    // }
-  }];
+  fetchResult = await queryAirdropUserContribution(type, appState.connectedWallet58!);
 
   // transformProjectStatus(fetchResult);
 
@@ -211,7 +81,7 @@ onMounted(async () => {
           <ul class="my-airdrop-ul">
 
             <li v-for="item in myAirdropsList.airdropList" :key="item.airdropDto.id" style="margin-bottom: 40px;">
-              
+
               <AirdropBlock :airdropDto="item" />
 
             </li>

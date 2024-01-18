@@ -199,7 +199,7 @@ const countdownFinishCallback = () => {
 
               <el-row>
                 <i class="iconfont icon-birdxiaoniao"></i>
-                <i class="iconfont icon-discord1"></i>
+                <i class="iconfont icon-discord"></i>
                 <i class="iconfont icon-telegram"></i>
               </el-row>
 
@@ -348,7 +348,7 @@ const countdownFinishCallback = () => {
   padding-bottom: 120px;
   background: #f7f7f7;
 
-  .icon-discord1,
+  .icon-discord,
   .icon-birdxiaoniao,
   .icon-telegram {
     margin-right: 20px;

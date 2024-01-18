@@ -16,7 +16,7 @@ const getAllPrivateSales = async () => {
   allPrivateSalesList.value = res.result
 }
 
-// 组件挂载完成后执行的函数  请求数据  
+// 组件挂载完成后执行的函数  请求数据 ! 
 onMounted(() => {
   getAllPrivateSales()
 

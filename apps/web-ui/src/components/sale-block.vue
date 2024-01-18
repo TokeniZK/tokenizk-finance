@@ -25,11 +25,6 @@ onMounted(async () => {
     saleDtoRef.saleStartTimeStamp = Date.now() + (saleDtoRef.startTimestamp - currentBlockHeight) * (3 * 60 * 1000)
     saleDtoRef.saleEndTimeStamp = Date.now() + (saleDtoRef.endTimestamp - currentBlockHeight) * (3 * 60 * 1000)
 
-    // 进入当前组件都会回到顶部
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth' // 平滑滚动到顶部  
-    });
 });
 
 onUpdated(() => {

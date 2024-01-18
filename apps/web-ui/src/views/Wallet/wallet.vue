@@ -132,7 +132,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 const feePayerAddress = appState.connectedWallet58;
                 const txFee = 0.21 * (10 ** 9);
 
-                const txJson = await CircuitControllerState.remoteController?.transferToken(
+                const { code, data: txJson, msg } = await CircuitControllerState.remoteController?.transferToken(
                     basicTokenZkAppAddress,
                     from,
                     to,
@@ -140,13 +140,25 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     feePayerAddress,
                     txFee
                 );
+
+                if (code == 1) {
+                    ElMessage({
+                        showClose: true,
+                        type: 'warning',
+                        message: msg,
+                    });
+                    closeLoadingMask(maskId);
+
+                    return;
+                }
+
                 console.log(`txJson: ${txJson}`);
 
                 try {
                     const { hash: txHash } = await window.mina.sendTransaction({
                         transaction: txJson,
                         feePayer: {
-                            fee: 0.101,
+                            fee: 0.201,
                             memo: "createPresale"
                         },
                     });
@@ -154,13 +166,19 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 
                     try {
-                        showLoadingMask({ id: maskId, text: `waiting for tx confirmation: ${zkTxLinkPrefix.value.concat(txHash)}` });
+                        showLoadingMask({ id: maskId, text: `waiting for tx confirmation: `, link: `${zkTxLinkPrefix.value.concat(txHash)}` });
 
                         // check tx is confirmed
                         await checkTx(txHash);
 
-                        showLoadingMask({ id: maskId, text: 'tx is confirmed!' });
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: `transfer token successfully`,
+                        });
 
+                        userFundFormRef.amount = null;
+                        userFundFormRef.reciver = null;
                     } catch (error) {
                         console.error(error);
                         showLoadingMask({ id: maskId, text: 'tx failed! please retry later.' });
@@ -195,6 +213,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 const balanceRef = ref<number>(0);
 const tokenChoose = async () => {
+    if (!userFundFormRef.token) {
+        ElMessage({
+            showClose: true,
+            type: 'warning',
+            message: `Please choose a token`,
+        });
+
+        return;
+    }
     console.log(`userFundFormRef.token: ${userFundFormRef.token}`);
     const maskId = 'fetchBalance'
     try {
@@ -264,7 +291,7 @@ onMounted(async () => {
                 <el-col :span="24">
 
                     <el-row>
-                        <div class="create-ZkToken-title">
+                        <div class="create-basic-zktoken-title">
                             <h1>Wallet Transfer</h1>
                         </div>
                     </el-row>
@@ -284,6 +311,9 @@ onMounted(async () => {
 
                         <el-form-item label="Balance" prop="balance">
                             {{ balanceRef }}
+                            <el-icon class="refreshBalanceRef" @click="tokenChoose">
+                                <Refresh />
+                            </el-icon>
                         </el-form-item>
 
                         <el-form-item label="Reciver" prop="reciver">
@@ -333,11 +363,11 @@ onMounted(async () => {
           <el-button size="large" disabled>View transaction</el-button>
 
           <el-button type="primary" size="large">
-            <router-link to="/create-normal-launch" style="color: #fff;"> Create launchpad</router-link>
+            <router-link to="/create-token-sale" style="color: #fff;"> Create launchpad</router-link>
           </el-button>
 
           <el-button type="primary" size="large">
-            <router-link to="/create-normal-launch" style="color: #fff;"> Create Fairlaunch</router-link>
+            <router-link to="/create-token-sale" style="color: #fff;"> Create Fairlaunch</router-link>
           </el-button>
 
         </el-col>
@@ -365,6 +395,13 @@ onMounted(async () => {
 
     .el-form-item {
         margin-bottom: 35px;
+    }
+
+    .refreshBalanceRef {
+        margin-left: 20px;
+        font-size: 16px;
+        cursor: pointer;
+        color: #00c798;
     }
 
     .el-row {

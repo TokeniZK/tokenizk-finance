@@ -2,160 +2,151 @@
 import { ref, onMounted, reactive, computed, type ComputedRef, onUpdated } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { type AirdropDto } from '@tokenizk/types/src/airdrop-dto'
+import { CircuitControllerState, useStatusStore } from '@/stores';
+import { syncLatestBlock } from '@/utils/txUtils';
 
-type AirdropDtoExtend = AirdropDto & { projectStatus: string }
+type AirdropDtoExtend = AirdropDto & { airdropStartTimeStamp: number, projectStatus: string }
 
 const props = defineProps<{
-  airdropDto: AirdropDtoExtend
+    airdropDto: AirdropDtoExtend
 }>()
 
 const airdropDtoRef: AirdropDtoExtend = JSON.parse(JSON.stringify(props.airdropDto));
 
-
-// 转换项目的状态
-const transformProjectStatus = (itmes: AirdropDtoExtend[]) => {
-  let currentTime = new Date().getTime();
-
-  itmes.forEach(item => {
-    if (item.startTimestamp > currentTime) {
-      item.projectStatus = 'Upcoming'
-    } else if (item.startTimestamp <= currentTime && item.endTimestamp > currentTime) {
-      item.projectStatus = 'Ongoing'
-    } else if (item.endTimestamp < currentTime) {
-      item.projectStatus = 'Ended'
-    } else {
-      item.projectStatus = 'All Status'
-    }
-  });
-}
-
-
-const countdownFinishCallback = () => {
-  // 修改 status 为 Ended
-  airdropDtoRef.projectStatus = 'Ended'
-}
-
-// 获取 用户输入的关键字 进行搜索
-let keyWord = ref('')
 const type = 0;
+const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 // 组件挂载完成后执行的函数  请求数据  
-onMounted(() => {
-  // 转换项目状态
-  transformProjectStatus([airdropDtoRef]);
+onMounted(async () => {
 
-  // 进入当前组件都会回到顶部
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth' // 平滑滚动到顶部  
-  });
+    if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
+        appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
+        appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
+    }
+
+    const currentBlockHeight = appState.latestBlockInfo!.blockchainLength;
+    console.log(`currentBlockHeight: ${currentBlockHeight}`);
+
+    airdropDtoRef.airdropStartTimeStamp = Date.now() + (airdropDtoRef.startTimestamp - currentBlockHeight) * (3 * 60 * 1000)
+
+    console.log(`airdropDtoRef.airdropStartTimeStamp: ${airdropDtoRef.airdropStartTimeStamp}`);
+
 });
 
 onUpdated(() => {
-  console.log('airdropDtoRef: ' + airdropDtoRef);
-  // 转换项目状态
-  transformProjectStatus([airdropDtoRef]);
-
-  // 进入当前组件都会回到顶部
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth' // 平滑滚动到顶部  
-  });
+    // 进入当前组件都会回到顶部
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // 平滑滚动到顶部  
+    });
 });
 
-const item = airdropDtoRef;
-const toDetailPage = `/sale-datails?saleAddress=${item.airdropAddress}&tokenAddress=${item.tokenAddress}`;
+const toDetailPage = `/airdrop-datails?airdropAddress=${airdropDtoRef.airdropAddress}&tokenAddress=${airdropDtoRef.tokenAddress}`;
 </script>
 
 
 <template>
-  <div class="airdrop-box">
+    <div class="airdrop-box">
 
-    <!-- photo -->
-    <el-row class="thumb">
-      <router-link to="/airdrop-datails">
-        <el-image style="width: 349px; height: 130px;" :src="item.logoUrl" :alt="item.airdropName" loading="lazy" />
-      </router-link>
-    </el-row>
-
-    <!-- 项目描述 -->
-    <el-row class="launchpads-content">
-
-      <el-col :span="24">
-
-        <el-row class="row-bg" justify="space-between">
-          <el-col :span="24">
-            <h3> <router-link to="/airdrop-datails">{{ item.airdropName }}</router-link></h3>
-          </el-col>
+        <!-- photo -->
+        <el-row class="thumb">
+            <router-link :to="toDetailPage">
+                <el-image style="width: 349px; height: 130px;" :src="airdropDtoRef.logoUrl" :alt="airdropDtoRef.airdropName"
+                    loading="lazy" />
+            </router-link>
         </el-row>
 
-        <el-row class="row-bg" justify="space-between" style="margin-top: 15px;">
-          <el-col :span="6">Token :</el-col>
-          <el-col :span="17">
-            <el-row justify="end">
-              {{ item.tokenName }}
-            </el-row>
-          </el-col>
+        <!-- 项目描述 -->
+        <el-row class="launchpads-content">
+
+            <el-col :span="24">
+
+                <el-row class="row-bg" justify="space-between">
+                    <el-col :span="24">
+                        <h3> <router-link :to="toDetailPage">{{ airdropDtoRef.airdropName }}</router-link></h3>
+                    </el-col>
+                </el-row>
+
+                <el-row class="row-bg" justify="space-between" style="margin-top: 15px;">
+                    <el-col :span="6">Token :</el-col>
+                    <el-col :span="17">
+                        <el-row justify="end">
+                            {{ airdropDtoRef.tokenSymbol }}
+                        </el-row>
+                    </el-col>
+                </el-row>
+
+                <el-row class="row-bg" justify="space-between"
+                    v-if="airdropDtoRef.airdropStartTimeStamp - Date.now() >= 10 * 1000">
+                    <el-col :span="6">
+                        <el-row style="padding-top: 8px;">Begin in :</el-row>
+                    </el-col>
+                    <el-col :span="17">
+                        <el-row justify="end">
+                            <el-countdown format="DD [days] HH:mm:ss" :value="airdropDtoRef.airdropStartTimeStamp"
+                                value-style="font-size: 14px;">
+                            </el-countdown>
+                        </el-row>
+                    </el-col>
+                </el-row>
+
+                <el-row class="row-bg" justify="space-between" v-else>
+                    <el-col :span="6">
+                        <el-row style="padding-top: 8px;"></el-row>
+                    </el-col>
+                    <el-col :span="17">
+                        <el-row justify="end">
+                            <el-button type="primary" round class="statusColor">Ongoing</el-button>
+                        </el-row>
+                    </el-col>
+                </el-row>
+
+                <el-row class="row-bg" justify="end">
+                    <router-link to="toDetailPage">
+                        <el-button type="primary" round> View Airdrop</el-button>
+                    </router-link>
+                </el-row>
+
+            </el-col>
+
         </el-row>
 
-        <el-row class="row-bg" justify="space-between">
-          <el-col :span="6">
-            <el-row style="padding-top: 8px;">Begin at :</el-row>
-          </el-col>
-          <el-col :span="17">
-            <el-row justify="end">
-              <el-countdown format="DD [days] HH:mm:ss" :value="item.endTimestamp" value-style="font-size: 14px;">
-              </el-countdown>
-            </el-row>
-          </el-col>
-        </el-row>
-
-        <el-row class="row-bg" justify="end">
-          <router-link to="/airdrop-datails">
-            <el-button type="primary" round class="statusColor"> View Airdrop</el-button>
-          </router-link>
-        </el-row>
-
-      </el-col>
-
-    </el-row>
-
-  </div>
+    </div>
 </template>
 
 <style lang="less" scoped>
 .airdrop-box {
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  border-radius: 15px;
-
-  .thumb {
-    width: 349px;
-    height: 130px;
-    overflow: hidden;
-    border-radius: 15px 15px 0 0;
-  }
-
-  .launchpads-content {
     width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 15px;
 
-    .demo-progress .el-progress--line {
-      margin-bottom: 15px;
-      width: 300px;
+    .thumb {
+        width: 349px;
+        height: 130px;
+        overflow: hidden;
+        border-radius: 15px 15px 0 0;
     }
 
-  }
+    .launchpads-content {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+
+        .demo-progress .el-progress--line {
+            margin-bottom: 15px;
+            width: 300px;
+        }
+
+    }
 
 }
 
 .el-row {
-  margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 .el-row:last-child {
-  margin-bottom: 6px;
+    margin-bottom: 6px;
 }
 </style>

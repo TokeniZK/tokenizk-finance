@@ -4,6 +4,7 @@ import { useStatusStore } from "@/stores"
 import { type SaleDto, type SaleReq } from '@tokenizk/types'
 import SaleBlock from '../../../components/sale-block.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { querySaleUserContribution } from '@/apis/sale-api'
 
 
 let route = useRoute();
@@ -39,7 +40,7 @@ type SaleUserDtoExtend = {
 
 
 // 转换项目的状态
-const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
+const transformProjectStatus = (itmes: SaleUserDtoExtend[]) => {
     let currentTime = new Date().getTime();
 
     itmes.forEach(item => {
@@ -56,15 +57,15 @@ const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
 }
 
 // 项目进度条
-const calcProjectProgress = (itmes: SaleDtoExtend[]) => {
+const calcProjectProgress = (itmes: SaleUserDtoExtend[]) => {
     itmes.forEach(item => {
-        item.progressPercent = computed(() => Number((item.totalContributedMina * 100 / item.hardCap).toFixed(1))) as any as number;
-        if ((item.progressPercent as any as ComputedRef).value >= 80) {
-            item.progressBarStatus = 'exception'
-        } else if ((item.progressPercent as any as ComputedRef).value >= 60) {
-            item.progressBarStatus = 'warning'
+        item.saleDto.progressPercent = computed(() => Number((item.saleDto.totalContributedMina * 100 / item.saleDto.hardCap).toFixed(1))) as any as number;
+        if ((item.saleDto.progressPercent as any as ComputedRef).value >= 80) {
+            item.saleDto.progressBarStatus = 'exception'
+        } else if ((item.saleDto.progressPercent as any as ComputedRef).value >= 60) {
+            item.saleDto.progressBarStatus = 'warning'
         } else {
-            item.progressBarStatus = 'success'
+            item.saleDto.progressBarStatus = 'success'
         }
     });
 }
@@ -77,206 +78,12 @@ let myContributionsList = reactive({ saleList: renderSaleBlock });
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(async () => {
 
-    //myContributionsList.saleList = await querySaleUserContribution(saleType, appState.connectedWallet58!);
-    // 临时数据 本尊
-    fetchResult = [{
-        saleDto: {
-            id: 0,
-            saleType: 1,
-            txHash: '0x333123456789',
-            status: 1,
-
-            tokenName: 'TxZ',
-            tokenAddress: 'B62xxxt',
-            tokenSymbol: 'TxZ',
-
-            saleName: 'CCC ZHI Inu 2.0',
-            saleAddress: 'B62xxs',
-
-            star: 4,
-
-            totalSaleSupply: 20,
-            currency: 'Mina',
-            feeRate: '5%',
-            saleRate: 10,
-            whitelistTreeRoot: '45678ityuioghjk',
-            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-            softCap: 21,
-            hardCap: 60,
-            minimumBuy: 0.1,
-            maximumBuy: 1,
-            startTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
-            endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-            projectStatus: '',
-
-            cliffTime: 300,
-            cliffAmountRate: 3,
-            vestingPeriod: 1704527581215,
-            vestingIncrement: 0,
-            contributorsFetchFlag: 0,
-            contributorsTreeRoot: '',
-            contributorsMaintainFlag: 0,
-            totalContributorNum: 0,
-
-            totalContributedMina: 11,
-
-            teamName: 'Zhi Tokenizk Team',
-            logoUrl: '/src/assets/images/1.png',
-            website: 'https://tokenizk.finance/',
-            facebook: 'https://tokenizk.finance/',
-            github: 'https://tokenizk.finance/',
-            twitter: 'https://tokenizk.finance/',
-            telegram: 'https://tokenizk.finance/',
-            discord: 'https://tokenizk.finance/',
-            reddit: 'https://tokenizk.finance/',
-            description: 'The Launchpad focusing on ZK-Token for Everyone!',
-            updatedAt: 1703691515995,
-            createdAt: 1703691251595,
-
-            progressBarStatus: 'success',
-            progressPercent: 0,
-
-        },
-        userContribute: {
-            txHash: '',
-            contributeTimestamp: '',
-            contributedCurrencyAmount: ''
-        }
-    },
-    {
-        saleDto: {
-            id: 0,
-            saleType: 1,
-            txHash: '0x123456789',
-            status: 1,
-
-            tokenName: 'TZ',
-            tokenAddress: 'B62xxxt',
-            tokenSymbol: 'TZ',
-
-            saleName: 'CCC Oggy Inu 2.0',
-            saleAddress: 'B62xxs',
-
-            star: 4,
-
-            totalSaleSupply: 20,
-            currency: 'Mina',
-            feeRate: '5%',
-            saleRate: 10,
-            whitelistTreeRoot: '45678ityuioghjk',
-            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-            totalContributedMina: 80,
-
-            softCap: 11,
-            hardCap: 90,
-            minimumBuy: 0.1,
-            maximumBuy: 1,
-            startTimestamp: new Date().getTime() + 10 * 60 * 60 * 1000,
-            endTimestamp: new Date().getTime() + 10 * 24 * 60 * 60 * 1000,
-            projectStatus: '',
-
-            cliffTime: 300,
-            cliffAmountRate: 3,
-            vestingPeriod: 1704527581215,
-            vestingIncrement: 0,
-            contributorsFetchFlag: 0,
-            contributorsTreeRoot: '',
-            contributorsMaintainFlag: 0,
-            totalContributorNum: 0,
-
-            teamName: 'Tokenizk Team',
-            logoUrl: '/src/assets/images/1.png',
-            website: 'https://tokenizk.finance/',
-            facebook: 'https://tokenizk.finance/',
-            github: 'https://tokenizk.finance/',
-            twitter: 'https://tokenizk.finance/',
-            telegram: 'https://tokenizk.finance/',
-            discord: 'https://tokenizk.finance/',
-            reddit: 'https://tokenizk.finance/',
-            description: 'The Launchpad focusing on ZK-Token for Everyone!',
-            updatedAt: new Date().getTime(),
-            createdAt: new Date().getTime(),
-
-            progressBarStatus: 'success',
-            progressPercent: 0
-        },
-        userContribute: {
-            txHash: '',
-            contributeTimestamp: '',
-            contributedCurrencyAmount: ''
-        }
-    },
-    {
-        saleDto: {
-            id: 0,
-            saleType: 1,
-            txHash: '0x123456789',
-            status: 1,
-
-            tokenName: 'TZ',
-            tokenAddress: 'B62xxxt',
-            tokenSymbol: 'TZ',
-
-            saleName: 'CCC XX Inu 2.0',
-            saleAddress: 'B62xxs',
-
-            star: 4,
-
-            totalSaleSupply: 20,
-            currency: 'Mina',
-            feeRate: '5%',
-            saleRate: 10,
-            whitelistTreeRoot: '45678ityuioghjk',
-            whitelistMembers: 'B62xxxxw,B62xxxxwY,B62xxU',
-
-            softCap: 101,
-            hardCap: 300,
-            minimumBuy: 0.1,
-            maximumBuy: 1,
-            startTimestamp: new Date().getTime() - 10 * 24 * 60 * 60 * 1000,
-            endTimestamp: new Date().getTime() - 10 * 60 * 60 * 1000,
-            projectStatus: '',
-
-            cliffTime: 300,
-            cliffAmountRate: 3,
-            vestingPeriod: 1704527581215,
-            vestingIncrement: 0,
-            contributorsFetchFlag: 0,
-            contributorsTreeRoot: '',
-            contributorsMaintainFlag: 0,
-            totalContributorNum: 0,
-
-            totalContributedMina: 100,
-
-            teamName: 'Tokenizk Team',
-            logoUrl: '/src/assets/images/1.png',
-            website: 'https://tokenizk.finance/',
-            facebook: 'https://tokenizk.finance/',
-            github: 'https://tokenizk.finance/',
-            twitter: 'https://tokenizk.finance/',
-            telegram: 'https://tokenizk.finance/',
-            discord: 'https://tokenizk.finance/',
-            reddit: 'https://tokenizk.finance/',
-            description: 'The Launchpad focusing on ZK-Token for Everyone!',
-            updatedAt: new Date().getTime(),
-            createdAt: new Date().getTime(),
-
-            progressBarStatus: 'success',
-            progressPercent: 0
-        },
-        userContribute: {
-            txHash: '',
-            contributeTimestamp: '',
-            contributedCurrencyAmount: ''
-        }
-    }
-    ];
+    let fetchResult = (await querySaleUserContribution(saleType.value, appState.connectedWallet58!)) as any as SaleUserDtoExtend[];
 
     calcProjectProgress(fetchResult);
     transformProjectStatus(fetchResult);
 
-    myContributionsList.saleList = fetchResult;
+    myContributionsList.saleList = fetchResult.map(a => a.saleDto);
 
     // 进入当前组件都会回到顶部
     window.scrollTo({
