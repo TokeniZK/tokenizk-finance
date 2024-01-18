@@ -1,5 +1,5 @@
 
-import { ProofTaskDto, ProofTaskType} from "@tokenizk/types";
+import { ProofTaskDto, ProofTaskType } from "@tokenizk/types";
 import fs from "fs";
 
 export function saveProofTaskDtoFile(proofTaskDto: ProofTaskDto<any, any>, dirDest: string) {
@@ -8,12 +8,15 @@ export function saveProofTaskDtoFile(proofTaskDto: ProofTaskDto<any, any>, dirDe
         case ProofTaskType.SALE_BATCH_MERGE:
             logNamePrefix += `SALE_BATCH_MERGE_`
             break;
-        case ProofTaskType.PRESALE_CONTRACT_CALL:
+        case ProofTaskType.PRESALE_CONTRACT_MAINTAIN_CONTRIBUTORS:
             logNamePrefix += `SALE_CONTRACT_CALL_`
+            break;
+        case ProofTaskType.CLIENT_AIRDROP_PROOF_REQ:
+            logNamePrefix += `CLIENT_AIRDROP_PROOF_REQ_`
             break;
     }
 
-    fs.writeFileSync(`${dirDest}/${logNamePrefix}-${proofTaskDto.index?.uuid}-${getDateString()}.json`, JSON.stringify(proofTaskDto));
+    fs.writeFileSync(`${dirDest}/${logNamePrefix}-${proofTaskDto.index?.id}-${getDateString()}.json`, JSON.stringify(proofTaskDto));
 }
 
 

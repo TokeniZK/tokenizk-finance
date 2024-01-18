@@ -6,8 +6,8 @@ import { getLogger } from "./lib/logUtils";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import config from './lib/config';
-import { PresaleRollupProof } from '@tokenizk/contracts/dist/src/presale/presale_rollup_prover';
-import { PresaleRollupState, PresaleActionBatch } from '@tokenizk/contracts/dist/src/presale/models';
+import { SaleRollupProof } from '@tokenizk/contracts';
+import { SaleRollupState, SaleActionBatch } from '@tokenizk/contracts';
 
 
 const logger = getLogger('create-sub-processes');
@@ -28,6 +28,8 @@ export type SubProcessCordinator = {
 
     privateSaleContractCall: (proofPayload: ProofPayload<any>, sendCallBack?: (x: any) => void) => Promise<ProofPayload<any>>,
 
+    clientAirDropContractCall: (proofPayload: ProofPayload<any>, sendCallBack?: (x: any) => void) => Promise<ProofPayload<any>>,
+
 };
 
 type WorkerStatus = 'IsReady' | 'Busy';
@@ -36,15 +38,18 @@ const CircuitName_SaleRollupProver = 'SaleRollupProver';
 const CircuitName_TokeniZkPresale = 'TokeniZkPresale';
 const CircuitName_TokeniZkFairSale = 'TokeniZkFairSale';
 const CircuitName_TokeniZkPrivateSale = 'TokeniZkPrivateSale';
+const CircuitName_Client_TokeniZkAirdrop = 'Client_TokeniZkAirdrop';
 
 const cnt_SaleRollupProver = config.cnt_SaleRollupProver;
 const cnt_TokeniZkPresale = config.cnt_TokeniZkPresale;
 const cnt_TokeniZkFairSale = config.cnt_TokeniZkFairSale;
 const cnt_TokeniZkPrivateSale = config.cnt_TokeniZkPrivateSale;
+const cnt_Client_TokeniZkAirdrop = config.cnt_Client_TokeniZkAirdrop;
 
 let fairSaleContractCallTimes = 0;
 let preSaleContractCallTimes = 0;
 let privateSaleContractCallTimes = 0;
+let clientAirdropContractCallTimes = 0;
 
 export const createSubProcesses = async () => {
     let cores = os.cpus().length - 2;
@@ -55,7 +60,8 @@ export const createSubProcesses = async () => {
         [CircuitName_SaleRollupProver, []],
         [CircuitName_TokeniZkPresale, []],
         [CircuitName_TokeniZkFairSale, []],
-        [CircuitName_TokeniZkPrivateSale, []]
+        [CircuitName_TokeniZkPrivateSale, []],
+        [CircuitName_Client_TokeniZkAirdrop, []]
     ]);
 
     const createCircuitProcessor = (proverCnt: number, circuitName: string) => {
@@ -105,6 +111,9 @@ export const createSubProcesses = async () => {
 
     createCircuitProcessor(cnt_TokeniZkPrivateSale, CircuitName_TokeniZkPrivateSale);
 
+    createCircuitProcessor(cnt_Client_TokeniZkAirdrop, CircuitName_Client_TokeniZkAirdrop);
+
+
     await waitForAllWorkersReady(workerMap);
 
     return {
@@ -118,14 +127,14 @@ export const createSubProcesses = async () => {
                 ) => {
                     const msg = {
                         type: `ROLLUP_BATCH`,
-                        payload: { presaleRollupState: proofPayload.payload.state, presaleActionBatch: proofPayload.payload.actionBatch } as {
-                            presaleRollupState: PresaleRollupState,
-                            presaleActionBatch: PresaleActionBatch
+                        payload: { saleRollupState: proofPayload.payload.state, saleActionBatch: proofPayload.payload.actionBatch } as {
+                            saleRollupState: SaleRollupState,
+                            saleActionBatch: SaleActionBatch
                         }
                     };
 
                     const fromJsonFn = (proofJson: any) => {
-                        return PresaleRollupProof.fromJSON(proofJson);
+                        return SaleRollupProof.fromJSON(proofJson);
                     }
 
                     generateProof(workerMap.get(CircuitName_SaleRollupProver)!, msg, fromJsonFn, resolve, reject, sendCallBack);
@@ -143,13 +152,13 @@ export const createSubProcesses = async () => {
                     const msg = {
                         type: `ROLLUP_MERGE`,
                         payload: { saleRollupProof1: x.payload, saleRollupProof2: y.payload } as {
-                            saleRollupProof1: PresaleRollupProof,
-                            saleRollupProof2: PresaleRollupProof
+                            saleRollupProof1: SaleRollupProof,
+                            saleRollupProof2: SaleRollupProof
                         },
                     };
 
                     const fromJsonFn = (proofJson: any) => {
-                        return PresaleRollupProof.fromJSON(proofJson);
+                        return SaleRollupProof.fromJSON(proofJson);
                     }
 
                     generateProof(workerMap.get(CircuitName_SaleRollupProver)!, msg, fromJsonFn, resolve, reject, sendCallBack);
@@ -164,19 +173,26 @@ export const createSubProcesses = async () => {
                     reject: (err: any) => any | any
                 ) => {
                     const msg = {
-                        type: `CONTRACT_CALL`,
+                        type: proofPayload.payload.type,
                         index: {
 
                         },
                         payload: {
+                            ...proofPayload.payload
+                            /*
                             feePayer: proofPayload.payload.feePayer,
                             fee: proofPayload.payload.fee,
-                            tokenAddress: PublicKey.fromBase58(proofPayload.payload.tokenAddress),
-                            contractAddress: PublicKey.fromBase58(proofPayload.payload.saleAddress),
+                            tokenAddress: proofPayload.payload.tokenAddress,
+                            contractAddress: proofPayload.payload.contractAddress,
                             methodParams: {
                                 saleParams: proofPayload.payload.saleParams,
-                                saleRollupProof: proofPayload.payload.saleRollupProof
+                                membershipMerkleWitness: proofPayload.payload.membershipMerkleWitness,
+                                leafIndex: proofPayload.payload.leafIndex,
+                                contributorAddress: proofPayload.payload.contributorAddress,
+                                minaAmount: proofPayload.payload.minaAmount
+                               
                             }
+                            */
                         }
                     };
 
@@ -198,19 +214,26 @@ export const createSubProcesses = async () => {
                     reject: (err: any) => any | any
                 ) => {
                     const msg = {
-                        type: `CONTRACT_CALL`,
+                        type: proofPayload.payload.type,
                         index: {
 
                         },
                         payload: {
+                            ...proofPayload.payload
+                            /*
                             feePayer: proofPayload.payload.feePayer,
                             fee: proofPayload.payload.fee,
-                            tokenAddress: PublicKey.fromBase58(proofPayload.payload.tokenAddress),
-                            contractAddress: PublicKey.fromBase58(proofPayload.payload.contractAddress),
+                            tokenAddress: proofPayload.payload.tokenAddress,
+                            contractAddress: proofPayload.payload.contractAddress,
                             methodParams: {
-                                saleParams: proofPayload.payload.methodParams.saleParams,
-                                saleRollupProof: proofPayload.payload.saleRollupProof
+                                saleParams: proofPayload.payload.saleParams,
+                                membershipMerkleWitness: proofPayload.payload.membershipMerkleWitness,
+                                leafIndex: proofPayload.payload.leafIndex,
+                                contributorAddress: proofPayload.payload.contributorAddress,
+                                minaAmount: proofPayload.payload.minaAmount
+                               
                             }
+                            */
                         }
                     };
 
@@ -232,19 +255,23 @@ export const createSubProcesses = async () => {
                     reject: (err: any) => any | any
                 ) => {
                     const msg = {
-                        type: `CONTRACT_CALL`,
-                        index: {
-
-                        },
+                        type: proofPayload.payload.type,
+                        index: {},
                         payload: {
+                            ...proofPayload.payload
+                            /*
                             feePayer: proofPayload.payload.feePayer,
                             fee: proofPayload.payload.fee,
-                            tokenAddress: PublicKey.fromBase58(proofPayload.payload.tokenAddress),
-                            contractAddress: PublicKey.fromBase58(proofPayload.payload.contractAddress),
+                            tokenAddress: proofPayload.payload.tokenAddress,
+                            contractAddress: proofPayload.payload.contractAddress,
                             methodParams: {
-                                saleParams: proofPayload.payload.methodParams.saleParams,
-                                saleRollupProof: proofPayload.payload.saleRollupProof
+                                saleParams: proofPayload.payload.saleParams,
+                                membershipMerkleWitness: proofPayload.payload.membershipMerkleWitness,
+                                leafIndex: proofPayload.payload.leafIndex,
+                                contributorAddress: proofPayload.payload.contributorAddress,
+                                minaAmount: proofPayload.payload.minaAmount
                             }
+                            */
                         }
                     };
 
@@ -257,7 +284,35 @@ export const createSubProcesses = async () => {
             ).catch(e => {
                 console.error(e);
             });
-        }
+        },
+
+        clientAirDropContractCall: async (proofPayload: ProofPayload<any>, sendCallBack?: any) => {
+            return await new Promise(
+                (
+                    resolve: (payload: ProofPayload<any>) => any,
+                    reject: (err: any) => any | any
+                ) => {
+                    const msg = {
+                        type: `CONTRACT_CALL`,
+                        index: {
+
+                        },
+                        payload: {
+                            ...proofPayload.payload
+                        }
+                    };
+
+                    const fromJsonFn = (proofJson: any) => {
+                        return proofJson;
+                    }
+
+                    generateProof(workerMap.get(CircuitName_Client_TokeniZkAirdrop)!, msg, fromJsonFn, resolve, reject, sendCallBack);
+                }
+            ).catch(e => {
+                console.error(e);
+            });
+        },
+
     } as SubProcessCordinator;
 };
 
@@ -303,20 +358,16 @@ function generateProof(
 
         const handler = (message: any) => {
             if (message.type == 'error') {// when meet errors (it's wasm32memory issue at great probability), defaultly restart the childProcess
+                workerE.status = 'IsReady';
                 return;
             }
 
-            if (workerE.type != CircuitName_TokeniZkPresale) {
-                workerE.status = 'IsReady';
-            }
-
-            workerE.worker!.removeListener('message', handler);// must rm it here to avoid listener accumulation.
-
             if (message.type == 'done') {
+                workerE.status = 'IsReady';
                 try {
                     let proofJson = message.payload.payload;
                     if (sendCallBack) {
-                        sendCallBack(proofJson);
+                        sendCallBack((typeof proofJson == 'string') ? JSON.parse(proofJson) : proofJson);
                     }
 
                     let proof = fromJsonFn(proofJson);
@@ -328,6 +379,8 @@ function generateProof(
                     reject(error);
                 }
             }
+
+            workerE.worker!.removeListener('message', handler);// must rm it here to avoid listener accumulation.
 
         }
         workerE.worker!.on('message', handler);
@@ -371,6 +424,13 @@ function getFreeWorker(
 
             worker = workers.at(privateSaleContractCallTimes % workers.length);
             privateSaleContractCallTimes++;
+
+        } else if (worker.type == CircuitName_Client_TokeniZkAirdrop) {
+            // by return, due to the last process need time to release memory(about wasm32, don't know why, but occurs), or else it will fail!
+            logger.info(`worker.type: ${worker.type}, clientAirdropContractCallTimes:${clientAirdropContractCallTimes}, workerIndex: ${clientAirdropContractCallTimes % workers.length}`);
+
+            worker = workers.at(clientAirdropContractCallTimes % workers.length);
+            clientAirdropContractCallTimes++;
         }
 
         worker!.status = 'Busy';

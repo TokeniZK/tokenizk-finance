@@ -9,6 +9,7 @@ import { getLogger } from "./lib/logUtils";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { $axiosCoreService, saveProofTaskDtoFile } from "./lib";
+import { saleRollupBatchAndMerge } from "./provers/sale-rollup-handler";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,7 +31,7 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator, port: s
     httpWorker.on('message', (proofTaskDto: ProofTaskDto<any, any>) => {
         try {
             const sendResultCoreServiceCallback = async (p: any) => {
-                proofTaskDto.payload = p;
+                proofTaskDto.payload = { data: p };
                 saveProofTaskDtoFile(proofTaskDto, '.');// save to file for test
 
                 await $axiosCoreService.post('/proof-result', proofTaskDto).then(value => {
@@ -43,27 +44,39 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator, port: s
             // recieve from http-server thread
             switch (proofTaskDto.taskType) {
                 case ProofTaskType.SALE_BATCH_MERGE:
-                    {
-                        let payload = {
-                            isProof: false,
-                            payload: proofTaskDto.payload
-                        } as ProofPayload<any>;
+                    { // { state: SaleRollupState, actionBatch: SaleActionBatch }[]
+                        let payloads = (proofTaskDto.payload as (any[])).map(d => {
+                            return {
+                                isProof: false,
+                                payload: d
+                            } as ProofPayload<any>;
+                        });
 
-                        subProcessCordinator.saleContributorsBatch(payload, sendResultCoreServiceCallback);
+                        saleRollupBatchAndMerge(subProcessCordinator, payloads, sendResultCoreServiceCallback);
                     }
                     break;
 
-                case ProofTaskType.PRESALE_CONTRACT_CALL:
+                case ProofTaskType.CLIENT_AIRDROP_PROOF_REQ:
                     {
                         let payload = {
                             isProof: false,
                             payload: {
-                                feePayer: proofTaskDto.payload.feePayer,
-                                fee: proofTaskDto.payload.fee,
-                                tokenAddress: proofTaskDto.index.tokenAddress,
-                                saleAddress: proofTaskDto.index.saleAddress,
-                                saleParams: proofTaskDto.payload.saleParams,
-                                saleRollupProof: proofTaskDto.payload.saleRollupProof
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.clientAirDropContractCall(payload, sendResultCoreServiceCallback);
+                    }
+                    break;
+
+                case ProofTaskType.PRESALE_CONTRACT_MAINTAIN_CONTRIBUTORS:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
                             }
                         } as ProofPayload<any>;
 
@@ -71,17 +84,70 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator, port: s
                     }
                     break;
 
-                case ProofTaskType.FAIRSALE_CONTRACT_CALL:
+                case ProofTaskType.CLIENT_PRESALE_CONTRIBUTE_PROOF_REQ:
                     {
                         let payload = {
                             isProof: false,
                             payload: {
-                                feePayer: proofTaskDto.payload.feePayer,
-                                fee: proofTaskDto.payload.fee,
-                                tokenAddress: proofTaskDto.index.tokenAddress,
-                                saleAddress: proofTaskDto.index.saleAddress,
-                                saleParams: proofTaskDto.payload.saleParams,
-                                saleRollupProof: proofTaskDto.payload.saleRollupProof
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.presaleContractCall(payload, sendResultCoreServiceCallback);
+                    }
+                    break;
+
+                case ProofTaskType.CLIENT_PRESALE_CLAIM_TOKEN_PROOF_REQ:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.presaleContractCall(payload, sendResultCoreServiceCallback);
+                    }
+                    break;
+
+                case ProofTaskType.CLIENT_PRESALE_REDEEM_FUND_PROOF_REQ:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.presaleContractCall(payload, sendResultCoreServiceCallback);
+                    }
+                    break;
+
+                case ProofTaskType.FAIRSALE_CONTRACT_MAINTAIN_CONTRIBUTORS:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.fairSaleContractCall(payload, sendResultCoreServiceCallback);
+                    }
+
+                    break;
+
+                case ProofTaskType.CLIENT_FAIRSALE_CONTRIBUTE_PROOF_REQ:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
                             }
                         } as ProofPayload<any>;
 
@@ -89,17 +155,69 @@ function bootWebServerThread(subProcessCordinator: SubProcessCordinator, port: s
                     }
                     break;
 
-                case ProofTaskType.PRIVATESALE_CONTRACT_CALL:
+                case ProofTaskType.CLIENT_FAIRSALE_CLAIM_TOKEN_PROOF_REQ:
                     {
                         let payload = {
                             isProof: false,
                             payload: {
-                                feePayer: proofTaskDto.payload.feePayer,
-                                fee: proofTaskDto.payload.fee,
-                                tokenAddress: proofTaskDto.index.tokenAddress,
-                                saleAddress: proofTaskDto.index.saleAddress,
-                                saleParams: proofTaskDto.payload.saleParams,
-                                saleRollupProof: proofTaskDto.payload.saleRollupProof
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.fairSaleContractCall(payload, sendResultCoreServiceCallback);
+                    }
+                    break;
+
+                case ProofTaskType.PRIVATESALE_CONTRACT_MAINTAIN_CONTRIBUTORS:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.privateSaleContractCall(payload, sendResultCoreServiceCallback);
+                    }
+                    break;
+
+                case ProofTaskType.CLIENT_PRIVATESALE_CONTRIBUTE_PROOF_REQ:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.privateSaleContractCall(payload, sendResultCoreServiceCallback);
+                    }
+                    break;
+
+                case ProofTaskType.CLIENT_PRIVATESALE_CLAIM_PROOF_REQ:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
+                            }
+                        } as ProofPayload<any>;
+
+                        subProcessCordinator.privateSaleContractCall(payload, sendResultCoreServiceCallback);
+                    }
+                    break;
+
+                case ProofTaskType.CLIENT_PRIVATESALE_REDEEM_FUND_PROOF_REQ:
+                    {
+                        let payload = {
+                            isProof: false,
+                            payload: {
+                                type: proofTaskDto.taskType,
+                                ...proofTaskDto.payload
                             }
                         } as ProofPayload<any>;
 

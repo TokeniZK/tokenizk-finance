@@ -98,7 +98,7 @@ export const mergeStates = (
 
     p1.publicOutput.target.assertEquals(p2.publicOutput.source);
 
-    return new SaleRollupStateTransition({
+    return new  SaleRollupStateTransition({
         source: p1.publicOutput.source,
         target: p2.publicOutput.target,
     });

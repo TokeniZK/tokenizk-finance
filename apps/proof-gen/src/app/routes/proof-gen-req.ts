@@ -25,12 +25,13 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
     req,
     res
 ): Promise<BaseResponse<string>> {
-    const { taskType, index, payload } = req.body
+    const { taskType, index, payload } = req.body;
 
-    if ([ProofTaskType.PRESALE_BATCH_MERGE, ProofTaskType.PRESALE_CONTRACT_CALL].includes(taskType)) {
-        // parentPort?.postMessage(payload);
-        (process as any).send(req.body)
-    }
+    (process as any).send({
+        taskType,
+        index,
+        payload: req.body.payload.data
+    });
 
     return {
         code: 0,
