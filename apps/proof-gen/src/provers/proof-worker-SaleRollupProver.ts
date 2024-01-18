@@ -19,8 +19,8 @@ function processMsgFromMaster() {
             case `ROLLUP_BATCH`:
                 await execCircuit(message, async () => {
                     let params = {
-                        saleRollupState: new SaleRollupState(SaleRollupState.fromJSON(message.payload.saleRollupState)),
-                        saleActionBatch: new SaleActionBatch(SaleActionBatch.fromJSON(message.payload.saleActionBatch))
+                        saleRollupState: SaleRollupState.fromJSON(message.payload.saleRollupState),
+                        saleActionBatch: SaleActionBatch.fromDto(message.payload.saleActionBatch)
                     } as { saleRollupState: SaleRollupState, saleActionBatch: SaleActionBatch };
 
                     logger.info(`currently process [params.saleRollupState.currentActionsHash: ${params.saleRollupState.currentActionsHash}, params.saleRollupState.currentIndex: ${params.saleRollupState.currentIndex}]`);
@@ -120,7 +120,9 @@ const initWorker = async () => {
 
     logger.info(`[WORKER ${process.pid}] new worker forked`);
 
+    console.time('SaleRollupProver.compile');
     await SaleRollupProver.compile();
+    console.timeEnd('SaleRollupProver.compile');
 
     // recieve message from main process...
     processMsgFromMaster();

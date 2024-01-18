@@ -159,7 +159,7 @@ const handler: RequestHandler<null, null> = async function (
 
             // if crash here, the worker thread will spot in time and recover the tree quickly!
             // commit the tree
-            await this.saleContributorsDB.commit();
+            // await this.saleContributorsDB.commit();
 
             // mark the tree of this sale contains all contributors
             await this.indexDB.put(`${MerkleTreeId[MerkleTreeId.CONTRIBUTORS_TREE]}:${sale.tokenAddress}:${sale.saleAddress}`, '1');

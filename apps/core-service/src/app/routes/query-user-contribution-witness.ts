@@ -4,19 +4,15 @@ import { FastifyPlugin } from "fastify"
 import { RequestHandler } from '@/lib/types'
 import { BaseResponse, MerkleTreeId, SaleStatus, UserRedeemClaimWitnessDto, UserRedeemClaimWitnessDtoSchema } from "@tokenizk/types";
 import { getConnection } from "typeorm";
-import { WithdrawInfo } from "@anomix/dao";
 import { PublicKey, Field, UInt64 } from "o1js";
 import { getLogger } from "@/lib/logUtils";
 import { LeafData } from "@tokenizk/merkle-tree";
 import { Sale, UserTokenSale } from "@tokenizk/entities";
 import { SaleContribution } from "@tokenizk/contracts";
 
+const logger = getLogger('queryUserContributionWitness');
 
-const logger = getLogger('queryWitnessByWithdrawNotes');
-/**
- * query all Witness By WithdrawNotes
- */
-export const queryNonMembershipWitness: FastifyPlugin = async function (
+export const queryUserContributionWitness: FastifyPlugin = async function (
     instance,
     options,
     done
@@ -45,7 +41,7 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
             where: {
                 tokenAddress: tokenAddr,
                 saleAddress: saleAddr,
-                ownerAddress: userAddr, 
+                ownerAddress: userAddr,
             }
         });
 
@@ -61,10 +57,10 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         if (!sale) {
             logger.warn(`no Sale found, end.`);
             return { code: 1, data: undefined, msg: 'Cannot find the user contribution record!' } as BaseResponse<UserRedeemClaimWitnessDto>;
-        } else if(sale.endTimestamp > new Date().getTime()){
+        } else if (sale.endTimestamp > new Date().getTime()) {
             logger.warn(`sale is not end yet, end.`);
             return { code: 1, data: undefined, msg: 'Please wait for sale end!' } as BaseResponse<UserRedeemClaimWitnessDto>;
-        } else if(sale.contributorsMaintainFlag != 1){
+        } else if (sale.contributorsMaintainFlag != 1) {
             logger.warn(`contributors is not maintained yet, end.`);
             return { code: 1, data: undefined, msg: 'Please wait serveral minutes for contributors tree maintainance done!' } as BaseResponse<UserRedeemClaimWitnessDto>;
         }
@@ -78,7 +74,7 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         }
 
         // check if already init
-         const hasTree = await this.indexDB.get(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddr}`);
+        const hasTree = await this.indexDB.get(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddr}`);
         if (hasTree) {// undefined
             await this.userNullifierDB.initTree(PublicKey.fromBase58(userAddr));
             await this.userNullifierDB.commit();
@@ -101,7 +97,7 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         const contributorsTreeRoot = this.saleContributorsDB.getRoot(false).toString();
         logger.info(`current root of Contributors Tree: ${contributorsTreeRoot}`);
 
-        const saleContributionHash  = (new SaleContribution({
+        const saleContributionHash = (new SaleContribution({
             tokenAddress: PublicKey.fromBase58(userTokenSale.tokenAddress),
             tokenId: Field(userTokenSale.tokenId),
             saleContractAddress: PublicKey.fromBase58(userTokenSale.saleAddress),
@@ -139,7 +135,7 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         logger.info(`after revert predecessor, nullifierTree Root: ${await this.userNullifierDB.getRoot(true)}`);
         // logger.info(`after revert predecessor, nullifierTree Num: ${await this.userNullifierDB.getNumLeaves(true)}`);
 
-        const witnessOnContributorTree = (await this.saleContributorsDB.getSiblingPath( BigInt(contributionTreeLeafIndx), false))!.path.map(p => p.toString());
+        const witnessOnContributorTree = (await this.saleContributorsDB.getSiblingPath(BigInt(contributionTreeLeafIndx), false))!.path.map(p => p.toString());
         logger.info(`witnessOnContributorTree: ${JSON.stringify(witnessOnContributorTree)}`);
 
         const rs = {

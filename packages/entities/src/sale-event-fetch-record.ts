@@ -15,14 +15,19 @@ export class SaleEventFetchRecord {
      * default: 0
      * 1: presaleMinaHolder
      */
+    @Column()
     type: number
 
+    @Column()
     saleId: number
 
+    @Column()
     tokenAddress: string
 
+    @Column()
     saleAddress: string
 
+    @Column()
     blockHeight: number
 
     @UpdateDateColumn({

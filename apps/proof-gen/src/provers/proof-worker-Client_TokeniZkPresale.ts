@@ -86,8 +86,8 @@ function processMsgFromMaster() {
                         tokenAddress: PublicKey.fromBase58(message.payload.tokenAddress),
                         contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
                         methodParams: {
-                            saleParams: SaleParams.fromJSON(message.payload.methodParams.presaleParams) as SaleParams,//??? rm 'as SaleParams'?
-                            saleRollupProof: SaleRollupProof.fromJSON(message.payload.methodParams.presaleRollupProof)
+                            saleParams: SaleParams.fromJSON(message.payload.methodParams.saleParams) as SaleParams,//??? rm 'as SaleParams'?
+                            saleRollupProof: SaleRollupProof.fromJSON(message.payload.methodParams.saleRollupProof)
                         }
                     }
 
@@ -127,7 +127,7 @@ function processMsgFromMaster() {
                             saleParams: SaleParams.fromDto(message.payload.methodParams.saleParams),
                             saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData.fromDTO(message.payload.methodParams.saleContributorMembershipWitnessData),
                             lowLeafWitness: UserLowLeafWitnessData.fromDTO(message.payload.methodParams.lowLeafWitness),
-                            oldNullWitness: UserNullifierMerkleWitness.fromJSON(message.payload.methodParams.oldNullWitness),
+                            oldNullWitness: UserNullifierMerkleWitness.fromJSON({ path: message.payload.methodParams.oldNullWitness }),
                         }
                     }
 
@@ -177,7 +177,7 @@ function processMsgFromMaster() {
                             saleParams: SaleParams.fromDto(message.payload.methodParams.saleParams),
                             saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData.fromDTO(message.payload.methodParams.saleContributorMembershipWitnessData),
                             lowLeafWitness: UserLowLeafWitnessData.fromDTO(message.payload.methodParams.lowLeafWitness),
-                            oldNullWitness: UserNullifierMerkleWitness.fromJSON(message.payload.methodParams.oldNullWitness),
+                            oldNullWitness: UserNullifierMerkleWitness.fromJSON({ path: message.payload.methodParams.oldNullWitness }),
                         }
                     }
 
@@ -194,26 +194,30 @@ function processMsgFromMaster() {
                     console.log(`contributorTreeRoot: ${contributorTreeRoot.toString()}`);
                     const presaleMinaFundHolderZkapp = new PresaleMinaFundHolder(params.contractAddress);
                     let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
-                        
+
                         // another solution:
-                        presaleMinaFundHolderZkapp.redeem(params.methodParams.saleParams, 
-                            totalContributedMina, 
-                            contributorTreeRoot, 
-                            params.methodParams.saleContributorMembershipWitnessData, 
-                            params.methodParams.lowLeafWitness, 
+                        presaleMinaFundHolderZkapp.redeem(params.methodParams.saleParams,
+                            totalContributedMina,
+                            contributorTreeRoot,
+                            params.methodParams.saleContributorMembershipWitnessData,
+                            params.methodParams.lowLeafWitness,
                             params.methodParams.oldNullWitness);
-                        /* 
+                        /*
                         presaleMinaFundHolderZkapp.redeem(params.methodParams.saleParams,
                             params.methodParams.saleContributorMembershipWitnessData,
                             params.methodParams.lowLeafWitness,
                             params.methodParams.oldNullWitness);
                             */
+
                     });
                     await tx.prove();
 
                     return tx;
                 });
                 break;
+
+
+
 
             default:
                 throw Error(`Unknown message ${message}`);
@@ -283,9 +287,17 @@ const initWorker = async () => {
     await SaleRollupProver.compile();
     console.timeEnd('SaleRollupProver.compile');
 
+    console.time('RedeemAccount.compile');
+    await RedeemAccount.compile();
+    console.timeEnd('RedeemAccount.compile');
+
     console.time('TokeniZkPresale.compile');
     await TokeniZkPresale.compile();
     console.timeEnd('TokeniZkPresale.compile');
+
+    console.time('PresaleMinaFundHolder.compile');
+    await PresaleMinaFundHolder.compile()
+    console.timeEnd('PresaleMinaFundHolder.compile');
 
     // recieve message from main process...
     processMsgFromMaster();
