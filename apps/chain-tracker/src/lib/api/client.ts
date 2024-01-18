@@ -2,12 +2,8 @@ import config from '../config';
 import axios from 'axios';
 
 export const $axiosCore = axios.create({
-    baseURL: `${config.httpProtocol}://${config.sequencerHost}:${config.sequencerPort}`,
+    baseURL: `${config.httpProtocol}://${config.coreServiceHost}:${config.coreServicePort}`,
     withCredentials: true,
 });
 
-export const $axiosDeposit = axios.create({
-    baseURL: `${config.httpProtocol}://${config.depositProcessorHost}:${config.depositProcessorPort}`,
-    withCredentials: true,
-});
 

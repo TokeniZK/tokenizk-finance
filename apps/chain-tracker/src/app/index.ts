@@ -12,7 +12,7 @@ import { throwError } from './decorators'
 import { routes } from './routes'
 import { getLogger } from "../lib/logUtils";
 
-const logger = getLogger('coordinator');
+const logger = getLogger('chain-tracker');
 
 export class FastifyCore {
 
