@@ -74,6 +74,11 @@ export class TokenFactory {
     @Column()
     privateSaleServiceFeeRate: string
 
+    @Column()
+    airdropVk: string
+
+    @Column()
+    airdropCreationFee: string
 
     @Column()
     redeemAccountVk: string
