@@ -11,7 +11,7 @@ import { requestSerializer, responseSerializer } from './serializers'
 import { throwError } from './decorators'
 import { routes } from './routes'
 import { getLogger } from "@/lib/logUtils";
-import { BaseResponse } from "@anomix/types"
+import { BaseResponse } from "@tokenizk/types"
 const logger = getLogger('web-server');
 
 export class FastifyCore {

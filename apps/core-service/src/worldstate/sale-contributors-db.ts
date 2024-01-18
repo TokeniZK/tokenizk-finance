@@ -80,7 +80,7 @@ export class SaleContributorsDB {
      * @param leaf - The leaves to be appended.
      */
     async appendLeaf(leaf: Field) {//
-        return (await this.appendLeaves([leaf]))[0];
+        return await this.appendLeaves([leaf]);
     }
 
     /**

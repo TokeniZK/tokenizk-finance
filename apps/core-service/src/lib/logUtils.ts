@@ -1,4 +1,3 @@
-import pinoDebug from "pino-debug";
 import pino, { Logger } from 'pino';
 import * as dotenv from "dotenv"
 dotenv.config({ path: '../../.env' })
@@ -13,19 +12,13 @@ const pinoObj = pino({
             {
                 target: 'pino/file',
                 level: 'info',
-                options: { destination: <string>process.env.PINO_LOG_FILE_PATH!.concat(`/rollup-sequencer-${loggerFlag}.log`) }
+                options: { destination: <string>process.env.PINO_LOG_FILE_PATH!.concat(`/core-service-${loggerFlag}.log`) }
             },
             { target: 'pino-pretty', level: 'info', options: { destination: '/dev/stdout' } }
         ]
     }
 });
 
-pinoDebug(pinoObj, {
-    auto: true,
-    map: {
-        'anomix:*': 'info'
-    }
-});
 
 const childLoggerMap = new Map<string, Logger>();
 

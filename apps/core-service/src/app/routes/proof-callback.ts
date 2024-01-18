@@ -35,7 +35,8 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
     req,
     res
 ): Promise<BaseResponse<string>> {
-    const { taskType, index, payload } = req.body
+    const { taskType, index, payload: payload0 } = req.body
+    const payload = payload0.data;
 
     const connection = getConnection();
     const presaleRepo = connection.getRepository(Sale);
@@ -49,13 +50,13 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
         const saleType = presale.saleType;
         switch (saleType) {
             case SaleType.PRESALE:
-                taskType = ProofTaskType.PRESALE_CONTRACT_CALL;
+                taskType = ProofTaskType.PRESALE_CONTRACT_MAINTAIN_CONTRIBUTORS;
                 break;
             case SaleType.FAIRSALE:
-                taskType = ProofTaskType.FAIRSALE_CONTRACT_CALL;
+                taskType = ProofTaskType.FAIRSALE_CONTRACT_MAINTAIN_CONTRIBUTORS;
                 break;
             case SaleType.PRIVATESALE:
-                taskType = ProofTaskType.PRIVATESALE_CONTRACT_CALL;
+                taskType = ProofTaskType.PRIVATESALE_CONTRACT_MAINTAIN_CONTRIBUTORS;
                 break;
             default:
                 break;
@@ -63,7 +64,7 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
 
         const presaleParams = presale.generateSaleParam();
 
-        // resend to proof-gen for PRESALE_CONTRACT_CALL. if fail, proof-watcher will trigger again later.
+        // resend to proof-gen for PRESALE_CONTRACT_MAINTAIN_CONTRIBUTORS. if fail, proof-watcher will trigger again later.
         try {
             const proofTaskDto = {
                 taskType,
@@ -73,19 +74,21 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
                     saleAddress: presale.saleAddress
                 },
                 payload: {
-                    feePayer: PrivateKey.fromBase58(config.txFeePayerPrivateKey).toPublicKey().toBase58(),
-                    fee: config.l1TxFee,
-                    tokenAddress: presale.tokenAddress,
-                    contractAddress: presale.saleAddress,
+                    data: {
+                        feePayer: PrivateKey.fromBase58(config.txFeePayerPrivateKey).toPublicKey().toBase58(),
+                        fee: config.l1TxFee,
+                        tokenAddress: presale.tokenAddress,
+                        contractAddress: presale.saleAddress,
 
-                    methodParams: {
-                        saleParams: presaleParams,
-                        saleRollupProof: payload
+                        methodParams: {
+                            saleParams: presaleParams,
+                            saleRollupProof: payload
+                        }
                     }
                 }
             } as ProofTaskDto<any, any>;
 
-            const fileName = `./${ProofTaskType[ProofTaskType.SALE_BATCH_MERGE]}_proofTaskDto_proofReq_${getDateString()}.json`;
+            const fileName = `./${ProofTaskType[taskType]}_proofTaskDto_proofReq_${getDateString()}.json`;
             fs.writeFileSync(fileName, JSON.stringify(proofTaskDto));
 
             await $axiosProofGenerator.post<BaseResponse<string>>('/proof-gen', proofTaskDto).then(r => {
@@ -97,9 +100,11 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
             logger.error(error);
         }
 
-    } else if (taskType == ProofTaskType.PRESALE_CONTRACT_CALL) {
+    } else if (taskType == ProofTaskType.PRESALE_CONTRACT_MAINTAIN_CONTRIBUTORS
+        || taskType == ProofTaskType.FAIRSALE_CONTRACT_MAINTAIN_CONTRIBUTORS
+        || taskType == ProofTaskType.PRIVATESALE_CONTRACT_MAINTAIN_CONTRIBUTORS) {
         // sign and broadcast it.
-        const l1Tx = Mina.Transaction.fromJSON(JSON.parse(payload));
+        const l1Tx = Mina.Transaction.fromJSON(payload);
         l1Tx.transaction.feePayer.lazyAuthorization = { kind: 'lazy-signature' };
         await l1Tx.sign([PrivateKey.fromBase58(config.txFeePayerPrivateKey)]);
 
@@ -107,7 +112,7 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
             const txHash0 = txId.hash()!;
 
             if ((!txHash0)) {
-                logger.warn('error: broadcast anomixRollupContract\'s l1Tx failed!!!');
+                logger.warn('error: broadcast tokenizkRollupContract\'s l1Tx failed!!!');
                 return;
             }
             // insert L1 tx into db, underlying 

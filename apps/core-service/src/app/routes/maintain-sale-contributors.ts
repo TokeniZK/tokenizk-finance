@@ -72,10 +72,24 @@ const handler: RequestHandler<null, null> = async function (
         const queryRunner = connection.createQueryRunner();
         await queryRunner.startTransaction();
         try {
+
+            let saleProofParam = await queryRunner.manager.findOne(SaleRollupProverParam, { saleId: sale.id });
+
+            const hasTree = await this.indexDB.get(`${MerkleTreeId[MerkleTreeId.CONTRIBUTORS_TREE]}: ${sale.tokenAddress}: ${sale.saleAddress}`);
+            if (!hasTree) {
+                await this.saleContributorsDB.initTree(PublicKey.fromBase58(sale.tokenAddress), PublicKey.fromBase58(sale.saleAddress));
+                await this.indexDB.put(`${MerkleTreeId[MerkleTreeId.CONTRIBUTORS_TREE]}: ${sale.tokenAddress}: ${sale.saleAddress}`, '1');
+            } else if (saleProofParam) {
+                logger.info('already maintain in contributor-tree!');
+                continue;
+            } else {
+                await this.saleContributorsDB.loadTree(PublicKey.fromBase58(sale.tokenAddress), PublicKey.fromBase58(sale.saleAddress));
+            }
+
             const saleContributionList = ((await queryRunner.manager.find(UserTokenSale, {
                 where: {
                     saleAddress: sale.saleAddress,
-                    tokenId: TokenId.derive(PublicKey.fromBase58(sale.tokenAddress))
+                    tokenAddress: sale.tokenAddress
                 }
             })) ?? [])
                 .sort((a, b) => a.contributeActionIndex - b.contributeActionIndex) // sort as action index
@@ -88,14 +102,12 @@ const handler: RequestHandler<null, null> = async function (
                 }));
 
             const batchSize = Number(SALE_ACTION_BATCH_SIZE.toString());
-            let appendDummySize = saleContributionList.length - saleContributionList.length % batchSize;
+            const gap = saleContributionList.length % batchSize;
+            let appendDummySize = batchSize - gap;
             while (appendDummySize > 0) {
                 saleContributionList.push(SaleContribution.dummy());
                 appendDummySize--;
             }
-
-            // tree name: CONTRIBUTORS_TREE:${token_addr}:${sale_addr}
-            await this.saleContributorsDB.initTree(PublicKey.fromBase58(sale.tokenAddress), PublicKey.fromBase58(sale.saleAddress));
 
             let currentIndex = Field(0);
             let currentActionsHash = Reducer.initialActionState;
@@ -143,8 +155,7 @@ const handler: RequestHandler<null, null> = async function (
                 });
             }
 
-            let saleProofParam = ((await queryRunner.manager.find(SaleRollupProverParam, { saleId: sale.id })) ?? [])[0];
-            saleProofParam = saleProofParam ?? new SaleRollupProverParam();
+            saleProofParam = new SaleRollupProverParam();
             saleProofParam.type = sale.saleType;
             saleProofParam.saleId = sale.id;
             saleProofParam.saleAddress = sale.saleAddress;
@@ -153,16 +164,15 @@ const handler: RequestHandler<null, null> = async function (
             await queryRunner.manager.save(saleProofParam);
 
             sale.contributorsTreeRoot = (await this.saleContributorsDB.getRoot(true)).toString();
+            sale.contributorsMaintainFlag = 1;
             await queryRunner.manager.save(sale);
 
             await queryRunner.commitTransaction();
 
             // if crash here, the worker thread will spot in time and recover the tree quickly!
             // commit the tree
-            // await this.saleContributorsDB.commit();
+            await this.saleContributorsDB.commit();
 
-            // mark the tree of this sale contains all contributors
-            await this.indexDB.put(`${MerkleTreeId[MerkleTreeId.CONTRIBUTORS_TREE]}:${sale.tokenAddress}:${sale.saleAddress}`, '1');
             sendProofGenFlag = true;
         } catch (err) {
             logger.error(err);
@@ -195,8 +205,8 @@ const handler: RequestHandler<null, null> = async function (
                     tokenAddress: sale.tokenAddress,
                     saleAddress: sale.saleAddress
                 },
-                payload: processActionsInBatchParamList
-            } as ProofTaskDto<any, { state: SaleRollupState, actionBatch: SaleActionBatch }[]>;
+                payload: { data: processActionsInBatchParamList }
+            } as ProofTaskDto<any, { data: { state: SaleRollupState, actionBatch: SaleActionBatch }[] }>;
 
             const fileName = `./${ProofTaskType[ProofTaskType.SALE_BATCH_MERGE]}_proofTaskDto_proofReq_${sale.id}_${getDateString()}.json`;
             fs.writeFileSync(fileName, JSON.stringify(proofTaskDto));

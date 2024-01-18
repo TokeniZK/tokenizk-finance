@@ -70,6 +70,8 @@ const handler: RequestHandler<null, null> = async function (
             await this.userNullifierDB.initTree(PublicKey.fromBase58(userAddress));
             await this.userNullifierDB.commit();
             logger.info(`created userNullifierTree for ${userAddress}]`);
+
+            await this.indexDB.put(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddress}`, '1');
         } else {
             await this.userNullifierDB.loadTree(PublicKey.fromBase58(userAddress));
             logger.info(`loaded userNullifierTree for ${userAddress}]`);
@@ -78,7 +80,8 @@ const handler: RequestHandler<null, null> = async function (
         const queryRunner = connection.createQueryRunner();
         await queryRunner.startTransaction();
 
-        const user = ((await queryRunner.manager.find(User, { address: userAddress })) ?? [])[0];
+        const user = await queryRunner.manager.findOne(User, { address: userAddress }) ?? new User();
+        user.address = userAddress;
         try {
             for (let i = 0; i < userTokenSaleListX.length; i++) {
                 const uts = userTokenSaleListX[i];
@@ -98,7 +101,7 @@ const handler: RequestHandler<null, null> = async function (
                 await queryRunner.manager.save(uts);
             }
             user.nullifierRoot = (await this.userNullifierDB.getRoot(true)).toString();
-            user.nullStartIndex = (Number(user.nullStartIndex) + Number(this.userNullifierDB.getNumLeaves(true))).toString();
+            user.nullStartIndex = this.userNullifierDB.getNumLeaves(true).toString();
             await queryRunner.manager.save(user);
 
             await queryRunner.commitTransaction();
@@ -107,7 +110,7 @@ const handler: RequestHandler<null, null> = async function (
             await this.userNullifierDB.commit();// commit tree
         } catch (err) {
             logger.error(`process record[${userAddress}, error!]`);
-            logger.error(err);
+            console.error(err);
             await this.userNullifierDB.rollback();
 
             await queryRunner.rollbackTransaction();
