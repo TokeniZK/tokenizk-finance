@@ -45,12 +45,16 @@ const handler: RequestHandler<SaleReq, null> = async function (
 
         const sale = ((await queryBuilder.orderBy({ createdAt: 'DESC' }).getMany()) ?? [])[0];
 
-        const token = (await connection.getRepository(BasiceToken).findOne({
-            where: {
-                address: sale.tokenAddress
-            }
-        }))!;
-        (sale as any as SaleDto).tokenSymbol = token.symbol
+        if (sale.totalSaleSupply != 0) {// exclude private sale
+            const token = (await connection.getRepository(BasiceToken).findOne({
+                where: {
+                    address: sale.tokenAddress
+                }
+            }))!;
+            (sale as any as SaleDto).tokenSymbol = token.symbol
+        } else {
+            (sale as any as SaleDto).tokenSymbol = 'MINA'
+        }
 
         const userTokenSaleRepo = connection.getRepository(UserTokenSale)
         const userTokenSaleList = await userTokenSaleRepo.find({
