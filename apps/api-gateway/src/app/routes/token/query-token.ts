@@ -7,7 +7,7 @@ import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
 
-const logger = getLogger('querySaleList');
+const logger = getLogger('queryTokenList');
 
 // query all, filter by status==on, order by createTime, limit 18
 // by tokenName

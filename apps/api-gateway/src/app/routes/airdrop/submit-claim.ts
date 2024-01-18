@@ -49,6 +49,7 @@ const handler: RequestHandler<AirdropClaimerDto, null> = async function (
         } else {
             userTokenAirdrop = new UserTokenAirdrop();
             Object.assign(userTokenAirdrop, airdropClaimerDto);
+            userTokenAirdrop.status = 0;
         }
         userTokenAirdrop = await userTokenAirdropRepo.save(userTokenAirdrop);
 

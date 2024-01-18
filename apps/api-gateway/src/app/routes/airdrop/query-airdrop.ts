@@ -1,13 +1,13 @@
 import httpCodes from "@inip/http-codes"
 import { FastifyPlugin } from "fastify"
-import { BaseResponse, AirdropReq, AirdropReqSchema, AirdropDtoSchema, AirdropDto} from '@tokenizk/types'
+import { BaseResponse, AirdropReq, AirdropReqSchema, AirdropDtoSchema, AirdropDto } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
 
 import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { Airdrop, BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
 
-const logger = getLogger('querySaleList');
+const logger = getLogger('queryAirdropList');
 
 // query all, filter by status==on, order by createTime, limit 18
 // by tokenName
@@ -39,8 +39,8 @@ const handler: RequestHandler<AirdropReq, null> = async function (
 
         const queryBuilder = saleRepo.createQueryBuilder('ps');
 
-        if (airdropReq?.airdropType) {
-            queryBuilder.andWhere(`ps.type = '%${airdropReq.airdropType}%'`);
+        if (airdropReq?.airdropType != undefined) {
+            queryBuilder.andWhere(`ps.type = '${airdropReq.airdropType}'`);
         }
 
         if (airdropReq?.airdropName) {
@@ -56,18 +56,19 @@ const handler: RequestHandler<AirdropReq, null> = async function (
         }
 
         const airdropList = (await queryBuilder.orderBy({ createdAt: 'DESC' }).getMany()) ?? [];
-
-        const tokenList = await connection.getRepository(BasiceToken).find({
-            where: {
-                address: In(airdropList.map(p => p.tokenAddress))
+        if (airdropList.length > 0) {
+            const tokenList = await connection.getRepository(BasiceToken).find({
+                where: {
+                    address: In(airdropList.map(p => p.tokenAddress))
+                }
+            });
+            if (tokenList.length > 0) {
+                airdropList.forEach(p => {
+                    const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
+                    (p as any as AirdropDto).tokenSymbol = token.symbol
+                })
             }
-        });
-
-        airdropList.forEach(p => {
-            const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-            (p as any as AirdropDto).tokenSymbol = token.symbol
-        })
-
+        }
         return {
             code: 0,
             data: airdropList as any as AirdropDto[],

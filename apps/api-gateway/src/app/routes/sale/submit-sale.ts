@@ -47,6 +47,7 @@ const handler: RequestHandler<SaleDto, null> = async function (
         } else {
             // transform from SaleDto to Sale
             sale = Sale.fromDto(saleDto);
+            sale.contributorsTreeRoot = null as any as string;
             sale.createdAt = new Date();
             sale.updatedAt = new Date();
         }

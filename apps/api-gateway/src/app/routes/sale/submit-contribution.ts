@@ -43,18 +43,22 @@ const handler: RequestHandler<UserContributionDto, null> = async function (
         });
 
         if (userTokenSale) {
-            if(userContributionDto.contributeTxHash){
+            if (userContributionDto.contributeTxHash) {
                 userTokenSale.contributeTxHash = userContributionDto.contributeTxHash;
-            } else if(userContributionDto.claimTxHash){
+            } else if (userContributionDto.claimTxHash) {
                 userTokenSale.claimAmount = userContributionDto.claimAmount;
                 userTokenSale.claimTxHash = userContributionDto.claimTxHash;
-            }  else if(userContributionDto.redeemTxHash){
+            } else if (userContributionDto.redeemTxHash) {
                 userTokenSale.redeemTxHash = userContributionDto.redeemTxHash;
-            } 
+            }
+            userTokenSale.updatedAt = new Date();
         } else {
             // transform from SaleDto to Sale
             userTokenSale = new UserTokenSale();
+            userTokenSale.createdAt = new Date();
             Object.assign(userTokenSale, userContributionDto);
+
+            userTokenSale.syncNullTreeFlag = 0;
         }
         userTokenSale = await userTokenSaleRepo.save(userTokenSale);
 

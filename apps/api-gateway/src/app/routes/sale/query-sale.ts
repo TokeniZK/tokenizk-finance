@@ -19,7 +19,7 @@ export const querySaleList: FastifyPlugin = async function (
 ): Promise<void> {
     instance.route({
         method: "POST",
-        url: "/presale/list",
+        url: "/sale/list",
         //preHandler: [instance.authGuard],
         schema,
         handler
@@ -37,8 +37,8 @@ const handler: RequestHandler<SaleReq, null> = async function (
 
         const queryBuilder = saleRepo.createQueryBuilder('ps');
 
-        if (saleReq?.saleType) {
-            queryBuilder.andWhere(`ps.saleType = '%${saleReq.saleType}%'`);
+        if (saleReq?.saleType != undefined) {
+            queryBuilder.andWhere(`ps.saleType = '${saleReq.saleType}'`);
         }
 
         if (saleReq?.saleName) {
@@ -53,22 +53,24 @@ const handler: RequestHandler<SaleReq, null> = async function (
             queryBuilder.andWhere(`ps.tokenAddress = '${saleReq.tokenAddress}'`);
         }
 
-        const presaleList = (await queryBuilder.orderBy({ createdAt: 'DESC' }).getMany()) ?? [];
+        const saleList = (await queryBuilder.orderBy({ createdAt: 'DESC' }).getMany()) ?? [];
 
         const tokenList = await connection.getRepository(BasiceToken).find({
             where: {
-                address: In(presaleList.map(p => p.tokenAddress))
+                address: In(saleList.map(p => p.tokenAddress))
             }
         });
 
-        presaleList.forEach(p => {
-            const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-            (p as any as SaleDto).tokenSymbol = token.symbol
-        })
+        if (tokenList.length > 0) {// for non-private sale case
+            saleList.forEach(p => {
+                const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
+                (p as any as SaleDto).tokenSymbol = token.symbol
+            })
+        }
 
         return {
             code: 0,
-            data: presaleList as any as SaleDto[],
+            data: saleList as any as SaleDto[],
             msg: ''
         };
     } catch (err) {
