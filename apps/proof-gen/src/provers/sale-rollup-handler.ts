@@ -7,7 +7,7 @@ import { getDateString } from '@/lib';
 
 const logger = getLogger('presale-rollup-handler');
 
-export const presaleRollupBatchAndMerge = async (subProcessCordinator: SubProcessCordinator, proofPayloads: ProofPayload<any>[], sendCallBack?: any) => {
+export const saleRollupBatchAndMerge = async (subProcessCordinator: SubProcessCordinator, proofPayloads: ProofPayload<any>[], sendCallBack?: any) => {
     const filterStep = (openTasks: ProofPayload<any>[]) => {
         return openTasks;
     };
@@ -17,12 +17,12 @@ export const presaleRollupBatchAndMerge = async (subProcessCordinator: SubProces
         let promises: Promise<any>[] = [];
         if (!proofPayLoadList[0].isProof) {
             for (let i = 0; i < proofPayLoadList.length; i++) {
-                promises.push(subProcessCordinator.presaleContributorsBatch(proofPayLoadList[i]));
+                promises.push(subProcessCordinator.saleContributorsBatch(proofPayLoadList[i]));
             }
         } else {
             for (let i = 0; i < proofPayLoadList.length; i = i + 2) {
                 if (proofPayLoadList[i + 1]) {
-                    promises.push(subProcessCordinator.presaleContributorsMerge(proofPayLoadList[i], proofPayLoadList[i + 1]));
+                    promises.push(subProcessCordinator.saleContributorsMerge(proofPayLoadList[i], proofPayLoadList[i + 1]));
                 } else {
                     promises.push(Promise.resolve(proofPayLoadList[i]));
                 }
@@ -65,7 +65,7 @@ export const presaleRollupBatchAndMerge = async (subProcessCordinator: SubProces
         }
 
     } else {
-        subProcessCordinator.presaleContributorsBatch(proofPayloads[0], sendCallBack);
+        subProcessCordinator.saleContributorsBatch(proofPayloads[0], sendCallBack);
     }
 
 };

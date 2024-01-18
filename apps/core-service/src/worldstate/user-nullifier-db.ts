@@ -78,7 +78,7 @@ export class UserNullifierDB {
      * @param leaf - The leaves to be appended.
      */
     async appendLeaf(leaf: Field) {//
-        return (await this.appendLeaves([leaf]))[0];
+        await this.appendLeaves([leaf]);
     }
 
     /**

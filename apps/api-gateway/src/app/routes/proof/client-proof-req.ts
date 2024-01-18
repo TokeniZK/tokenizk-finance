@@ -34,7 +34,16 @@ const handler: RequestHandler<ClientProveTaskDto, null> = async function (
         const connection = getConnection();
         const clientProveTaskRepo = connection.getRepository(ClientProveTask)
 
-        let clientProveTask = new ClientProveTask();
+
+        let clientProveTask = await clientProveTaskRepo.findOne({
+            where: {
+                tokenAddress: clientProveTaskDto.tokenAddress,
+                targetAddress: clientProveTaskDto.targetAddress,
+                userAddress: clientProveTaskDto.userAddress
+            }
+        });
+
+        clientProveTask = clientProveTask ?? new ClientProveTask();
         Object.assign(clientProveTask, clientProveTaskDto);
 
         clientProveTask.status = 0;
@@ -44,7 +53,6 @@ const handler: RequestHandler<ClientProveTaskDto, null> = async function (
 
 
         const txParams = JSON.parse(clientProveTask.params);
-        let methodParams = {};
         let proofTaskType = 0;
         if (clientProveTaskDto.type == ClientProofReqType.AIRDROP_CLAIM_TOKEN) {
             proofTaskType = ProofTaskType.CLIENT_AIRDROP_PROOF_REQ;
@@ -55,6 +63,9 @@ const handler: RequestHandler<ClientProveTaskDto, null> = async function (
         } else if (clientProveTaskDto.type == ClientProofReqType.PRESALE_CLAIM_TOKEN) {
             proofTaskType = ProofTaskType.CLIENT_PRESALE_CLAIM_TOKEN_PROOF_REQ;
 
+        } else if (clientProveTaskDto.type == ClientProofReqType.PRESALE_REDEEM_FUND) {
+            proofTaskType = ProofTaskType.CLIENT_PRESALE_REDEEM_FUND_PROOF_REQ;
+
         } else if (clientProveTaskDto.type == ClientProofReqType.FAIRSALE_CONTRIBUTE) {
             proofTaskType = ProofTaskType.CLIENT_FAIRSALE_CONTRIBUTE_PROOF_REQ;
 
@@ -63,7 +74,8 @@ const handler: RequestHandler<ClientProveTaskDto, null> = async function (
 
         } else if (clientProveTaskDto.type == ClientProofReqType.PRIVATESALE_CONTRIBUTE) {
             proofTaskType = ProofTaskType.CLIENT_PRIVATESALE_CONTRIBUTE_PROOF_REQ;
-
+        } else if (clientProveTaskDto.type == ClientProofReqType.PRIVATESALE_REDEEM_FUND) {
+            proofTaskType = ProofTaskType.CLIENT_PRIVATESALE_REDEEM_FUND_PROOF_REQ;
         }
 
         try {
@@ -73,7 +85,9 @@ const handler: RequestHandler<ClientProveTaskDto, null> = async function (
                     id: clientProveTask.id,
                 },
                 payload: {
-                    ...txParams
+                    data: {
+                        ...txParams
+                    }
                 }
             } as ProofTaskDto<any, any>;
 

@@ -4,7 +4,7 @@ import { FastifyPlugin } from "fastify"
 import { RequestHandler } from '@/lib/types'
 import { BaseResponse, MerkleTreeId, SaleStatus, UserRedeemClaimWitnessDto, UserRedeemClaimWitnessDtoSchema } from "@tokenizk/types";
 import { getConnection } from "typeorm";
-import { PublicKey, Field, UInt64 } from "o1js";
+import { PublicKey, Field, UInt64, fetchLastBlock, TokenId } from "o1js";
 import { getLogger } from "@/lib/logUtils";
 import { LeafData } from "@tokenizk/merkle-tree";
 import { Sale, UserTokenSale } from "@tokenizk/entities";
@@ -26,6 +26,9 @@ export const queryUserContributionWitness: FastifyPlugin = async function (
     })
 }
 
+let lastFetchBlockTs = 0;
+let currentBlockHeight = 0;
+
 const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: string }, null> = async function (
     req,
     res
@@ -41,7 +44,7 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
             where: {
                 tokenAddress: tokenAddr,
                 saleAddress: saleAddr,
-                ownerAddress: userAddr,
+                contributorAddress: userAddr,
             }
         });
 
@@ -51,16 +54,15 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
             where: {
                 tokenAddress: tokenAddr,
                 saleAddress: saleAddr,
-                saleStatus: SaleStatus.CONFIRMED,
+                status: SaleStatus.CONFIRMED,
             }
         });
         if (!sale) {
             logger.warn(`no Sale found, end.`);
             return { code: 1, data: undefined, msg: 'Cannot find the user contribution record!' } as BaseResponse<UserRedeemClaimWitnessDto>;
-        } else if (sale.endTimestamp > new Date().getTime()) {
-            logger.warn(`sale is not end yet, end.`);
-            return { code: 1, data: undefined, msg: 'Please wait for sale end!' } as BaseResponse<UserRedeemClaimWitnessDto>;
-        } else if (sale.contributorsMaintainFlag != 1) {
+        }
+
+        if (sale.contributorsMaintainFlag != 1) {
             logger.warn(`contributors is not maintained yet, end.`);
             return { code: 1, data: undefined, msg: 'Please wait serveral minutes for contributors tree maintainance done!' } as BaseResponse<UserRedeemClaimWitnessDto>;
         }
@@ -68,16 +70,28 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         if (!userTokenSale) {
             logger.warn(`no userTokenSale, end.`);
             return { code: 1, data: undefined, msg: 'Cannot find the user contribution record!' } as BaseResponse<UserRedeemClaimWitnessDto>;
-        } else if (!userTokenSale.nullTreeLeafIndex) {
+        } else if (userTokenSale.nullTreeLeafIndex) {
             logger.warn(`the userTokenSale has been consumed, end.`);
             return { code: 1, data: undefined, msg: 'This asset has been claimed or redeemed!' } as BaseResponse<UserRedeemClaimWitnessDto>;
         }
 
+        if (new Date().getTime() - lastFetchBlockTs > 1000 * 60 * 1) {
+            currentBlockHeight = Number((await fetchLastBlock()).blockchainLength.toString());
+        }
+
+        /*
+                if (Number(sale.endTimestamp) < currentBlockHeight + 2) {
+                    logger.warn(`sale is not end yet, end.`);
+                    return { code: 1, data: undefined, msg: 'Please wait for sale end!' } as BaseResponse<UserRedeemClaimWitnessDto>;
+                }
+        */
+
         // check if already init
         const hasTree = await this.indexDB.get(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddr}`);
-        if (hasTree) {// undefined
+        if (!hasTree) {// undefined
             await this.userNullifierDB.initTree(PublicKey.fromBase58(userAddr));
             await this.userNullifierDB.commit();
+            await this.indexDB.put(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddr}`, '1');
             logger.info(`created userNullifierTree for ${userAddr}]`);
         } else {
             await this.userNullifierDB.loadTree(PublicKey.fromBase58(userAddr));
@@ -91,15 +105,13 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         logger.info(`  leafNum: ${this.userNullifierDB.getNumLeaves(false).toString()}`);
         logger.info(`  treeRoot: ${this.userNullifierDB.getRoot(false).toString()}`);
 
-        const contributionTreeLeafIndx = userTokenSale.contributeActionIndex;
         const targetIndx = this.userNullifierDB.getNumLeaves(false);
 
-        const contributorsTreeRoot = this.saleContributorsDB.getRoot(false).toString();
-        logger.info(`current root of Contributors Tree: ${contributorsTreeRoot}`);
-
+        const tokenAddress = PublicKey.fromBase58(userTokenSale.tokenAddress);
+        const tokenId = TokenId.derive(tokenAddress);
         const saleContributionHash = (new SaleContribution({
-            tokenAddress: PublicKey.fromBase58(userTokenSale.tokenAddress),
-            tokenId: Field(userTokenSale.tokenId),
+            tokenAddress,
+            tokenId,
             saleContractAddress: PublicKey.fromBase58(userTokenSale.saleAddress),
             contributorAddress: PublicKey.fromBase58(userTokenSale.contributorAddress),
             minaAmount: UInt64.from(userTokenSale.contributeCurrencyAmount)
@@ -135,6 +147,8 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         logger.info(`after revert predecessor, nullifierTree Root: ${await this.userNullifierDB.getRoot(true)}`);
         // logger.info(`after revert predecessor, nullifierTree Num: ${await this.userNullifierDB.getNumLeaves(true)}`);
 
+        await this.saleContributorsDB.loadTree(PublicKey.fromBase58(sale.tokenAddress), PublicKey.fromBase58(sale.saleAddress));
+        const contributionTreeLeafIndx = userTokenSale.contributeActionIndex;
         const witnessOnContributorTree = (await this.saleContributorsDB.getSiblingPath(BigInt(contributionTreeLeafIndx), false))!.path.map(p => p.toString());
         logger.info(`witnessOnContributorTree: ${JSON.stringify(witnessOnContributorTree)}`);
 
@@ -142,7 +156,7 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
             saleContributorMembershipWitnessData: {
                 leafData: {
                     tokenAddress: userTokenSale.tokenAddress,
-                    tokenId: userTokenSale.tokenId,
+                    tokenId: tokenId.toString(),
                     saleContractAddress: userTokenSale.saleAddress,
                     contributorAddress: userTokenSale.contributorAddress,
                     minaAmount: Number(userTokenSale.contributeCurrencyAmount)
@@ -163,6 +177,7 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         } as UserRedeemClaimWitnessDto
 
         await this.userNullifierDB.reset();
+        await this.saleContributorsDB.reset();
 
         return { code: 0, data: rs, msg: '' };
     } catch (err) {

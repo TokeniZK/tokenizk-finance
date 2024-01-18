@@ -11,7 +11,7 @@ const pinoObj = pino({
             {
                 target: 'pino/file',
                 level: 'info',
-                options: { destination: config.pinoLogFilePath.concat(`/coordinator-${loggerFlag}.log`) }
+                options: { destination: config.pinoLogFilePath.concat(`/chain-tracker-${loggerFlag}.log`) }
             },
             { target: 'pino-pretty', level: 'info', options: { destination: '/dev/stdout' } }
         ]

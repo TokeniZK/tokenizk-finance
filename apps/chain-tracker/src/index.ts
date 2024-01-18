@@ -1,129 +1,95 @@
-import cp, { ChildProcess as Worker } from "child_process";
+import cp, { ChildProcess } from "child_process";
+import cluster from "cluster";
+
+import { Worker } from "worker_threads";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { FastifyCore } from './app'
 import { activeMinaInstance } from "@tokenizk/util";
 import { getLogger } from "./lib/logUtils";
+import { initORM } from "./lib/orm";
 
-const logger = getLogger('coordinator-primary-process');
+const logger = getLogger('chain-tracker');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const workerMap = new Map<string, Worker>();
+const workerMap = new Map<string, ChildProcess>();
 
-function bootTaskTracerThread() {
+function bootFactoryEventFetchThread() {
     // init worker thread A
-    const worker = cp.fork(`${__dirname}/task-tracer-by-db-query.js`, ['task-tracer']);// TODO
-
-    worker.on('message', (msg: { type: any, data: any }) => {
-        if (msg.type == 'online') {
-            logger.info('task-tracer is online...');
-        } else if (msg.type == 'isReady') {
-            logger.info('task-tracer is isReady...');
-        }
+    const worker = cp.fork(`${__dirname}/fetch-factory-events.js`, ['fetch-factory-events']);// TODO
+    worker.on('online', () => {
+        logger.info('fetch-factory-events is online...');
     })
 
     worker.on('exit', (exitCode: number) => {
         // create a new worker for http-server
-        bootTaskTracerThread();
+        bootFactoryEventFetchThread();
     })
 
-    workerMap.set('TaskTracer', worker);
+    workerMap.set('FactoryEventFetch', worker);
 }
 
-function bootMempoolWatcherThread() {
+function bootSaleEventFetchThread() {
     // init worker thread A
-    const worker = cp.fork(`${__dirname}/mempool-watcher-deposit-first.js`, ['mempool-watcher-deposit-first']);// TODO
-
-    worker.on('message', (msg: { type: any, data: any }) => {
-        if (msg.type == 'online') {
-            logger.info('mempool-watcher is online...');
-        } else if (msg.type == 'isReady') {
-            logger.info('mempool-watcher is isReady...');
-        }
+    const worker = cp.fork(`${__dirname}/fetch-sale-events.js`, ['fetch-sale-events']);// TODO
+    worker.on('online', () => {
+        logger.info('fetch-sale-events is online...');
     })
 
     worker.on('exit', (exitCode: number) => {
         // create a new worker for http-server
-        bootMempoolWatcherThread();
+        bootSaleEventFetchThread();
     })
 
-    workerMap.set('MempoolWatcher', worker);
+    workerMap.set('SaleEventFetch', worker);
 }
 
-function bootProofTriggerThread() {
-    // init worker thread A
-    const worker = cp.fork(`${__dirname}/proof-trigger-deposit-first.js`, ['proof-trigger-deposit-first']);// TODO
 
-    worker.on('message', (msg: { type: any, data: any }) => {
-        if (msg.type == 'online') {
-            logger.info('proof-trigger is online...');
-        } else if (msg.type == 'isReady') {
-            logger.info('proof-trigger is isReady...');
-        }
+function bootSaleContributorActionsFetchThread() {
+    // init worker thread A
+    const worker = cp.fork(`${__dirname}/fetch-sale-contributor-actions.js`, ['fetch-sale-contributor-actions']);// TODO
+    worker.on('online', () => {
+        logger.info('fetch-sale-contributor-actions is online...');
     })
 
     worker.on('exit', (exitCode: number) => {
         // create a new worker for http-server
-        bootProofTriggerThread();
+        bootSaleContributorActionsFetchThread();
     })
 
-    workerMap.set('ProofTrigger', worker);
+    workerMap.set('SaleContributorActionsFetch', worker);
 }
 
-function bootWebServerThread() {
-    const worker = cp.fork(`${__dirname}/web-server.js`, ['web-server']);// TODO
-
-    worker.on('message', (msg: { type: any, data: any }) => {
-        if (msg.type == 'online') {
-            logger.info('web-server is online...');
-        } else if (msg.type == 'isReady') {
-            logger.info('web-server is isReady...');
-        } else if (msg.type == 'seq') {
-            workerMap.get('MempoolWatcher')?.send('');
-        }
+function bootTokenEventsFetchThread() {
+    // init worker thread A
+    const worker = cp.fork(`${__dirname}/fetch-token-events.js`, ['fetch-token-events']);// TODO
+    worker.on('online', () => {
+        logger.info('fetch-token-events is online...');
     })
 
     worker.on('exit', (exitCode: number) => {
-        // create a new worker for web-server
-        bootWebServerThread();
+        // create a new worker for http-server
+        bootTokenEventsFetchThread();
     })
 
-    workerMap.set('WebServer', worker);
+    workerMap.set('TokenEventsFetch', worker);
 }
 
-
-function bootFetchWithdrawEventThread() {
-    const worker = cp.fork(`${__dirname}/fetch-withdrawal-events.js`, ['fetch-withdrawal-events']);// TODO
-
-    worker.on('message', (msg: { type: any, data: any }) => {
-        if (msg.type == 'online') {
-            logger.info('FetchWithdrawEvent is online...');
-        } else if (msg.type == 'isReady') {
-            logger.info('FetchWithdrawEvent is isReady...');
-        }
-    })
-
-    worker.on('exit', (exitCode: number) => {
-        // create a new worker for FetchWithdrawEvent
-        bootFetchWithdrawEventThread();
-    })
-
-    workerMap.set('FetchWithdrawEvent', worker);
-}
+// await initORM();
 
 // init Mina tool
 await activeMinaInstance();// TODO improve it to configure graphyQL endpoint
 
-bootTaskTracerThread();
+bootSaleContributorActionsFetchThread();
 
-bootProofTriggerThread();
+bootFactoryEventFetchThread();
 
-bootMempoolWatcherThread();
+bootSaleEventFetchThread();
 
-bootWebServerThread();
+bootTokenEventsFetchThread();
 
-bootFetchWithdrawEventThread();
-
-logger.info('all workers are created...');
+const app = new FastifyCore();
+app.server.decorate('workerMap', workerMap);
+await app.listen();

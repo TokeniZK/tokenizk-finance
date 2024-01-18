@@ -29,6 +29,9 @@
   },
   "devDependencies": {},
   "scripts": {
+    "fetch-factory-events": "tsc && tsc-alias && node --experimental-specifier-resolution=node ./dist/src/fetch-factory-events.js",
+    "fetch-sale-contributor-actions": "tsc && tsc-alias && node --experimental-specifier-resolution=node ./dist/src/fetch-sale-contributor-actions.js",
+    "fetch-sale-events": "tsc && tsc-alias && node --experimental-specifier-resolution=node ./dist/src/fetch-sale-events.js",
     "serve": "tsc && tsc-alias && node --experimental-specifier-resolution=node ./dist/src/index.js",
     "build": "tsc --build tsconfig.json && tsc-alias",
     "buildw": "tsc --build tsconfig.json --watch && (concurrently \"tsc --build tsconfig.json -w\" \"tsc-alias -w\")",

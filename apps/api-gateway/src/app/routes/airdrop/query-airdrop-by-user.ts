@@ -37,41 +37,45 @@ const handler: RequestHandler<{ airdropType: number, userAddress: string }, null
         const userTokenAirdropRepo = connection.getRepository(UserTokenAirdrop)
         const userAirdropList = await userTokenAirdropRepo.find({
             where: {
-                userAddress: userAddress
+                userAddress
             }
         }) ?? [];
 
-        const presaleUserDtoList: AirdropUserDto[] = [];
-        const airdropList = await airdropRepo.find({ where: { id: In(userAirdropList.map(us => us.airdropId)), airdropType } });
-        const tokenList = await connection.getRepository(BasiceToken).find({
-            where: {
-                tokenAddress: In(airdropList.map(p => p.tokenAddress))
-            }
-        });
-        airdropList.forEach(p => {
-            const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-            (p as any as AirdropDto).tokenSymbol = token.symbol
-        })
+        const airdropUserDtoList: AirdropUserDto[] = [];
 
-        for (let i = 0; i < userAirdropList.length; i++) {
-            const ufs = userAirdropList[i];
-
-            const airdrop = airdropList.filter(p => p.id == ufs.airdropId)[0];
-
-            const fsDto: AirdropUserDto = {
-                saleDto: airdrop as any as AirdropDto,
-                userClaim: {
-                    txHash: ufs.claimTxHash,
-                    claimBlockHeight: ufs.claimBlockHeight,
-                    claimAmount: ufs.claimAmount
+        if (userAirdropList.length > 0) {
+            const airdropList = await airdropRepo.find({ where: { id: In(userAirdropList.map(us => us.airdropId)), type: airdropType } });
+            const tokenList = await connection.getRepository(BasiceToken).find({
+                where: {
+                    address: In(airdropList.map(p => p.tokenAddress))
                 }
+            });
+            airdropList.forEach(p => {
+                const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
+                (p as any as AirdropDto).tokenSymbol = token.symbol
+            })
+
+            for (let i = 0; i < userAirdropList.length; i++) {
+                const ual = userAirdropList[i];
+
+                const airdrop = airdropList.filter(p => p.id == ual.airdropId)[0];
+
+                const fsDto: AirdropUserDto = {
+                    airdropDto: airdrop as any as AirdropDto,
+                    userClaim: {
+                        txHash: ual.claimTxHash,
+                        claimBlockHeight: ual.claimBlockHeight,
+                        claimAmount: ual.claimAmount
+                    }
+                }
+                airdropUserDtoList.push(fsDto);
             }
-            presaleUserDtoList.push(fsDto);
         }
+
 
         return {
             code: 0,
-            data: presaleUserDtoList,
+            data: airdropUserDtoList,
             msg: ''
         };
     } catch (err) {
@@ -83,10 +87,20 @@ const handler: RequestHandler<{ airdropType: number, userAddress: string }, null
 }
 
 const schema = {
-    description: 'query presale by user',
+    description: 'query airdrop by user',
     tags: ["Airdrop"],
     body: {
-        type: 'string'
+        type: 'object',
+        properties: {
+            userAddress: {
+                type: 'string',
+                description: 'user address'
+            },
+            airdropType: {
+                type: 'number',
+                description: 'airdrop type'
+            }
+        }
     },
     response: {
         200: {

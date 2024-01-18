@@ -1,12 +1,10 @@
 import { FastifyPlugin } from "fastify"
-
-import { health } from "../health";
+import { queryLastBlock } from './query-last-block'
 
 export const networkEndpoint: FastifyPlugin = async (
-    instance,
-    options,
-    done
+  instance,
+  options,
+  done
 ): Promise<void> => {
-    instance.register(health);
-
+  instance.register(queryLastBlock);
 }

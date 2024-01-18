@@ -32,41 +32,45 @@ const handler: RequestHandler<{ saleType: number, userAddress: string }, null> =
 
     try {
         const connection = getConnection();
-        const presaleRepo = connection.getRepository(Sale)
+        const saleRepo = connection.getRepository(Sale)
 
         const userTokenSaleRepo = connection.getRepository(UserTokenSale)
         const userSaleList = await userTokenSaleRepo.find({
             where: {
-                userAddress: userAddress
+                contributorAddress: userAddress
             }
         }) ?? [];
 
         const presaleUserDtoList: SaleUserDto[] = [];
-        const presaleList = await presaleRepo.find({ where: { id: In(userSaleList.map(us => us.saleId)), saleType } });
-        const tokenList = await connection.getRepository(BasiceToken).find({
-            where: {
-                tokenAddress: In(presaleList.map(p => p.tokenAddress))
-            }
-        });
-        presaleList.forEach(p => {
-            const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-            (p as any as SaleDto).tokenSymbol = token.symbol
-        })
+        if (userSaleList.length > 0) {
+            const saleList = await saleRepo.find({ where: { id: In(userSaleList.map(us => us.saleId)), saleType } });
+            if (saleList.length > 0) {
+                const tokenList = await connection.getRepository(BasiceToken).find({
+                    where: {
+                        address: In(saleList.map(p => p.tokenAddress))
+                    }
+                });
+                saleList.forEach(p => {
+                    const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
+                    (p as any as SaleDto).tokenSymbol = token.symbol
+                })
 
-        for (let i = 0; i < userSaleList.length; i++) {
-            const ufs = userSaleList[i];
+                for (let i = 0; i < userSaleList.length; i++) {
+                    const ufs = userSaleList[i];
 
-            const presale = presaleList.filter(p => p.id == ufs.saleId)[0];
+                    const presale = saleList.filter(p => p.id == ufs.saleId)[0];
 
-            const fsDto: SaleUserDto = {
-                saleDto: presale as any as SaleDto,
-                userContribute: {
-                    txHash: ufs.contributeTxHash,
-                    contributeBlockHeight: ufs.contributeBlockHeight,
-                    contributedCurrencyAmount: ufs.contributeCurrencyAmount
+                    const fsDto: SaleUserDto = {
+                        saleDto: presale as any as SaleDto,
+                        userContribute: {
+                            txHash: ufs.contributeTxHash,
+                            contributeBlockHeight: ufs.contributeBlockHeight,
+                            contributedCurrencyAmount: ufs.contributeCurrencyAmount
+                        }
+                    }
+                    presaleUserDtoList.push(fsDto);
                 }
             }
-            presaleUserDtoList.push(fsDto);
         }
 
         return {
@@ -86,7 +90,15 @@ const schema = {
     description: 'query presale by user',
     tags: ["Sale"],
     body: {
-        type: 'string'
+        type: 'object',
+        properties: {
+            saleType: {
+                type: 'number'
+            },
+            userAddress: {
+                type: 'string'
+            }
+        }
     },
     response: {
         200: {

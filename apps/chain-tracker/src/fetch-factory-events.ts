@@ -12,6 +12,10 @@ const logger = getLogger('standardFetchFactoryEvents');
 await activeMinaInstance();
 await initORM();
 
+
+const periodRange = 1.5 * 60 * 1000
+await standardFetchFactoryEvents();
+setInterval(standardFetchFactoryEvents, periodRange); // exec/1.5mins
 export async function standardFetchFactoryEvents() {
     logger.info('start fetch factory events by Standard...');
 
@@ -36,6 +40,7 @@ export async function standardFetchFactoryEvents() {
                 factoryEventFetchRecord.factoryId = factory.id;
                 factoryEventFetchRecord.blockHeight = startBlock;
             }
+            logger.info(`start from blockHeight: ${startBlock}`);
 
             // await syncNetworkStatus();
 
@@ -49,6 +54,7 @@ export async function standardFetchFactoryEvents() {
 
             for (let i = 0; i < eventList.length; i++) {
                 const e = eventList[i];
+                logger.info(`e.type: ${e.type}`);
                 const txHash = e.event.transactionInfo.transactionHash.toString();
                 const blockHeight = Number(e.blockHeight.toBigint());
 
@@ -80,11 +86,11 @@ export async function standardFetchFactoryEvents() {
                     const createBasicTokenEvent: CreateBasicTokenEvent = e.event.data;
 
                     const basiceToken = ((await queryRunner.manager.find(BasiceToken, {
-                        txHash,
                         address: createBasicTokenEvent.basicTokenAddress.toBase58()
                     })) ?? [])[0];
 
                     if (basiceToken) {
+                        basiceToken.txHash = txHash;
                         basiceToken.status = 1;
                         basiceToken.fee = createBasicTokenEvent.fee.toString();
                         basiceToken.totalSupply = createBasicTokenEvent.totalSupply.toString();
@@ -132,21 +138,31 @@ export async function standardFetchFactoryEvents() {
                 } else if (e.type == 'createRedeemAccount') {
                     const redeemTokenEvent: CreateRedeemAccount = e.event.data;
 
-                    const user = (await queryRunner.manager.find(User, {
+                    let user = (await queryRunner.manager.findOne(User, {
                         address: redeemTokenEvent.redeemAccountAddress.toBase58()
-                    }))![0];
+                    }));
+                    if (!user) {
+                        user = new User();
+                        user.address = redeemTokenEvent.redeemAccountAddress.toBase58();
+                    }
                     user.txHash = e.event.transactionInfo.transactionHash;
                     user.status = 1;
                     user.nullifierRoot = redeemTokenEvent.nullifierRoot.toString();
+                    user.nullStartIndex = '1';
                     await queryRunner.manager.save(user);
 
                 } else if (e.type == 'createAirdrop') {
                     const createAirdropEvent: CreateAirdropEvent = e.event.data;
 
-                    const airdrop = (await queryRunner.manager.find(Airdrop, {
+                    let airdrop = (await queryRunner.manager.findOne(Airdrop, {
                         tokenAddress: createAirdropEvent.basicTokenAddress.toBase58(),
                         airdropAddress: createAirdropEvent.airdropContractAddress.toBase58()
-                    }))![0];
+                    }));
+                    if (!airdrop) {
+                        airdrop = new Airdrop();
+                        airdrop.tokenAddress = createAirdropEvent.basicTokenAddress.toBase58();
+                        airdrop.airdropAddress = createAirdropEvent.airdropContractAddress.toBase58();
+                    }
 
                     airdrop.feeRate = createAirdropEvent.fee.toString();
                     airdrop.status = 1;
@@ -167,6 +183,7 @@ export async function standardFetchFactoryEvents() {
 
             if (eventList.length > 0) {
                 factoryEventFetchRecord.blockHeight = Number(eventList[eventList.length - 1].blockHeight.toBigint());
+                logger.info(`updated factoryEventFetchRecord.blockHeight: ${factoryEventFetchRecord.blockHeight}`);
             }
             await queryRunner.manager.save(factoryEventFetchRecord);
 
@@ -189,5 +206,3 @@ export async function standardFetchFactoryEvents() {
     }
 
 }
-
-await standardFetchFactoryEvents();

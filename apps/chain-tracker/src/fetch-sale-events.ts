@@ -11,6 +11,13 @@ import { activeMinaInstance } from '@tokenizk/util';
 const logger = getLogger('standardFetchSaleEvents');
 await activeMinaInstance();
 await initORM();
+
+
+const periodRange = 1.5 * 60 * 1000
+
+await standardFetchSaleEvents();
+setInterval(standardFetchSaleEvents, periodRange); // exec/1.5mins
+
 // Task:
 
 // 1) fetch the sales that are ongoing
@@ -39,6 +46,7 @@ export async function standardFetchSaleEvents() {
         })) ?? [];
         for (let i = 0; i < presaleList.length; i++) {
             const sale = presaleList[i];
+            logger.info(`saleId: ${sale.id}, saleType: ${SaleType[sale.saleType]}, saleAddress: ${sale.saleAddress}`);
 
             const queryRunner = connection.createQueryRunner();
             try {
@@ -57,6 +65,7 @@ export async function standardFetchSaleEvents() {
                     saleEventFetchRecord.saleAddress = sale.saleAddress;
                     saleEventFetchRecord.blockHeight = 0;
                 }
+                logger.info(`start from blockHeight: ${startBlock}`);
 
                 let tokenzkSaleContract: TokeniZkPresale | TokeniZkFairSale | TokeniZkPrivateSale;
                 let presaleMinaFundHolderContract: PresaleMinaFundHolder;
@@ -77,6 +86,8 @@ export async function standardFetchSaleEvents() {
 
                 for (let i = 0; i < eventList.length; i++) {
                     const e = eventList[i];
+                    logger.info(`e.type: ${e.type}`);
+
                     const blockHeight = Number(e.blockHeight.toBigint());
                     const txHash = e.event.transactionInfo.transactionHash;
 
@@ -127,11 +138,11 @@ export async function standardFetchSaleEvents() {
                         const user = (await queryRunner.manager.findOne(UserTokenSale, {
                             tokenAddress: sale.tokenAddress,
                             saleAddress: sale.saleAddress,
-                            contributorAddress: claimTokenEvent.presaleContribution.contributorAddress.toBase58()
+                            contributorAddress: claimTokenEvent.saleContribution.contributorAddress.toBase58()
                         }))!;
                         user.claimTxHash = txHash;
                         user.redeemOrClaimBlockHeight = blockHeight;
-                        user.claimAmount = claimTokenEvent.presaleContribution.minaAmount.mul(sale.saleRate).toString();
+                        user.claimAmount = claimTokenEvent.saleContribution.minaAmount.mul(sale.saleRate).toString();
 
                         await queryRunner.manager.save(user);
 
@@ -192,5 +203,3 @@ export async function standardFetchSaleEvents() {
     }
 
 }
-
-await standardFetchSaleEvents();

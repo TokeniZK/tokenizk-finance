@@ -1,24 +1,25 @@
-import { PublicKey, Mina, TokenId } from 'o1js';
+import { PublicKey, Mina, TokenId, UInt64, Field, Signature, AccountUpdate } from 'o1js';
 import config from "../lib/config";
 
-import { SaleRollupProver, TokeniZkPrivateSale, SaleRollupProof, SaleParams } from "@tokenizk/contracts";
-import { activeMinaInstance, syncAcctInfo } from '@tokenizk/util';
+import { SaleRollupProver, TokeniZkPrivateSale, SaleRollupProof, SaleParams, WhitelistMembershipMerkleWitness, SaleContributorMembershipWitnessData, PresaleMinaFundHolder, UserLowLeafWitnessData, UserNullifierMerkleWitness } from "@tokenizk/contracts";
+import { activeMinaInstance, syncAcctInfo, syncNetworkStatus } from '@tokenizk/util';
 import { getLogger } from "../lib/logUtils";
+import { ProofTaskType } from '@tokenizk/types';
 
 const logger = getLogger(`pWorker-TokeniZkPrivateSale`);
 
 export { initWorker };
 
-let privateSaleContractCallTimes = 0;
+let contractCallTimes = 0;
 
 function processMsgFromMaster() {
-    process.on('message', async (message: { type: string; payload: any }) => {
+    process.on('message', async (message: { type: ProofTaskType; payload: any }) => {
 
         logger.info(`[WORKER ${process.pid}] running ${message.type}`);
 
         switch (message.type) {
 
-            case `CONTRACT_CALL`:
+            case ProofTaskType.CLIENT_PRIVATESALE_CONTRIBUTE_PROOF_REQ:
                 await execCircuit(message, async () => {
                     const params = {
                         feePayer: PublicKey.fromBase58(message.payload.feePayer),
@@ -26,8 +27,44 @@ function processMsgFromMaster() {
                         tokenAddress: PublicKey.fromBase58(message.payload.tokenAddress),
                         contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
                         methodParams: {
-                            saleParams: SaleParams.fromJSON(message.payload.methodParams.presaleParams) as SaleParams,//??? rm 'as SaleParams'?
-                            saleRollupProof: SaleRollupProof.fromJSON(message.payload.methodParams.presaleRollupProof)
+                            saleParams: SaleParams.fromDto(message.payload.methodParams.saleParams),
+                            membershipMerkleWitness: WhitelistMembershipMerkleWitness.fromJSON({ path: message.payload.methodParams.membershipMerkleWitness.map(m => Field(m)) }),
+                            leafIndex: Field(message.payload.methodParams.leafIndex),
+                            contributorAddress: PublicKey.fromBase58(message.payload.methodParams.contributorAddress),
+                            minaAmount: UInt64.from(message.payload.methodParams.minaAmount),
+                        }
+                    }
+
+                    await syncNetworkStatus();
+                    await syncAcctInfo(params.feePayer);
+                    if (params.feePayer.equals(params.methodParams.contributorAddress).not().toBoolean()) {
+                        await syncAcctInfo(params.methodParams.contributorAddress);
+                    }
+
+                    const tokeniZkSaleZkApp = new TokeniZkPrivateSale(params.contractAddress);
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
+                        tokeniZkSaleZkApp.contribute(params.methodParams.saleParams,
+                            params.methodParams.contributorAddress,
+                            params.methodParams.minaAmount,
+                            params.methodParams.membershipMerkleWitness,
+                            params.methodParams.leafIndex);
+                    });
+                    await tx.prove();
+
+                    return tx;
+                });
+                break;
+
+            case ProofTaskType.PRIVATESALE_CONTRACT_MAINTAIN_CONTRIBUTORS:
+                await execCircuit(message, async () => {
+                    const params = {
+                        feePayer: PublicKey.fromBase58(message.payload.feePayer),
+                        fee: message.payload.fee,
+                        tokenAddress: PublicKey.fromBase58(message.payload.tokenAddress),
+                        contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
+                        methodParams: {
+                            saleParams: SaleParams.fromJSON(message.payload.methodParams.saleParams) as SaleParams,//??? rm 'as SaleParams'?
+                            saleRollupProof: SaleRollupProof.fromJSON(message.payload.methodParams.saleRollupProof)
                         }
                     }
 
@@ -39,8 +76,10 @@ function processMsgFromMaster() {
                     logger.info(`currentIndex1: ${params.methodParams.saleRollupProof.publicOutput.target.currentIndex}`);
                     logger.info(`depositRoot1: ${params.methodParams.saleRollupProof.publicOutput.target.membershipTreeRoot}`);
 
+                    await syncAcctInfo(params.feePayer);
                     await syncAcctInfo(params.contractAddress);// fetch account.
-                    const saleContract = new TokeniZkPrivateSale(params.contractAddress, TokenId.derive(params.tokenAddress));
+
+                    const saleContract = new TokeniZkPrivateSale(params.contractAddress);
 
                     let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
                         saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
@@ -51,12 +90,81 @@ function processMsgFromMaster() {
                 });
                 break;
 
+            case ProofTaskType.CLIENT_PRIVATESALE_CLAIM_PROOF_REQ:
+                await execCircuit(message, async () => {
+                    const params = {
+                        feePayer: PublicKey.fromBase58(message.payload.feePayer),
+                        fee: message.payload.fee,
+                        tokenAddress: PublicKey.fromBase58(message.payload.tokenAddress),
+                        contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
+                        methodParams: {
+                            saleParams: SaleParams.fromDto(message.payload.methodParams.saleParams),
+                            receiverAddress: PublicKey.fromBase58(message.payload.methodParams.receiverAddress),
+                            signature: Signature.fromBase58(message.payload.methodParams.signature),
+                        }
+                    }
+
+                    await syncNetworkStatus();
+                    await syncAcctInfo(params.feePayer);
+                    await syncAcctInfo(params.contractAddress);// fetch account.
+                    const holderAccount = await syncAcctInfo(params.methodParams.receiverAddress);// fetch account.
+
+                    const tokeniZkSaleZkApp = new TokeniZkPrivateSale(params.contractAddress);
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
+                        if (!holderAccount) {
+                            AccountUpdate.fundNewAccount(params.feePayer);
+                        }
+                        tokeniZkSaleZkApp.claim(
+                            params.methodParams.saleParams,
+                            params.methodParams.receiverAddress,
+                            params.methodParams.signature);
+                    });
+                    await tx.prove();
+
+                    return tx;
+                });
+                break;
+
+            case ProofTaskType.CLIENT_PRIVATESALE_REDEEM_FUND_PROOF_REQ:
+                await execCircuit(message, async () => {
+                    const params = {
+                        feePayer: PublicKey.fromBase58(message.payload.feePayer),
+                        fee: message.payload.fee,
+                        tokenAddress: PublicKey.fromBase58(message.payload.tokenAddress),
+                        contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
+                        methodParams: {
+                            saleParams: SaleParams.fromDto(message.payload.methodParams.saleParams),
+                            saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData.fromDTO(message.payload.methodParams.saleContributorMembershipWitnessData),
+                            lowLeafWitness: UserLowLeafWitnessData.fromDTO(message.payload.methodParams.lowLeafWitness),
+                            oldNullWitness: UserNullifierMerkleWitness.fromJSON({ path: message.payload.methodParams.oldNullWitness }),
+                        }
+                    }
+
+                    await syncNetworkStatus();
+                    await syncAcctInfo(params.feePayer);
+                    await syncAcctInfo(params.contractAddress);// fetch account.
+
+                    const tokeniZkSaleZkApp = new TokeniZkPrivateSale(params.contractAddress);
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+                        tokeniZkSaleZkApp.redeem(
+                            params.methodParams.saleParams,
+                            params.methodParams.saleContributorMembershipWitnessData,
+                            params.methodParams.lowLeafWitness,
+                            params.methodParams.oldNullWitness
+                        );
+                        await tx.prove();
+
+                        return tx;
+                    });
+                });
+                break;
+
             default:
                 throw Error(`Unknown message ${message}`);
         }
         logger.info(`[WORKER ${process.pid}] completed ${message.type}`);
 
-        if (++privateSaleContractCallTimes > 6) {// TODO set 6 temporarily
+        if (++contractCallTimes > 6) {// TODO set 6 temporarily
             process.exit(0);
         }
     });

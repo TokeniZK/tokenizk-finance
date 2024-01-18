@@ -6,6 +6,7 @@ import { tokenEndpoint } from "./token";
 import { userEndpoint } from "./user";
 import { witnessEndpoint } from "./witness";
 import { proofReqEndpoint } from "./proof";
+import { networkEndpoint } from "./network";
 
 export const routes: FastifyPlugin = async function (
     instance,
@@ -19,4 +20,5 @@ export const routes: FastifyPlugin = async function (
     instance.register(saleEndpoint);
     instance.register(airdropEndpoint);
     instance.register(proofReqEndpoint);
+    instance.register(networkEndpoint);
 }
