@@ -422,7 +422,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             const factoryAddress = appState.tokeniZkFactoryAddress;
             const basicTokenZkAppAddress = tokenAddress;
 
-            saleDto.saleRate = saleDto.saleRate * (10 ** 9);
             saleDto.maximumBuy = saleDto.maximumBuy * (10 ** 9);
             saleDto.minimumBuy = saleDto.minimumBuy * (10 ** 9);
             saleDto.softCap = saleDto.softCap * (10 ** 9);
@@ -1321,4 +1320,4 @@ const title = computed(() => {
 
 }
 </style>
-@/apis/sale-api
+
