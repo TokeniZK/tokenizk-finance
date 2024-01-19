@@ -136,6 +136,9 @@ const init = async () => {
     saleContributorsDetailDto0.saleDto.saleEndTimeStamp = Date.now() + (saleContributorsDetailDto0.saleDto.endTimestamp - Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000;
     console.log('saleContributorsDetailDto0.saleDto.saleEndTimeStamp:' + saleContributorsDetailDto0.saleDto.saleEndTimeStamp);
 
+    saleContributorsDetailDto0.saleDto.totalContributedMina = saleContributorsDetailDto0.contributorList.reduce<number>((p, c)=> p + Number(c.contributeCurrencyAmount), 0);
+    console.log(`saleContributorsDetailDto.saleDto.totalContributedMina: ${saleContributorsDetailDto0.saleDto.totalContributedMina}`);
+
     transformProjectStatus([saleContributorsDetailDto0.saleDto]);
     calcProjectProgress([saleContributorsDetailDto0.saleDto]);
 
@@ -144,7 +147,6 @@ const init = async () => {
     saleContributorsDetailDto0.saleDto.hardCap = Number((saleContributorsDetailDto0.saleDto.hardCap / (10 ** 9)).toFixed(2));
     saleContributorsDetailDto0.saleDto.minimumBuy = Number((saleContributorsDetailDto0.saleDto.minimumBuy / (10 ** 9)).toFixed(2));
     saleContributorsDetailDto0.saleDto.maximumBuy = Number((saleContributorsDetailDto0.saleDto.maximumBuy / (10 ** 9)).toFixed(2));
-
 
     saleContributorsDetailDto.saleDto = saleContributorsDetailDto0.saleDto;
     saleContributorsDetailDto.contributorList = saleContributorsDetailDto0.contributorList ?? [];
@@ -914,7 +916,7 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
-                                    {{ saleContributorsDetailDto.saleDto.totalSaleSupply }}
+                                    {{ saleContributorsDetailDto.saleDto.totalSaleSupply }} {{ saleContributorsDetailDto.saleDto.tokenSymbol }}
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -954,7 +956,7 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
-                                    {{ saleContributorsDetailDto.saleDto.saleRate }}
+                                    {{ saleContributorsDetailDto.saleDto.saleRate }}x
                                 </el-row>
                             </el-col>
                         </el-row>
