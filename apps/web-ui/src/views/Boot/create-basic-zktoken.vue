@@ -295,9 +295,8 @@ const checkIfDeployed = async () => {
 
                         <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
-
-
                         <el-row class="row-bg">
+
                             <el-col :span="12">
 
                                 <el-form-item label="Token Type" prop="type">
@@ -334,8 +333,10 @@ const checkIfDeployed = async () => {
                                                 upload</em></div>
                                         <template #tip>
                                             <div class="el-upload__tip">
-                                                jpg/png files with a size less than 500kb.
-                                                limit 1 file, new file will cover the old file
+                                                jpg/png files with a size less than 500kb. &nbsp; &nbsp; &nbsp; &nbsp;
+                                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <br>
+                                                limit 1 file , new file will cover the old file
                                             </div>
                                         </template>
                                     </el-upload>
@@ -344,7 +345,7 @@ const checkIfDeployed = async () => {
 
                         </el-row>
 
-                        <el-form-item>
+                        <el-form-item style="margin-top: -30px;">
                             <el-button type="primary" @click="submitForm(ruleFormRef)"
                                 :disabled="hasDeployedYet || !appState.connectedWallet58"> Create
                             </el-button>
@@ -423,7 +424,7 @@ const checkIfDeployed = async () => {
 
     .tokenTable {
         background-color: #fff;
-        padding: 20px;
+        padding: 50px 0 50px 80px;
         border-radius: 10px;
     }
 
