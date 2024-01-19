@@ -244,7 +244,7 @@ const getSearchProjects = async () => {
             contributorsMaintainFlag: 0,
 
             teamName: 'Tokenizk Team',
-            logoUrl: '/src/assets/images/1.png',
+            logoUrl: '/src/assets/images/2.png',
             website: 'https://tokenizk.finance/',
             facebook: 'https://tokenizk.finance/',
             github: 'https://tokenizk.finance/',
@@ -299,7 +299,7 @@ const getSearchProjects = async () => {
             totalContributedMina: 100,
             totalContributorNum: 3,
             teamName: 'Tokenizk Team',
-            logoUrl: '/src/assets/images/1.png',
+            logoUrl: '/src/assets/images/3.png',
             website: 'https://tokenizk.finance/',
             facebook: 'https://tokenizk.finance/',
             github: 'https://tokenizk.finance/',
@@ -382,7 +382,7 @@ onMounted(() => {
 
                 <el-col :span="10">
                     <el-row>
-                        <h2 class="title"> Ongoing Presales</h2>
+                        <h2 class="title"> Hot Presales</h2>
                     </el-row>
                     <el-row>Normal Presale pages work for project team to pre-configure a set of presale
                         rules</el-row>
