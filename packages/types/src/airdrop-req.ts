@@ -4,4 +4,8 @@ export interface AirdropReq {
     airdropName?: string;
     airdropAddress?: string;
     tokenAddress?: string;
+    
+    limit: number,
+    
+    take: number
 }

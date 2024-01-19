@@ -12,5 +12,11 @@ export interface SaleReq {
 
     contributorAddress: string,
 
-    tokenSymbol: string
+    tokenSymbol: string,
+
+    limit: number,
+    
+    take: number,
+
+    queryBriefInfo: boolean
 }
