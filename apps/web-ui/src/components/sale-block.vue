@@ -170,6 +170,8 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
         }
     }
 
