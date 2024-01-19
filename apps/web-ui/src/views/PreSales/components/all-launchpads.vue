@@ -175,7 +175,8 @@ let keyWord = ref('')
 const getSearchProjects = async () => {
     const saleReq = {
         saleType: saleType.value,
-        saleName: keyWord.value
+        saleName: keyWord.value,
+        queryBriefInfo: true
     } as any as SaleReq;
 
     fetchResult = (await querySale(saleReq)) as SaleDtoExtend[];

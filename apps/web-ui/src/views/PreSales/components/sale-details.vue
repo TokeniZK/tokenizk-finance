@@ -9,6 +9,7 @@ import { queryContributorWitnessByUser } from '@/apis/witness-api';
 import { useRoute } from 'vue-router';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 import { fetchAccount, Mina, PrivateKey } from 'o1js';
+import { WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -240,7 +241,7 @@ const buyWithMina = async () => {
         // calc whitelist tree root
         let whitelistWitness: string[] = [];
         let leafIndex = 0;
-        if (saleDto.whitelistMembers?.length > 0 || saleDto.whitelistTreeRoot == '0') {
+        if (saleDto.whitelistMembers?.length > 0 || saleDto.whitelistTreeRoot != WHITELIST_TREE_ROOT.toString()) {
             showLoadingMask({ id: maskId, text: 'constructing whitelist tree...' });
 
             const members: string[] = saleDto.whitelistMembers.trim().split(',');

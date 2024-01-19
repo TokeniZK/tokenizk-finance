@@ -320,7 +320,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 airdropDto.whitelistTreeRoot = '0';
             }
 
-            showLoadingMask({ id: maskId, text: 'generating presale KeyPair ...' });
+            showLoadingMask({ id: maskId, text: 'generating airdrop contract KeyPair ...' });
 
             const tokenKey = PrivateKey.fromBase58(appState.tokeniZkBasicTokenKeyPair?.key!);
             const tokenAddress = appState.tokeniZkBasicTokenKeyPair?.value;
