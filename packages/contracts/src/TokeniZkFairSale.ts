@@ -18,8 +18,12 @@ import {
 } from 'o1js';
 import { STANDARD_TREE_INIT_ROOT_16 } from './constants';
 import { SaleRollupProof } from './sale-rollup-prover';
-import { ContributorsMembershipMerkleWitness, ContributionEvent, SaleContribution, SaleParams, SaleParamsConfigurationEvent, SaleContributorMembershipWitnessData, UserLowLeafWitnessData, UserNullifierMerkleWitness, WhitelistMembershipMerkleWitness } from './sale-models';
-import { ClaimTokenEvent } from './TokeniZkPresale';
+import {
+    ContributorsMembershipMerkleWitness, ContributionEvent, SaleContribution,
+    SaleParams, SaleParamsConfigurationEvent, SaleContributorMembershipWitnessData,
+    UserLowLeafWitnessData, UserNullifierMerkleWitness, WhitelistMembershipMerkleWitness,
+    ClaimTokenEvent, MaintainContributorsEvent
+} from './sale-models';
 import { RedeemAccount } from './TokeniZkUser';
 
 
@@ -37,8 +41,8 @@ export class TokeniZkFairSale extends SmartContract {
             hardCap: UInt64.from(0),// ignored at fair sale
             minimumBuy: UInt64.from(0),
             maximumBuy: UInt64.from(0),
-            startTime: UInt64.from(0),
-            endTime: UInt64.from(0),
+            startTime: UInt32.from(0),
+            endTime: UInt32.from(0),
             cliffTime: UInt32.from(0),
             cliffAmountRate: UInt64.from(0),
             vestingPeriod: UInt32.from(0),
@@ -65,7 +69,7 @@ export class TokeniZkFairSale extends SmartContract {
         configureSaleParams: SaleParamsConfigurationEvent,
         contribute: ContributionEvent,
         claimToken: ClaimTokenEvent,
-
+        maintainContributors: MaintainContributorsEvent,
     }
 
     /**
@@ -101,7 +105,7 @@ export class TokeniZkFairSale extends SmartContract {
     @method
     configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
         // cannot be changed after ('startTime' - 60 * 60 * 1000)
-        this.network.timestamp.assertBetween(saleParams0.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
+        this.network.blockchainLength.requireBetween(saleParams0.startTime.sub(10), UInt32.MAXINT());
 
         // check if  params is aligned with the existing ones
         const hash0 = saleParams0.hash();
@@ -110,7 +114,7 @@ export class TokeniZkFairSale extends SmartContract {
         saleParams0.tokenAddress.assertEquals(saleParams1.tokenAddress);
         saleParams0.totalSaleSupply.assertEquals(saleParams1.totalSaleSupply);
 
-        this.network.timestamp.assertBetween(saleParams1.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
+        this.network.blockchainLength.requireBetween(saleParams1.startTime.sub(10), UInt32.MAXINT());
 
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
@@ -153,7 +157,7 @@ export class TokeniZkFairSale extends SmartContract {
         );
 
         // check network timestamp
-        this.network.timestamp.assertBetween(saleParams.startTime, saleParams.endTime);
+        this.network.blockchainLength.requireBetween(saleParams.startTime, saleParams.endTime);
 
         // check [minimumBuy, maximumBuy]
         minaAmount.assertGreaterThanOrEqual(saleParams.minimumBuy);
@@ -204,7 +208,8 @@ export class TokeniZkFairSale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
+
         // check actionState
         this.account.actionState.assertEquals(
             saleRollupProof.publicOutput.target.currentActionsHash
@@ -225,6 +230,15 @@ export class TokeniZkFairSale extends SmartContract {
         // transfer partial MINA-fee to TokeniZK platform
         // TODO at next version TODO
         ///////////////////////////////////////////////////////
+        this.emitEvent('maintainContributors', new MaintainContributorsEvent({
+            fromActionState0: saleRollupProof.publicOutput.source.currentActionsHash,
+            contributorTreeRoot0: saleRollupProof.publicOutput.source.membershipTreeRoot,
+            totalContributedMina0: saleRollupProof.publicOutput.source.currentMinaAmount,
+
+            fromActionState1: saleRollupProof.publicOutput.target.currentActionsHash,
+            contributorTreeRoot1: saleRollupProof.publicOutput.target.membershipTreeRoot,
+            totalContributedMina1: saleRollupProof.publicOutput.target.currentMinaAmount
+        }));
     }
 
     /**
@@ -244,7 +258,7 @@ export class TokeniZkFairSale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
 
         // check softcap
         const totalMina = this.totalContributedMina.getAndRequireEquals();
@@ -266,7 +280,7 @@ export class TokeniZkFairSale extends SmartContract {
         );
 
         this.emitEvent('claimToken', new ClaimTokenEvent({
-            presaleContribution: saleContribution
+            saleContribution: saleContribution
         }));
     }
 

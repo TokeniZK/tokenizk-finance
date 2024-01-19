@@ -3,8 +3,8 @@ import axios, { AxiosError, type AxiosResponse } from "axios";
 
 // 创建 axios 实例
 export const $httpInstance = axios.create({
-  baseURL: 'http://pcapi-xiaotuxian-front-devtest.itheima.net',
-  timeout: 5000
+    baseURL: import.meta.env.VITE_API_GATEWAY,
+   // timeout: 25000
 })
 
 type ResponseSuccessCallback = (response: AxiosResponse) => void;

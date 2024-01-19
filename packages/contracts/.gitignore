@@ -13,3 +13,7 @@ coverage
 keys
 
 *-private.json
+
+contributors-db
+user-asset-db
+whitelist-db

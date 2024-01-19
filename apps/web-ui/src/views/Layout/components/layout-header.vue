@@ -12,150 +12,151 @@ const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useS
 
 const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
+    console.log(key, keyPath)
 }
 
 const connectWallet = async () => {
-  console.log('connect wallet...');
-  if (!window.mina) {
-    ElMessage({
-      showClose: true,
-      message: 'Please install auro wallet browser extension first.',
-    })
-    return;
-  }
-
-  try {
-    const currentNetwork = await window.mina.requestNetwork();
-    if (appState.minaNetwork !== currentNetwork.name) {
-      ElMessage({
-        showClose: true,
-        message: `Please switch to the correct network (${appState.minaNetwork}) first.`,
-      })
-      return;
+    console.log('connect wallet...');
+    if (!window.mina) {
+        ElMessage({
+            showClose: true,
+            message: 'Please install auro wallet browser extension first.',
+        })
+        return;
     }
 
-    let accounts = await window.mina.requestAccounts();
+    try {
+        const currentNetwork = await window.mina.requestNetwork();
+        if (appState.minaNetwork !== currentNetwork.name) {
+            ElMessage({
+                showClose: true,
+                message: `Please switch to the correct network (${appState.minaNetwork}) first.`,
+            })
+            return;
+        }
 
-    // gen token
-    const { privateKey: tokenKey, publicKey: tokenAddress0 } = await generateTokenKey();
-    appState.tokeniZkBasicTokenKeyPair!.key = tokenKey.toBase58();
-    appState.tokeniZkBasicTokenKeyPair!.value = tokenAddress0.toBase58();
+        let accounts = await window.mina.requestAccounts();
 
-    setConnectedWallet(accounts[0]);
-    chan.postMessage({
-      eventType: WalletEventType.CONNECT,
-      connectedAddress: accounts[0],
-    } as WalletEvent);
-  } catch (err: any) {
-    // if user reject, requestAccounts will throw an error with code and message filed
-    console.error(err);
-    ElMessage({
-      showClose: true,
-      message: `${err.message}`,
-    })
-  }
+        // gen token
+        const { privateKey: tokenKey, publicKey: tokenAddress0 } = await generateTokenKey();
+        console.log(`tokenKey: ${tokenKey.toBase58()}, tokenAddress: ${tokenAddress0.toBase58()}`)
+        appState.tokeniZkBasicTokenKeyPair!.key = tokenKey.toBase58();
+        appState.tokeniZkBasicTokenKeyPair!.value = tokenAddress0.toBase58();
+
+        setConnectedWallet(accounts[0]);
+        chan.postMessage({
+            eventType: WalletEventType.CONNECT,
+            connectedAddress: accounts[0],
+        } as WalletEvent);
+    } catch (err: any) {
+        // if user reject, requestAccounts will throw an error with code and message filed
+        console.error(err);
+        ElMessage({
+            showClose: true,
+            message: `${err.message}`,
+        })
+    }
 };
 
 const disconnect = async () => {
-  setConnectedWallet(null);
-  // window.mina.emitAccountsChanged([]);
-  chan.postMessage({
-    eventType: WalletEventType.DISCONNECT,
-    connectedAddress: undefined,
-  } as WalletEvent);
+    setConnectedWallet(null);
+    // window.mina.emitAccountsChanged([]);
+    chan.postMessage({
+        eventType: WalletEventType.DISCONNECT,
+        connectedAddress: undefined,
+    } as WalletEvent);
 }
 
 </script>
 
 
 <template>
-  <el-row class="LayoutHeader">
-    <el-col :span="24">
+    <el-row class="LayoutHeader">
+        <el-col :span="24">
 
-      <el-menu :default-active="activeIndex" class="el-menu-demo LayoutHeader" mode="horizontal" :ellipsis="false"
-        @select="handleSelect" background-color="#000" active-text-color="#00FFC2">
+            <el-menu :default-active="activeIndex" class="el-menu-demo LayoutHeader" mode="horizontal" :ellipsis="false"
+                @select="handleSelect" background-color="#000" active-text-color="#00FFC2">
 
-        <el-menu-item>
-          <RouterLink class="logo" to="/" alt="Element logo" />
-        </el-menu-item>
+                <el-menu-item>
+                    <RouterLink class="logo" to="/" alt="Element logo" />
+                </el-menu-item>
 
-        <div class="flex-grow" />
-
-
-        <el-menu-item index="1" class="header-category">
-          <router-link to="/">Home</router-link>
-        </el-menu-item>
-
-        <el-sub-menu index="2" text-color="#fff" popper-class="subMenuSecondaryMenu">
-
-          <template #title>
-            <i class="iconfont icon-fire2"></i>
-            <span class="header-title">Hot Sales</span>
-          </template>
-
-          <router-link to="/sales?saleType=0">
-            <el-menu-item index="2-1">
-              PreSales
-            </el-menu-item>
-          </router-link>
-
-          <router-link to="/sales?saleType=1">
-            <el-menu-item index="2-2">
-              Fair Sales
-            </el-menu-item>
-          </router-link>
-
-          <router-link to="/sales?saleType=2">
-            <el-menu-item index="2-3">
-              Private Sales
-            </el-menu-item>
-          </router-link>
-
-        </el-sub-menu>
+                <div class="flex-grow" />
 
 
-        <el-menu-item index="3" class="header-category">
-          <router-link to="/airdrop-list">Airdrop</router-link>
-        </el-menu-item>
+                <el-menu-item index="1" class="header-category">
+                    <router-link to="/">Home</router-link>
+                </el-menu-item>
 
-        <el-sub-menu index="4" class="header-title" popper-class="subMenuSecondaryMenu">
+                <el-sub-menu index="2" text-color="#fff" popper-class="subMenuSecondaryMenu">
 
-          <template #title>
-            <span class="header-title">Boot</span>
-          </template>
+                    <template #title>
+                        <i class="iconfont icon-fire2"></i>
+                        <span class="header-title">Hot Sales</span>
+                    </template>
 
-          <router-link to="/create-zk-token">
-            <el-menu-item index="4-1">
-              Create zkToken
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/sales?saleType=0">
+                        <el-menu-item index="2-1">
+                            PreSales
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/create-sale-launch?saleType=0">
-            <el-menu-item index="4-3">
-              Create PreSales
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/sales?saleType=1">
+                        <el-menu-item index="2-2">
+                            Fair Sales
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/create-sale-launch?saleType=1">
-            <el-menu-item index="4-2">
-              Create Fair Sale
-            </el-menu-item>
-          </router-link>
+                    <router-link to="/sales?saleType=2">
+                        <el-menu-item index="2-3">
+                            Private Sales
+                        </el-menu-item>
+                    </router-link>
 
-          <router-link to="/create-sale-launch?saleType=2">
-            <el-menu-item index="4-4">
-              Create Private Sale
-            </el-menu-item>
-          </router-link>
+                </el-sub-menu>
 
-          <router-link to="/create-new-airdrop">
-            <el-menu-item index="4-5">
-              Create Airdrop
-            </el-menu-item>
-          </router-link>
 
-          <!-- 
+                <el-menu-item index="3" class="header-category">
+                    <router-link to="/airdrop-list">Airdrop</router-link>
+                </el-menu-item>
+
+                <el-sub-menu index="4" class="header-title" popper-class="subMenuSecondaryMenu">
+
+                    <template #title>
+                        <span class="header-title">Boot</span>
+                    </template>
+
+                    <router-link to="/create-zk-token">
+                        <el-menu-item index="4-1">
+                            Create zkToken
+                        </el-menu-item>
+                    </router-link>
+
+                    <router-link to="/create-token-sale?saleType=0">
+                        <el-menu-item index="4-3">
+                            Create PreSales
+                        </el-menu-item>
+                    </router-link>
+
+                    <router-link to="/create-token-sale?saleType=1">
+                        <el-menu-item index="4-2">
+                            Create Fair Sale
+                        </el-menu-item>
+                    </router-link>
+
+                    <router-link to="/create-private-sale?saleType=2">
+                        <el-menu-item index="4-4">
+                            Create Private Sale
+                        </el-menu-item>
+                    </router-link>
+
+                    <router-link to="/create-new-airdrop">
+                        <el-menu-item index="4-5">
+                            Create Airdrop
+                        </el-menu-item>
+                    </router-link>
+
+                    <!-- 
                     <router-link to="/create-lock">
                         <el-menu-item index="4-6">
                             Create Lock
@@ -168,15 +169,15 @@ const disconnect = async () => {
                         </el-menu-item>
                     </router-link>-->
 
-        </el-sub-menu>
+                </el-sub-menu>
 
 
-        <el-menu-item index="5" class="header-category">
-          <router-link to="/wallet"> Wallet</router-link>
-        </el-menu-item>
+                <el-menu-item index="5" class="header-category">
+                    <router-link to="/wallet"> Wallet</router-link>
+                </el-menu-item>
 
 
-        <!-- 
+                <!-- 
                 <el-sub-menu index="6">
                     <template #title>
                         <span class="header-category">About</span>
@@ -263,38 +264,39 @@ const disconnect = async () => {
                 </el-sub-menu>-->
 
 
-        <el-menu-item>
-          <el-row class="mb-4">
+                <el-menu-item>
+                    <el-row class="mb-4">
 
-            <div v-if="appState.connectedWallet58 == null">
-              <el-button type="success" class="ConnectBtn" @click="connectWallet">Connect</el-button>
-            </div>
+                        <div v-if="appState.connectedWallet58 == null" style="padding-top: 2px;">
+                            <el-button type="success" class="ConnectBtn" @click="connectWallet">Connect</el-button>
+                        </div>
 
-            <div v-else class="el-dropdown-link">
+                        <div v-else class="el-dropdown-link">
 
-              <el-dropdown>
+                            <el-dropdown>
 
-                <span class="address--left">
-                  {{ omitAddress(appState.connectedWallet58) }}
-                  <el-icon class="el-icon--right" size="14px">
-                    <arrow-down />
-                  </el-icon>
-                </span>
+                                <span class="address--left">
+                                    {{ omitAddress(appState.connectedWallet58) }}
+                                    <el-icon class="el-icon--right" size="14px">
+                                        <arrow-down />
+                                    </el-icon>
+                                </span>
 
-                <template #dropdown>
-                  <el-dropdown-menu>
+                                <template #dropdown>
 
-                    <el-dropdown-item @click="disconnect">
-                      Disconnect
-                    </el-dropdown-item>
+                                    <el-dropdown-menu style="width: 180px;">
 
-                    <router-link to="/my-launches">
-                      <el-dropdown-item>
-                        my launches
-                      </el-dropdown-item>
-                    </router-link>
+                                        <el-dropdown-item @click="disconnect">
+                                            Disconnect
+                                        </el-dropdown-item>
 
-                    <!-- <el-dropdown-item>
+                                        <router-link to="/my-launches">
+                                            <el-dropdown-item>
+                                                my launches
+                                            </el-dropdown-item>
+                                        </router-link>
+
+                                        <!-- <el-dropdown-item>
                                             <el-button @click="disconnect">Disconnect</el-button>
                                         </el-dropdown-item>
 
@@ -304,96 +306,97 @@ const disconnect = async () => {
                                             </el-dropdown-item>
                                         </router-link> -->
 
-                  </el-dropdown-menu>
-                </template>
+                                    </el-dropdown-menu>
 
-              </el-dropdown>
+                                </template>
 
-            </div>
+                            </el-dropdown>
 
-          </el-row>
-        </el-menu-item>
+                        </div>
 
-      </el-menu>
+                    </el-row>
+                </el-menu-item>
 
-    </el-col>
-  </el-row>
+            </el-menu>
+
+        </el-col>
+    </el-row>
 </template>
 
 <style lang="less" scoped>
 .el-menu-demo {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  width: 100%;
-  height: 70px;
-  color: #fff;
-  background-color: #000;
-
-  .logo {
-    width: 200px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
     height: 70px;
-    background: url("/src/assets/logo.svg") no-repeat right 2px;
-    background-size: 200px 70px;
-  }
-
-  .item {
-    margin-top: 10px;
-    margin-right: 40px;
-  }
-
-  .el-dropdown {
-    margin-top: 13px;
-  }
-
-  .flex-grow {
-    flex-grow: 1;
-  }
-
-  .header-category {
     color: #fff;
-    font-size: 16px;
-    // padding-top: 20px;
-  }
+    background-color: #000;
 
-  .header-category:hover {
-    color: #00FFC2;
-  }
+    .logo {
+        width: 200px;
+        height: 70px;
+        background: url("/src/assets/logo.svg") no-repeat right 2px;
+        background-size: 200px 70px;
+    }
 
-  .header-title {
-    font-size: 16px;
-    color: #fff;
-  }
+    .item {
+        margin-top: 10px;
+        margin-right: 40px;
+    }
 
-  .header-title:hover {
-    color: #00FFC2;
-  }
+    .el-dropdown {
+        margin-top: 13px;
+    }
 
-  .icon-fire2 {
-    color: #F2B535;
-    margin-right: 8px;
-  }
+    .flex-grow {
+        flex-grow: 1;
+    }
 
-  .subMenu-item {
-    background-color: #fff;
-  }
+    .header-category {
+        color: #fff;
+        font-size: 16px;
+        // padding-top: 20px;
+    }
 
-  .ConnectBtn {
-    font-size: 16px;
-    background-color: #00FFC2;
-  }
+    .header-category:hover {
+        color: #00FFC2;
+    }
 
-  .address--left {
-    padding-top: 5px;
-    padding-left: 10px;
-    font-size: 16px;
-    color: #00FFC2;
-  }
+    .header-title {
+        font-size: 16px;
+        color: #fff;
+    }
 
-  .el-icon--right {
-    color: #00FFC2;
-  }
+    .header-title:hover {
+        color: #00FFC2;
+    }
+
+    .icon-fire2 {
+        color: #F2B535;
+        margin-right: 8px;
+    }
+
+    .subMenu-item {
+        background-color: #fff;
+    }
+
+    .ConnectBtn {
+        font-size: 16px;
+        background-color: #00FFC2;
+    }
+
+    .address--left {
+        padding-top: 10px;
+        padding-left: 10px;
+        font-size: 16px;
+        color: #00FFC2;
+    }
+
+    .el-icon--right {
+        color: #00FFC2;
+    }
 
 }
 </style>

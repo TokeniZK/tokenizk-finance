@@ -24,6 +24,11 @@ import { ContributorsMembershipMerkleWitness, SaleContributorMembershipWitnessDa
 import { RedeemAccount } from './TokeniZkUser';
 import { RedeemEvent } from './sale-models';
 
+export class ClaimEvent extends Struct({
+    receiverAddress: PublicKey,
+    minaAmount: UInt64
+}) { }
+
 export class TokeniZkPrivateSale extends SmartContract {
 
     init() {
@@ -38,8 +43,8 @@ export class TokeniZkPrivateSale extends SmartContract {
             hardCap: UInt64.from(0),// no need at private sale
             minimumBuy: UInt64.from(10),
             maximumBuy: UInt64.from(50),
-            startTime: UInt64.from(new Date().getTime()),
-            endTime: UInt64.from(new Date().getTime() + 20 * 5 * 60 * 1000),
+            startTime: UInt32.from(new Date().getTime()),
+            endTime: UInt32.from(new Date().getTime() + 20 * 5 * 60 * 1000),
             cliffTime: UInt32.from(1),// // !!vest project team on recieved MINA!!
             cliffAmountRate: UInt64.from(0),
             vestingPeriod: UInt32.from(1), // default value is 1
@@ -63,6 +68,7 @@ export class TokeniZkPrivateSale extends SmartContract {
     events = {
         configureSaleParams: SaleParamsConfigurationEvent,
         contribute: ContributionEvent,
+        claim: ClaimEvent,
         redeem: RedeemEvent
     }
 
@@ -94,11 +100,13 @@ export class TokeniZkPrivateSale extends SmartContract {
     @method
     configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
         // cannot be changed after ('startTime' - 60 * 60 * 1000)
-        this.network.timestamp.assertBetween(saleParams0.startTime.sub(60 * 60 * 1000), UInt64.MAXINT());
+        this.network.blockchainLength.requireBetween(saleParams0.startTime.sub(10), UInt32.MAXINT());
 
         // check if privateSale params is aligned with the existing ones
         const hash0 = saleParams0.hash();
         const hash1 = saleParams1.hash();
+
+        this.network.blockchainLength.requireBetween(saleParams1.startTime.sub(10), UInt32.MAXINT());
 
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
@@ -138,8 +146,8 @@ export class TokeniZkPrivateSale extends SmartContract {
             saleParams.hash()
         );
 
-        // check startTime
-        this.network.timestamp.assertBetween(saleParams.startTime, saleParams.endTime);
+        // check network timestamp
+        this.network.blockchainLength.requireBetween(saleParams.startTime, saleParams.endTime);
 
         // check [minimumBuy, maximumBuy]
         minaAmount.assertGreaterThanOrEqual(saleParams.minimumBuy);
@@ -190,7 +198,7 @@ export class TokeniZkPrivateSale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
 
         // check actionState
         this.account.actionState.assertEquals(
@@ -209,21 +217,55 @@ export class TokeniZkPrivateSale extends SmartContract {
         this.contributorTreeRoot.set(saleRollupProof.publicOutput.target.membershipTreeRoot);
         this.totalContributedMina.set(saleRollupProof.publicOutput.target.currentMinaAmount);
 
-        // vesting project team's MINA
-        const initialMinimumBalance = saleRollupProof.publicOutput.target.currentMinaAmount;
-        const cliffAmount = UInt64.from(initialMinimumBalance.div(saleParams.cliffAmountRate));
-        this.self.account.timing.set({
-            initialMinimumBalance,
-            cliffTime: saleParams.cliffTime,
-            cliffAmount,
-            vestingPeriod: saleParams.vestingPeriod,
-            vestingIncrement: saleParams.vestingIncrement
-        });
-
         ///////////////////////////////////////////////////////
         // transfer partial MINA-fee to TokeniZK platform
         // TODO at next version TODO
         ///////////////////////////////////////////////////////
+    }
+
+    /**
+     * 
+     * @param saleParams 
+     * @param receiverAddress 
+     * @param signature 
+     */
+    @method
+    claim(saleParams: SaleParams, receiverAddress: PublicKey, signature: Signature) {
+        // check if privateSale params is aligned with the existing ones
+        const hash0 = saleParams.hash();
+        this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
+
+        // check endTime
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
+
+        // check softcap
+        const totalMina = this.totalContributedMina.getAndRequireEquals();
+        totalMina.assertGreaterThanOrEqual(saleParams.softCap); // sub 10 ** -9 MINA, i.e. lessThan softCap
+
+        // TODO consider if need add NONCE as params
+        signature.verify(this.address, [
+            ...saleParams.toFields(),
+            ...receiverAddress.toFields(),
+            ...totalMina.toFields()
+        ]);
+
+        const receiverAddressAccountUpdate = AccountUpdate.createSigned(receiverAddress);
+        // vesting project team's MINA
+        const initialMinimumBalance = totalMina;
+        const cliffAmount = UInt64.from(initialMinimumBalance.mul(saleParams.cliffAmountRate).div(100));
+        const vestingIncrement = UInt64.from(initialMinimumBalance.mul(saleParams.vestingIncrement).div(100));
+        receiverAddressAccountUpdate.account.timing.set({
+            initialMinimumBalance,
+            cliffTime: saleParams.cliffTime,
+            cliffAmount,
+            vestingPeriod: saleParams.vestingPeriod,
+            vestingIncrement
+        });
+
+        this.emitEvent('claim', new ClaimEvent({
+            receiverAddress,
+            minaAmount: totalMina
+        }));
     }
 
     /**
@@ -244,7 +286,7 @@ export class TokeniZkPrivateSale extends SmartContract {
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
         // check endTime
-        this.network.timestamp.assertBetween(saleParams.endTime, UInt64.MAXINT());
+        // this.network.blockchainLength.requireBetween(saleParams.endTime, UInt32.MAXINT());TODO need uncomment here
 
         // check softcap
         const totalMina = this.totalContributedMina.getAndRequireEquals();
@@ -253,13 +295,13 @@ export class TokeniZkPrivateSale extends SmartContract {
         // check membership in contributor tree
         saleContributorMembershipWitnessData.checkMembershipAndAssert(this.contributorTreeRoot.getAndRequireEquals());
 
-        const presaleContribution = saleContributorMembershipWitnessData.leafData;
-        const contributorAddress = presaleContribution.contributorAddress;
-        const minaAmount = presaleContribution.minaAmount;
+        const saleContribution = saleContributorMembershipWitnessData.leafData;
+        const contributorAddress = saleContribution.contributorAddress;
+        const minaAmount = saleContribution.minaAmount;
 
         const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
         redeemAccount.updateState(
-            presaleContribution.hash(),
+            saleContribution.hash(),
             lowLeafWitness,
             oldNullWitness
         );
@@ -267,7 +309,7 @@ export class TokeniZkPrivateSale extends SmartContract {
         this.send({ to: contributorAddress, amount: minaAmount });
 
         this.emitEvent('redeem', new RedeemEvent({
-            saleContribution: presaleContribution
+            saleContribution: saleContribution
         }));
     }
 }

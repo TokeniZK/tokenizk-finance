@@ -35,7 +35,7 @@ const handler: RequestHandler<SaleReq, null> = async function (
         const connection = getConnection();
         const saleRepo = connection.getRepository(Sale)
 
-        const queryBuilder = saleRepo.createQueryBuilder('ps');
+        const queryBuilder = saleRepo.createQueryBuilder('ps').andWhere(`ps.status = 1`);
 
         if (saleReq?.saleType != undefined) {
             queryBuilder.andWhere(`ps.saleType = '${saleReq.saleType}'`);

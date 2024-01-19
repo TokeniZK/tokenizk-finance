@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted,computed, onUpdated } from 'vue'
 import { useStatusStore, type AppState } from "@/stores";
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
@@ -45,19 +45,18 @@ const handleBClick = () => {
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 const checkConnectedWallet = () => {
+
     ElMessage({
         showClose: true,
         type: 'warning',
         message: `Please connect wallet first.`,
-    });
+    }); 
 
 }
 
 
-
 onMounted(() => {
-
-
+ 
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -66,6 +65,11 @@ onMounted(() => {
 })
 
 
+onUpdated(() => {
+    if (appState.connectedWallet58 == '' || appState.connectedWallet58 == null) {
+        handleAClick()
+    }
+})
 
 </script>
 
@@ -96,8 +100,8 @@ onMounted(() => {
 
                 <el-col :span="6">
                     <router-link :to="myContriUrl" :class="{ 'activeMenu': isBSelected }" @click="handleBClick"
-                        v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">My
-                        Contributions</router-link>
+                        v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">My Contributions</router-link>
+                        
                     <div v-else @click="checkConnectedWallet">
                         <span>My Contributions</span>
                     </div>

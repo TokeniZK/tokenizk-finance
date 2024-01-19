@@ -32,10 +32,11 @@ await ctx.initMinaNetwork();
 // ================
 
 // let feePayerKey = Local.testAccounts[0].privateKey;
-let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEkj9pHm1H39RAukSCSFF2SVDknAxsd5GFGt5G7xjcX3gNNzPy5') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
+let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEDgneTyC6VimEUWF4jrreDaR4ntSvJdjw6ckfDQCtMG5aJtMGP') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
 let feePayer = feePayerKey.toPublicKey();
 if (process.env.TEST_ON_BERKELEY === 'true') {
-    await fetchAccount({ publicKey: feePayer });
+    const feePayerAcctInfo = await fetchAccount({ publicKey: feePayer });
+    console.log(JSON.stringify(feePayerAcctInfo));
 }
 
 let tokenFactoryZkAppKey = PrivateKey.random()//PrivateKey.fromBase58('EKFTrkQTUwfnzvC27Gp9zxJhHqSZ4h7oFJuj2ckB6GQnMxS9vZyF') //Local.testAccounts[1].privateKey;

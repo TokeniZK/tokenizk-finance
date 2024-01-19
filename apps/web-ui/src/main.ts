@@ -14,6 +14,7 @@ import 'element-plus/dist/index.css'
 
 // 3、 导入 Icon 图标
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import '@/styles/icon/iconfont/iconfont.css'
 
 import App from './App.vue'
 import router from './router'
@@ -21,7 +22,7 @@ import router from './router'
 import * as buffer from "buffer";
 
 if (typeof (window as any).Buffer === "undefined") {
-    (window as any).Buffer = buffer.Buffer;
+  (window as any).Buffer = buffer.Buffer;
 }
 
 const app = createApp(App)

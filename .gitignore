@@ -59,7 +59,7 @@ typings/
 
 # dotenv environment variables file
 .env
-
+.env.product
 
 # End of https://www.gitignore.io/api/node
 *.tsbuildinfo
@@ -76,8 +76,7 @@ settings.json
 
 packages/types/src/*-schema.json
 
-tokenizk_index_db/
-tokenizk_withdraw_db/
-tokenizk_world_state_db/
+contributors-db/
+indexed-db/
+user-asset-db/
 
-tokenizk-factory-keypair-params.json

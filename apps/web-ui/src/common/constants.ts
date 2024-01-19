@@ -2,8 +2,6 @@ export const CHANNEL_LOG = "log";
 export const CHANNEL_SYNCER = "syncer";
 export const CHANNEL_MINA = "mina";
 
-export const ANOMIX_NETWORK_LOCAL = "anomix_network";
-
 export const MINA = 1000_000_000;
 
 export const EMPTY_PUBLICKEY =
@@ -18,6 +16,8 @@ export enum PageAction {
 export enum WalletEventType {
     ACCOUNTS_CHANGED = "WALLETEVENT_ACCOUNTS_CHANGED",
     NETWORK_INCORRECT = "WALLETEVENT_NETWORK_INCORRECT",
+    DISCONNECT = "WALLETEVENT_DISCONNECT",
+    CONNECT = "WALLETEVENT_CONNECT"
 }
 
 export enum SdkEventType {

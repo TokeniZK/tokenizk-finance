@@ -21,6 +21,7 @@ import {
     Provable,
     UInt32,
     fetchAccount,
+    fetchLastBlock
 } from 'o1js';
 
 import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, AirdropParams, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, UserNullifierMerkleWitness, AirdropClaim } from "../src";
@@ -203,7 +204,11 @@ await ctx.submitTx(tx, {
 console.log('============= deploy TokeniZkAirdrop =============');
 if (process.env.TEST_ON_BERKELEY === 'true') {
     await fetchAccount({ publicKey: basicTokenZkAppAddress });
+    await fetchLastBlock();
 }
+console.log('Mina.activeInstance.getNetworkState(): ' + JSON.stringify(Mina.activeInstance.getNetworkState()));
+
+const currentBlockHeight = Mina.activeInstance.getNetworkState().blockchainLength;
 
 // airdrop whitelist
 let whitelistDB = new Level<string, Buffer>('whitelist-db', { valueEncoding: 'buffer' });
@@ -234,7 +239,7 @@ const airdropParams = new AirdropParams({
     /** 
      * Start time stamp
      */
-    startTime: UInt64.from(new Date().getTime() - 15 * 60 * 1000),
+    startTime: currentBlockHeight,
 
     cliffTime: UInt32.from(1),
     cliffAmountRate: UInt64.from(20),
@@ -297,17 +302,17 @@ if (process.env.TEST_ON_BERKELEY === 'true') {
         console.log(`basicTokenZkAppAddress account: `);
         console.log(JSON.stringify(Mina.getAccount(basicTokenZkAppAddress)));
         console.log();
-    
+
         /*
         console.log(`airdropZkAppAddress account: `);
         console.log(JSON.stringify(Mina.getAccount(airdropZkAppAddress)));
         console.log();
         */
-    
+
         console.log(`airdropZkAppAddress(tokenId) account: `);
         console.log(JSON.stringify(Mina.getAccount(airdropZkAppAddress, tokenId)));
         console.log();
-    
+
         console.log(`redeemAccountZkAppAddress account: `);
         console.log(JSON.stringify(Mina.getAccount(redeemAccountZkAppAddress)));
         console.log();

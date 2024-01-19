@@ -4,11 +4,55 @@ import { onMounted, ref } from "vue";
 import useClientUtils from "./utils/useClientUtils";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { CHANNEL_MINA, WalletEventType, type WalletEvent, type ChainInfoArgs } from "./common";
+import { Mina } from "o1js";
+import { ElMessage } from "element-plus";
+
+Mina.setActiveInstance(
+    Mina.Network({
+        mina: import.meta.env.VITE_MINA_GRAPHQL_URL,
+        archive: import.meta.env.VITE_MINA_ARCHIVE_URL,
+    }));
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 const supportStatus = ref("supported");
-const walletListenerSetted = ref(false);
+
+// init wallet listening
+const chan = new BroadcastChannel(CHANNEL_MINA);
+(window as any)?.mina?.on("accountsChanged", async (accounts: string[]) => {
+    console.log('App - connected account change: ', accounts);
+
+    if (accounts.length === 0) {
+        chan.postMessage({
+            eventType: WalletEventType.ACCOUNTS_CHANGED,
+            connectedAddress: undefined,
+        } as WalletEvent);
+
+        setConnectedWallet(null);
+    } else {
+        chan.postMessage({
+            eventType: WalletEventType.ACCOUNTS_CHANGED,
+            connectedAddress: accounts[0],
+        } as WalletEvent);
+        setConnectedWallet(accounts[0]);
+    }
+});
+
+window.mina?.on('chainChanged', (chainInfo: ChainInfoArgs) => {
+    console.log('App - current chain info: ', chainInfo);
+    if (chainInfo.name !== appState.minaNetwork) {
+        setConnectedWallet(null);
+
+        chan.postMessage({
+            eventType: WalletEventType.NETWORK_INCORRECT,
+        } as WalletEvent);
+
+        ElMessage({
+            showClose: true,
+            message: `Please switch to the correct network (${appState.minaNetwork}) first.`,
+        })
+    }
+});
 
 onMounted(async () => {
     const { getSupportStatus } = useClientUtils();
@@ -23,52 +67,14 @@ onMounted(async () => {
     }
 
     // init appState
-    const minaNetwork = import.meta.env.VITE_MINA_NETWORK;
-    const explorerUrl = import.meta.env.VITE_EXPLORER_URL;
-    const tokeniZkFactory = import.meta.env.VITE_TOKENIZK_FACTORY_ADDR;
-
     appState.connectedWallet58 = null;
-    appState.minaNetwork = minaNetwork;
-    appState.explorerUrl = explorerUrl;
-    appState.tokeniZkFactoryAddress = tokeniZkFactory;
+    appState.minaNetwork = import.meta.env.VITE_MINA_NETWORK;
+    appState.explorerUrl = import.meta.env.VITE_EXPLORER_TX_URL;
+    appState.tokeniZkFactoryAddress = import.meta.VITE_TOKENIZK_FACTORY_ADDR;
 
     // init web workers
     await createRemoteCircuitController();
-    await CircuitControllerState.remoteController?.compileTokeniZkBasicToken();
-
-    // init wallet listening
-    if (!walletListenerSetted.value) {
-        if (window.mina) {
-            const chan = new BroadcastChannel(CHANNEL_MINA);
-            window.mina.on('accountsChanged', (accounts: string[]) => {
-                console.log('App - connected account change: ', accounts);
-
-                if (accounts.length === 0) {
-                    chan.postMessage({
-                        eventType: WalletEventType.ACCOUNTS_CHANGED,
-                        connectedAddress: undefined,
-                    } as WalletEvent);
-                } else {
-                    chan.postMessage({
-                        eventType: WalletEventType.ACCOUNTS_CHANGED,
-                        connectedAddress: accounts[0],
-                    } as WalletEvent);
-                }
-
-            });
-
-            window.mina.on('chainChanged', (chainInfo: ChainInfoArgs) => {
-                console.log('App - current chain info: ', chainInfo);
-                if (chainInfo.chainId !== appState.minaNetwork) {
-                    chan.postMessage({
-                        eventType: WalletEventType.NETWORK_INCORRECT,
-                    } as WalletEvent);
-                }
-            });
-        }
-
-        walletListenerSetted.value = true;
-    }
+    await CircuitControllerState.remoteController?.compileTokeniZkBasicToken()
 
 });
 
@@ -94,9 +100,11 @@ onMounted(async () => {
         Your device or browser is not supported, reason: {{ supportStatus }}
     </div>
 
-    <el-dialog v-model="appState.mask.show" width="30%" :close-on-click-modal="false" :close-on-press-escape="false"
-        :show-close="false">
-        <span>{{ appState.mask.loadingText }}</span>
+    <el-dialog v-model="appState.mask.show" width="30%" :close-on-click-modal="appState.mask.closable"
+        :close-on-press-escape="false" :show-close="false" class="dialog-box">
+        <span style="font-size: 16px;  text-align: center;">{{ appState.mask.loadingText }}</span>
+        <a :href="appState.mask.loadingLink" v-if="appState.mask.loadingLink" class="urlLink" target="_blank">{{
+            appState.mask.loadingLink }}</a>
     </el-dialog>
 </template>
 <style lang="less">
@@ -108,6 +116,7 @@ onMounted(async () => {
         background-color: #fff;
         width: 200px;
         padding: 0;
+        border-radius: 10px;
 
         // 二级菜单中的子选项
         .el-menu-item {
@@ -117,6 +126,7 @@ onMounted(async () => {
             width: 100%;
             font-size: 14px;
             text-align: center;
+            border-radius: 10px;
 
             // 被选择的子选项
             &:not(.is-disabled):hover {
@@ -125,6 +135,14 @@ onMounted(async () => {
                 width: 100%;
                 text-align: center;
             }
+
+        }
+
+        .el-menu-item.is-active {
+            color: #00FFC2 !important;
+            background-color: #E6FFF9 !important;
+            width: 100%;
+            text-align: center;
         }
     }
 
@@ -134,5 +152,20 @@ onMounted(async () => {
         min-height: 112px !important;
     }
 }
-</style>
 
+.dialog-box {
+    border-radius: 25px !important;
+    text-align: center;
+    font-size: 16px;
+    overflow-wrap: break-word;
+
+    .urlLink {
+        cursor: pointer;
+        color: #00c798;
+    }
+}
+
+.el-dialog__body {
+    padding-top: 10px;
+}
+</style>

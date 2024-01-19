@@ -1,4 +1,6 @@
 import { fetchLastBlock } from "o1js";
+import $httpInstance from "./http";
+import type { BaseResponse } from "@tokenizk/types";
 
 
 export const checkTx = async (
@@ -9,7 +11,7 @@ export const checkTx = async (
     // const Blockchain = Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL);
     // Mina.setActiveInstance(Blockchain);
     const maxAttempts = options?.maxAttempts ?? 500;
-    const interval = options?.interval ?? 20000;
+    const interval = options?.interval ?? 60 * 1000;
     let attempts = 0;
     const executePoll = async (
         resolve: () => void,
@@ -46,10 +48,34 @@ export const checkTx = async (
 }
 
 export const syncLatestBlock = async () => {
-    const block = await fetchLastBlock();
-    if (block) {
-        return {
-            blockchainLength: Number(block.blockchainLength.toString())
-        }
+    let block;
+    try {
+        block = await $httpInstance.get<BaseResponse<{ blockchainLength: number }>>('/query-last-block').then(r => {
+            return r.data.data
+        });
+
+    } catch (error) {
+        console.error(error);
     }
+
+    try {
+        /*
+        if (!block || block?.blockchainLength == 0) {
+            block = (await fetchLastBlock()) as any;
+        }
+        */
+
+        if (block) {
+            return {
+                blockchainLength: Number(block.blockchainLength.toString())
+            }
+        }
+
+        return {
+            blockchainLength: 0
+        }
+    } catch (error) {
+        console.error(error);
+    }
+
 }

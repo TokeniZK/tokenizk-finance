@@ -25,8 +25,8 @@ export async function activeMinaInstance() {
          */
 
     const Blockchain = isLocalBlockChain ? Mina.LocalBlockchain({ proofsEnabled: true }) : Mina.Network({
-        mina: 'https://berkeley.minascan.io/graphql',
-        archive: 'https://archive-node-api.p42.xyz/',
+        mina: 'https://proxy.berkeley.minaexplorer.com/graphql', // 'https://berkeley.minascan.io/graphql', // 'http://51.222.10.110/graphql', // 
+        archive: 'https://archive.berkeley.minaexplorer.com/' // 'https://api.minascan.io/archive/berkeley/v1/graphql' //'https://archive-node-api.p42.xyz/' //'http://51.222.10.110:8090',
     });
 
     /*

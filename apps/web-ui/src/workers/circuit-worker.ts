@@ -15,6 +15,7 @@ import {
     LauchpadPlatformParams, SaleParams, PresaleMinaFundHolder,
     SaleContribution, WhitelistMembershipMerkleWitness, RedeemAccount, AirdropParams
 } from "@tokenizk/contracts";
+import { ClientProofReqType, type ClientProveTaskDto } from '@tokenizk/types';
 import { expose } from "comlink";
 
 import tokenizkFactoryKeypairParams from "../../../../packages/contracts/deploy/tokenizk-factory-keypair-params.json";
@@ -25,8 +26,7 @@ import TokeniZkFairSaleVK from "../../../../packages/contracts/deploy/verificati
 import TokeniZkPrivateSaleVK from "../../../../packages/contracts/deploy/verification-keys/TokeniZkPrivateSale-VK.json";
 import TokeniZkAirdropVK from "../../../../packages/contracts/deploy/verification-keys/TokeniZkAirdrop-VK.json";
 import RedeemAccountVK from "../../../../packages/contracts/deploy/verification-keys/RedeemAccount-VK.json";
-import { proofReq, proofResult } from '@/apis/proof-api';
-import { ClientProofReqType, type ClientProveTaskDto } from '@tokenizk/types';
+import { proofReq, checkProofResult } from '@/apis/proof-api';
 // import SaleRollupProverVK from "../../../../packages/contracts/deploy/verification-keys/SaleRollupProver-VK.json";
 
 // Error.stackTraceLimit = Infinity;
@@ -184,7 +184,7 @@ const compileTokeniZkPresale = async () => {
 const compilePresaleMinaFundHolder = async () => {
     try {
 
-        await compileTokeniZkPresale();
+        // await compileTokeniZkPresale();
 
         if (!presaleMinaFundHolderCompiled) {
             console.log('hi, compile PresaleMinaFundHolder.....');
@@ -265,9 +265,10 @@ const compileRedeemAccount = async () => {
 const createBasicToken = async (factoryAddress: string, basicTokenZkAppAddress: string, totalSupply: number,
     feePayerAddress: string, txFee: number) => {
     try {
+        await fetchAccount({ publicKey: feePayerAddress });
+        await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
         if (await compileTokeniZkFactory()) {
-            await fetchAccount({ publicKey: feePayerAddress });
-            await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
+
 
             const feePayer = PublicKey.fromBase58(feePayerAddress);
             const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
@@ -307,11 +308,16 @@ const transferToken = async (basicTokenZkAppAddress: string, from: string, to: s
                 const toAccount = await fetchAccount({ publicKey: PublicKey.fromBase58(to), tokenId: TokenId.derive(PublicKey.fromBase58(basicTokenZkAppAddress)) });
                 if (toAccount.account) {
                     toHasAcct = true;
-                } else if (toAccount.error) {
+                } else if (toAccount.error.statusCode == 404) {
+                    toHasAcct = false;
+                } else {
                     console.error('fetchAccount error...');
+                    return { code: 1, data: undefined, msg: 'fetchAccount error, Please retry later...' }
                 }
             } catch (error) {
                 console.error('fetchAccount error...');
+
+                return { code: 1, data: undefined, msg: 'fetchAccount error, Please retry later...' }
             }
 
             const tx = await Mina.transaction(
@@ -331,12 +337,13 @@ const transferToken = async (basicTokenZkAppAddress: string, from: string, to: s
             const txJson = tx.toJSON();
             console.log('generated tx: ' + txJson);
 
-            return txJson;
+            return { code: 0, data: txJson, msg: '' };
         }
     } catch (error) {
         console.error(error);
     }
-    return null;
+    return { code: 1, data: undefined, msg: 'fetchAccount error, Please retry later...' }
+
 }
 
 const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string, saleAddress: string, saleParams: {
@@ -357,83 +364,83 @@ const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string
 }, feePayerAddress: string, txFee: number) => {
     try {
 
-                // private sale
-                if (saleParams.totalSaleSupply == 0 && await compileTokeniZkFactory()) {//PrivateSale
-                    await fetchAccount({ publicKey: feePayerAddress });
-                    await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
-        
-                    const feePayer = PublicKey.fromBase58(feePayerAddress);
-                    const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
-        
-                    const saleParams1 = SaleParams.fromDto(saleParams);
-                    let tx = await Mina.transaction(
-                        {
-                            sender: feePayer,
-                            fee: txFee,
-                            memo: 'Deploy PrivateSale contract',
-                        },
-                        () => {
-                            AccountUpdate.fundNewAccount(feePayer, 1);
-                            tokenFactoryZkApp.createPrivateSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.privateSaleContractVk, saleParams1);
-                        }
-                    );
-        
-                    await tx.prove();
-        
-                    const txJson = tx.toJSON();
-                    console.log('generated tx: ' + txJson);
-        
-                    return txJson;
-                }
-        
-                // belows are presale & fairsale
-                if (await compileTokeniZkBasicToken()) {
-                    await fetchAccount({ publicKey: feePayerAddress });
-                    await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
-                    await fetchAccount({ publicKey: basicTokenZkAppAddress });
-        
-                    const feePayer = PublicKey.fromBase58(feePayerAddress);
-        
-                    const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(PublicKey.fromBase58(basicTokenZkAppAddress));
-                    const saleParams1 = SaleParams.fromDto(saleParams);
-        
-                    const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
-        
-                    let tx: any;
-                    if (saleParams.softCap == 0) {// Fairsale
-                        tx = await Mina.transaction(
-                            {
-                                sender: feePayer,
-                                fee: txFee,
-                                memo: 'Deploy Fairsale contract',
-                            },
-                            () => {
-                                AccountUpdate.fundNewAccount(feePayer, 1);
-                                tokeniZkBasicTokenZkApp.createFairSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.fairSaleContractVk, saleParams1);
-                            }
-                        );
-        
-                    } else {// presale
-                        tx = await Mina.transaction(
-                            {
-                                sender: feePayer,
-                                fee: txFee,
-                                memo: 'Deploy Presale contract',
-                            },
-                            () => {
-                                AccountUpdate.fundNewAccount(feePayer, 2);
-                                tokeniZkBasicTokenZkApp.createPresale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.presaleContractVk, saleParams1, TokeniZkFactory.presaleMinaFundHolderVk);
-                            }
-                        );
-                    }
-        
-                    await tx.prove();
-        
-                    const txJson = tx.toJSON();
-                    console.log('generated tx: ' + txJson);
-        
-                    return txJson;
-           }
+        // private sale
+        if (saleParams.totalSaleSupply == 0 && await compileTokeniZkFactory()) {//PrivateSale
+            await fetchAccount({ publicKey: feePayerAddress });
+            await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
+
+            const feePayer = PublicKey.fromBase58(feePayerAddress);
+            const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
+
+            const saleParams1 = SaleParams.fromDto(saleParams);
+            let tx = await Mina.transaction(
+                {
+                    sender: feePayer,
+                    fee: txFee,
+                    memo: 'Deploy PrivateSale contract',
+                },
+                () => {
+                    AccountUpdate.fundNewAccount(feePayer, 1);
+                    tokenFactoryZkApp.createPrivateSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.privateSaleContractVk, saleParams1);
+                }
+            );
+
+            await tx.prove();
+
+            const txJson = tx.toJSON();
+            console.log('generated tx: ' + txJson);
+
+            return txJson;
+        }
+
+        // belows are presale & fairsale
+        if (await compileTokeniZkBasicToken()) {
+            await fetchAccount({ publicKey: feePayerAddress });
+            await fetchAccount({ publicKey: TokeniZkFactory.tokeniZkFactoryAddress });
+            await fetchAccount({ publicKey: basicTokenZkAppAddress });
+
+            const feePayer = PublicKey.fromBase58(feePayerAddress);
+
+            const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(PublicKey.fromBase58(basicTokenZkAppAddress));
+            const saleParams1 = SaleParams.fromDto(saleParams);
+
+            const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
+
+            let tx: any;
+            if (saleParams.softCap == 0) {// Fairsale
+                tx = await Mina.transaction(
+                    {
+                        sender: feePayer,
+                        fee: txFee,
+                        memo: 'Deploy Fairsale contract',
+                    },
+                    () => {
+                        AccountUpdate.fundNewAccount(feePayer, 1);
+                        tokeniZkBasicTokenZkApp.createFairSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.fairSaleContractVk, saleParams1);
+                    }
+                );
+
+            } else {// presale
+                tx = await Mina.transaction(
+                    {
+                        sender: feePayer,
+                        fee: txFee,
+                        memo: 'Deploy Presale contract',
+                    },
+                    () => {
+                        AccountUpdate.fundNewAccount(feePayer, 2);
+                        tokeniZkBasicTokenZkApp.createPresale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.presaleContractVk, saleParams1, TokeniZkFactory.presaleMinaFundHolderVk);
+                    }
+                );
+            }
+
+            await tx.prove();
+
+            const txJson = tx.toJSON();
+            console.log('generated tx: ' + txJson);
+
+            return txJson;
+        }
     } catch (error) {
         console.error(error);
     }
@@ -601,14 +608,14 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
         updatedAt: 0,
         createdAt: 0
     };
-    const rs = 1 // await proofReq(clientProveTaskDto);
+    const rs = await proofReq(clientProveTaskDto);
     if (rs > 0) {
         try {
             // setInterval to fetch result back
             //
             //
             //
-            return await proofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
         } catch (error) {
             console.error(error);
         }
@@ -694,7 +701,8 @@ const claimTokensSale = async (
         index: string,
     },
     oldNullWitness0: string[],
-    feePayerAddress: string, txFee: number) => {
+    feePayerAddress: string,
+    txFee: number) => {
 
     let flag = true; // await compileTokeniZkBasicToken();
     //flag = flag && (await compileRedeemAccount());
@@ -731,10 +739,10 @@ const claimTokensSale = async (
     }
 
     const clientProveTaskDto: ClientProveTaskDto = {
-        id: 0,
+        id: undefined as any as number,
         type: saleType,
         params: JSON.stringify(contributeTxParams),
-        result: '',
+        result: undefined as any as string,
         userAddress: feePayerAddress,
         targetAddress: saleAddress,
         tokenAddress,
@@ -743,14 +751,14 @@ const claimTokensSale = async (
         updatedAt: 0,
         createdAt: 0
     };
-    const rs = await proofReq(clientProveTaskDto);
+    const rs = 1;// await proofReq(clientProveTaskDto);
     if (rs > 0) {
         try {
             // setInterval to fetch result back
             //
             //
             //
-            return await proofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
         } catch (error) {
             console.error(error);
         }
@@ -847,26 +855,91 @@ const redeemFunds = async (
         index: string,
     },
     oldNullWitness0: string[],
-    feePayerAddress: string, txFee: number
+    feePayerAddress: string,
+    txFee: number
 ) => {
+    const saleAddressX = PublicKey.fromBase58(saleContributorMembershipWitnessData0.leafData.saleContractAddress);
+    let totalContributedMina = Field(0);
+    let contributorTreeRoot = Field(0);
 
+    let saleType = 0;
     let saleTag = '';
-    let flag = true;
-    flag = flag && (await compileRedeemAccount());
+    let flag = true; //await compileRedeemAccount();
     if (saleParams0.totalSaleSupply == 0) {
-        flag = flag && (await compileTokeniZkPrivatesale());
-        saleTag = 'Presale'
-    } else {
-        flag = flag && (await compileTokeniZkPresale());
+        // flag = flag && (await compileTokeniZkPrivatesale());
         saleTag = 'Privatesale'
+        saleType = ClientProofReqType.PRIVATESALE_REDEEM_FUND;
+
+    } else {
+        // flag = flag && (await compilePresaleMinaFundHolder());
+        saleTag = 'Presale'
+        saleType = ClientProofReqType.PRESALE_REDEEM_FUND;
+
+        const saleAccountInfo = await fetchAccount({ publicKey: saleAddressX, tokenId: Field(saleContributorMembershipWitnessData0.leafData.tokenId) });
+
+        if (saleAccountInfo.error) {
+            return null;
+        }
+
+        totalContributedMina = saleAccountInfo.account.zkapp?.appState[5]!;
+        contributorTreeRoot = saleAccountInfo.account.zkapp?.appState[2]!;
     }
 
+    const saleContribution0 = saleContributorMembershipWitnessData0.leafData;
+    const saleAddress = saleContribution0.saleContractAddress;
+    const tokenAddress = saleContribution0.tokenAddress;
+
+    const lowLeafWitness = lowLeafWitness0;
+    const oldNullWitness = oldNullWitness0;
+    const contributeTxParams = {
+        feePayer: feePayerAddress,
+        fee: txFee,
+        tokenAddress: saleParams0.tokenAddress,
+        contractAddress: saleAddress,
+
+        methodParams: {
+            saleParams: saleParams0,
+            totalContributedMina: totalContributedMina.toString(),
+            contributorTreeRoot: contributorTreeRoot.toString(),
+            saleContributorMembershipWitnessData: saleContributorMembershipWitnessData0,
+            lowLeafWitness,
+            oldNullWitness
+        }
+    }
+
+    const clientProveTaskDto: ClientProveTaskDto = {
+        id: undefined as any as number,
+        type: saleType,
+        params: JSON.stringify(contributeTxParams),
+        result: undefined as any as string,
+        userAddress: feePayerAddress,
+        targetAddress: saleAddress,
+        tokenAddress,
+        txHash: '',
+        status: 0,
+        updatedAt: 0,
+        createdAt: 0
+    };
+    const rs = 1; //await proofReq(clientProveTaskDto);
+    if (rs > 0) {
+        try {
+            // setInterval to fetch result back
+            //
+            //
+            //
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+
+
+    ////////////////////////////
     if (flag) {
         const feePayer = PublicKey.fromBase58(feePayerAddress);
-        await fetchAccount({ publicKey: feePayer });
-
         const redeemAccounAddress = feePayer;
-        await fetchAccount({ publicKey: redeemAccounAddress, tokenId: TokenId.derive(TokeniZkFactory.tokeniZkFactoryAddress) });
+        await fetchAccount({ publicKey: feePayer });
 
         const saleContribution0 = saleContributorMembershipWitnessData0.leafData;
         const saleAddress = PublicKey.fromBase58(saleContribution0.saleContractAddress);
@@ -1000,7 +1073,7 @@ const claimTokensAirdrop = async (
         //
         //
         //
-        return await proofResult({ userAddress: feePayerAddress, targetAddress: airdropAddress0 });
+        return await checkProofResult({ userAddress: feePayerAddress, targetAddress: airdropAddress0 });
     }
 
     const saleTag = 'Airdrop';
@@ -1099,7 +1172,7 @@ const createAirdrop = async (factoryAddress: string, basicTokenZkAppAddress: str
     vestingIncrement: number
 }, feePayerAddress: string, txFee: number) => {
 
-    const flag = await compileTokeniZkAirdrop();
+    const flag = await compileTokeniZkBasicToken();
 
     if (flag) {
         try {
