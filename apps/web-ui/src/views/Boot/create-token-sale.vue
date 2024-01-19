@@ -1032,153 +1032,235 @@ const title = computed(() => {
                                 <!-- 步骤4 -->
                                 <el-row class="row-bg formTable2" v-show="flagX === 3">
                                     <el-col :span="24">
-                                        <el-row class="row-bg">
-                                            <el-col :span="12">Sale name</el-col>
-                                            <el-col :span="12">{{ saleDto.saleName }}</el-col>
-                                        </el-row>
-                                        <el-row>
-                                            <el-col :span="12">Token name</el-col>
-                                            <el-col :span="12">{{ saleDto.tokenSymbol }}</el-col>
-                                        </el-row>
-                                        <el-row>
-                                            <el-col :span="12">Token address</el-col>
-                                            <el-col :span="12">{{ saleDto.tokenAddress }}</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Sale name</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end">
+                                                    {{ saleDto.saleName }}
+                                                </el-row>
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row>
-                                            <el-col :span="12">Sale contract address</el-col>
-                                            <el-col :span="12">{{ saleDto.saleAddress ?? `click 'confirm' to generate`
-                                            }}</el-col>
-                                        </el-row>
-                                        <el-row>
-                                            <el-col :span="12">Sale Supply</el-col>
-                                            <el-col :span="12">{{ saleDto.totalSaleSupply }} {{ saleDto.tokenSymbol
-                                            }}</el-col>
-                                        </el-row>
-                                        <!-- 注意 下面两项 -->
-                                        <el-row>
-                                            <el-col :span="12">Sale currency</el-col>
-                                            <el-col :span="12">{{ saleDto.currency }}</el-col>
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Token name</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end">
+                                                    {{ saleDto.tokenSymbol }}
+                                                </el-row>
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row>
-                                            <el-col :span="12">Sale creation fee</el-col>
-                                            <el-col :span="12">{{ saleDto.feeRate }} {{ saleDto.currency }}</el-col>
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Token address</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.tokenAddress }}</el-row>
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row v-show="saleDto.saleRate">
-                                            <el-col :span="12">Sale Rate</el-col>
-                                            <el-col :span="12">{{ saleDto.saleRate }}</el-col>
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Sale contract address</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.saleAddress ?? `click 'confirm' to
+                                                    generate` }} </el-row>
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row
-                                            :hidden="saleDto.whitelistMembers == null || saleDto.whitelistMembers == ''">
-                                            <el-col :span="12">Sale whitelist</el-col>
-                                            <el-col :span="12">
-                                                <!-- {{ saleDto.whitelistMembers }} -->
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Sale Supply</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.totalSaleSupply }} {{
+                                                    saleDto.tokenSymbol }}</el-row>
+                                            </el-col>
+                                        </el-row>
 
-                                                <div>
-                                                    <el-button text @click="dialogTableVisible = true" type="success"
-                                                        class="whiteListBtn">
-                                                        whilelist
-                                                    </el-button>
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Sale currency</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.currency }}</el-row>
+                                            </el-col>
+                                        </el-row>
 
-                                                    <el-dialog v-model="dialogTableVisible" title="Whilelist Table"
-                                                        style="width:600px">
-                                                        <ul>
-                                                            <el-scrollbar max-height="400px">
-                                                                <li v-for="item in saleDto.whitelistMembers.split(',')"
-                                                                    :key="item.index"
-                                                                    class="whiteListUl scrollbar-demo-item">{{ item }}
-                                                                </li>
-                                                            </el-scrollbar>
-                                                        </ul>
-                                                    </el-dialog>
-                                                </div>
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Sale creation fee</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.feeRate }} {{ saleDto.currency }}
+                                                </el-row>
 
                                             </el-col>
                                         </el-row>
 
-                                        <el-row v-show="saleDto.softCap">
-                                            <el-col :span="12">Softcap</el-col>
-                                            <el-col :span="12">{{ saleDto.softCap }} {{ saleDto.currency }}</el-col>
+                                        <el-row v-show="saleDto.saleRate" justify="space-between" class="table2Line">
+                                            <el-col :span="6">Sale Rate</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.saleRate }} </el-row>
+
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row v-show="saleDto.hardCap">
-                                            <el-col :span="12">HardCap</el-col>
-                                            <el-col :span="12">{{ saleDto.hardCap }} {{ saleDto.currency }}</el-col>
+                                        <el-row :hidden="saleDto.whitelistMembers == null || saleDto.whitelistMembers == ''"
+                                            justify="space-between" class="table2Line">
+                                            <el-col :span="6">Sale whitelist</el-col>
+                                            <el-col :span="17">
+                                                <!-- {{ saleDto.whitelistMembers }} -->
+                                                <el-row justify="end">
+                                                    <div>
+                                                        <el-button text @click="dialogTableVisible = true" type="success"
+                                                            class="whiteListBtn">
+                                                            whilelist
+                                                        </el-button>
+
+                                                        <el-dialog v-model="dialogTableVisible" title="Whilelist Table"
+                                                            style="width:600px">
+                                                            <ul>
+                                                                <el-scrollbar max-height="400px">
+                                                                    <li v-for="item in saleDto.whitelistMembers.split(',')"
+                                                                        :key="item.index"
+                                                                        class="whiteListUl scrollbar-demo-item">{{ item }}
+                                                                    </li>
+                                                                </el-scrollbar>
+                                                            </ul>
+                                                        </el-dialog>
+                                                    </div>
+                                                </el-row>
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row>
-                                            <el-col :span="12">Minimum buy</el-col>
-                                            <el-col :span="12">{{ saleDto.minimumBuy }} {{ saleDto.currency }}</el-col>
+                                        <el-row v-show="saleDto.softCap" justify="space-between" class="table2Line">
+                                            <el-col :span="6">Softcap</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.softCap }} {{ saleDto.currency }}
+                                                </el-row>
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row>
-                                            <el-col :span="12">Maximum buy</el-col>
-                                            <el-col :span="12">{{ saleDto.maximumBuy }} {{ saleDto.currency }}</el-col>
+                                        <el-row v-show="saleDto.hardCap" justify="space-between" class="table2Line">
+                                            <el-col :span="6">HardCap</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.hardCap }} {{ saleDto.currency }}
+                                                </el-row>
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row>
-                                            <el-col :span="12">Start Time(block height)</el-col>
-                                            <el-col :span="12">{{ saleDto.startTimestamp }}</el-col>
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Minimum buy</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.minimumBuy }} {{ saleDto.currency
+                                                }}</el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">End Time(block height)</el-col>
-                                            <el-col :span="12">{{ saleDto.endTimestamp }} </el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Maximum buy</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.maximumBuy }} {{ saleDto.currency
+                                                }}</el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">Liquidity cliffTime</el-col>
-                                            <el-col :span="12">{{ saleDto.cliffTime }} slots (about {{ dynamicalCliffTime
-                                            }} minutes )</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Start Time(block height)</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.startTimestamp }} </el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">Liquidity cliffAmountRate(%)</el-col>
-                                            <el-col :span="12">{{ saleDto.cliffAmountRate }}%</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">End Time(block height)</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.endTimestamp }} </el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">Liquidity vestingPeriod</el-col>
-                                            <el-col :span="12">{{ saleDto.vestingPeriod }} slots (about
-                                                {{ dynamicalVestingPeriod }} minutes )</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Liquidity cliffTime</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.cliffTime }} slots (about {{
+                                                    dynamicalCliffTime }} minutes ) </el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">Liquidity vestingIncrement</el-col>
-                                            <el-col :span="12">{{ saleDto.vestingIncrement }}%</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Liquidity cliffAmountRate(%)</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.cliffAmountRate }}% </el-row>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Liquidity vestingPeriod</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end">
+                                                    {{ saleDto.vestingPeriod }} slots (about
+                                                    {{ dynamicalVestingPeriod }} minutes )
+                                                </el-row>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Liquidity vestingIncrement</el-col>
+                                            <el-col :span="17" style=" overflow-wrap: break-word;">
+                                                <el-row justify="end"> {{ saleDto.vestingIncrement }}% </el-row>
+                                            </el-col>
                                         </el-row>
 
 
-                                        <el-row>
-                                            <el-col :span="12">logoUrl</el-col>
-                                            <el-col :span="12">{{ saleDto.logoUrl }}</el-col>
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">logoUrl</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.logoUrl }} </el-row>
+                                            </el-col>
                                         </el-row>
 
-                                        <el-row>
-                                            <el-col :span="12">Website</el-col>
-                                            <el-col :span="12">{{ saleDto.website }}</el-col>
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">Website</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.website }} </el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">facebook</el-col>
-                                            <el-col :span="12">{{ saleDto.facebook }}</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">facebook</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.facebook }} </el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">github</el-col>
-                                            <el-col :span="12">{{ saleDto.github }}</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">github</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.github }} </el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">twitter</el-col>
-                                            <el-col :span="12">{{ saleDto.twitter }}</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">twitter</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.twitter }}</el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">telegram</el-col>
-                                            <el-col :span="12">{{ saleDto.telegram }}</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">telegram</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.telegram }} </el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">discord</el-col>
-                                            <el-col :span="12">{{ saleDto.discord }}</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">discord</el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.discord }} </el-row>
+                                            </el-col>
                                         </el-row>
-                                        <el-row>
-                                            <el-col :span="12">reddit</el-col>
-                                            <el-col :span="12">{{ saleDto.reddit }}</el-col>
+
+                                        <el-row justify="space-between" class="table2Line">
+                                            <el-col :span="6">
+                                                <el-row>reddit</el-row>
+                                            </el-col>
+                                            <el-col :span="17">
+                                                <el-row justify="end"> {{ saleDto.reddit }} </el-row>
+                                            </el-col>
                                         </el-row>
 
                                     </el-col>
@@ -1270,7 +1352,7 @@ const title = computed(() => {
 
     .formTable2 {
         background-color: #fff;
-        padding: 20px;
+        padding: 40px;
         border-radius: 10px;
 
         .whiteListBtn {
@@ -1298,10 +1380,16 @@ const title = computed(() => {
             border-radius: 4px;
         }
 
-        .el-row {
+        .table2Line {
             border-bottom: 1px solid #e6e6e6;
+
+            .el-row {
+                margin-bottom: 0;
+            }
         }
     }
+
+
 
     .el-form-item__label {
         width: 100px;
