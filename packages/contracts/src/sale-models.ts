@@ -78,12 +78,12 @@ export class SaleParams extends Struct({
     /** 
      * Start time stamp
      */
-    startTime: UInt32,
+    startTime: UInt64,
 
     /**
      * End time stamp
      */
-    endTime: UInt32,
+    endTime: UInt64,
 
     cliffTime: UInt32,
     cliffAmountRate: UInt64,
@@ -180,10 +180,10 @@ export class SaleParams extends Struct({
             maximumBuy: UInt64.from(dto.maximumBuy),
 
 
-            startTime: UInt32.from(dto.startTime),
+            startTime: UInt64.from(dto.startTime),
 
 
-            endTime: UInt32.from(dto.endTime),
+            endTime: UInt64.from(dto.endTime),
 
             cliffTime: UInt32.from(dto.cliffTime),
             cliffAmountRate: UInt64.from(dto.cliffAmountRate),

@@ -16,6 +16,7 @@ import {
 import { VestingParams, WhitelistMembershipMerkleWitness, UserLowLeafWitnessData, UserNullifierMerkleWitness } from './sale-models';
 import { RedeemAccount } from './TokeniZkUser';
 import { TokeniZkFactory } from './TokeniZkFactory';
+import { WHITELIST_TREE_ROOT } from './constants';
 
 
 export class AirdropParams extends Struct({
@@ -33,7 +34,7 @@ export class AirdropParams extends Struct({
     /** 
      * Start time stamp
      */
-    startTime: UInt32,
+    startTime: UInt64,
 
     cliffTime: UInt32,
     cliffAmountRate: UInt64,
@@ -88,7 +89,7 @@ export class AirdropParams extends Struct({
 
             whitelistTreeRoot: Field(dto.whitelistTreeRoot),
 
-            startTime: UInt32.from(dto.startTime),
+            startTime: UInt64.from(dto.startTime),
 
             cliffTime: UInt32.from(dto.cliffTime),
             cliffAmountRate: UInt64.from(dto.cliffAmountRate),
@@ -194,11 +195,15 @@ export class TokeniZkAirdrop extends SmartContract {
         existingHash.assertEquals(hash0);
 
         // check startTime
-        this.network.blockchainLength.requireBetween(airdropParams.startTime, UInt32.MAXINT());
+        // ~this.network.blockchainLength.requireBetween(airdropParams.startTime, UInt32.MAXINT());
+        this.network.timestamp.requireBetween(airdropParams.startTime, UInt64.MAXINT());
 
         // check whitelist
-        membershipMerkleWitness.calculateRoot(Poseidon.hash(this.sender.toFields()), leafIndex)
-            .assertEquals(airdropParams.whitelistTreeRoot);
+        const leaf = Provable.if(
+            airdropParams.whitelistTreeRoot.equals(WHITELIST_TREE_ROOT),
+            Field(0),
+            Poseidon.hash(this.sender.toFields()))
+        membershipMerkleWitness.calculateRoot(leaf, leafIndex).assertEquals(airdropParams.whitelistTreeRoot);
 
         const tokenAmount = airdropParams.totalAirdropSupply.div(airdropParams.totalMembersNumber);
         Provable.log('airdropClaim.tokenAmount: ', tokenAmount);

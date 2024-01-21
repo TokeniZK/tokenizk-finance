@@ -19,7 +19,8 @@ import {
     VerificationKey,
     PrivateKey,
     fetchAccount,
-    Mina
+    Mina,
+    fetchLastBlock
 } from 'o1js';
 import { INDEX_TREE_INIT_ROOT_8, getTestContext } from '../src';
 
@@ -27,9 +28,13 @@ import { INDEX_TREE_INIT_ROOT_8, getTestContext } from '../src';
 const ctx = getTestContext();
 await ctx.initMinaNetwork();
 // ================
+const lastBlock = await fetchLastBlock();
+
+console.log(`lastBlock: ${JSON.stringify(lastBlock)}`);
+
 
 // let feePayerKey = Local.testAccounts[0].privateKey;
-let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEm81DLyU44Gpu4egbX9g1zgrVS7NnGCcbNZYGrKiG4XRQacKRK') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
+let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEDgneTyC6VimEUWF4jrreDaR4ntSvJdjw6ckfDQCtMG5aJtMGP') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
 let feePayer = feePayerKey.toPublicKey();
 
 if (process.env.TEST_ON_BERKELEY === 'true') {

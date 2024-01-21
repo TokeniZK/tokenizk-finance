@@ -379,7 +379,8 @@ export class TokeniZkFactory extends SmartContract {
         saleParams.saleRate.assertEquals(UInt64.from(0));// no need at private sale
         saleParams.hardCap.assertLessThanOrEqual(saleParams.softCap.mul(4));
         saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
-        saleParams.startTime.assertLessThan(saleParams.endTime);
+        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 3 * 60 * 1000));
+
         saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
 
