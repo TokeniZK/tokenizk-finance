@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "lib:dev": "npm run lib:build && (concurrently \"tsc --build tsconfig.json --watch\" \"tsc-alias -w\")",
-    "lib:gen-schema": "npm run gen-schema-client-prove-task-dto && npm run gen-schema-airdrop-req && npm run gen-schema-airdrop-dto && npm run gen-schema-airdrop-user-dto && npm run gen-schema-airdrop-claimer-dto && npm run gen-schema-airdrop-claimers-detail-dto && npm run gen-schema-user-contribution-dto && npm run gen-schema-sale-req && npm run gen-schema-sale-contribution-dto  && npm run gen-schema-sale-dto && npm run gen-schema-token-dto && npm run gen-schema-sale-user-dto && npm run gen-schema-user-redeem-claim-witness-dto && npm run gen-schema-merkle-proof-dto && npm run gen-schema-proof-task-dto ",
+    "lib:gen-schema": "npm run gen-schema-user-token-transfer-dto && npm run gen-schema-client-prove-task-dto && npm run gen-schema-airdrop-req && npm run gen-schema-airdrop-dto && npm run gen-schema-airdrop-user-dto && npm run gen-schema-airdrop-claimer-dto && npm run gen-schema-airdrop-claimers-detail-dto && npm run gen-schema-user-contribution-dto && npm run gen-schema-sale-req && npm run gen-schema-sale-contribution-dto  && npm run gen-schema-sale-dto && npm run gen-schema-token-dto && npm run gen-schema-sale-user-dto && npm run gen-schema-user-redeem-claim-witness-dto && npm run gen-schema-merkle-proof-dto && npm run gen-schema-proof-task-dto ",
     "lib:build": "npm run lib:clean && npm run lib:gen-schema && tsc --build tsconfig.json && tsc-alias",
     "lib:clean": "rimraf ./dist ./dist_es ./tsconfig.es.tsbuildinfo ./tsconfig.tsbuildinfo",
     "lib:lint": "eslint \"src/**/*.ts\" --fix",
@@ -27,7 +27,9 @@
     "gen-schema-airdrop-user-dto": "npx typescript-json-schema --refs false ./src/airdrop-user-dto.ts AirdropUserDto -o ./src/airdrop-user-dto-schema.json",
     "gen-schema-airdrop-claimer-dto": "npx typescript-json-schema --refs false ./src/airdrop-claimer-dto.ts AirdropClaimerDto -o ./src/airdrop-claimer-dto-schema.json",
     "gen-schema-airdrop-claimers-detail-dto": "npx typescript-json-schema --refs false ./src/airdrop-claimers-detail-dto.ts AirdropClaimersDetailDto -o ./src/airdrop-claimers-detail-dto-schema.json",
-    "gen-schema-client-prove-task-dto": "npx typescript-json-schema --refs false ./src/client-prove-task-dto.ts ClientProveTaskDto -o ./src/client-prove-task-dto-schema.json"
+    "gen-schema-client-prove-task-dto": "npx typescript-json-schema --refs false ./src/client-prove-task-dto.ts ClientProveTaskDto -o ./src/client-prove-task-dto-schema.json",
+    "gen-schema-user-token-transfer-dto": "npx typescript-json-schema --refs false ./src/user-token-transfer-dto.ts UserTokenTransferDto -o ./src/user-token-transfer-dto-schema.json"
+
   },
   "peerDependencies": {
     "o1js": "0.15.1"
