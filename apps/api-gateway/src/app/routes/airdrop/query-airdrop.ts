@@ -73,7 +73,8 @@ const handler: RequestHandler<AirdropReq, null> = async function (
             if (tokenList.length > 0) {
                 airdropList.forEach(p => {
                     const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-                    (p as any as AirdropDto).tokenSymbol = token.symbol
+                    (p as any as AirdropDto).tokenSymbol = token.symbol;
+                    (p as any as AirdropDto).teamName = token.name
                 })
             }
         }

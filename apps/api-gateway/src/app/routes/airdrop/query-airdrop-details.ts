@@ -50,7 +50,8 @@ const handler: RequestHandler<AirdropReq, null> = async function (
                 address: airdrop.tokenAddress
             }
         }))!;
-        (airdrop as any as AirdropDto).tokenSymbol = token.symbol
+        (airdrop as any as AirdropDto).tokenSymbol = token.symbol;
+        (airdrop as any as AirdropDto).teamName = token.name
 
         const userTokenAirdropRepo = connection.getRepository(UserTokenAirdrop)
         const userTokenAirdropList = await userTokenAirdropRepo.find({
