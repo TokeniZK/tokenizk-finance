@@ -18,19 +18,6 @@ const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useS
 
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(async () => {
-
-    if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
-        appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
-        appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
-    }
-
-    const currentBlockHeight = appState.latestBlockInfo!.blockchainLength;
-    console.log(`currentBlockHeight: ${currentBlockHeight}`);
-
-    airdropDtoRef.airdropStartTimeStamp = Date.now() + (airdropDtoRef.startTimestamp - currentBlockHeight) * (3 * 60 * 1000)
-
-    console.log(`airdropDtoRef.airdropStartTimeStamp: ${airdropDtoRef.airdropStartTimeStamp}`);
-
 });
 
 onUpdated(() => {
@@ -77,13 +64,13 @@ const toDetailPage = `/airdrop-datails?airdropAddress=${airdropDtoRef.airdropAdd
                 </el-row>
 
                 <el-row class="row-bg" justify="space-between"
-                    v-if="airdropDtoRef.airdropStartTimeStamp - Date.now() >= 10 * 1000">
+                    v-if="airdropDtoRef.startTimestamp - Date.now() >= 10 * 1000">
                     <el-col :span="6">
                         <el-row style="padding-top: 8px;">Begin in :</el-row>
                     </el-col>
                     <el-col :span="17">
                         <el-row justify="end">
-                            <el-countdown format="DD [days] HH:mm:ss" :value="airdropDtoRef.airdropStartTimeStamp"
+                            <el-countdown format="DD [days] HH:mm:ss" :value="airdropDtoRef.startTimestamp"
                                 value-style="font-size: 14px;">
                             </el-countdown>
                         </el-row>

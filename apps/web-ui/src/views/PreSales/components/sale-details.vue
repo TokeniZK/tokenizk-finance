@@ -29,16 +29,11 @@ const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
     let currentTime = new Date().getTime();
 
     itmes.forEach(item => {
-
-        console.log('currentTime: ' + currentTime)
-        console.log('item.saleStartTimeStamp: ' + item.saleStartTimeStamp)
-        console.log('item.saleEndTimeStamp: ' + item.saleEndTimeStamp)
-
-        if (item.saleStartTimeStamp > currentTime) {
+        if (item.startTimestamp > currentTime) {
             item.projectStatus = 'Upcoming'
-        } else if (item.saleStartTimeStamp <= currentTime && currentTime < item.saleEndTimeStamp) {
+        } else if (item.startTimestamp <= currentTime && currentTime < item.endTimestamp) {
             item.projectStatus = 'Ongoing'
-        } else if (item.saleEndTimeStamp <= currentTime) {
+        } else if (item.endTimestamp <= currentTime) {
             item.projectStatus = 'Ended'
         } else {
             item.projectStatus = 'All Status'
@@ -78,7 +73,7 @@ const ifSaleEnded = ref(false);
 const checkSaleStatusDynamically = () => {
     const currentTime = new Date().getTime();
     [saleContributorsDetailDto.saleDto].forEach((item: SaleDtoExtend) => {
-        if (item.saleEndTimeStamp <= currentTime) { // endTimestamp 已结束
+        if (item.endTimestamp <= currentTime) { // endTimestamp 已结束
 
             ifSaleEnded.value = true;
             if (item.totalContributedMina >= item.softCap) {// claim tokens
@@ -131,14 +126,15 @@ const init = async () => {
         appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
     }
 
+    /*
     saleContributorsDetailDto0.saleDto.saleStartTimeStamp = Date.now() + (saleContributorsDetailDto0.saleDto.startTimestamp - Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000;
     console.log('saleContributorsDetailDto0.saleDto.saleStartTimeStamp:' + saleContributorsDetailDto0.saleDto.saleStartTimeStamp);
 
     saleContributorsDetailDto0.saleDto.saleEndTimeStamp = Date.now() + (saleContributorsDetailDto0.saleDto.endTimestamp - Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000;
     console.log('saleContributorsDetailDto0.saleDto.saleEndTimeStamp:' + saleContributorsDetailDto0.saleDto.saleEndTimeStamp);
 
+    */
     saleContributorsDetailDto0.saleDto.totalContributedMina = saleContributorsDetailDto0.contributorList.reduce<number>((p, c)=> p + Number(c.contributeCurrencyAmount), 0);
-    console.log(`saleContributorsDetailDto.saleDto.totalContributedMina: ${saleContributorsDetailDto0.saleDto.totalContributedMina}`);
 
     transformProjectStatus([saleContributorsDetailDto0.saleDto]);
     calcProjectProgress([saleContributorsDetailDto0.saleDto]);
@@ -1034,8 +1030,7 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
-                                    {{ saleContributorsDetailDto.saleDto.startTimestamp }} (about {{ new
-                                        Date(saleContributorsDetailDto.saleDto.saleStartTimeStamp) }})
+                                    {{ new Date(saleContributorsDetailDto.saleDto.startTimestamp) }}
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1048,8 +1043,7 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
-                                    {{ saleContributorsDetailDto.saleDto.endTimestamp }} (about {{ new
-                                        Date(saleContributorsDetailDto.saleDto.saleEndTimeStamp) }})
+                                    {{ new Date(saleContributorsDetailDto.saleDto.endTimestamp) }}
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1224,9 +1218,9 @@ onUnmounted(() => {
                     </el-row>
 
                     <el-row class="countdown">
-                        <el-col v-if="saleContributorsDetailDto.saleDto.saleStartTimeStamp > ((new Date()).getTime())">
+                        <el-col v-if="saleContributorsDetailDto.saleDto.startTimestamp > ((new Date()).getTime())">
                             <el-countdown format="DD [days] HH:mm:ss"
-                                :value="saleContributorsDetailDto.saleDto.saleStartTimeStamp"
+                                :value="saleContributorsDetailDto.saleDto.startTimestamp"
                                 @finish="countdownFinishCallback">
                                 <template #title>
                                     <div style="display: inline-flex; align-items: center">Start of Sale</div>
@@ -1235,7 +1229,7 @@ onUnmounted(() => {
                         </el-col>
                         <el-col v-else>
                             <el-countdown format="DD [days] HH:mm:ss"
-                                :value="saleContributorsDetailDto.saleDto.saleEndTimeStamp"
+                                :value="saleContributorsDetailDto.saleDto.endTimestamp"
                                 @finish="countdownFinishCallback">
                                 <template #title>
                                     <div style="display: inline-flex; align-items: center">End of Sale</div>

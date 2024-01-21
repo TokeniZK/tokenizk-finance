@@ -19,7 +19,7 @@ import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 
-type SaleDtoExtend = SaleDto & { saleStartTimeStamp: number, saleEndTimeStamp: number }
+type SaleDtoExtend = SaleDto ;// & { saleStartTimeStamp: number, saleEndTimeStamp: number }
 
 const upload = ref<UploadInstance>()
 
@@ -62,8 +62,8 @@ let saleDtoInit: SaleDtoExtend = {
     hardCap: null as any as number,
     minimumBuy: null as any as number,
     maximumBuy: null as any as number,
-    startTimestamp: 0,
-    endTimestamp: 0,
+    startTimestamp: Date.now(),
+    endTimestamp: Date.now() + 10 * 3 * 60 * 1000,
     cliffTime: null as any as number,
     cliffAmountRate: null as any as number,
     vestingPeriod: null as any as number,
@@ -72,8 +72,6 @@ let saleDtoInit: SaleDtoExtend = {
     contributorsTreeRoot: null as any as string,
     totalContributorNum: 0,
     contributorsMaintainFlag: 0,
-    saleStartTimeStamp: 0,
-    saleEndTimeStamp: 0,
     logoUrl: '',
     website: '',
     facebook: '',
@@ -112,41 +110,49 @@ const ruleFormRef = ref<FormInstance>()
 let saleDto = reactive<SaleDtoExtend>(saleDtoInit)
 let tokenDto = reactive<TokenDto>(tokenDtoInit)
 
-let saleStartDateTime = ref(new Date());
-let startTargetBlockHeight = ref(0);
+// let saleStartDateTime = ref(new Date());
+// let startTargetBlockHeight = ref(0);
 const changeSaleStartDateTime = async (choosedDate: number) => {
+    /*
     if (!choosedDate) {
         choosedDate = Date.now();
     }
     const maskId = 'changeSaleStartDateTime';
     showLoadingMask({ id: maskId, text: 'fetching latest block...' });
     try {
+        
         if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
             appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
             appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
         }
         startTargetBlockHeight.value = appState.latestBlockInfo!.blockchainLength + Math.floor((choosedDate - Date.now()) / (3 * 60 * 1000)) + 1;
         saleDto.startTimestamp = startTargetBlockHeight.value;
-
-        saleDto.saleStartTimeStamp = Date.now() + (saleDto.startTimestamp - Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000;
-        console.log('saleDto.saleStartTimeStamp:' + saleDto.saleStartTimeStamp);
-
+        
+        // saleDto.saleStartTimeStamp = Date.now() + (saleDto.startTimestamp - Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000;
+        // console.log('saleDto.saleStartTimeStamp:' + saleDto.saleStartTimeStamp);
+        
     } catch (error) {
         ElMessage.error({ message: 'fetching latest block failed' });
     }
 
     closeLoadingMask(maskId);
+    */
+
+    saleDto.startTimestamp = choosedDate;
+
 }
 
-let saleEndDateTime = ref(new Date());
-let endTargetBlockHeight = ref(0);
+// let saleEndDateTime = ref(new Date());
+// let endTargetBlockHeight = ref(0);
 const changeSaleEndDateTime = async (choosedDate: number) => {
+    /*
     if (!choosedDate) {
         choosedDate = Date.now();
     }
     const maskId = 'changeSaleEndDateTime';
     showLoadingMask({ id: maskId, text: 'fetching latest block...' });
     try {
+        
         if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
             appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
             appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
@@ -157,11 +163,15 @@ const changeSaleEndDateTime = async (choosedDate: number) => {
 
         saleDto.saleEndTimeStamp = Date.now() + (saleDto.endTimestamp - Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000;
         console.log('saleDto.saleEndTimeStamp:' + saleDto.saleEndTimeStamp);
+
     } catch (error) {
         ElMessage.error({ message: 'fetching latest block failed' });
     }
 
     closeLoadingMask(maskId);
+    */
+
+    saleDto.endTimestamp = choosedDate;
 }
 const zkTxLinkPrefix = ref(import.meta.env.VITE_EXPLORER_TX_URL);
 
@@ -581,10 +591,6 @@ const nextX = () => {
     if (flagX.value >= 3) {
         flagX.value = 3
     } else {
-
-        console.log(`saleDto.saleStartTimeStamp: ${saleDto.saleStartTimeStamp}`);
-        console.log(`saleDto.saleEndTimeStamp: ${saleDto.saleEndTimeStamp}`);
-
         flagX.value++
         goToTop()
     }
@@ -847,20 +853,20 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="12">
                                                 <el-form-item label="Start Time" required style="width: 100%">
-                                                    <el-date-picker v-model="saleStartDateTime" type="datetime"
+                                                    <el-date-picker v-model="saleDto.startTimestamp" type="datetime"
                                                         placeholder="Pick a Date" format="YYYY/MM/DD HH:mm:ss"
                                                         value-format="x" @change="changeSaleStartDateTime" />
-                                                    <div v-if="startTargetBlockHeight != 0">(start at blockHeight: {{
-                                                        startTargetBlockHeight }})</div>
+                                                    <!-- <div v-if="startTargetBlockHeight != 0">(start at blockHeight: {{
+                                                        startTargetBlockHeight }})</div> -->
                                                 </el-form-item>
                                             </el-col>
                                             <el-col :span="12">
                                                 <el-form-item label="End Time" required style="width: 100%">
-                                                    <el-date-picker v-model="saleEndDateTime" type="datetime"
+                                                    <el-date-picker v-model="saleDto.endTimestamp" type="datetime"
                                                         placeholder="Pick a Date" format="YYYY/MM/DD HH:mm:ss"
                                                         value-format="x" @change="changeSaleEndDateTime" />
-                                                    <div v-if="endTargetBlockHeight != 0">(End at blockHeight: {{
-                                                        endTargetBlockHeight }})</div>
+                                                    <!-- <div v-if="endTargetBlockHeight != 0">(End at blockHeight: {{
+                                                        endTargetBlockHeight }})</div> -->
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -1117,12 +1123,12 @@ const title = computed(() => {
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Start Time(block height)</el-col>
-                                            <el-col :span="12">{{ saleDto.startTimestamp }}</el-col>
+                                            <el-col :span="12">Start Time</el-col>
+                                            <el-col :span="12">{{ new Date(saleDto.startTimestamp) }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">End Time(block height)</el-col>
-                                            <el-col :span="12">{{ saleDto.endTimestamp }} </el-col>
+                                            <el-col :span="12">End Time</el-col>
+                                            <el-col :span="12">{{ new Date(saleDto.endTimestamp) }} </el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">Liquidity cliffTime</el-col>

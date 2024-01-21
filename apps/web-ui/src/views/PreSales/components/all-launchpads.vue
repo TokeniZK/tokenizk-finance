@@ -109,26 +109,22 @@ const inputChangeTigger = async () => {
 }
 
 // 转换项目的状态
-const transformProjectStatus = async (itmes: SaleDtoExtend[]) => {
+const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
+    let currentTime = new Date().getTime();
 
-    if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
-        appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
-        appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
-    }
-
-    const currentBlockHeight = appState.latestBlockInfo!.blockchainLength;
     itmes.forEach(item => {
-        if (item.startTimestamp > currentBlockHeight) {
+        if (item.startTimestamp > currentTime) {
             item.projectStatus = 'Upcoming'
-        } else if (item.startTimestamp <= currentBlockHeight && item.endTimestamp > currentBlockHeight) {
+        } else if (item.startTimestamp <= currentTime && currentTime < item.endTimestamp) {
             item.projectStatus = 'Ongoing'
-        } else if (item.endTimestamp < currentBlockHeight) {
+        } else if (item.endTimestamp <= currentTime) {
             item.projectStatus = 'Ended'
         } else {
             item.projectStatus = 'All Status'
         }
     });
 }
+
 
 // 项目进度条
 const calcProjectProgress = (itmes: SaleDtoExtend[]) => {
@@ -240,8 +236,6 @@ onMounted(async () => {
         behavior: 'smooth' // 平滑滚动到顶部  
     });
 })
-
-
 
 
 </script>

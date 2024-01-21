@@ -14,17 +14,6 @@ const props = defineProps<{
 const saleDtoRef: SaleDtoExtend = props.saleDto;
 
 onMounted(async () => {
-
-    if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
-        appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
-        appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
-    }
-
-    const currentBlockHeight = appState.latestBlockInfo!.blockchainLength;
-
-    saleDtoRef.saleStartTimeStamp = Date.now() + (saleDtoRef.startTimestamp - currentBlockHeight) * (3 * 60 * 1000)
-    saleDtoRef.saleEndTimeStamp = Date.now() + (saleDtoRef.endTimestamp - currentBlockHeight) * (3 * 60 * 1000)
-
 });
 
 onUpdated(() => {
@@ -118,13 +107,13 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
                     </el-col>
                 </el-row>
 
-                <el-row class="row-bg" justify="space-between" v-if="saleDtoRef.saleStartTimeStamp > Date.now()">
+                <el-row class="row-bg" justify="space-between" v-if="saleDtoRef.startTimestamp > Date.now()">
                     <el-col :span="7">
                         <el-row style="padding-top: 8px;">Sale Starts In: </el-row>
                     </el-col>
                     <el-col :span="17">
                         <el-row justify="end">
-                            <el-countdown format="DD [days] HH:mm:ss" :value="saleDtoRef.saleStartTimeStamp"
+                            <el-countdown format="DD [days] HH:mm:ss" :value="saleDtoRef.startTimestamp"
                                 value-style="font-size: 14px;">
                             </el-countdown>
                         </el-row>
@@ -137,7 +126,7 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
                     </el-col>
                     <el-col :span="17">
                         <el-row justify="end">
-                            <el-countdown format="DD [days] HH:mm:ss" :value="saleDtoRef.saleEndTimeStamp"
+                            <el-countdown format="DD [days] HH:mm:ss" :value="saleDtoRef.endTimestamp"
                                 value-style="font-size: 14px;">
                             </el-countdown>
                         </el-row>
