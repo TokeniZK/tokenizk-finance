@@ -94,7 +94,7 @@ export async function fetchSaleContributorActions() {
             try {
                 await queryRunner.startTransaction();
 
-                let totalContributions = 0;
+                let totalContributions = sale.totalContributedMina??0;
                 for (let i = 0; i < newActionList.length; i++) {
                     const item = newActionList[i];
                     const saleContribution = SaleContribution.fromFields(item.actions[0].map(a => Field(a)));
