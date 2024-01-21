@@ -12,24 +12,19 @@ export class PlatformDB {
         await queryRunner.startTransaction();
         try {
             // truncate tables
-            await queryRunner.clearTable('tb_account');
-            await queryRunner.clearTable('tb_block');
-            await queryRunner.clearTable('tb_block_cache');
-            await queryRunner.clearTable('tb_block_prover_output');
-            await queryRunner.clearTable('tb_deposit_action_event_fetch_record');
-            await queryRunner.clearTable('tb_deposit_commitment');
-            await queryRunner.clearTable('tb_deposit_processor_signal');
-            await queryRunner.clearTable('tb_deposit_prover_output');
-            await queryRunner.clearTable('tb_deposit_rollup_batch');
-            await queryRunner.clearTable('tb_deposit_tree_trans');
-            await queryRunner.clearTable('tb_deposit_tree_trans_cache');
-            await queryRunner.clearTable('tb_inner_rollup_batch');
-            await queryRunner.clearTable('tb_l2_tx');
-            await queryRunner.clearTable('tb_mempl_l2_tx');
+            await queryRunner.clearTable('tb_airdrop');
+            await queryRunner.clearTable('tb_basic_token');
+            await queryRunner.clearTable('tb_client_prove_task');
+            await queryRunner.clearTable('tb_factory_event_fetch_record');
+            await queryRunner.clearTable('tb_sale');
+            await queryRunner.clearTable('tb_sale_event_fetch_record');
+            await queryRunner.clearTable('tb_sale_rollup_prover_param');
             await queryRunner.clearTable('tb_task');
-            await queryRunner.clearTable('tb_withdraw_info');
-            await queryRunner.clearTable('tb_withdraw_event_fetch_record');
-            await queryRunner.clearTable('tb_l2_tx_dto_origin');
+            await queryRunner.clearTable('tb_token_factory');
+            await queryRunner.clearTable('tb_user');
+            await queryRunner.clearTable('tb_user_token_airdrop');
+            await queryRunner.clearTable('tb_user_token_sale');
+            await queryRunner.clearTable('tb_user_token_transfer');
 
             await queryRunner.commitTransaction();
 
