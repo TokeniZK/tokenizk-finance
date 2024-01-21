@@ -4,7 +4,7 @@ import "reflect-metadata"
 import { createConnection } from 'typeorm'
 import { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectionOptions";
 import { getLogger } from "@/lib/logUtils";
-import { TokenFactory, UserTokenSale, UserTokenAirdrop, Sale, User, SaleRollupProverParam, SaleEventFetchRecord, FactoryEventFetchRecord, BasiceToken, Airdrop, ClientProveTask } from '@tokenizk/entities';
+import { TokenFactory, UserTokenSale, UserTokenAirdrop, Sale, User, SaleRollupProverParam, SaleEventFetchRecord, FactoryEventFetchRecord, BasiceToken, Airdrop, ClientProveTask, UserTokenTransfer } from '@tokenizk/entities';
 
 const logger = getLogger('orm');
 export const initORM = async (connectionOverrides?: Partial<MysqlConnectionOptions>) => {
@@ -12,7 +12,7 @@ export const initORM = async (connectionOverrides?: Partial<MysqlConnectionOptio
     try {
         const connection = await createConnection(<MysqlConnectionOptions>{
             ...config.typeORM,
-            entities: [TokenFactory, ClientProveTask, BasiceToken, UserTokenSale, Sale, User, SaleRollupProverParam, SaleEventFetchRecord, FactoryEventFetchRecord, Airdrop, UserTokenAirdrop],
+            entities: [TokenFactory, ClientProveTask, UserTokenTransfer, BasiceToken, UserTokenSale, Sale, User, SaleRollupProverParam, SaleEventFetchRecord, FactoryEventFetchRecord, Airdrop, UserTokenAirdrop],
             ...connectionOverrides,
             timezone: '+00:00'
         });

@@ -88,7 +88,7 @@ bootFactoryEventFetchThread();
 
 bootSaleEventFetchThread();
 
-bootTokenEventsFetchThread();
+// bootTokenEventsFetchThread();
 
 const app = new FastifyCore();
 app.server.decorate('workerMap', workerMap);
