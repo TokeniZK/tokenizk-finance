@@ -146,7 +146,8 @@ export class TokeniZkBasicToken extends SmartContract {
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
         saleParams.softCap.mul(4).assertGreaterThanOrEqual(saleParams.hardCap);
         saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
-        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10)); // at least last for 10 blocks
+        // ~saleParams.startTime.assertLessThan(saleParams.endTime.sub(10)); // at least last for 10 blocks~
+        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 3 * 60 * 1000));
         saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], saleParams.hash());
@@ -193,7 +194,8 @@ export class TokeniZkBasicToken extends SmartContract {
         saleParams.tokenAddress.assertEquals(this.address);
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
         saleParams.minimumBuy.assertLessThanOrEqual(saleParams.maximumBuy);
-        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10)); // at least last for 10 blocks
+        // ~saleParams.startTime.assertLessThan(saleParams.endTime.sub(10)); // at least last for 10 blocks~
+        saleParams.startTime.assertLessThan(saleParams.endTime.sub(10 * 3 * 60 * 1000));
         saleParams.vestingPeriod.assertGreaterThanOrEqual(UInt32.from(1));
         saleParams.saleRate.assertEquals(UInt64.from(0));// !
         saleParams.softCap.assertEquals(UInt64.from(0));// !

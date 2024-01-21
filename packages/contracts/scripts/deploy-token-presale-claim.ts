@@ -266,8 +266,8 @@ const presaleParams = new SaleParams({
     hardCap: UInt64.from(9 * (10 ** 9)),
     minimumBuy: UInt64.from(1 * (10 ** 9)),
     maximumBuy: UInt64.from(3 * (10 ** 9)),
-    startTime: currentBlockHeight,
-    endTime: currentBlockHeight.add(11),
+    startTime: UInt64.from(Date.now()),
+    endTime: UInt64.from(Date.now() + 11 * 3 * 60 * 1000),
     cliffTime: UInt32.from(1),// slot
     cliffAmountRate: UInt64.from(10),
     vestingPeriod: UInt32.from(5), // default value is 1

@@ -235,7 +235,7 @@ const airdropParams = new AirdropParams({
     /** 
      * Start time stamp
      */
-    startTime: UInt32.from(1),
+    startTime: UInt64.from(1),
 
     cliffTime: UInt32.from(1),
     cliffAmountRate: UInt64.from(10),

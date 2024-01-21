@@ -239,7 +239,7 @@ const airdropParams = new AirdropParams({
     /** 
      * Start time stamp
      */
-    startTime: currentBlockHeight,
+    startTime: UInt64.from(Date.now()),
 
     cliffTime: UInt32.from(1),
     cliffAmountRate: UInt64.from(20),
