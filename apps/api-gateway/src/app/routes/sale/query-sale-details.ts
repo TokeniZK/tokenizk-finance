@@ -51,8 +51,10 @@ const handler: RequestHandler<SaleReq, null> = async function (
                     address: sale.tokenAddress
                 }
             }))!;
-            (sale as any as SaleDto).tokenSymbol = token.symbol
-        } else {
+            (sale as any as SaleDto).tokenSymbol = token.symbol;
+            (sale as any as SaleDto).teamName = token.name;
+
+        } else { // for private sale
             (sale as any as SaleDto).tokenSymbol = 'MINA'
         }
 

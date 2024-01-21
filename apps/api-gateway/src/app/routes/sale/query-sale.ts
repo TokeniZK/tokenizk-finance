@@ -73,7 +73,8 @@ const handler: RequestHandler<SaleReq, null> = async function (
             if (tokenList.length > 0) {// for non-private sale case
                 saleList.forEach(p => {
                     const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-                    (p as any as SaleDto).tokenSymbol = token.symbol
+                    (p as any as SaleDto).tokenSymbol = token.symbol;
+                    (p as any as SaleDto).teamName = token.name;
                 })
             }
 

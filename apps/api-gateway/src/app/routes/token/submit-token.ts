@@ -12,7 +12,7 @@ const logger = getLogger('createSale');
 // query all, filter by status==on, order by createTime, limit 18
 // by tokenName
 // by userAddress 
-export const createSale: FastifyPlugin = async function (
+export const createToken: FastifyPlugin = async function (
     instance,
     options,
     done
