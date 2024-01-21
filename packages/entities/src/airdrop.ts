@@ -131,7 +131,7 @@ export class Airdrop {
             totalAirdropSupply: UInt64.from(this.totalAirdropSupply),
             totalMembersNumber: UInt64.from(this.whitelistMembers.split(',').length),
             whitelistTreeRoot: Field(this.whitelistTreeRoot),
-            startTime: UInt32.from(this.startTimestamp),
+            startTime: UInt64.from(this.startTimestamp),
             cliffTime: UInt32.from(this.cliffTime),
             cliffAmountRate: UInt64.from(this.cliffAmountRate),
             vestingPeriod: UInt32.from(this.vestingPeriod), // 0 is not allowed, default value is 1

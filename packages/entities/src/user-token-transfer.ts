@@ -13,6 +13,9 @@ export class UserTokenTransfer {
   id: number
 
   @Column()
+  status: number
+
+  @Column()
   from: string
 
   @Column()

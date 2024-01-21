@@ -174,8 +174,8 @@ export class Sale {
             hardCap: UInt64.from(this.hardCap),
             minimumBuy: UInt64.from(this.minimumBuy),
             maximumBuy: UInt64.from(this.maximumBuy),
-            startTime: UInt32.from(this.startTimestamp),
-            endTime: UInt32.from(this.endTimestamp),
+            startTime: UInt64.from(this.startTimestamp),
+            endTime: UInt64.from(this.endTimestamp),
             cliffTime: UInt32.from(this.cliffTime),
             cliffAmountRate: UInt64.from(this.cliffAmountRate),
             vestingPeriod: UInt32.from(this.vestingPeriod), // 0 is not allowed, default value is 1
