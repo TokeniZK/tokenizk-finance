@@ -53,19 +53,47 @@ const handler: RequestHandler<SaleReq, null> = async function (
             queryBuilder.andWhere(`ps.tokenAddress = '${saleReq.tokenAddress}'`);
         }
 
+        if (saleReq?.limit) {
+            queryBuilder.limit(saleReq.limit);
+        }
+
+        if (saleReq?.take) {
+            queryBuilder.take(saleReq.take);
+        }
+
         const saleList = (await queryBuilder.orderBy({ createdAt: 'DESC' }).getMany()) ?? [];
 
-        const tokenList = await connection.getRepository(BasiceToken).find({
-            where: {
-                address: In(saleList.map(p => p.tokenAddress))
-            }
-        });
+        if (saleList.length > 0) {
+            const tokenList = await connection.getRepository(BasiceToken).find({
+                where: {
+                    address: In(saleList.map(p => p.tokenAddress))
+                }
+            });
 
-        if (tokenList.length > 0) {// for non-private sale case
-            saleList.forEach(p => {
-                const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-                (p as any as SaleDto).tokenSymbol = token.symbol
-            })
+            if (tokenList.length > 0) {// for non-private sale case
+                saleList.forEach(p => {
+                    const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
+                    (p as any as SaleDto).tokenSymbol = token.symbol
+                })
+            }
+
+            if (saleReq?.queryBriefInfo) {
+                const userTokenSaleRepo = connection.getRepository(UserTokenSale)
+
+                for (let i = 0; i < saleList.length; i++) {
+                    const s = saleList[i];
+                    //if (s.endTimestamp > currentBLockHeight) {
+                    s.totalContributedMina = (await userTokenSaleRepo.find({
+                        where: {
+                            saleId: s.id,
+                            // status: 1  // TODO !!! when fetchEvent is ok, then need it!!!
+                        }
+                    }) ?? []).reduce<number>((p, c)=>{
+                        return p + Number(c.contributeCurrencyAmount)
+                    }, 0);
+                    //}
+                }
+            }
         }
 
         return {

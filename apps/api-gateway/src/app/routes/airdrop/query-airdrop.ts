@@ -55,6 +55,14 @@ const handler: RequestHandler<AirdropReq, null> = async function (
             queryBuilder.andWhere(`ps.tokenAddress = '${airdropReq.tokenAddress}'`);
         }
 
+        if (airdropReq?.limit) {
+            queryBuilder.limit(airdropReq.limit);
+        }
+
+        if (airdropReq?.take) {
+            queryBuilder.take(airdropReq.take);
+        }
+
         const airdropList = (await queryBuilder.orderBy({ createdAt: 'DESC' }).getMany()) ?? [];
         if (airdropList.length > 0) {
             const tokenList = await connection.getRepository(BasiceToken).find({
