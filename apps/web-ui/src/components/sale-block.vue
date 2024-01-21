@@ -17,7 +17,7 @@ onMounted(async () => {
 });
 
 onUpdated(() => {
-    // console.log('saleDtoRef: ' + saleDtoRef);
+    console.log('saleDtoRef: ' + JSON.stringify(saleDtoRef));
     // calcProjectProgress([saleDtoRef]);
 
     // 转换项目状态
@@ -49,28 +49,31 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
             <el-col :span="24">
 
                 <el-row class="row-bg NStatus" justify="space-between">
-                    <el-col :span="12">
+                    <el-col :span="17">
                         <el-row>
-                            <h4><a href="#">{{ saleDtoRef.saleName }}</a></h4>
+                            <h4>{{ saleDtoRef.saleName }}</h4>
                         </el-row>
                     </el-col>
 
-                    <el-col :span="12">
+                    <el-col :span="6">
                         <el-row justify="end">
                             <el-button
                                 :type="saleDtoRef.projectStatus === 'Ongoing' ? 'primary' : '' || saleDtoRef.projectStatus === 'Upcoming' ? 'warning' : ''"
-                                round class="statusColor">{{ saleDtoRef.projectStatus }}</el-button>
+                                round class="statusColor" plain size="small">{{ saleDtoRef.projectStatus }}</el-button>
+
+                            <!-- <div :type="saleDtoRef.projectStatus === 'Ongoing' ? 'primary' : '' || saleDtoRef.projectStatus === 'Upcoming' ? 'warning' : ''"
+                                class="statusColor">{{ saleDtoRef.projectStatus }}</div> -->
+
                         </el-row>
                     </el-col>
                 </el-row>
 
-                <!-- 团队名称 -->
                 <el-row class="row-bg teamName" justify="space-between" style="align-items: center;">
-                    <el-col class="text" :span="10">
-                        by <a href="" class="link">{{ saleDtoRef.teamName }}</a>
+                    <el-col class="text" :span="15">
+                        by <a :href="saleDtoRef.website" target="_blank">{{ saleDtoRef.teamName }}</a>
                     </el-col>
 
-                    <el-col class="likes" :span="10">
+                    <el-col class="likes" :span="8">
                         <el-rate v-model="saleDtoRef.star" size="large" />
                     </el-col>
                 </el-row>
@@ -78,10 +81,23 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
                 <el-row class="row-bg soft-hard-cap" justify="space-between">
                     <el-col :span="10">
                         <el-row>
-                            Soft / Hard
+                            Total Supply:
                         </el-row>
                     </el-col>
                     <el-col :span="10">
+                        <el-row justify="end">
+                            {{ saleDtoRef.totalSaleSupply }} {{ saleDtoRef.tokenSymbol }}
+                        </el-row>
+                    </el-col>
+                </el-row>
+
+                <el-row class="row-bg soft-hard-cap" justify="space-between" v-if="saleDtoRef.saleType != 1">
+                    <el-col :span="11">
+                        <el-row>
+                            Soft / Hard:
+                        </el-row>
+                    </el-col>
+                    <el-col :span="13">
                         <el-row justify="end">
                             {{ saleDtoRef.softCap / (10 ** 9) }} - {{ saleDtoRef.hardCap / (10 ** 9) }} Mina
                         </el-row>
@@ -89,7 +105,7 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
                 </el-row>
 
                 <!-- <el-row style="margin-bottom: 6px; margin-top: 6px;">progress</el-row> -->
-                <el-row class="Progress demo-progress" style="margin-bottom: 0;">
+                <el-row class="Progress demo-progress" style="margin-bottom: 0;" v-if="saleDtoRef.saleType != 1">
                     <el-progress :text-inside="true" :stroke-width="14" :status="saleDtoRef.progressBarStatus"
                         :percentage="saleDtoRef.progressPercent" striped striped-flow :duration="6" />
                 </el-row>
@@ -100,9 +116,8 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
                     </el-col>
                     <el-col :span="17">
                         <el-row justify="end">
-                            {{ saleDtoRef.cliffTime * 5 }} mins / {{ saleDtoRef.cliffAmountRate }}% / {{
-                                saleDtoRef.vestingPeriod }} slots/
-                            {{ saleDtoRef.vestingIncrement }}%
+                            ({{ saleDtoRef.cliffTime * 3 }} mins,{{ saleDtoRef.cliffAmountRate }}%),
+                            ({{ saleDtoRef.vestingIncrement }}%/{{ saleDtoRef.vestingPeriod * 3 }} mins)
                         </el-row>
                     </el-col>
                 </el-row>
@@ -150,9 +165,9 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
     .thumb {
         width: 349px;
         height: 130px;
-        border-radius: 15px 15px 0 0;
         overflow: hidden;
         text-align: center;
+        border-radius: 15px 15px 0 0;
 
         .salePhoto {
             position: absolute;
@@ -167,6 +182,14 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
     .launchpads-content {
         width: 100%;
         padding: 12px 20px;
+
+        .statusColor {
+            border: 0;
+        }
+
+        .statusColor:hover {
+            cursor: default;
+        }
 
         .NStatus {
             align-items: center;

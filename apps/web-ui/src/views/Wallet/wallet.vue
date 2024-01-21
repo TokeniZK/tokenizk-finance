@@ -3,12 +3,13 @@ import { reactive, ref, onMounted, watch } from 'vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { useConnectStatusStore } from '@/stores/connectStatus'
 import type { Token } from 'typescript';
-import { type TokenDto } from '@tokenizk/types';
+import { type TokenDto, type UserTokenTransferDto } from '@tokenizk/types';
 import { queryTokenByUser } from '@/apis/user-api';
 import { CircuitControllerState, useStatusStore } from '@/stores';
 import { PublicKey, TokenId, fetchAccount, Mina } from 'o1js';
 import { CHANNEL_MINA, WalletEventType, type WalletEvent } from '@/common';
 import { checkTx } from '@/utils/txUtils';
+import { submitTokenTransfer } from '@/apis/token-api';
 
 const goToTop = () => {
     window.scrollTo({
@@ -132,14 +133,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 const feePayerAddress = appState.connectedWallet58;
                 const txFee = 0.21 * (10 ** 9);
 
-                const { code, data: txJson, msg } = await CircuitControllerState.remoteController?.transferToken(
+                const { code, data: txJson, msg } = (await CircuitControllerState.remoteController?.transferToken(
                     basicTokenZkAppAddress,
                     from,
                     to,
                     value,
                     feePayerAddress,
                     txFee
-                );
+                ))!;
 
                 if (code == 1) {
                     ElMessage({
@@ -171,14 +172,28 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                         // check tx is confirmed
                         await checkTx(txHash);
 
+                        const userTokenTransferDto = {
+                            status: 0,
+                            from: from,
+                            to: to,
+                            amount: value,
+                            tokenAddress: basicTokenZkAppAddress,
+                            tokenId: TokenId.derive(PublicKey.fromBase58(basicTokenZkAppAddress)),
+                            txHash: txHash,
+                        } as UserTokenTransferDto;
+
                         ElMessage({
                             showClose: true,
                             type: 'success',
                             message: `transfer token successfully`,
                         });
 
-                        userFundFormRef.amount = null;
-                        userFundFormRef.reciver = null;
+                        userFundFormRef.amount = null as any as string;
+                        userFundFormRef.reciver = null as any as string;
+                        
+                        // submit to backend
+                        await submitTokenTransfer(userTokenTransferDto);
+
                     } catch (error) {
                         console.error(error);
                         showLoadingMask({ id: maskId, text: 'tx failed! please retry later.' });

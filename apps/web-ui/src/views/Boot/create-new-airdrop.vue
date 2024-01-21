@@ -99,9 +99,10 @@ const ruleFormRef = ref<FormInstance>()
 let airdropDto = reactive<AirdropDto>(airdropDtoInit)
 let tokenDto = reactive<TokenDto>(tokenDtoInit)
 
-let saleStartDateTime = ref(new Date());
-let saleStartBlockInfo = reactive({ current: 0, target: 0 });
+// let saleStartDateTime = ref(new Date());
+// let saleStartBlockInfo = reactive({ current: 0, target: 0 });
 const changeAirdropStartDateTime = async (choosedDate: number) => {
+    /*
     const maskId = 'changeAirdropStartDateTime';
     showLoadingMask({ id: maskId, text: 'fetching latest block...' });
     try {
@@ -118,6 +119,8 @@ const changeAirdropStartDateTime = async (choosedDate: number) => {
     }
 
     closeLoadingMask(maskId);
+    */
+    airdropDto.startTimestamp = choosedDate;
 }
 
 // 正则
@@ -317,7 +320,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                 console.log('whitelistTreeRoot: ' + airdropDto.whitelistTreeRoot);
             } else {
-                airdropDto.whitelistTreeRoot = '0';
+                airdropDto.whitelistTreeRoot = WHITELIST_TREE_ROOT.toString();
+                console.log('whitelistTreeRoot: ' + airdropDto.whitelistTreeRoot);
             }
 
             showLoadingMask({ id: maskId, text: 'generating airdrop contract KeyPair ...' });
@@ -325,7 +329,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             const tokenKey = PrivateKey.fromBase58(appState.tokeniZkBasicTokenKeyPair?.key!);
             const tokenAddress = appState.tokeniZkBasicTokenKeyPair?.value;
 
-            const airdropDtoList = await queryAirdrop({ tokenAddress } as AirdropReq);
+            const airdropDtoList = (await queryAirdrop({ tokenAddress } as AirdropReq)) ?? [];
             const accountIndex = airdropDtoList?.length;
             const signData = import.meta.env.VITE_AIRDROP_KEY_SIGNING_DATA;
             console.log(`token's sale accountIndex: ${accountIndex}`);
@@ -488,6 +492,7 @@ const dialogTableVisible = ref(false)
 
 // 组件挂载完成后执行的函数
 onMounted(async () => {
+    /*
     if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
         appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
         appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
@@ -496,7 +501,7 @@ onMounted(async () => {
     saleStartBlockInfo.current = Number(appState.latestBlockInfo.blockchainLength.toString());
     saleStartBlockInfo.target = Number(appState.latestBlockInfo.blockchainLength.toString());
     airdropDto.startTimestamp = saleStartBlockInfo.target;
-
+    */
     // 进入当前组件都会回到顶部
     window.scrollTo({
         top: 0,
@@ -680,20 +685,20 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="12">
                                                 <el-form-item label="Start Time" required style="width: 100%">
-                                                    <el-date-picker v-model="saleStartDateTime" type="datetime"
+                                                    <el-date-picker v-model="airdropDto.startTimestamp" type="datetime"
                                                         placeholder="Pick a Date" format="YYYY/MM/DD HH:mm:ss"
-                                                        value-format="x" @change="changeAirdropStartDateTime" />
-                                                    <div v-if="saleStartBlockInfo.current != 0">(start at blockHeight: {{
-                                                        saleStartBlockInfo.target }})</div>
+                                                        value-format="x" />
+                                                    <!-- <div v-if="saleStartBlockInfo.current != 0">(start at blockHeight: {{
+                                                        saleStartBlockInfo.target }})</div> -->
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
 
 
-                                        <el-form-item label="Whitelist" prop="whitelistMembers">
-                                            <el-input v-model.trim="airdropDto.whitelistMembers" type="textarea"
-                                                :autosize="{ minRows: 2, maxRows: 1000 }"
-                                                placeholder="Please input as comma-sperated Mina wallet addresses" />
+                                        <el-form-item label="Whitelist(optional)" prop="whitelistMembers">
+                                        <el-input v-model.trim="airdropDto.whitelistMembers" type="textarea"
+                                            :autosize="{ minRows: 2, maxRows: 1000 }"
+                                            placeholder="Please input as comma-sperated Mina wallet addresses" />
                                         </el-form-item>
 
                                         <div style="border-color: #009688; border-width: 10px;">
@@ -901,7 +906,7 @@ const title = computed(() => {
                                             <el-col :span="12">
                                                 <!-- {{ airdropDto.whitelistMembers }} -->
 
-                                                <div>
+                                                <div v-if="airdropDto.whitelistMembers">
                                                     <el-button text @click="dialogTableVisible = true" type="success"
                                                         class="whiteListBtn">
                                                         whileList table
@@ -920,14 +925,14 @@ const title = computed(() => {
                                                     </el-dialog>
                                                 </div>
 
+                                                <div v-else>No Whitelist Members</div>
+
                                             </el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Start at Block Height</el-col>
-                                            <el-col :span="12">{{ airdropDto.startTimestamp }} ( about <span
-                                                    style="color:green">{{ new
-                                                        Date(saleStartDateTime) }}</span> )</el-col>
+                                            <el-col :span="12">Start at</el-col>
+                                            <el-col :span="12">{{ airdropDto.startTimestamp }}</el-col>
                                         </el-row>
 
                                         <!-- <el-row>

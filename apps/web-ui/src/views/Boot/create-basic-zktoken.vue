@@ -57,20 +57,19 @@ let getFlag = () => {
 const ruleFormRef = ref<FormInstance>()
 
 const tokenDtoInit: TokenDto = {
-    id: 0,
-    txHash: '',
+    id: null as any as number,
+    txHash: null as any as string,
     type: null as any as number,
     status: 0,
-    address: appState.connectedWallet58 as string,
-    name: '',
-    logoUrl: '',
-    symbol: '',
-    zkappUri: '',
-    totalSupply: 0,
+    address: null as any as string,
+    name:  null as any as string,
+    logoUrl:  null as any as string,
+    symbol:  null as any as string,
+    zkappUri:  null as any as string,
+    totalSupply: null as any as number,
     totalAmountInCirculation: 0,
     updatedAt: 0,
-    createdAt: 0,
-
+    createdAt: 0
 }
 
 
@@ -95,14 +94,18 @@ const rules = reactive<FormRules<TokenDto>>({
     // ],
 
     name: [
-        { required: true, message: 'Please input Token name', trigger: 'blur' },
-        { min: 3, max: 10, message: 'Length should be 3 to 10', trigger: 'blur' },
+        { required: true, message: 'Please input Issuer Name, such as project team name, individual name, etc.', trigger: 'blur' },
+        { min: 3, max: 15, message: 'Length should be 3 to 10', trigger: 'blur' },
+    ],
+
+    zkappUri: [
+        { required: true, message: 'Please input Issuer Official Website, could be your website address, twitter address, facebook address, etc.', trigger: 'blur' },
     ],
 
     symbol: [
         {
             required: true,
-            message: 'Please input symbol',
+            message: 'Please input token symbol',
             trigger: 'blur'
         },
     ],
@@ -111,7 +114,7 @@ const rules = reactive<FormRules<TokenDto>>({
         {
             type: 'number',
             required: true,
-            message: 'Total Sale Supply must be number type',
+            message: 'Total Supply must be number type',
             trigger: 'blur'
         },
     ],
@@ -307,12 +310,17 @@ const checkIfDeployed = async () => {
                                     </el-select>
                                 </el-form-item>
 
-                                <el-form-item label="Token Name" prop="name">
-                                    <el-input v-model.trim="tokenDtoForm.name" placeholder="Ex: Mina" />
+                                <el-form-item label="Issuer Name" prop="name">
+                                    <el-input v-model.trim="tokenDtoForm.name" placeholder="Ex: Mina Protocol" />
                                 </el-form-item>
 
-                                <el-form-item label="Symbol" prop="symbol">
-                                    <el-input v-model.trim="tokenDtoForm.symbol" placeholder="Ex: Mina" />
+                                <el-form-item label="Official Website">
+                                    <el-input v-model.trim="tokenDtoForm.zkappUri"
+                                        placeholder="Ex: https://minaprotocol.com/" />
+                                </el-form-item>
+
+                                <el-form-item label="Token Symbol" prop="symbol">
+                                    <el-input v-model.trim="tokenDtoForm.symbol" placeholder="Ex: MINA" />
                                 </el-form-item>
 
                                 <el-form-item label="Total Sale Supply" prop="totalSupply">
@@ -320,10 +328,16 @@ const checkIfDeployed = async () => {
                                         placeholder="Ex: 100000000000" />
                                 </el-form-item>
 
+                                <el-form-item label="Token Logo" prop="logoUrl">
+                                    <el-input v-model.trim="tokenDtoForm.logoUrl"
+                                        placeholder="Ex: https://minaprotocol.com/img/logo.png" />
+                                </el-form-item>
+
                             </el-col>
 
                             <el-col :span="1"></el-col>
 
+                            <!-- 
                             <el-col :span="11">
                                 <el-form-item label="Logo" prop="logoUrl">
                                     <el-upload class="upload-demo" drag v-model="tokenDtoForm.logoUrl"
@@ -341,7 +355,7 @@ const checkIfDeployed = async () => {
                                     </el-upload>
                                 </el-form-item>
                             </el-col>
-
+                            -->
                         </el-row>
 
                         <el-form-item>
@@ -366,29 +380,32 @@ const checkIfDeployed = async () => {
                         <el-col :span="12">
 
                             <el-row>
-                                <el-col :span="4">Name</el-col>
+                                <el-col :span="8">Issuer Name: </el-col>
                                 <el-col :span="12">{{ tokenDtoForm.name }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="4">Symbol</el-col>
+                                <el-col :span="8">Symbol: </el-col>
                                 <el-col :span="12">{{ tokenDtoForm.symbol }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="4">Total supply</el-col>
+                                <el-col :span="8">Total supply: </el-col>
                                 <el-col :span="12">{{ tokenDtoForm.totalSupply }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="4">txHash</el-col>
+                                <el-col :span="8">txHash: </el-col>
                                 <el-col :span="12">{{ appState.explorerUrl.concat(tokenDtoForm.txHash) }}</el-col>
                             </el-row>
 
                         </el-col>
 
                         <el-col :span="12">
-                            <el-row>{{ tokenDtoForm.logoUrl }}</el-row>
+                            <el-row>
+                                <!-- <img :src="tokenDtoForm.logoUrl" style="border-radius: 10px;"> -->
+                                {{tokenDtoForm.logoUrl}}
+                            </el-row>
                         </el-col>
                     </el-row>
 

@@ -134,7 +134,7 @@ const init = async () => {
     console.log('saleContributorsDetailDto0.saleDto.saleEndTimeStamp:' + saleContributorsDetailDto0.saleDto.saleEndTimeStamp);
 
     */
-    saleContributorsDetailDto0.saleDto.totalContributedMina = saleContributorsDetailDto0.contributorList.reduce<number>((p, c)=> p + Number(c.contributeCurrencyAmount), 0);
+    saleContributorsDetailDto0.saleDto.totalContributedMina = saleContributorsDetailDto0.contributorList.reduce<number>((p, c) => p + Number(c.contributeCurrencyAmount), 0);
 
     transformProjectStatus([saleContributorsDetailDto0.saleDto]);
     calcProjectProgress([saleContributorsDetailDto0.saleDto]);
@@ -169,10 +169,17 @@ const init = async () => {
     console.log('refresh sale-detail info intervally: done!');
 }
 
-const tokenAddressLink = ref('');
-
 const buyWithMina = async () => {
     let saleDto = saleContributorsDetailDto.saleDto;
+    if (saleDto.startTimestamp >= Date.now()) {
+        ElMessage({
+            showClose: true,
+            type: 'warning',
+            message: `The Sale has not started yet.`,
+        });
+
+        return;
+    }
 
     if (appState.connectedWallet58 === '' || appState.connectedWallet58 === null || appState.connectedWallet58 === undefined) {
         ElMessage({
@@ -781,16 +788,23 @@ onUnmounted(() => {
             <!-- 项目描述 -->
             <el-col :span="12" class="project-description">
 
-                <el-row>
+                <el-row class="row-bg presale-description-box">
                     <el-col :span="4">
                         <el-image :src="saleContributorsDetailDto.saleDto.logoUrl" fit="contain" lazy />
                     </el-col>
-                    <el-col :span="20">
+
+                    <el-col :span="1"></el-col>
+
+                    <el-col :span="19">
                         <el-row>
                             <h1>{{ saleContributorsDetailDto.saleDto.saleName }}</h1>
                         </el-row>
 
                         <el-row>
+                            <a :href="saleContributorsDetailDto.saleDto.website"
+                                v-show="saleContributorsDetailDto.saleDto.website" target="_blank">
+                                <i class="iconfont icon-xitong"></i>
+                            </a>
 
                             <a :href="saleContributorsDetailDto.saleDto.twitter"
                                 v-show="saleContributorsDetailDto.saleDto.twitter" target="_blank">
@@ -860,26 +874,18 @@ onUnmounted(() => {
                                     Token address :
                                 </el-row>
                             </el-col>
+
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
                                     <a :href="tokenAddressLinkPrefix" class="titleContent">{{
                                         saleContributorsDetailDto.saleDto.tokenAddress }}</a>
-                                    <el-icon style="margin-left: 10px;">
-                                        <CopyDocument />
-                                    </el-icon>
-                                </el-row>
-                            </el-col>
-                        </el-row>
 
-                        <el-row justify="space-between" class="tableLine">
-                            <el-col :span="8">
-                                <el-row class="titleName">
-                                    Sale name :
-                                </el-row>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-row justify="end" class="titleContent">
-                                    {{ saleContributorsDetailDto.saleDto.saleName }}
+                                    <a :href="tokenAddressLinkPrefix" class="titleContent">
+                                        <el-icon style="margin-left: 10px;">
+                                            <CopyDocument />
+                                        </el-icon>
+                                    </a>
+
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -896,9 +902,11 @@ onUnmounted(() => {
                                     <a :href="saleAddressLinkPrefix" class="titleContent">{{
                                         saleContributorsDetailDto.saleDto.saleAddress }}</a>
 
-                                    <el-icon style="margin-left: 10px;">
-                                        <CopyDocument />
-                                    </el-icon>
+                                    <a :href="saleAddressLinkPrefix" class="titleContent">
+                                        <el-icon style="margin-left: 10px;">
+                                            <CopyDocument />
+                                        </el-icon>
+                                    </a>
 
                                 </el-row>
                             </el-col>
@@ -913,7 +921,8 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
-                                    {{ saleContributorsDetailDto.saleDto.totalSaleSupply }} {{ saleContributorsDetailDto.saleDto.tokenSymbol }}
+                                    {{ saleContributorsDetailDto.saleDto.totalSaleSupply }} {{
+                                        saleContributorsDetailDto.saleDto.tokenSymbol }}
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -945,7 +954,7 @@ onUnmounted(() => {
                         </el-row>
 
                         <el-row justify="space-between" class="tableLine"
-                            v-if="saleContributorsDetailDto.saleDto.saleType != 2">
+                            v-if="saleContributorsDetailDto.saleDto.saleType == 0">
                             <el-col :span="8">
                                 <el-row class="titleName">
                                     Sale Rate :
@@ -1025,7 +1034,7 @@ onUnmounted(() => {
                         <el-row justify="space-between" class="tableLine">
                             <el-col :span="6">
                                 <el-row class="titleName">
-                                    Start At BlockHeight :
+                                    Sale Start At:
                                 </el-row>
                             </el-col>
                             <el-col :span="18">
@@ -1038,7 +1047,7 @@ onUnmounted(() => {
                         <el-row justify="space-between" class="tableLine">
                             <el-col :span="6">
                                 <el-row class="titleName">
-                                    End At BlockHeight :
+                                    Sale End At:
                                 </el-row>
                             </el-col>
                             <el-col :span="18">
@@ -1220,8 +1229,7 @@ onUnmounted(() => {
                     <el-row class="countdown">
                         <el-col v-if="saleContributorsDetailDto.saleDto.startTimestamp > ((new Date()).getTime())">
                             <el-countdown format="DD [days] HH:mm:ss"
-                                :value="saleContributorsDetailDto.saleDto.startTimestamp"
-                                @finish="countdownFinishCallback">
+                                :value="saleContributorsDetailDto.saleDto.startTimestamp" @finish="countdownFinishCallback">
                                 <template #title>
                                     <div style="display: inline-flex; align-items: center">Start of Sale</div>
                                 </template>
@@ -1229,8 +1237,7 @@ onUnmounted(() => {
                         </el-col>
                         <el-col v-else>
                             <el-countdown format="DD [days] HH:mm:ss"
-                                :value="saleContributorsDetailDto.saleDto.endTimestamp"
-                                @finish="countdownFinishCallback">
+                                :value="saleContributorsDetailDto.saleDto.endTimestamp" @finish="countdownFinishCallback">
                                 <template #title>
                                     <div style="display: inline-flex; align-items: center">End of Sale</div>
                                 </template>
@@ -1371,36 +1378,45 @@ onUnmounted(() => {
         background-color: #fff;
         padding: 30px 15px;
 
-        .icon-discord,
-        .icon-bird,
-        .icon-telegram,
-        .icon-redditsquare,
-        .icon-facebook,
-        .icon-GitHub {
-            margin-right: 20px;
-            font-size: 20px;
-            color: #00c798;
-        }
+        .presale-description-box {
+            border-radius: 20px;
 
-        .icon-discord:hover,
-        .icon-bird:hover,
-        .icon-telegram:hover,
-        .icon-redditsquare:hover,
-        .icon-facebook:hover,
-        .icon-GitHub:hover {
-            margin-right: 20px;
-            font-size: 20px;
-            color: #000;
+
+            .icon-discord,
+            .icon-bird,
+            .icon-xitong,
+            .icon-telegram,
+            .icon-redditsquare,
+            .icon-facebook,
+            .icon-GitHub {
+                margin-right: 20px;
+                font-size: 20px;
+                color: #00c798;
+            }
+
+            .icon-discord:hover,
+            .icon-xitong:hover,
+            .icon-bird:hover,
+            .icon-telegram:hover,
+            .icon-redditsquare:hover,
+            .icon-facebook:hover,
+            .icon-GitHub:hover {
+                margin-right: 20px;
+                font-size: 20px;
+                color: #000;
+            }
         }
     }
 
     .project-status {
         width: 100%;
         margin-left: 30px;
+        border-radius: 30px;
 
         .project-status-box {
             padding: 30px;
             background-color: #fff;
+            border-radius: 20px;
 
             .countdown {
                 text-align: center;
@@ -1418,6 +1434,7 @@ onUnmounted(() => {
         margin-top: 20px;
         padding: 30px 20px;
         background-color: #fff;
+        border-radius: 20px;
 
         .titleName {
             // font-weight: 700;
@@ -1433,11 +1450,16 @@ onUnmounted(() => {
         }
 
         .whiteListBtn {
-            color: #fff;
-            background-color: #00c798;
+            color: #00c798;
+            background-color: #e6fff9;
             border-radius: 15px;
             text-align: center;
             margin-bottom: 10px;
+        }
+
+        .whiteListBtn:hover {
+            color: #fff;
+            background-color: #00FFC2;
         }
 
         .whiteListUl {

@@ -9,9 +9,7 @@ import { syncLatestBlock } from '@/utils/txUtils';
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
-
-let route = useRoute();
-let saleType = ref(route.query.saleType as any as number);
+let saleType = 0;
 
 type SaleDtoExtend = SaleDto & { projectStatus: string, progressBarStatus: string, progressPercent: number }
 
@@ -21,7 +19,7 @@ let fetchResult: SaleDtoExtend[] = [];
 
 // 转换项目的状态
 const transformProjectStatus = async (itmes: SaleDtoExtend[]) => {
-
+    /*
     if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
         appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
         appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
@@ -38,16 +36,30 @@ const transformProjectStatus = async (itmes: SaleDtoExtend[]) => {
         } else {
             item.projectStatus = 'All Status'
         }
-    });
+    }); 
+    */
+
+    const currentTimestamp = Date.now();
+    itmes.forEach(item => {
+        if (item.startTimestamp > currentTimestamp) {
+            item.projectStatus = 'Upcoming'
+        } else if (item.startTimestamp <= currentTimestamp && item.endTimestamp > currentTimestamp) {
+            item.projectStatus = 'Ongoing'
+        } else if (item.endTimestamp < currentTimestamp) {
+            item.projectStatus = 'Ended'
+        } else {
+            item.projectStatus = 'All Status'
+        }
+    }); 
 }
 
 // 项目进度条
 const calcProjectProgress = (itmes: SaleDtoExtend[]) => {
     itmes.forEach(item => {
-        item.progressPercent = computed(() => Number((item.totalContributedMina * 100 / item.hardCap).toFixed(1))) as any as number;
-        if ((item.progressPercent as any as ComputedRef).value >= 80) {
+        item.progressPercent = Number((item.totalContributedMina * 100 / item.hardCap).toFixed(1));
+        if (item.progressPercent >= 80) {
             item.progressBarStatus = 'exception'
-        } else if ((item.progressPercent as any as ComputedRef).value >= 60) {
+        } else if (item.progressPercent >= 60) {
             item.progressBarStatus = 'warning'
         } else {
             item.progressBarStatus = 'success'
@@ -64,7 +76,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 let keyWord = ref('')
 const getSearchProjects = async () => {
     const saleReq = {
-        saleType: saleType.value,
+        saleType,
         saleName: keyWord.value,
         queryBriefInfo: true,
         take: 3

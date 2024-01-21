@@ -1,5 +1,5 @@
 <script lang="ts" setup >
-import { ref, onMounted, reactive, computed, type ComputedRef } from 'vue'
+import { ref, onMounted, reactive, computed, type ComputedRef, onUpdated } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { type SaleDto, type SaleReq } from '@tokenizk/types'
 import SaleBlock from '../../../components/sale-block.vue'
@@ -7,21 +7,20 @@ import { useRoute, useRouter } from 'vue-router';
 import { querySale } from '@/apis/sale-api';
 import { CircuitControllerState, useStatusStore } from '@/stores';
 import { syncLatestBlock } from '@/utils/txUtils';
+import { ElMessage } from 'element-plus';
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
-
 let route = useRoute();
 let saleType = ref(route.query.saleType as any as number);
-
+let saleTypeOld = saleType.value;
 const router = useRouter();
-router.beforeEach((to, from, next) => {
-    const query = to.query;
-    saleType.value = query.saleType as any as number;
-
-    getSearchProjects();
-
-    next();
+router.afterEach(async (to, from, next) => {
+    if (from.path == '/sales' && to.path == '/sales') {
+        const query = to.query;
+        saleType.value = query.saleType as any as number;
+        console.log(`changed saleType...`)
+    }
 });
 
 type SaleDtoExtend = SaleDto & { projectStatus: string, progressBarStatus: string, progressPercent: number }
@@ -175,7 +174,20 @@ const getSearchProjects = async () => {
         queryBriefInfo: true
     } as any as SaleReq;
 
+    const maskId = 'getSearchProjects'
+    showLoadingMask({ id: maskId, text: 'loading...' });
+
     fetchResult = (await querySale(saleReq)) as SaleDtoExtend[];
+    if (!fetchResult) {
+        ElMessage({
+            showClose: true,
+            type: 'warning',
+            message: `Please check network connection !`,
+        });
+
+        closeLoadingMask(maskId);
+        return;
+    }
 
     calcProjectProgress(fetchResult);
     // 转换项目状态
@@ -185,6 +197,7 @@ const getSearchProjects = async () => {
 
     renderSaleBlock = fetchResult;
     presaleProjects.saleList = renderSaleBlock
+    closeLoadingMask(maskId);
 }
 
 // 根据 用户选择 filterBy的选项  过滤数据
@@ -235,7 +248,24 @@ onMounted(async () => {
         top: 0,
         behavior: 'smooth' // 平滑滚动到顶部  
     });
-})
+});
+
+onUpdated(async () => {
+
+    console.log('onUpdated...');
+
+    if(saleTypeOld != saleType.value){
+        await getSearchProjects();
+        saleTypeOld = saleType.value;
+    }
+
+    // 进入当前组件都会回到顶部
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // 平滑滚动到顶部  
+    });
+});
+
 
 
 </script>

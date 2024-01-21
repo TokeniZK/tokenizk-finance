@@ -5,6 +5,7 @@ import SaleBlock from '@/components/sale-block.vue'
 import { useStatusStore } from '@/stores';
 import { querySale } from '@/apis/sale-api'
 import { syncLatestBlock } from '@/utils/txUtils'
+import { ElMessage } from 'element-plus';
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -54,8 +55,11 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(async () => {
-    let saleReq = { tokenAddress: appState.tokeniZkBasicTokenKeyPair.value } as SaleReq;
-    fetchResult = (await querySale(saleReq)) ?? [] as SaleDtoExtend[];
+    const maskId = 'querySale';
+    showLoadingMask({id: maskId, text: 'loading...'});
+
+    let saleReq = { tokenAddress: appState.tokeniZkBasicTokenKeyPair!.value } as SaleReq;
+    fetchResult = (await querySale(saleReq)) ?? [] as any as SaleDtoExtend[];
     if (fetchResult.length == 0) {
         saleReq = { saleAddress: appState.connectedWallet58 } as SaleReq;
         fetchResult = (await querySale(saleReq)) as SaleDtoExtend[];
@@ -67,6 +71,8 @@ onMounted(async () => {
             type: 'warning',
             message: `fetch no sales!`,
         });
+        closeLoadingMask(maskId);
+
         return;
     }
 
@@ -82,6 +88,8 @@ onMounted(async () => {
         top: 0,
         behavior: 'smooth' // 平滑滚动到顶部  
     });
+
+    closeLoadingMask(maskId);
 })
 
 </script>

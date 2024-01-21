@@ -4,7 +4,7 @@ import axios, { AxiosError, type AxiosResponse } from "axios";
 // 创建 axios 实例
 export const $httpInstance = axios.create({
     baseURL: import.meta.env.VITE_API_GATEWAY,
-   // timeout: 25000
+    timeout: 10000
 })
 
 type ResponseSuccessCallback = (response: AxiosResponse) => void;

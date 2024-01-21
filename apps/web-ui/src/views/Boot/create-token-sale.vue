@@ -19,7 +19,7 @@ import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 
-type SaleDtoExtend = SaleDto ;// & { saleStartTimeStamp: number, saleEndTimeStamp: number }
+type SaleDtoExtend = SaleDto;// & { saleStartTimeStamp: number, saleEndTimeStamp: number }
 
 const upload = ref<UploadInstance>()
 
@@ -51,7 +51,7 @@ let saleDtoInit: SaleDtoExtend = {
     tokenAddress: appState.tokeniZkBasicTokenKeyPair?.value as string, // TODO consider if publickey.empty for privateSale
     tokenSymbol: null as any as string,
     saleName: '',
-    saleAddress: null as any as string,
+    saleAddress: 'to be generated...',
     totalSaleSupply: null as any as number,
     currency: 'MINA',
     feeRate: '1',
@@ -454,6 +454,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 vestingPeriod: saleDto1.vestingPeriod, // 0 is not allowed, default value is 1
                 vestingIncrement: saleDto1.vestingIncrement
             };
+            console.log('saleParams: ' + JSON.stringify(saleParams));
 
             const feePayerAddress = appState.connectedWallet58;
             const txFee = 0.21 * (10 ** 9)
@@ -525,7 +526,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                         router.replace(`/sale-datails?saleAddress=${saleAddress}&tokenAddress=${tokenAddress}`);
 
                         // send back to backend for recording
-                        await submitSale(saleDto);// TODO!!! 本尊
+                        await submitSale(saleDto1);// TODO!!! 本尊
                     } catch (error) {
                         console.error(error);
                     }
@@ -816,7 +817,7 @@ const title = computed(() => {
 
                                         <el-row class="row-bg">
                                             <el-col :span="11">
-                                                <el-form-item label="SoftCap (Mina)" prop="softCap">
+                                                <el-form-item label="SoftCap (Mina)" prop="softCap" v-if="saleType != 1">
                                                     <el-input v-model.number.trim="saleDto.softCap" placeholder="0" />
                                                     <div class="form-notes"> Softcap must be >= 25% of Hardcap!</div>
                                                 </el-form-item>
@@ -825,7 +826,7 @@ const title = computed(() => {
                                             <el-col :span="1"></el-col>
 
                                             <el-col :span="12">
-                                                <el-form-item label="HardCap (Mina)" prop="hardCap">
+                                                <el-form-item label="HardCap (Mina)" prop="hardCap" v-if="saleType != 1">
                                                     <el-input v-model.number.trim="saleDto.hardCap" placeholder="0" />
                                                     <div class="form-notes"> Setting max contribution?</div>
                                                 </el-form-item>
@@ -1071,8 +1072,7 @@ const title = computed(() => {
                                             <el-col :span="12">{{ saleDto.saleRate }}</el-col>
                                         </el-row>
 
-                                        <el-row
-                                            :hidden="saleDto.whitelistMembers == null || saleDto.whitelistMembers == ''">
+                                        <el-row>
                                             <el-col :span="12">Sale whitelist</el-col>
                                             <el-col :span="12">
                                                 <!-- {{ saleDto.whitelistMembers }} -->
@@ -1102,12 +1102,12 @@ const title = computed(() => {
                                             </el-col>
                                         </el-row>
 
-                                        <el-row v-show="saleDto.softCap">
+                                        <el-row v-show="saleType != 1">
                                             <el-col :span="12">Softcap</el-col>
                                             <el-col :span="12">{{ saleDto.softCap }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
-                                        <el-row v-show="saleDto.hardCap">
+                                        <el-row v-show="saleType != 1">
                                             <el-col :span="12">HardCap</el-col>
                                             <el-col :span="12">{{ saleDto.hardCap }} {{ saleDto.currency }}</el-col>
                                         </el-row>
@@ -1150,9 +1150,9 @@ const title = computed(() => {
                                         </el-row>
 
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="12">logoUrl</el-col>
-                                            <el-col :span="12">{{ saleDto.logoUrl }}</el-col>
+                                            <el-col :span="12" style="">{{ saleDto.logoUrl }}</el-col>
                                         </el-row>
 
                                         <el-row>

@@ -373,7 +373,7 @@ const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string
             const tokenFactoryZkApp = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
 
             const saleParams1 = SaleParams.fromDto(saleParams);
-            let tx = await Mina.transaction(
+            const tx = await Mina.transaction(
                 {
                     sender: feePayer,
                     fee: txFee,
@@ -381,7 +381,7 @@ const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string
                 },
                 () => {
                     AccountUpdate.fundNewAccount(feePayer, 1);
-                    tokenFactoryZkApp.createPrivateSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.privateSaleContractVk, saleParams1);
+                    tokenFactoryZkApp.createPrivateSale(lauchpadPlatformParams, saleParams1, PublicKey.fromBase58(saleParams.tokenAddress), PublicKey.fromBase58(saleAddress), TokeniZkFactory.privateSaleContractVk);
                 }
             );
 

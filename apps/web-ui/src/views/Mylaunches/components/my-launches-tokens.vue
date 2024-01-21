@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive } from 'vue'
+import { onBeforeMount, onMounted, reactive } from 'vue'
 import { useStatusStore, type AppState } from "@/stores";
 import { ElMessage } from 'element-plus';
 import { queryToken } from '@/apis/token-api';
@@ -20,6 +20,8 @@ onMounted(async () => {
         return;
     }
 
+    const maskId = 'queryToken';
+    showLoadingMask({id: maskId, text: 'loading...'});
     // query token list
     const tokenDtoList = (await queryToken(appState.tokeniZkBasicTokenKeyPair?.value)) ?? [];
 
@@ -29,6 +31,7 @@ onMounted(async () => {
             type: 'warning',
             message: `fetch no token!`,
         });
+        closeLoadingMask(maskId);
         return;
     }
 
@@ -39,6 +42,8 @@ onMounted(async () => {
         top: 0,
         behavior: 'smooth' // 平滑滚动到顶部  
     });
+
+    closeLoadingMask(maskId);
 
 })
 

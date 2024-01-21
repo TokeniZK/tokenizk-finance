@@ -1,5 +1,5 @@
 import { $httpInstance } from "@/utils"
-import type { BaseResponse, TokenDto } from "@tokenizk/types";
+import type { BaseResponse, TokenDto,UserTokenTransferDto } from "@tokenizk/types";
 
 // submit token
 export async function submitToken(tokenDto: TokenDto) {
@@ -47,4 +47,19 @@ export async function queryToken(address?: string) {
         console.error(error);
     }
     return [];
+}
+export async function submitTokenTransfer(userTokenTransferDto: UserTokenTransferDto) {
+    try {
+        // request sequencer for the result.
+        const rs = await $httpInstance.post<BaseResponse<TokenDto[]>>('/token/transfer', userTokenTransferDto).then(r => {
+            return r.data
+        });
+        if (rs.code == 0) {
+            return true;
+        }
+    } catch (error) {
+        console.error(error);
+
+    }
+    return false;
 }

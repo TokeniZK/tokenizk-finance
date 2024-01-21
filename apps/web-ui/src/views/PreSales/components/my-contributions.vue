@@ -21,7 +21,7 @@ router.beforeEach((to, from, next) => {
 
 watch(() => appState.connectedWallet58, async (value, oldValue) => {
     if (!appState.connectedWallet58) {
-        router.replace('/sales?saleType=' + saleType);
+        router.replace('/sales?saleType=' + saleType.value);
     }
 })
 
@@ -74,10 +74,13 @@ let renderSaleBlock: SaleDtoExtend[] = [];
 let myContributionsList = reactive({ saleList: renderSaleBlock });
 
 
-// 组件挂载完成后执行的函数  请求数据  
+// 组件挂载完成后执行的函数  请求数据
 onMounted(async () => {
 
     let fetchResult = (await querySaleUserContribution(saleType.value, appState.connectedWallet58!)) as any as SaleUserDtoExtend[];
+
+    console.log(`fetchResult: ${JSON.stringify(fetchResult)}`);
+    
 
     calcProjectProgress(fetchResult);
     transformProjectStatus(fetchResult);

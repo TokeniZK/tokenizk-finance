@@ -6,11 +6,11 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "4936949",
-      "name": "google plus",
-      "font_class": "googleplus",
-      "unicode": "e87a",
-      "unicode_decimal": 59514
+      "icon_id": "2815735",
+      "name": "系统",
+      "font_class": "xitong",
+      "unicode": "e604",
+      "unicode_decimal": 58884
     },
     {
       "icon_id": "837149",
@@ -41,20 +41,6 @@
       "unicode_decimal": 59914
     },
     {
-      "icon_id": "14679150",
-      "name": "logo_instagram",
-      "font_class": "logo_instagram",
-      "unicode": "e682",
-      "unicode_decimal": 59010
-    },
-    {
-      "icon_id": "15188325",
-      "name": "discord",
-      "font_class": "discord1",
-      "unicode": "e6e0",
-      "unicode_decimal": 59104
-    },
-    {
       "icon_id": "5835056",
       "name": "bird",
       "font_class": "bird",
@@ -76,41 +62,6 @@
       "unicode_decimal": 59134
     },
     {
-      "icon_id": "2204136",
-      "name": "战略，计划，公关",
-      "font_class": "strategyplanpr",
-      "unicode": "e624",
-      "unicode_decimal": 58916
-    },
-    {
-      "icon_id": "2409490",
-      "name": "dis_strategy",
-      "font_class": "dis_strategy",
-      "unicode": "e8e4",
-      "unicode_decimal": 59620
-    },
-    {
-      "icon_id": "3759347",
-      "name": "公司战略",
-      "font_class": "gongsizhanlve-",
-      "unicode": "e603",
-      "unicode_decimal": 58883
-    },
-    {
-      "icon_id": "4495013",
-      "name": "预售",
-      "font_class": "yushou",
-      "unicode": "e655",
-      "unicode_decimal": 58965
-    },
-    {
-      "icon_id": "4682109",
-      "name": "launchpad",
-      "font_class": "launchpad",
-      "unicode": "e60b",
-      "unicode_decimal": 58891
-    },
-    {
       "icon_id": "4770815",
       "name": "启动招聘管理",
       "font_class": "qidongzhaopinguanli",
@@ -118,25 +69,11 @@
       "unicode_decimal": 59212
     },
     {
-      "icon_id": "8262866",
-      "name": "structure_editor",
-      "font_class": "structure_editor",
-      "unicode": "e600",
-      "unicode_decimal": 58880
-    },
-    {
       "icon_id": "8592099",
       "name": "lock-clock",
       "font_class": "lock-clock",
       "unicode": "e7d4",
       "unicode_decimal": 59348
-    },
-    {
-      "icon_id": "8938555",
-      "name": "strategy_nocolor",
-      "font_class": "analysis",
-      "unicode": "e64f",
-      "unicode_decimal": 58959
     },
     {
       "icon_id": "12129508",
@@ -151,20 +88,6 @@
       "font_class": "strategy",
       "unicode": "e716",
       "unicode_decimal": 59158
-    },
-    {
-      "icon_id": "24890803",
-      "name": "Strategy-1",
-      "font_class": "Strategy-1",
-      "unicode": "e838",
-      "unicode_decimal": 59448
-    },
-    {
-      "icon_id": "25671906",
-      "name": "品牌",
-      "font_class": "pinpai",
-      "unicode": "fe83",
-      "unicode_decimal": 65155
     },
     {
       "icon_id": "28800472",
@@ -193,13 +116,6 @@
       "font_class": "a-InvestmentCastingCustomization",
       "unicode": "e686",
       "unicode_decimal": 59014
-    },
-    {
-      "icon_id": "35126983",
-      "name": "Set customization",
-      "font_class": "a-Setcustomization",
-      "unicode": "e60c",
-      "unicode_decimal": 58892
     }
   ]
 }

@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4413137 */
-  src: url('iconfont.woff2?t=1705479702453') format('woff2'),
-       url('iconfont.woff?t=1705479702453') format('woff'),
-       url('iconfont.ttf?t=1705479702453') format('truetype');
+  src: url('iconfont.woff2?t=1705855092227') format('woff2'),
+       url('iconfont.woff?t=1705855092227') format('woff'),
+       url('iconfont.ttf?t=1705855092227') format('truetype');
 }
 
 .iconfont {
@@ -13,8 +13,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-googleplus:before {
-  content: "\e87a";
+.icon-xitong:before {
+  content: "\e604";
 }
 
 .icon-redditsquare:before {
@@ -33,14 +33,6 @@
   content: "\ea0a";
 }
 
-.icon-logo_instagram:before {
-  content: "\e682";
-}
-
-.icon-discord1:before {
-  content: "\e6e0";
-}
-
 .icon-bird:before {
   content: "\e606";
 }
@@ -53,40 +45,12 @@
   content: "\e6fe";
 }
 
-.icon-strategyplanpr:before {
-  content: "\e624";
-}
-
-.icon-dis_strategy:before {
-  content: "\e8e4";
-}
-
-.icon-gongsizhanlve-:before {
-  content: "\e603";
-}
-
-.icon-yushou:before {
-  content: "\e655";
-}
-
-.icon-launchpad:before {
-  content: "\e60b";
-}
-
 .icon-qidongzhaopinguanli:before {
   content: "\e74c";
 }
 
-.icon-structure_editor:before {
-  content: "\e600";
-}
-
 .icon-lock-clock:before {
   content: "\e7d4";
-}
-
-.icon-analysis:before {
-  content: "\e64f";
 }
 
 .icon-presale:before {
@@ -95,14 +59,6 @@
 
 .icon-strategy:before {
   content: "\e716";
-}
-
-.icon-Strategy-1:before {
-  content: "\e838";
-}
-
-.icon-pinpai:before {
-  content: "\fe83";
 }
 
 .icon-pre_sale:before {
@@ -119,9 +75,5 @@
 
 .icon-a-InvestmentCastingCustomization:before {
   content: "\e686";
-}
-
-.icon-a-Setcustomization:before {
-  content: "\e60c";
 }
 

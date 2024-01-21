@@ -49,13 +49,34 @@ const toDetailPage = `/airdrop-datails?airdropAddress=${airdropDtoRef.airdropAdd
             <el-col :span="24">
 
                 <el-row class="row-bg" justify="space-between">
-                    <el-col :span="24">
-                        <h3> <router-link :to="toDetailPage">{{ airdropDtoRef.airdropName }}</router-link></h3>
+                    <el-col :span="17">
+                        <h4> <router-link :to="toDetailPage">{{ airdropDtoRef.airdropName }}</router-link></h4>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-row justify="end" v-if="airdropDtoRef.startTimestamp > Date.now()">
+                            <el-button type="warning" round class="statusColor" plain size="small">Upcoming</el-button>
+                        </el-row>
+                        <el-row justify="end" v-else>
+                            <el-button type="primary" round class="statusColor" plain size="small">Ongoing</el-button>
+                        </el-row>
                     </el-col>
                 </el-row>
 
-                <el-row class="row-bg" justify="space-between" style="margin-top: 15px;">
-                    <el-col :span="6">Token :</el-col>
+                <el-row class="row-bg teamName" justify="space-between" style="align-items: center;">
+                    <el-col class="text" :span="15">
+                        by <a :href="airdropDtoRef.website" target="_blank">{{ airdropDtoRef.teamName }}</a>
+                    </el-col>
+
+                    <el-col class="likes" :span="8">
+                        <el-rate v-model="airdropDtoRef.star" size="large" />
+                    </el-col>
+                </el-row>
+
+
+                <el-row class="row-bg" justify="space-between">
+                    <el-col :span="6">
+                        <el-row>Token :</el-row>
+                    </el-col>
                     <el-col :span="17">
                         <el-row justify="end">
                             {{ airdropDtoRef.tokenSymbol }}
@@ -63,11 +84,24 @@ const toDetailPage = `/airdrop-datails?airdropAddress=${airdropDtoRef.airdropAdd
                     </el-col>
                 </el-row>
 
+                <el-row class="row-bg" justify="space-between">
+                    <el-col :span="12">
+                        <el-row> Total Supply :</el-row>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-row justify="end">
+                            {{ airdropDtoRef.totalAirdropSupply }}
+                        </el-row>
+                    </el-col>
+                </el-row>
+
                 <el-row class="row-bg" justify="space-between"
                     v-if="airdropDtoRef.startTimestamp - Date.now() >= 10 * 1000">
+
                     <el-col :span="6">
-                        <el-row style="padding-top: 8px;">Begin in :</el-row>
+                        <el-row>Begin in :</el-row>
                     </el-col>
+
                     <el-col :span="17">
                         <el-row justify="end">
                             <el-countdown format="DD [days] HH:mm:ss" :value="airdropDtoRef.startTimestamp"
@@ -75,23 +109,7 @@ const toDetailPage = `/airdrop-datails?airdropAddress=${airdropDtoRef.airdropAdd
                             </el-countdown>
                         </el-row>
                     </el-col>
-                </el-row>
 
-                <el-row class="row-bg" justify="space-between" v-else>
-                    <el-col :span="6">
-                        <el-row style="padding-top: 8px;"></el-row>
-                    </el-col>
-                    <el-col :span="17">
-                        <el-row justify="end">
-                            <el-button type="primary" round class="statusColor">Ongoing</el-button>
-                        </el-row>
-                    </el-col>
-                </el-row>
-
-                <el-row class="row-bg" justify="end">
-                    <router-link to="toDetailPage">
-                        <el-button type="primary" round> View Airdrop</el-button>
-                    </router-link>
                 </el-row>
 
             </el-col>
@@ -117,23 +135,25 @@ const toDetailPage = `/airdrop-datails?airdropAddress=${airdropDtoRef.airdropAdd
 
     .launchpads-content {
         width: 100%;
-        padding-left: 20px;
-        padding-right: 20px;
+        padding: 15px 20px 10px;
 
-        .demo-progress .el-progress--line {
-            margin-bottom: 15px;
-            width: 300px;
+        .statusColor {
+            border: 0;
+        }
+
+        .statusColor:hover {
+            cursor: default;
+        }
+
+        .NStatus {
+            align-items: center;
+        }
+
+        .el-row {
+            margin-bottom: 5px;
         }
 
     }
 
-}
-
-.el-row {
-    margin-bottom: 5px;
-}
-
-.el-row:last-child {
-    margin-bottom: 6px;
 }
 </style>
