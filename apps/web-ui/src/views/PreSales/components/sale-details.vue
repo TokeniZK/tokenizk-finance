@@ -1413,7 +1413,6 @@ onUnmounted(() => {
     .project-status {
         width: 100%;
         margin-left: 30px;
-        border-radius: 30px;
 
         .project-status-box {
             padding: 30px;

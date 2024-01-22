@@ -974,6 +974,7 @@ onUnmounted(() => {
         .project-status-box {
             padding: 30px;
             background-color: #fff;
+            border-radius: 20px;
 
             .countdown {
                 text-align: center;
@@ -991,6 +992,7 @@ onUnmounted(() => {
         margin-top: 20px;
         padding: 30px 15px;
         background-color: #fff;
+        border-radius: 20px;
 
         .titleName {
             // font-weight: 700;
