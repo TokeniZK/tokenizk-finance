@@ -4,14 +4,7 @@ import { onMounted, ref } from "vue";
 import useClientUtils from "./utils/useClientUtils";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { CHANNEL_MINA, WalletEventType, type WalletEvent, type ChainInfoArgs } from "./common";
-import { Mina } from "o1js";
 import { ElMessage } from "element-plus";
-
-Mina.setActiveInstance(
-    Mina.Network({
-        mina: import.meta.env.VITE_MINA_GRAPHQL_URL,
-        archive: import.meta.env.VITE_MINA_ARCHIVE_URL,
-    }));
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -103,9 +96,9 @@ onMounted(async () => {
     <el-dialog v-model="appState.mask.show" width="30%" :close-on-click-modal="appState.mask.closable"
         :close-on-press-escape="false" :show-close="false" class="dialog-box">
         <span style="font-size: 16px;  text-align: center;">{{ appState.mask.loadingText }}</span>
-        <a :href="appState.mask.loadingLink" v-if="appState.mask.loadingLink" class="urlLink">{{ appState.mask.loadingLink }}</a>
+        <a :href="appState.mask.loadingLink" v-if="appState.mask.loadingLink" class="urlLink">{{ appState.mask.loadingLink
+        }}</a>
     </el-dialog>
-
 </template>
 <style lang="less">
 .subMenuSecondaryMenu {
@@ -153,13 +146,13 @@ onMounted(async () => {
     }
 }
 
-.dialog-box{
-    border-radius: 25px !important; 
-    text-align: center;  
+.dialog-box {
+    border-radius: 25px !important;
+    text-align: center;
     font-size: 16px;
     overflow-wrap: break-word;
 
-    .urlLink{
+    .urlLink {
         cursor: pointer;
         color: #00c798;
     }
