@@ -877,10 +877,11 @@ onUnmounted(() => {
 
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
-                                    <a :href="tokenAddressLinkPrefix" class="titleContent">{{
-                                        saleContributorsDetailDto.saleDto.tokenAddress }}</a>
+                                    <a :href="tokenAddressLinkPrefix" class="titleContent" target="_blank">
+                                        {{ saleContributorsDetailDto.saleDto.tokenAddress }}
+                                    </a>
 
-                                    <a :href="tokenAddressLinkPrefix" class="titleContent">
+                                    <a :href="tokenAddressLinkPrefix" class="titleContent" target="_blank">
                                         <el-icon style="margin-left: 10px;">
                                             <CopyDocument />
                                         </el-icon>
@@ -899,10 +900,11 @@ onUnmounted(() => {
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
 
-                                    <a :href="saleAddressLinkPrefix" class="titleContent">{{
-                                        saleContributorsDetailDto.saleDto.saleAddress }}</a>
+                                    <a :href="saleAddressLinkPrefix" class="titleContent" target="_blank">
+                                        {{ saleContributorsDetailDto.saleDto.saleAddress }}
+                                    </a>
 
-                                    <a :href="saleAddressLinkPrefix" class="titleContent">
+                                    <a :href="saleAddressLinkPrefix" class="titleContent" target="_blank">
                                         <el-icon style="margin-left: 10px;">
                                             <CopyDocument />
                                         </el-icon>
