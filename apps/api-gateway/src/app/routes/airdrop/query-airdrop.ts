@@ -37,7 +37,7 @@ const handler: RequestHandler<AirdropReq, null> = async function (
         const connection = getConnection();
         const saleRepo = connection.getRepository(Airdrop)
 
-        const queryBuilder = saleRepo.createQueryBuilder('ps');
+        const queryBuilder = saleRepo.createQueryBuilder('ps').andWhere(`ps.status = 1`);
 
         if (airdropReq?.airdropType != undefined) {
             queryBuilder.andWhere(`ps.type = '${airdropReq.airdropType}'`);

@@ -35,7 +35,7 @@ const handler: RequestHandler<null, null> = async function (
         const airdropRepo = connection.getRepository(Airdrop)
         const userTokenAirdropRepo = connection.getRepository(UserTokenAirdrop)
 
-        const totalAirdrops = await airdropRepo.count();
+        const totalAirdrops = await airdropRepo.count({ where: { status: 1 } });
         const totalParticipants = await userTokenAirdropRepo.count();
 
         return {
