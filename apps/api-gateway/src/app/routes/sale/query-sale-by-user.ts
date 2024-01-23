@@ -50,18 +50,30 @@ const handler: RequestHandler<{ saleType: number, userAddress: string }, null> =
                         address: In(saleList.map(p => p.tokenAddress))
                     }
                 });
-                saleList.forEach(p => {
-                    const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
-                    (p as any as SaleDto).tokenSymbol = token.symbol
-                })
+                
+                for (let i = 0; i < saleList.length; i++) {
+                    const sale = saleList[i];
+                    const token = tokenList.filter(t => t.address == sale.tokenAddress)[0];
+                    (sale as any as SaleDto).tokenSymbol = token.symbol;
+                    (sale as any as SaleDto).teamName = token.name;
+
+                    sale.totalContributedMina = (await userTokenSaleRepo.find({
+                        where: {
+                            saleId: sale.id,
+                            // status: 1  // TODO !!! when fetchEvent is ok, then need it!!!
+                        }
+                    }) ?? []).reduce<number>((p, c) => {
+                        return p + Number(c.contributeCurrencyAmount??0)
+                    }, 0);
+                }
 
                 for (let i = 0; i < userSaleList.length; i++) {
                     const ufs = userSaleList[i];
 
-                    const presale = saleList.filter(p => p.id == ufs.saleId)[0];
+                    const sale = saleList.filter(p => p.id == ufs.saleId)[0];
 
                     const fsDto: SaleUserDto = {
-                        saleDto: presale as any as SaleDto,
+                        saleDto: sale as any as SaleDto,
                         userContribute: {
                             txHash: ufs.contributeTxHash,
                             contributeBlockHeight: ufs.contributeBlockHeight,
