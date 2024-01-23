@@ -54,7 +54,7 @@ let airdropDtoInit: AirdropDto = {
     airdropAddress: null as any as string,
     totalAirdropSupply: null as any as number,
     currency: 'MINA',
-    feeRate: '100',
+    feeRate: '10',
     whitelistTreeRoot: '0',
     whitelistMembers: '',
     startTimestamp: new Date().getTime(),
@@ -163,6 +163,7 @@ const rules = reactive<FormRules<AirdropDto>>({
             message: 'Total Airdrop Supply must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
     whitelistMembers: [
@@ -172,6 +173,7 @@ const rules = reactive<FormRules<AirdropDto>>({
             trigger: 'blur',
         },
     ],
+    
     startTimestamp: [
         {
             type: 'date',
@@ -197,7 +199,40 @@ const rules = reactive<FormRules<AirdropDto>>({
             message: 'cliffTime must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
+
+    cliffAmountRate:[
+        {
+            type: 'number',
+            required: true,
+            message: 'cliffAmountRate must be number type',
+            trigger: 'blur'
+        },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+    ],
+
+    vestingPeriod:[
+        {
+            type: 'number',
+            required: true,
+            message: 'vestingPeriod must be number type',
+            trigger: 'blur'
+        },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+    ],
+
+    
+    vestingIncrement:[
+        {
+            type: 'number',
+            required: true,
+            message: 'vestingIncrement must be number type',
+            trigger: 'blur'
+        },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+    ],
+
     logoUrl: [
         {
             required: true,
@@ -651,7 +686,7 @@ const title = computed(() => {
 
                                         <el-form-item label="Creation Fee Options" prop="feeRate">
                                             <el-radio-group v-model="airdropDto.feeRate">
-                                                <el-radio label="10">10 MINA</el-radio>
+                                                <el-radio label="10" />
                                                 <!-- <el-radio label="0">Other</el-radio> -->
                                             </el-radio-group>
                                         </el-form-item>

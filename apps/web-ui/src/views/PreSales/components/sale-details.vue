@@ -877,10 +877,11 @@ onUnmounted(() => {
 
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
-                                    <a :href="tokenAddressLinkPrefix" class="titleContent">{{
-                                        saleContributorsDetailDto.saleDto.tokenAddress }}</a>
+                                    <a :href="tokenAddressLinkPrefix" class="titleContent" target="_blank">
+                                    {{saleContributorsDetailDto.saleDto.tokenAddress }}
+                                        </a>
 
-                                    <a :href="tokenAddressLinkPrefix" class="titleContent">
+                                    <a :href="tokenAddressLinkPrefix" class="titleContent" target="_blank">
                                         <el-icon style="margin-left: 10px;">
                                             <CopyDocument />
                                         </el-icon>
@@ -1246,7 +1247,7 @@ onUnmounted(() => {
                     </el-row>
 
                     <!-- 注意  进度条 -->
-                    <el-row>
+                    <el-row v-if="saleContributorsDetailDto.saleDto.saleType != 1">
                         <el-col>
                             <el-row class="Progress demo-progress" style="margin-bottom: 0;">
                                 <el-progress :text-inside="true" :stroke-width="14"
@@ -1411,7 +1412,6 @@ onUnmounted(() => {
     .project-status {
         width: 100%;
         margin-left: 30px;
-        border-radius: 30px;
 
         .project-status-box {
             padding: 30px;

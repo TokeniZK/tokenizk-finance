@@ -81,6 +81,7 @@ const rules = reactive<FormRules<UserFundTransferForm>>({
             message: 'amount must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
 })

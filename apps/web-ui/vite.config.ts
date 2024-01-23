@@ -9,6 +9,29 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // 导入对应包
 import ElementPlus from 'unplugin-element-plus/vite'
 import topLevelAwait from 'vite-plugin-top-level-await'
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+
+let https: any = undefined;
+let hmr = true;
+let network = os.networkInterfaces()
+for (let dev in network) {
+    let iface = network[dev]!
+    for (let i = 0; i < iface.length; i++) {
+        let alias = iface[i]
+        if (alias.address == '51.161.87.222') {
+            hmr = false;
+            /*
+            https = {
+                cert: fs.readFileSync('/root/tokenizk-project-space/ssl/tokenizk_finance.crt'),
+                key: fs.readFileSync('/root/tokenizk-project-space/ssl/tokenizk_finance.key'),
+            };
+            */
+            break;
+        }
+    }
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -55,7 +78,7 @@ export default defineConfig({
                 @use "@/styles/element/index.scss" as *;
                 @use "@/styles/var.scss" as *;
               `,
-              }
+            }
         }
     },
     server: {
@@ -66,6 +89,8 @@ export default defineConfig({
             "Cross-Origin-Resource-Policy": "same-site",
             "Access-Control-Allow-Origin": "*"
         },
+        https,
+        hmr
     },
     optimizeDeps: {
         include: ['buffer']
