@@ -215,6 +215,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'Total Sale Supply must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
 
@@ -226,6 +227,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'saleRate must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     whitelistMembers: [
@@ -243,6 +245,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'softCap must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     hardCap: [
@@ -252,6 +255,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'hardCap must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     minimumBuy: [
@@ -261,6 +265,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'minimumBuy must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     maximumBuy: [
@@ -270,6 +275,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'maximumBuy must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     startTimestamp: [
@@ -297,6 +303,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'cliffTime must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
 
@@ -366,11 +373,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 saleDto1.hardCap = 0;
                 saleDto1.softCap = 0;
                 saleDto1.saleRate = 0;
+                saleDto1.saleType = 1;
                 saleTag = 'FairSale'
 
             } else if (saleType.value == 2) {
                 saleDto1.totalSaleSupply = 0;
                 saleDto1.saleRate = 0;
+                saleDto1.saleType = 2;
                 saleTag = 'PrivateSale'
 
             } else {
@@ -686,6 +695,10 @@ const title = computed(() => {
     return `Create ${saleType.value == 0 ? 'PreSale' : (saleType.value == 1 ? 'FairSale' : 'PrivateSale')} Launch`
 })
 
+// const compareSoftHard = () => {
+
+// }
+
 </script>
 
 <template>
@@ -791,29 +804,9 @@ const title = computed(() => {
 
                                     <el-col :span="24">
 
-                                        <el-row class="row-bg">
-                                            <el-col :span="11">
-                                                <el-form-item label="Sale Name" prop="saleName">
-                                                    <el-input v-model="saleDto.saleName" placeholder="Ex: Mina" />
-                                                </el-form-item>
-                                            </el-col>
-
-                                            <el-col :span="1"></el-col>
-
-                                            <el-col :span="12">
-                                                <el-form-item label="Sale Total Supply" prop="totalSaleSupply">
-                                                    <el-input v-model.number.trim="saleDto.totalSaleSupply"
-                                                        placeholder="0" />
-                                                </el-form-item>
-                                            </el-col>
-                                        </el-row>
-
-                                        <el-form-item label="Presale rate" prop="saleRate" v-if="saleType == 0">
-                                            <el-input v-model.number.trim="saleDto.saleRate" placeholder="0" />
-                                            <div class="form-notes">If I spend 1 Mina how many tokens will I
-                                                receive?</div>
+                                        <el-form-item label="Sale Name" prop="saleName">
+                                            <el-input v-model="saleDto.saleName" placeholder="Ex: Mina" />
                                         </el-form-item>
-
 
                                         <el-row class="row-bg">
                                             <el-col :span="11">
@@ -833,6 +826,29 @@ const title = computed(() => {
                                             </el-col>
                                         </el-row>
 
+                                        <el-row class="row-bg" v-if="saleType == 0">
+                                            <el-col :span="11">
+                                                <el-form-item label="Presale rate" prop="saleRate" v-if="saleType == 0">
+                                                    <el-input v-model.number.trim="saleDto.saleRate" placeholder="0" />
+                                                    <div class="form-notes">If I spend 1 Mina how many tokens will I
+                                                        receive?</div>
+                                                </el-form-item>
+                                            </el-col>
+
+                                            <el-col :span="1"></el-col>
+
+                                            <el-col :span="12">
+                                                <el-form-item label="Sale Total Supply" prop="totalSaleSupply">
+                                                    <!-- <el-input v-model.number.trim="saleDto.totalSaleSupply"
+                                                        placeholder="0" /> -->
+                                                    {{ saleDto.hardCap * saleDto.saleRate }}
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-form-item label="Sale Total Supply" prop="totalSaleSupply" v-if="saleType == 1">
+                                            <el-input v-model.number.trim="saleDto.totalSaleSupply" placeholder="0" />
+                                        </el-form-item>
 
                                         <el-row class="row-bg">
                                             <el-col :span="11">

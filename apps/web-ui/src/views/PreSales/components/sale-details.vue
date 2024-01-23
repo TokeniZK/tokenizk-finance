@@ -878,8 +878,8 @@ onUnmounted(() => {
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
                                     <a :href="tokenAddressLinkPrefix" class="titleContent" target="_blank">
-                                        {{ saleContributorsDetailDto.saleDto.tokenAddress }}
-                                    </a>
+                                    {{saleContributorsDetailDto.saleDto.tokenAddress }}
+                                        </a>
 
                                     <a :href="tokenAddressLinkPrefix" class="titleContent" target="_blank">
                                         <el-icon style="margin-left: 10px;">
@@ -900,11 +900,10 @@ onUnmounted(() => {
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
 
-                                    <a :href="saleAddressLinkPrefix" class="titleContent" target="_blank">
-                                        {{ saleContributorsDetailDto.saleDto.saleAddress }}
-                                    </a>
+                                    <a :href="saleAddressLinkPrefix" class="titleContent">{{
+                                        saleContributorsDetailDto.saleDto.saleAddress }}</a>
 
-                                    <a :href="saleAddressLinkPrefix" class="titleContent" target="_blank">
+                                    <a :href="saleAddressLinkPrefix" class="titleContent">
                                         <el-icon style="margin-left: 10px;">
                                             <CopyDocument />
                                         </el-icon>
@@ -1248,7 +1247,7 @@ onUnmounted(() => {
                     </el-row>
 
                     <!-- 注意  进度条 -->
-                    <el-row>
+                    <el-row v-if="saleContributorsDetailDto.saleDto.saleType != 1">
                         <el-col>
                             <el-row class="Progress demo-progress" style="margin-bottom: 0;">
                                 <el-progress :text-inside="true" :stroke-width="14"

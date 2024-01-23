@@ -176,6 +176,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'Total Sale Supply must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
 
@@ -187,6 +188,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'saleRate must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
     whitelistMembers: [
@@ -204,6 +206,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'softCap must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
     hardCap: [
@@ -213,6 +216,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'hardCap must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
     minimumBuy: [
@@ -222,6 +226,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'minimumBuy must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
     maximumBuy: [
@@ -231,6 +236,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'maximumBuy must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
     startTimestamp: [
@@ -258,6 +264,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'cliffTime must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 
 

@@ -117,6 +117,7 @@ const rules = reactive<FormRules<TokenDto>>({
             message: 'Total Supply must be number type',
             trigger: 'blur'
         },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
     ],
 })
 
@@ -311,7 +312,7 @@ const checkIfDeployed = async () => {
                                 </el-form-item>
 
                                 <el-form-item label="Issuer Name" prop="name">
-                                    <el-input v-model.trim="tokenDtoForm.name" placeholder="Ex: Mina Protocol" />
+                                    <el-input v-model="tokenDtoForm.name" placeholder="Ex: Mina Protocol" />
                                 </el-form-item>
 
                                 <el-form-item label="Official Website">

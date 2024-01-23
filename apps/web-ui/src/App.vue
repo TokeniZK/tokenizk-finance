@@ -67,7 +67,6 @@ onMounted(async () => {
 
     // init web workers
     await createRemoteCircuitController();
-    await CircuitControllerState.remoteController?.compileTokeniZkBasicToken()
 
 });
 
@@ -96,8 +95,7 @@ onMounted(async () => {
     <el-dialog v-model="appState.mask.show" width="30%" :close-on-click-modal="appState.mask.closable"
         :close-on-press-escape="false" :show-close="false" class="dialog-box">
         <span style="font-size: 16px;  text-align: center;">{{ appState.mask.loadingText }}</span>
-        <a :href="appState.mask.loadingLink" v-if="appState.mask.loadingLink" class="urlLink">{{ appState.mask.loadingLink
-        }}</a>
+        <a :href="appState.mask.loadingLink" v-if="appState.mask.loadingLink" class="urlLink" target="_blank">{{ appState.mask.loadingLink }}</a>
     </el-dialog>
 </template>
 <style lang="less">
