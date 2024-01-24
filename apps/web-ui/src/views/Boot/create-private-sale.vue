@@ -81,59 +81,41 @@ const ruleFormRef = ref<FormInstance>()
 
 let saleDto = reactive<SaleDto>(saleDtoInit)
 
-// let saleStartDateTime = ref(new Date());
-// let startTargetBlockHeight = ref(0);
-const changeSaleStartDateTime = async (choosedDate: number) => {
-    /*
-    if (!choosedDate) {
-        choosedDate = Date.now();
+// const changeNumberBuy = () => {
+//     if (saleDto.minimumBuy && saleDto.maximumBuy && saleDto.maximumBuy < saleDto.minimumBuy) {
+//         ElMessage.error({ message: 'maximumBuy must be >= minimumBuy' });
+//         return false;
+//     }
+//     if (saleDto.maximumBuy && saleDto.hardCap && saleDto.maximumBuy > saleDto.hardCap) {
+//         ElMessage.error({ message: 'maximumBuy should be less than or equal hardCap!' });
+//         return false;
+//     }
+
+//     return true;
+// }
+
+// const changeCap = () => {
+//     if (saleDto.softCap && saleDto.hardCap && saleDto.softCap * 4 < saleDto.hardCap) {
+//         ElMessage.error({ message: 'Softcap must be >= 25% of Hardcap!' });
+//         return false;
+//     }
+//     if (saleDto.maximumBuy && saleDto.hardCap && saleDto.maximumBuy > saleDto.hardCap) {
+//         ElMessage.error({ message: 'maximumBuy should be less than or equal hardCap!' });
+//         return false;
+//     }
+//     return true;
+// }
+
+const changeSaleEndStartDateTime = () => {
+    if (saleDto.startTimestamp && saleDto.endTimestamp && saleDto.startTimestamp + 15 * 3 * 60 * 1000 > saleDto.endTimestamp) {
+        ElMessage.error({ message: 'startTimestamp should be less than endTimestamp by 15 slots(about 45mins)' });
+
+        return false;
     }
-    const maskId = 'changeSaleStartDateTime';
-    showLoadingMask({ id: maskId, text: 'fetching latest block...' });
-    try {
-        if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
-            appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
-            appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
-        }
-        startTargetBlockHeight.value = appState.latestBlockInfo!.blockchainLength + Math.floor((choosedDate - Date.now()) / (3 * 60 * 1000)) + 1;
-        saleDto.startTimestamp = startTargetBlockHeight.value;
 
-    } catch (error) {
-        ElMessage.error({ message: 'fetching latest block failed' });
-    }
-
-    closeLoadingMask(maskId);
-    */
-
-    saleDto.startTimestamp = choosedDate;
+    return true;
 }
 
-// let saleEndDateTime = ref(new Date());
-// let endTargetBlockHeight = ref(0);
-const changeSaleEndDateTime = async (choosedDate: number) => {
-    /*
-    if (!choosedDate) {
-        choosedDate = Date.now();
-    }
-    const maskId = 'changeSaleEndDateTime';
-    showLoadingMask({ id: maskId, text: 'fetching latest block...' });
-    try {
-        if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
-            appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
-            appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
-        }
-
-        endTargetBlockHeight.value = appState.latestBlockInfo!.blockchainLength + Math.floor((choosedDate - Date.now()) / (3 * 60 * 1000)) + 1;
-        saleDto.endTimestamp = endTargetBlockHeight.value;
-
-    } catch (error) {
-        ElMessage.error({ message: 'fetching latest block failed' });
-    }
-
-    closeLoadingMask(maskId);
-    */
-    saleDto.endTimestamp = choosedDate;
-}
 const zkTxLinkPrefix = ref(import.meta.env.VITE_EXPLORER_TX_URL);
 
 // 正则
@@ -176,7 +158,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'Total Sale Supply must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
 
@@ -188,7 +170,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'saleRate must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     whitelistMembers: [
@@ -206,7 +188,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'softCap must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     hardCap: [
@@ -216,7 +198,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'hardCap must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     minimumBuy: [
@@ -226,7 +208,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'minimumBuy must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     maximumBuy: [
@@ -236,7 +218,7 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'maximumBuy must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     startTimestamp: [
@@ -264,7 +246,37 @@ const rules = reactive<FormRules<SaleDto>>({
             message: 'cliffTime must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
+    ],
+
+    cliffAmountRate: [
+        {
+            type: 'number',
+            required: true,
+            message: 'cliffAmountRate must be number type',
+            trigger: 'blur'
+        },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
+    ],
+
+    vestingPeriod: [
+        {
+            type: 'number',
+            required: true,
+            message: 'vestingPeriod must be number type',
+            trigger: 'blur'
+        },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
+    ],
+
+    vestingIncrement: [
+        {
+            type: 'number',
+            required: true,
+            message: 'vestingIncrement must be number type',
+            trigger: 'blur'
+        },
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
 
@@ -328,6 +340,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
 
         if (valid) {
+
+            if (!changeNumberBuy() || !changeSaleEndStartDateTime()) {
+                return;
+            }
+            if (saleType.value == 0 && !changeRateCap()) {
+                return;
+            }
+
             saleDto.totalSaleSupply = 0;
             saleDto.saleRate = 0;
             let saleTag = 'PrivateSale'
@@ -501,29 +521,121 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 const dynamicalCliffAmount = ref(0);
 const changeCliffAmountRate = () => {
+    if (saleDto.cliffAmountRate === 0) {
+        ElMessage.error({ message: 'cliffAmountRate must be > 0' });
+        return false;
+    }
+    if (saleDto.cliffAmountRate > 100) {
+        ElMessage.error({ message: 'cliffAmountRate must be <= 100' });
+        return false;
+    }
     if ((saleDto.whitelistMembers != '' && saleDto.whitelistMembers != null)) {
         const members = saleDto.whitelistMembers.split(',').length;
         dynamicalCliffAmount.value = Number((((saleDto.totalSaleSupply ?? 0) / members) * (saleDto.cliffAmountRate / 100)).toFixed(2));
     }
+
+    return true;
 }
 
 const dynamicalVestingIncrement = ref(0);
 const changeVestingIncrement = () => {
+    if (saleDto.vestingIncrement === 0) {
+        ElMessage.error({ message: 'vestingIncrement must be > 0' });
+        return false;
+    }
+    if (saleDto.vestingIncrement > 100) {
+        ElMessage.error({ message: 'vestingIncrement must be <= 100' });
+        return false;
+    }
     if ((saleDto.whitelistMembers != '' && saleDto.whitelistMembers != null)) {
         const members = saleDto.whitelistMembers.split(',').length;
         dynamicalVestingIncrement.value = Number((((saleDto.totalSaleSupply ?? 0) / members) * (saleDto.vestingIncrement / 100)).toFixed(2));
     }
+    return true;
 }
 
 const dynamicalCliffTime = ref(0);
 const changeCliffTime = () => {
+    if (saleDto.cliffTime === 0) {
+        ElMessage.error({ message: 'cliffTime must be > 0' });
+        return false;
+    }
     dynamicalCliffTime.value = saleDto.cliffTime * 3
+
+    return true;
 }
 
 const dynamicalVestingPeriod = ref(0);
 const changeVestingPeriod = () => {
+    if (saleDto.vestingPeriod === 0) {
+        ElMessage.error({ message: 'vestingPeriod must be > 0' });
+        return false;
+    }
     dynamicalVestingPeriod.value = saleDto.vestingPeriod * 3
+
+    return true;
 }
+
+
+const changeNumberBuy = () => {
+    if (saleDto.minimumBuy === 0 || saleDto.maximumBuy === 0) {
+        ElMessage.error({ message: 'minimumBuy, maximumBuy must be > 0' });
+        return false;
+    }
+    if (saleDto.minimumBuy && saleDto.maximumBuy && saleDto.maximumBuy < saleDto.minimumBuy) {
+        ElMessage.error({ message: 'maximumBuy must be >= minimumBuy' });
+        return false;
+    }
+    if (saleDto.maximumBuy && saleDto.maximumBuy > saleDto.hardCap) {
+        ElMessage.error({ message: 'maximumBuy should be less than or equal hardCap!' });
+        return false;
+    }
+    return true;
+}
+
+const changeRateCap = () => {
+    if (saleDto.softCap === 0 || saleDto.hardCap === 0 || saleDto.saleRate === 0) {
+        ElMessage.error({ message: 'softCap, hardCap, saleRate must be > 0' });
+        return false;
+    }
+    if (saleDto.softCap && saleDto.hardCap && (saleDto.softCap > saleDto.hardCap || saleDto.softCap * 4 < saleDto.hardCap)) {
+        ElMessage.error({ message: 'Softcap must be >= 25% of Hardcap!' });
+        return false;
+    }
+    // if (saleDto.hardCap && saleDto.saleRate && saleDto.saleRate * saleDto.hardCap > (tokenDto.totalSupply - tokenDto.totalAmountInCirculation)) {
+    //     ElMessage.error({ message: 'hardCap * saleRate should be less than the rest amount of token!' });
+    //     return false;
+    // }
+    if (saleDto.maximumBuy && saleDto.maximumBuy > saleDto.hardCap) {
+        ElMessage.error({ message: 'maximumBuy should be less than or equal hardCap!' });
+        return false;
+    }
+    return true;
+}
+
+const dialogTableVisibleErrorAlert = ref(false)
+const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
+const handleWhitelistInput = () => {
+    const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
+    saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
+
+    saleDto.whitelistMembers.split(',').forEach(item => {
+        try {
+            PublicKey.fromBase58(item);
+        } catch (error) {
+            dialogTableVisibleErrorAlert.value = true;
+            console.log(error);
+            whiteListErrorAlert.whitelist.push(item)
+            // ElMessage.error({ message: item + ' is not a valid address!' });
+        }
+    })
+};
+
+const closeErrorWhitelistDialog = () => {
+    dialogTableVisible.value = false
+    whiteListErrorAlert.whitelist = []
+}
+
 
 const goToTop = () => {
     window.scrollTo({
@@ -705,7 +817,7 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="SoftCap (MINA)" prop="softCap">
-                                                    <el-input v-model.number.trim="saleDto.softCap" placeholder="0" />
+                                                    <el-input v-model.number.trim="saleDto.softCap" placeholder="0" @change="changeRateCap"/>
                                                     <div class="form-notes"> Softcap must be >= 25% of Hardcap!</div>
                                                 </el-form-item>
                                             </el-col>
@@ -714,7 +826,7 @@ const title = computed(() => {
 
                                             <el-col :span="12">
                                                 <el-form-item label="HardCap (MINA)" prop="hardCap">
-                                                    <el-input v-model.number.trim="saleDto.hardCap" placeholder="0" />
+                                                    <el-input v-model.number.trim="saleDto.hardCap" placeholder="0"  @change="changeRateCap" />
                                                     <div class="form-notes"> Setting max amount to raise</div>
                                                 </el-form-item>
                                             </el-col>
@@ -724,7 +836,7 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="Minimum buy (MINA)" prop="minimumBuy">
-                                                    <el-input v-model.number.trim="saleDto.minimumBuy" placeholder="0" />
+                                                    <el-input v-model.number.trim="saleDto.minimumBuy" placeholder="0"  @change="changeNumberBuy" />
                                                 </el-form-item>
                                             </el-col>
 
@@ -732,7 +844,7 @@ const title = computed(() => {
 
                                             <el-col :span="12">
                                                 <el-form-item label="Maximum buy (MINA)" prop="maximumBuy">
-                                                    <el-input v-model.number.trim="saleDto.maximumBuy" placeholder="0" />
+                                                    <el-input v-model.number.trim="saleDto.maximumBuy" placeholder="0"  @change="changeNumberBuy" />
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -743,7 +855,7 @@ const title = computed(() => {
                                                 <el-form-item label="Start Time" required style="width: 100%">
                                                     <el-date-picker v-model="saleDto.startTimestamp" type="datetime"
                                                         placeholder="Pick a Date" format="YYYY/MM/DD HH:mm:ss"
-                                                        value-format="x" @change="changeSaleStartDateTime" />
+                                                        value-format="x" @change="changeSaleEndStartDateTime" />
                                                     <!-- <div v-if="startTargetBlockHeight != 0">(start at blockHeight: {{
                                                         startTargetBlockHeight }})</div> -->
                                                 </el-form-item>
@@ -752,7 +864,7 @@ const title = computed(() => {
                                                 <el-form-item label="End Time" required style="width: 100%">
                                                     <el-date-picker v-model="saleDto.endTimestamp" type="datetime"
                                                         placeholder="Pick a Date" format="YYYY/MM/DD HH:mm:ss"
-                                                        value-format="x" @change="changeSaleEndDateTime" />
+                                                        value-format="x" @change="changeSaleEndStartDateTime" />
                                                     <!-- <div v-if="endTargetBlockHeight != 0">(End at blockHeight: {{
                                                         endTargetBlockHeight }})</div> -->
                                                 </el-form-item>
@@ -760,10 +872,21 @@ const title = computed(() => {
                                         </el-row>
 
 
-                                        <el-form-item label="Whitelist" >
+                                        <el-form-item label="Whitelist">
                                             <el-input v-model.trim="saleDto.whitelistMembers" type="textarea"
                                                 :autosize="{ minRows: 2, maxRows: 1000 }"
-                                                placeholder="Please input as comma-sperated Mina wallet addresses" />
+                                                placeholder="Please input as comma-sperated Mina wallet addresses" 
+                                                @blur="handleWhitelistInput" />
+
+                                            <el-dialog v-model="dialogTableVisibleErrorAlert" title="Error WhileList Items"
+                                                style="width:600px" @close="closeErrorWhitelistDialog">
+                                                <ul>
+                                                    <el-scrollbar max-height="400px">
+                                                        <li v-for="item in whiteListErrorAlert.whitelist" :key="item.index"
+                                                            class="whiteListUl scrollbar-demo-item">{{ item }}</li>
+                                                    </el-scrollbar>
+                                                </ul>
+                                            </el-dialog>
                                         </el-form-item>
 
                                         <div style="border-color: #009688; border-width: 10px;">
@@ -955,7 +1078,7 @@ const title = computed(() => {
                                             <el-col :span="12">{{ saleDto.feeRate }} MINA</el-col>
                                         </el-row>
 
-<!--                                         
+                                        <!--                                         
                                         <el-row v-show="saleDto.saleRate">
                                             <el-col :span="12">Sale Rate</el-col>
                                             <el-col :span="12">{{ saleDto.saleRate }}</el-col>
@@ -1193,6 +1316,31 @@ const title = computed(() => {
         }
     }
 
+    .whiteListBtn {
+        color: #00c798;
+            background-color: #e6fff9;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .whiteListUl {
+            border: 1px solid #e6e6e6;
+            padding: 10px 0 10px 10px;
+        }
+
+        .whiteListUl:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        .scrollbar-demo-item {
+            display: flex;
+            align-items: center;
+            margin: 10px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
     .el-form-item__label {
         width: 100px;
         text-align: right;
@@ -1210,4 +1358,3 @@ const title = computed(() => {
 
 }
 </style>
-@/apis/sale-api
