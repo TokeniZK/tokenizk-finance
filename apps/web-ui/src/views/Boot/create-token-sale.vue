@@ -615,7 +615,7 @@ const changeVestingPeriod = () => {
 }
 
 const changeNumberBuy = () => {
-    if (saleDto.minimumBuy === 0 || saleDto.maximumBuy === 0) {
+    if (saleDto.minimumBuy == 0 || saleDto.maximumBuy == 0) {
         ElMessage.error({ message: 'minimumBuy, maximumBuy must be > 0' });
         return false;
     }
@@ -623,13 +623,13 @@ const changeNumberBuy = () => {
         ElMessage.error({ message: 'maximumBuy must be >= minimumBuy' });
         return false;
     }
-    if(saleType.value === 0){
+    if (saleType.value == 0) {
         if (saleDto.maximumBuy && saleDto.maximumBuy > saleDto.hardCap) {
             ElMessage.error({ message: 'maximumBuy should be less than or equal hardCap!' });
             return false;
         }
     }
-  
+
     return true;
 }
 
@@ -659,16 +659,19 @@ const handleWhitelistInput = () => {
     const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
     saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
-    saleDto.whitelistMembers.split(',').forEach(item => {
-        try {
-            PublicKey.fromBase58(item);
-        } catch (error) {
-            dialogTableVisibleErrorAlert.value = true;
-            console.log(error);
-            whiteListErrorAlert.whitelist.push(item)
-            // ElMessage.error({ message: item + ' is not a valid address!' });
-        }
-    })
+    if (saleDto.whitelistMembers) {
+        saleDto.whitelistMembers.split(',').forEach(item => {
+            try {
+                PublicKey.fromBase58(item);
+            } catch (error) {
+                dialogTableVisibleErrorAlert.value = true;
+                console.log(error);
+                whiteListErrorAlert.whitelist.push(item)
+                // ElMessage.error({ message: item + ' is not a valid address!' });
+            }
+        })
+    }
+
 };
 
 const closeErrorWhitelistDialog = () => {
@@ -1007,7 +1010,7 @@ const title = computed(() => {
                                                 <el-col :span="11">
                                                     <el-form-item label="cliffTime(slots)" prop="cliffTime">
                                                         <el-input v-model.number.trim="saleDto.cliffTime" placeholder="0"
-                                                            @input="changeCliffTime" />
+                                                            @change="changeCliffTime" />
                                                         <span v-if="dynamicalCliffTime">about {{ dynamicalCliffTime }}
                                                             minutes</span>
                                                     </el-form-item>
@@ -1018,7 +1021,7 @@ const title = computed(() => {
                                                 <el-col :span="12">
                                                     <el-form-item label="cliffAmountRate(%)" prop="cliffAmountRate">
                                                         <el-input v-model.number.trim="saleDto.cliffAmountRate"
-                                                            placeholder="0" @input="changeCliffAmountRate" />
+                                                            placeholder="0" @change="changeCliffAmountRate" />
                                                     </el-form-item>
                                                 </el-col>
                                             </el-row>
@@ -1027,7 +1030,7 @@ const title = computed(() => {
                                                 <el-col :span="11">
                                                     <el-form-item label="vestingPeriod(>=1 slot)" prop="vestingPeriod">
                                                         <el-input v-model.number.trim="saleDto.vestingPeriod"
-                                                            placeholder="0" @input="changeVestingPeriod" />
+                                                            placeholder="0" @change="changeVestingPeriod" />
                                                         <span v-if="dynamicalVestingPeriod">about {{ dynamicalVestingPeriod
                                                         }} minutes</span>
                                                     </el-form-item>
@@ -1038,7 +1041,7 @@ const title = computed(() => {
                                                 <el-col :span="12">
                                                     <el-form-item label="vestingIncrement(%)" prop="vestingIncrement">
                                                         <el-input v-model.number.trim="saleDto.vestingIncrement"
-                                                            placeholder="0" @input="changeVestingIncrement" />
+                                                            placeholder="0" @change="changeVestingIncrement" />
                                                     </el-form-item>
                                                 </el-col>
                                             </el-row>
@@ -1428,29 +1431,29 @@ const title = computed(() => {
     }
 
     .whiteListBtn {
-            color: #00c798;
-            background-color: #e6fff9;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
+        color: #00c798;
+        background-color: #e6fff9;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
 
-        .whiteListUl {
-            border: 1px solid #e6e6e6;
-            padding: 10px 0 10px 10px;
-        }
+    .whiteListUl {
+        border: 1px solid #e6e6e6;
+        padding: 10px 0 10px 10px;
+    }
 
-        .whiteListUl:nth-child(odd) {
-            background-color: #f2f2f2;
-        }
+    .whiteListUl:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
 
-        .scrollbar-demo-item {
-            display: flex;
-            align-items: center;
-            margin: 10px;
-            text-align: center;
-            border-radius: 4px;
-        }
+    .scrollbar-demo-item {
+        display: flex;
+        align-items: center;
+        margin: 10px;
+        text-align: center;
+        border-radius: 4px;
+    }
 
     .el-form-item__label {
         width: 100px;

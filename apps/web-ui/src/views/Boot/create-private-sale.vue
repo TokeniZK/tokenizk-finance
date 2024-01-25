@@ -619,16 +619,19 @@ const handleWhitelistInput = () => {
     const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
     saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
-    saleDto.whitelistMembers.split(',').forEach(item => {
-        try {
-            PublicKey.fromBase58(item);
-        } catch (error) {
-            dialogTableVisibleErrorAlert.value = true;
-            console.log(error);
-            whiteListErrorAlert.whitelist.push(item)
-            // ElMessage.error({ message: item + ' is not a valid address!' });
-        }
-    })
+    if (saleDto.whitelistMembers) {
+        saleDto.whitelistMembers.split(',').forEach(item => {
+            try {
+                PublicKey.fromBase58(item);
+            } catch (error) {
+                dialogTableVisibleErrorAlert.value = true;
+                console.log(error);
+                whiteListErrorAlert.whitelist.push(item)
+                // ElMessage.error({ message: item + ' is not a valid address!' });
+            }
+        })
+    }
+
 };
 
 const closeErrorWhitelistDialog = () => {
@@ -817,7 +820,8 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="SoftCap (MINA)" prop="softCap">
-                                                    <el-input v-model.number.trim="saleDto.softCap" placeholder="0" @change="changeRateCap"/>
+                                                    <el-input v-model.number.trim="saleDto.softCap" placeholder="0"
+                                                        @change="changeRateCap" />
                                                     <div class="form-notes"> Softcap must be >= 25% of Hardcap!</div>
                                                 </el-form-item>
                                             </el-col>
@@ -826,7 +830,8 @@ const title = computed(() => {
 
                                             <el-col :span="12">
                                                 <el-form-item label="HardCap (MINA)" prop="hardCap">
-                                                    <el-input v-model.number.trim="saleDto.hardCap" placeholder="0"  @change="changeRateCap" />
+                                                    <el-input v-model.number.trim="saleDto.hardCap" placeholder="0"
+                                                        @change="changeRateCap" />
                                                     <div class="form-notes"> Setting max amount to raise</div>
                                                 </el-form-item>
                                             </el-col>
@@ -836,7 +841,8 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="Minimum buy (MINA)" prop="minimumBuy">
-                                                    <el-input v-model.number.trim="saleDto.minimumBuy" placeholder="0"  @change="changeNumberBuy" />
+                                                    <el-input v-model.number.trim="saleDto.minimumBuy" placeholder="0"
+                                                        @change="changeNumberBuy" />
                                                 </el-form-item>
                                             </el-col>
 
@@ -844,7 +850,8 @@ const title = computed(() => {
 
                                             <el-col :span="12">
                                                 <el-form-item label="Maximum buy (MINA)" prop="maximumBuy">
-                                                    <el-input v-model.number.trim="saleDto.maximumBuy" placeholder="0"  @change="changeNumberBuy" />
+                                                    <el-input v-model.number.trim="saleDto.maximumBuy" placeholder="0"
+                                                        @change="changeNumberBuy" />
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -875,7 +882,7 @@ const title = computed(() => {
                                         <el-form-item label="Whitelist">
                                             <el-input v-model.trim="saleDto.whitelistMembers" type="textarea"
                                                 :autosize="{ minRows: 2, maxRows: 1000 }"
-                                                placeholder="Please input as comma-sperated Mina wallet addresses" 
+                                                placeholder="Please input as comma-sperated Mina wallet addresses"
                                                 @blur="handleWhitelistInput" />
 
                                             <el-dialog v-model="dialogTableVisibleErrorAlert" title="Error WhileList Items"
@@ -896,7 +903,7 @@ const title = computed(() => {
                                                 <el-col :span="11">
                                                     <el-form-item label="cliffTime(slots)" prop="cliffTime">
                                                         <el-input v-model.number.trim="saleDto.cliffTime" placeholder="0"
-                                                            @input="changeCliffTime" />
+                                                            @change="changeCliffTime" />
                                                         <span v-if="dynamicalCliffTime">about {{ dynamicalCliffTime }}
                                                             minutes</span>
                                                     </el-form-item>
@@ -907,7 +914,7 @@ const title = computed(() => {
                                                 <el-col :span="12">
                                                     <el-form-item label="cliffAmountRate(%)" prop="cliffAmountRate">
                                                         <el-input v-model.number.trim="saleDto.cliffAmountRate"
-                                                            placeholder="0" @input="changeCliffAmountRate" />
+                                                            placeholder="0" @change="changeCliffAmountRate" />
                                                     </el-form-item>
                                                 </el-col>
                                             </el-row>
@@ -916,7 +923,7 @@ const title = computed(() => {
                                                 <el-col :span="11">
                                                     <el-form-item label="vestingPeriod(>=1 slot)" prop="vestingPeriod">
                                                         <el-input v-model.number.trim="saleDto.vestingPeriod"
-                                                            placeholder="0" @input="changeVestingPeriod" />
+                                                            placeholder="0" @change="changeVestingPeriod" />
                                                         <span v-if="dynamicalVestingPeriod">about {{ dynamicalVestingPeriod
                                                         }} minutes</span>
                                                     </el-form-item>
@@ -927,7 +934,7 @@ const title = computed(() => {
                                                 <el-col :span="12">
                                                     <el-form-item label="vestingIncrement(%)" prop="vestingIncrement">
                                                         <el-input v-model.number.trim="saleDto.vestingIncrement"
-                                                            placeholder="0" @input="changeVestingIncrement" />
+                                                            placeholder="0" @change="changeVestingIncrement" />
                                                     </el-form-item>
                                                 </el-col>
                                             </el-row>
@@ -1318,28 +1325,28 @@ const title = computed(() => {
 
     .whiteListBtn {
         color: #00c798;
-            background-color: #e6fff9;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
+        background-color: #e6fff9;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
 
-        .whiteListUl {
-            border: 1px solid #e6e6e6;
-            padding: 10px 0 10px 10px;
-        }
+    .whiteListUl {
+        border: 1px solid #e6e6e6;
+        padding: 10px 0 10px 10px;
+    }
 
-        .whiteListUl:nth-child(odd) {
-            background-color: #f2f2f2;
-        }
+    .whiteListUl:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
 
-        .scrollbar-demo-item {
-            display: flex;
-            align-items: center;
-            margin: 10px;
-            text-align: center;
-            border-radius: 4px;
-        }
+    .scrollbar-demo-item {
+        display: flex;
+        align-items: center;
+        margin: 10px;
+        text-align: center;
+        border-radius: 4px;
+    }
 
     .el-form-item__label {
         width: 100px;

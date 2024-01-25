@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted,computed, onUpdated } from 'vue'
+import { ref, onMounted, computed, onUpdated } from 'vue'
 import { useStatusStore, type AppState } from "@/stores";
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
@@ -7,17 +7,37 @@ import { useRoute, useRouter } from 'vue-router';
 let route = useRoute();
 let saleType = ref(route.query.saleType as any as number);
 
-const allSaleUrl = '/sales?saleType=' + saleType.value;
-const myContriUrl = '/sales/my-contributions?saleType=' + saleType.value;
-console.log('allSaleUrl: ' + allSaleUrl);
-console.log('myContriUrl: ' + myContriUrl);
-
 const router = useRouter();
-router.beforeEach((to, from, next) => {
-    const query = to.query;
-    saleType.value = query.saleType as any as number;
-    next();
+router.afterEach(async (to, from, next) => {
+    if (from.path == '/sales' && to.path == '/sales') {
+        const query = to.query;
+        saleType.value = query.saleType as any as number;
+        console.log(`changed saleType...`)
+    }
+
+    if (from.path == '/sales' && to.path == '/sales/my-contributions') {
+        const query = to.query;
+        saleType.value = query.saleType as any as number;
+        console.log(`changed saleType...`)
+    }
+
+    
+    if (from.path == '/sales/my-contributions' && to.path == '/sales') {
+        const query = to.query;
+        saleType.value = query.saleType as any as number;
+        console.log(`changed saleType...`)
+    }
+
+    if(to.path == '/sales'){
+        isASelected.value = true;
+        isBSelected.value = false;
+    } else if(to.path == '/sales/my-contributions') {
+        isASelected.value = false;
+        isBSelected.value = true;
+    }
 });
+const allSaleUrl = computed(()=>'/sales?saleType=' + saleType.value);
+const myContriUrl = computed(()=>'/sales/my-contributions?saleType=' + saleType.value);
 
 let salePageTitle = computed(() => {
     return `Current ${saleType.value == 0 ? 'PreSale' : (saleType.value == 1 ? 'FairSale' : 'PrivateSale')}`
@@ -50,13 +70,13 @@ const checkConnectedWallet = () => {
         showClose: true,
         type: 'warning',
         message: `Please connect wallet first.`,
-    }); 
+    });
 
 }
 
 
 onMounted(() => {
- 
+
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -100,8 +120,9 @@ onUpdated(() => {
 
                 <el-col :span="6">
                     <router-link :to="myContriUrl" :class="{ 'activeMenu': isBSelected }" @click="handleBClick"
-                        v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">My Contributions</router-link>
-                        
+                        v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">My
+                        Contributions</router-link>
+
                     <div v-else @click="checkConnectedWallet">
                         <span>My Contributions</span>
                     </div>

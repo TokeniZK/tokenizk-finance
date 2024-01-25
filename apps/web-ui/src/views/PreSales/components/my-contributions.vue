@@ -13,12 +13,13 @@ let saleType = ref(route.query.saleType as any as number);
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 const router = useRouter();
-router.beforeEach((to, from, next) => {
-    const query = to.query;
-    saleType.value = query.saleType as any as number;
-    next();
+router.afterEach(async (to, from, next) => {
+    if (from.path == '/sales' && to.path == '/sales/my-contributions') {
+        const query = to.query;
+        saleType.value = query.saleType as any as number;
+        console.log(`changed saleType...`)
+    }
 });
-
 watch(() => appState.connectedWallet58, async (value, oldValue) => {
     if (!appState.connectedWallet58) {
         router.replace('/sales?saleType=' + saleType.value);

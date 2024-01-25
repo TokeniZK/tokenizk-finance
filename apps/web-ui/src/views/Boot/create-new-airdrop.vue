@@ -163,7 +163,7 @@ const rules = reactive<FormRules<AirdropDto>>({
             message: 'Total Airdrop Supply must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     whitelistMembers: [
@@ -173,7 +173,7 @@ const rules = reactive<FormRules<AirdropDto>>({
             trigger: 'blur',
         },
     ],
-    
+
     startTimestamp: [
         {
             type: 'date',
@@ -199,38 +199,38 @@ const rules = reactive<FormRules<AirdropDto>>({
             message: 'cliffTime must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
-    cliffAmountRate:[
+    cliffAmountRate: [
         {
             type: 'number',
             required: true,
             message: 'cliffAmountRate must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
-    vestingPeriod:[
+    vestingPeriod: [
         {
             type: 'number',
             required: true,
             message: 'vestingPeriod must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
-    
-    vestingIncrement:[
+
+    vestingIncrement: [
         {
             type: 'number',
             required: true,
             message: 'vestingIncrement must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
     logoUrl: [
@@ -276,30 +276,97 @@ const rules = reactive<FormRules<AirdropDto>>({
 
 })
 
+const ChangeAirdropSupply = () => {
+    if (airdropDto.totalAirdropSupply === 0) {
+        ElMessage.error({ message: 'Total Airdrop Supply must be > 0' });
+        return false;
+    }
+
+    if (airdropDto.totalAirdropSupply > (tokenDto.totalSupply - tokenDto.totalAmountInCirculation)) {
+        ElMessage.error({ message: 'Total Airdrop Supply must be < Token Total Supply' });
+        return false;
+    }
+    return true;
+}
+
 const dynamicalCliffAmount = ref(0);
 const changeCliffAmountRate = () => {
+    if (airdropDto.cliffAmountRate === 0) {
+        ElMessage.error({ message: 'cliffAmountRate must be > 0' });
+        return false;
+    }
+    if (airdropDto.cliffAmountRate > 100) {
+        ElMessage.error({ message: 'cliffAmountRate must be <= 100' });
+        return false;
+    }
     if ((airdropDto.whitelistMembers != '' && airdropDto.whitelistMembers != null)) {
         const members = airdropDto.whitelistMembers.split(',').length;
         dynamicalCliffAmount.value = Number((((airdropDto.totalAirdropSupply ?? 0) / members) * (airdropDto.cliffAmountRate / 100)).toFixed(2));
     }
+
+    return true;
 }
 
 const dynamicalVestingIncrement = ref(0);
 const changeVestingIncrement = () => {
+    if (airdropDto.vestingIncrement === 0) {
+        ElMessage.error({ message: 'vestingIncrement must be > 0' });
+        return false;
+    }
+    if (airdropDto.vestingIncrement > 100) {
+        ElMessage.error({ message: 'vestingIncrement must be <= 100' });
+        return false;
+    }
     if ((airdropDto.whitelistMembers != '' && airdropDto.whitelistMembers != null)) {
         const members = airdropDto.whitelistMembers.split(',').length;
         dynamicalVestingIncrement.value = Number((((airdropDto.totalAirdropSupply ?? 0) / members) * (airdropDto.vestingIncrement / 100)).toFixed(2));
     }
+    return true;
 }
 
 const dynamicalCliffTime = ref(0);
 const changeCliffTime = () => {
+    if (airdropDto.cliffTime === 0) {
+        ElMessage.error({ message: 'cliffTime must be > 0' });
+        return false;
+    }
     dynamicalCliffTime.value = airdropDto.cliffTime * 3
+    return true;
 }
 
 const dynamicalVestingPeriod = ref(0);
 const changeVestingPeriod = () => {
+    if (airdropDto.vestingPeriod === 0) {
+        ElMessage.error({ message: 'vestingPeriod must be > 0' });
+        return false;
+    }
     dynamicalVestingPeriod.value = airdropDto.vestingPeriod * 3
+    return true;
+}
+
+const dialogTableVisibleErrorAlert = ref(false)
+const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
+const handleWhitelistInput = () => {
+    const noSpacesValue = airdropDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
+    airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
+
+    if (airdropDto.whitelistMembers) {
+        airdropDto.whitelistMembers.split(',').forEach(item => {
+            try {
+                PublicKey.fromBase58(item);
+            } catch (error) {
+                dialogTableVisibleErrorAlert.value = true;
+                console.log(error);
+                whiteListErrorAlert.whitelist.push(item)
+                // ElMessage.error({ message: item + ' is not a valid address!' });
+            }
+        })
+    }
+};
+
+const closeErrorWhitelistDialog = () => {
+    dialogTableVisible.value = false
+    whiteListErrorAlert.whitelist = []
 }
 
 // 提交
@@ -712,7 +779,7 @@ const title = computed(() => {
                                             <el-col :span="12">
                                                 <el-form-item label="Airdrop Total Supply" prop="totalAirdropSupply">
                                                     <el-input v-model.number.trim="airdropDto.totalAirdropSupply"
-                                                        placeholder="0" />
+                                                        placeholder="0" @change="ChangeAirdropSupply" />
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -731,9 +798,20 @@ const title = computed(() => {
 
 
                                         <el-form-item label="Whitelist(optional)" prop="whitelistMembers">
-                                        <el-input v-model.trim="airdropDto.whitelistMembers" type="textarea"
-                                            :autosize="{ minRows: 2, maxRows: 1000 }"
-                                            placeholder="Please input as comma-sperated Mina wallet addresses" />
+                                            <el-input v-model.trim="airdropDto.whitelistMembers" type="textarea"
+                                                :autosize="{ minRows: 2, maxRows: 1000 }"
+                                                placeholder="Please input as comma-sperated Mina wallet addresses"
+                                                @blur="handleWhitelistInput" />
+
+                                            <el-dialog v-model="dialogTableVisibleErrorAlert" title="Error WhileList Items"
+                                                style="width:600px" @close="closeErrorWhitelistDialog">
+                                                <ul>
+                                                    <el-scrollbar max-height="400px">
+                                                        <li v-for="item in whiteListErrorAlert.whitelist" :key="item.index"
+                                                            class="whiteListUl scrollbar-demo-item">{{ item }}</li>
+                                                    </el-scrollbar>
+                                                </ul>
+                                            </el-dialog>
                                         </el-form-item>
 
                                         <div style="border-color: #009688; border-width: 10px;">
@@ -743,7 +821,7 @@ const title = computed(() => {
                                                 <el-col :span="11">
                                                     <el-form-item label="cliffTime" prop="cliffTime">
                                                         <el-input v-model.number.trim="airdropDto.cliffTime" placeholder="0"
-                                                            @input="changeCliffTime" />
+                                                            @change="changeCliffTime" />
                                                         <span v-if="dynamicalCliffTime">about {{ dynamicalCliffTime }}
                                                             minutes</span>
                                                     </el-form-item>
@@ -754,7 +832,7 @@ const title = computed(() => {
                                                 <el-col :span="12">
                                                     <el-form-item label="cliffAmountRate(%)" prop="cliffAmountRate">
                                                         <el-input v-model.number.trim="airdropDto.cliffAmountRate"
-                                                            placeholder="0" @input="changeCliffAmountRate" />
+                                                            placeholder="0" @change="changeCliffAmountRate" />
                                                         <span v-if="dynamicalCliffAmount">about {{ dynamicalCliffAmount }}
                                                             {{ tokenDto.symbol }}</span>
                                                     </el-form-item>
@@ -765,7 +843,7 @@ const title = computed(() => {
                                                 <el-col :span="11">
                                                     <el-form-item label="vestingPeriod(>=1)" prop="vestingPeriod">
                                                         <el-input v-model.number.trim="airdropDto.vestingPeriod"
-                                                            placeholder="0" @input="changeVestingPeriod" />
+                                                            placeholder="0" @change="changeVestingPeriod" />
                                                         <span v-if="dynamicalVestingPeriod">about {{ dynamicalVestingPeriod
                                                         }} minutes</span>
                                                     </el-form-item>
@@ -776,7 +854,7 @@ const title = computed(() => {
                                                 <el-col :span="12">
                                                     <el-form-item label="vestingIncrement(%)" prop="vestingIncrement">
                                                         <el-input v-model.number.trim="airdropDto.vestingIncrement"
-                                                            placeholder="0" @input="changeVestingIncrement" />
+                                                            placeholder="0" @change="changeVestingIncrement" />
                                                         <span v-if="dynamicalVestingIncrement">about {{
                                                             dynamicalVestingIncrement }}
                                                             {{ tokenDto.symbol }}</span>
@@ -1152,6 +1230,31 @@ const title = computed(() => {
         .el-row {
             border-bottom: 1px solid #e6e6e6;
         }
+    }
+
+    .whiteListBtn {
+        color: #fff;
+        background-color: #00c798;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .whiteListUl {
+        border: 1px solid #e6e6e6;
+        padding: 10px 0 10px 10px;
+    }
+
+    .whiteListUl:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .scrollbar-demo-item {
+        display: flex;
+        align-items: center;
+        margin: 10px;
+        text-align: center;
+        border-radius: 4px;
     }
 
     .el-form-item__label {
