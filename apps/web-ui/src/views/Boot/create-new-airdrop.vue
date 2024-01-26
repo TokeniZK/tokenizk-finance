@@ -1203,8 +1203,8 @@ const title = computed(() => {
         border-radius: 10px;
 
         .whiteListBtn {
-            color: #fff;
-            background-color: #00c798;
+            color: #00c798;
+            background-color: #e6fff9;
             border-radius: 15px;
             text-align: center;
             margin-bottom: 10px;
@@ -1233,11 +1233,11 @@ const title = computed(() => {
     }
 
     .whiteListBtn {
-        color: #fff;
-        background-color: #00c798;
-        border-radius: 15px;
-        text-align: center;
-        margin-bottom: 10px;
+        color: #00c798;
+            background-color: #e6fff9;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 10px;
     }
 
     .whiteListUl {

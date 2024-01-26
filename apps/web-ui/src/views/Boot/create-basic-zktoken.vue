@@ -302,7 +302,7 @@ const checkIfDeployed = async () => {
 
 
                         <el-row class="row-bg">
-                            <el-col :span="12">
+                            <el-col :span="15">
 
                                 <el-form-item label="Token Type" prop="type">
                                     <el-select v-model.trim="tokenDtoForm.type" placeholder="select zkToken type"
@@ -336,7 +336,7 @@ const checkIfDeployed = async () => {
 
                             </el-col>
 
-                            <el-col :span="1"></el-col>
+                            <!-- <el-col :span="1"></el-col> -->
 
                             <!-- 
                             <el-col :span="11">
@@ -361,7 +361,7 @@ const checkIfDeployed = async () => {
 
                         <el-form-item>
                             <el-button type="primary" @click="submitForm(ruleFormRef)"
-                                :disabled="hasDeployedYet || !appState.connectedWallet58"> Create
+                                :disabled="hasDeployedYet || !appState.connectedWallet58" class="basicZkBtn"> Create
                             </el-button>
                             <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
                         </el-form-item>
@@ -378,50 +378,54 @@ const checkIfDeployed = async () => {
                     <el-row> Your token was created ! </el-row>
 
                     <el-row>
-                        <el-col :span="12">
+                        <el-col :span="24">
 
                             <el-row>
-                                <el-col :span="8">Issuer Name: </el-col>
-                                <el-col :span="12">{{ tokenDtoForm.name }}</el-col>
+                                <el-col :span="4">Issuer Name : </el-col>
+                                <el-col :span="19">{{ tokenDtoForm.name }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="8">Symbol: </el-col>
-                                <el-col :span="12">{{ tokenDtoForm.symbol }}</el-col>
+                                <el-col :span="4">Symbol : </el-col>
+                                <el-col :span="19">{{ tokenDtoForm.symbol }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="8">Total supply: </el-col>
-                                <el-col :span="12">{{ tokenDtoForm.totalSupply }}</el-col>
+                                <el-col :span="4">Total supply : </el-col>
+                                <el-col :span="19">{{ tokenDtoForm.totalSupply }}</el-col>
                             </el-row>
 
-                            <el-row>
-                                <el-col :span="8">txHash: </el-col>
-                                <el-col :span="12">{{ appState.explorerUrl.concat(tokenDtoForm.txHash) }}</el-col>
-                            </el-row>
-
-                        </el-col>
-
-                        <el-col :span="12">
                             <el-row>
                                 <!-- <img :src="tokenDtoForm.logoUrl" style="border-radius: 10px;"> -->
-                                {{tokenDtoForm.logoUrl}}
+                                <el-col :span="4">Logo URL :</el-col>
+                                <el-col :span="19"> {{tokenDtoForm.logoUrl}}</el-col>                               
                             </el-row>
+
+                            <el-row>
+                                <el-col :span="4">txHash : </el-col>
+                                <el-col :span="19">{{ appState.explorerUrl.concat(tokenDtoForm.txHash) }}</el-col>
+                            </el-row>
+
                         </el-col>
                     </el-row>
 
-                    <el-button type="primary" size="large">
-                        <router-link to="/create-token-sale?saleType=0" style="color: #fff;"> Create PreSale </router-link>
-                    </el-button>
+                    <router-link to="/create-token-sale?saleType=0" > 
+                        <el-button type="primary" size="large" class="basicZkBtn">
+                            Create PreSale
+                        </el-button>
+                    </router-link>
 
-                    <el-button type="primary" size="large">
-                        <router-link to="/create-token-sale?saleType=1" style="color: #fff;"> Create Fair
-                            Sale</router-link>
-                    </el-button>
+                    <router-link to="/create-token-sale?saleType=1" >
+                        <el-button type="primary" size="large" class="basicZkBtn">
+                        Create Fair Sale
+                        </el-button>
+                    </router-link>
 
-                    <el-button type="primary" size="large">
-                        <router-link to="/create-airdrop" style="color: #fff;"> Create Airdrop</router-link>
-                    </el-button>
+                    <router-link to="/create-airdrop">
+                        <el-button type="primary" size="large" class="basicZkBtn">
+                            Create Airdrop
+                        </el-button>
+                    </router-link>
                 </el-col>
             </el-row>
 
@@ -432,7 +436,7 @@ const checkIfDeployed = async () => {
 <style lang="less" scoped>
 .create-ZkToken {
     width: 100%;
-    padding: 10% 15%;
+    padding: 10% 20% 10% 15%;
 
     .form-notes {
         font-size: 12px;
@@ -443,6 +447,16 @@ const checkIfDeployed = async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
+
+        // .basicZkBtn{
+        //     margin-right: 20px;
+        //     &:hover{
+        //         // background-color: rgba(0, 0, 0, 0.5);
+        //          color: #00c798;
+        //     }
+        // }
+
+        
     }
 
     .el-form-item {
