@@ -553,6 +553,19 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     })
 }
 
+const ChangeFairSalesSupply = () => {
+    if (saleDto.totalSaleSupply === 0) {
+        ElMessage.error({ message: 'Total Airdrop Supply must be > 0' });
+        return false;
+    }
+
+    if (saleDto.totalSaleSupply > (tokenDto.totalSupply - tokenDto.totalAmountInCirculation)) {
+        ElMessage.error({ message: 'Total Airdrop Supply must be < Token Total Supply' });
+        return false;
+    }
+    return true;
+}
+
 const dynamicalCliffAmount = ref(0);
 const changeCliffAmountRate = () => {
     if (saleDto.cliffAmountRate === 0) {
@@ -941,7 +954,7 @@ const title = computed(() => {
                                         </el-row>
 
                                         <el-form-item label="Sale Total Supply" prop="totalSaleSupply" v-if="saleType == 1">
-                                            <el-input v-model.number.trim="saleDto.totalSaleSupply" placeholder="0" />
+                                            <el-input v-model.number.trim="saleDto.totalSaleSupply" placeholder="0" @change="ChangeFairSalesSupply"/>
                                         </el-form-item>
 
                                         <el-row class="row-bg">
