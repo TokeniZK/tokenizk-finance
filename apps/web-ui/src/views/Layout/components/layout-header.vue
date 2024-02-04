@@ -1,18 +1,21 @@
 <script lang="ts" setup>
 import { CHANNEL_MINA, WalletEventType, type WalletEvent } from "@/common";
 import { useStatusStore } from "@/stores";
+import { useNavMenuItemActivation } from '@/stores/NavMenuItemActivation'
 import { omitAddress } from "@/utils";
 import { ElMessage } from 'element-plus'
-import { ref } from "vue";
+import { onUpdated, ref } from "vue";
 import { generateTokenKey } from '@/utils/keys-gen';
 import { queryToken } from "@/apis/token-api";
+
+let { activeIndex,setActiveIndex } = useNavMenuItemActivation();
 
 const chan = new BroadcastChannel(CHANNEL_MINA);
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
-const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
+    setActiveIndex(key)
 }
 
 const connectWallet = async () => {
@@ -66,6 +69,7 @@ const disconnect = async () => {
         connectedAddress: undefined,
     } as WalletEvent);
 }
+
 
 </script>
 
