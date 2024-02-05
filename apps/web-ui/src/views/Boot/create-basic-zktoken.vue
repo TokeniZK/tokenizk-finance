@@ -62,10 +62,10 @@ const tokenDtoInit: TokenDto = {
     type: null as any as number,
     status: 0,
     address: null as any as string,
-    name:  null as any as string,
-    logoUrl:  null as any as string,
-    symbol:  null as any as string,
-    zkappUri:  null as any as string,
+    name: null as any as string,
+    logoUrl: null as any as string,
+    symbol: null as any as string,
+    zkappUri: null as any as string,
     totalSupply: null as any as number,
     totalAmountInCirculation: 0,
     updatedAt: 0,
@@ -117,7 +117,7 @@ const rules = reactive<FormRules<TokenDto>>({
             message: 'Total Supply must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 })
 
@@ -300,9 +300,8 @@ const checkIfDeployed = async () => {
                         <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
 
-
                         <el-row class="row-bg">
-                            <el-col :span="15">
+                            <el-col :span="19">
 
                                 <el-form-item label="Token Type" prop="type">
                                     <el-select v-model.trim="tokenDtoForm.type" placeholder="select zkToken type"
@@ -311,22 +310,30 @@ const checkIfDeployed = async () => {
                                     </el-select>
                                 </el-form-item>
 
-                                <el-form-item label="Issuer Name" prop="name">
-                                    <el-input v-model="tokenDtoForm.name" placeholder="Ex: Mina Protocol" />
+                                <el-row class="row-bg" style="margin-bottom: 10px;">
+                                    <el-col :span="13">
+                                        <el-form-item label="Issuer Name" prop="name">
+                                            <el-input v-model="tokenDtoForm.name" placeholder="Ex: Mina Protocol" />
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="1"></el-col>
+
+                                    <el-col :span="10">
+                                        <el-form-item label="Token Symbol" prop="symbol">
+                                            <el-input v-model.trim="tokenDtoForm.symbol" placeholder="Ex: MINA" />
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+
+                                <el-form-item label="Total Sale Supply" prop="totalSupply">
+                                    <el-input v-model.number.trim="tokenDtoForm.totalSupply"
+                                        placeholder="Ex: 100000000000" />
                                 </el-form-item>
 
                                 <el-form-item label="Official Website">
                                     <el-input v-model.trim="tokenDtoForm.zkappUri"
                                         placeholder="Ex: https://minaprotocol.com/" />
-                                </el-form-item>
-
-                                <el-form-item label="Token Symbol" prop="symbol">
-                                    <el-input v-model.trim="tokenDtoForm.symbol" placeholder="Ex: MINA" />
-                                </el-form-item>
-
-                                <el-form-item label="Total Sale Supply" prop="totalSupply">
-                                    <el-input v-model.number.trim="tokenDtoForm.totalSupply"
-                                        placeholder="Ex: 100000000000" />
                                 </el-form-item>
 
                                 <el-form-item label="Token Logo" prop="logoUrl">
@@ -335,8 +342,6 @@ const checkIfDeployed = async () => {
                                 </el-form-item>
 
                             </el-col>
-
-                            <!-- <el-col :span="1"></el-col> -->
 
                             <!-- 
                             <el-col :span="11">
@@ -357,6 +362,7 @@ const checkIfDeployed = async () => {
                                 </el-form-item>
                             </el-col>
                             -->
+
                         </el-row>
 
                         <el-form-item>
@@ -396,9 +402,8 @@ const checkIfDeployed = async () => {
                             </el-row>
 
                             <el-row>
-                                <!-- <img :src="tokenDtoForm.logoUrl" style="border-radius: 10px;"> -->
                                 <el-col :span="4">Logo URL :</el-col>
-                                <el-col :span="19"> {{tokenDtoForm.logoUrl}}</el-col>                               
+                                <el-col :span="19"> {{ tokenDtoForm.logoUrl }}</el-col>
                             </el-row>
 
                             <el-row>
@@ -409,15 +414,15 @@ const checkIfDeployed = async () => {
                         </el-col>
                     </el-row>
 
-                    <router-link to="/create-token-sale?saleType=0" > 
+                    <router-link to="/create-token-sale?saleType=0">
                         <el-button type="primary" size="large" class="basicZkBtn">
                             Create PreSale
                         </el-button>
                     </router-link>
 
-                    <router-link to="/create-token-sale?saleType=1" >
+                    <router-link to="/create-token-sale?saleType=1">
                         <el-button type="primary" size="large" class="basicZkBtn">
-                        Create Fair Sale
+                            Create Fair Sale
                         </el-button>
                     </router-link>
 
@@ -447,17 +452,8 @@ const checkIfDeployed = async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
-
-        // .basicZkBtn{
-        //     margin-right: 20px;
-        //     &:hover{
-        //         // background-color: rgba(0, 0, 0, 0.5);
-        //          color: #00c798;
-        //     }
-        // }
-
-        
     }
+
 
     .el-form-item {
         margin-bottom: 35px;

@@ -31,16 +31,16 @@ import MyLaunchesSales from '@/views/Mylaunches/components/my-launches-sales.vue
 import MyLaunchesAirdrops from '@/views/Mylaunches/components/my-launches-airdrops.vue'
 
 import CreateLock from '@/views/create-Lock.vue'
-import CreateZkNFT from '../views/create-zkNFT.vue'
-import Services from '../views/Services.vue'
-import Team from '../views/Team.vue'
-import FAQ from '../views/FAQ.vue'
-import Comments from '../views/Comments.vue'
-import AddFans from '../views/Add-fans.vue'
+import CreateZkNFT from '@/views/create-zkNFT.vue'
+// import Services from '@/views/Services.vue'
+import Team from '@/views/Team.vue'
+import FAQ from '@/views/FAQ.vue'
+import Comments from '@/views/Comments.vue'
+import AddFans from '@/views/Add-fans.vue'
 import PraiseAndCollection from '@/views/Praise-and-Collection.vue'
-import PrivateMessage from '../views/Private-Message.vue'
-import SystemNotifications from '../views/System-Notifications.vue'
-// import MessageSettings from '../views/Message-Settings.vue'
+import PrivateMessage from '@/views/Private-Message.vue'
+import SystemNotifications from '@/views/System-Notifications.vue'
+//  import MessageSettings from '@/views/Message-Settings.vue'
 
 const routes = [
     {
@@ -133,10 +133,10 @@ const routes = [
                 path: '/create-zk-nft',
                 component: CreateZkNFT
             },
-            {
-                path: '/services',
-                component: Services
-            },
+            // {
+            //     path: '/services',
+            //     component: Services
+            // },
             {
                 path: '/team',
                 component: Team

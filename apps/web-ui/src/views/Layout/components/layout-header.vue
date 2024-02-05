@@ -357,6 +357,7 @@ const disconnect = async () => {
     .header-category {
         color: #fff;
         font-size: 16px;
+        margin-right: 20px;
         // padding-top: 20px;
     }
 
