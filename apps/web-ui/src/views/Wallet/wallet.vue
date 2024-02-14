@@ -10,6 +10,7 @@ import { PublicKey, TokenId, fetchAccount, Mina } from 'o1js';
 import { CHANNEL_MINA, WalletEventType, type WalletEvent } from '@/common';
 import { checkTx } from '@/utils/txUtils';
 import { submitTokenTransfer } from '@/apis/token-api';
+import type { TableColumnCtx } from 'element-plus'
 
 const goToTop = () => {
     window.scrollTo({
@@ -81,7 +82,7 @@ const rules = reactive<FormRules<UserFundTransferForm>>({
             message: 'amount must be number type',
             trigger: 'blur'
         },
-        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' }, 
+        { pattern: /^[0-9]+$/, message: 'Please enter a non negative number', trigger: 'blur' },
     ],
 
 })
@@ -181,7 +182,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                             tokenAddress: basicTokenZkAppAddress,
                             tokenId: TokenId.derive(PublicKey.fromBase58(basicTokenZkAppAddress)),
                             txHash: txHash,
-                        } as UserTokenTransferDto;
+                        } as unknown as UserTokenTransferDto;
 
                         ElMessage({
                             showClose: true,
@@ -191,7 +192,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                         userFundFormRef.amount = null as any as string;
                         userFundFormRef.reciver = null as any as string;
-                        
+
                         // submit to backend
                         await submitTokenTransfer(userTokenTransferDto);
 
@@ -281,6 +282,40 @@ watch(() => appState.connectedWallet58, async (value, oldValue) => {
     }
 })
 
+
+interface User {
+    date: string
+    name: string
+    address: string
+}
+
+const formatter = (row: User, column: TableColumnCtx<User>) => {
+    return row.address
+}
+
+const tableData: User[] = [
+    {
+        date: '2016-05-03',
+        name: 'Tom',
+        address: 'No. 189, Grove St, Los Angeles',
+    },
+    {
+        date: '2016-05-02',
+        name: 'Tom',
+        address: 'No. 189, Grove St, Los Angeles',
+    },
+    {
+        date: '2016-05-04',
+        name: 'Tom',
+        address: 'No. 189, Grove St, Los Angeles',
+    },
+    {
+        date: '2016-05-01',
+        name: 'Tom',
+        address: 'No. 189, Grove St, Los Angeles',
+    },
+]
+
 // 组件挂载完成后执行的函数
 onMounted(async () => {
 
@@ -346,6 +381,12 @@ onMounted(async () => {
                         </el-form-item>
 
                     </el-form>
+
+                    <el-table :data="tableData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%">
+                        <el-table-column prop="date" label="Date" sortable width="180" />
+                        <el-table-column prop="name" label="Name" width="180" />
+                        <el-table-column prop="address" label="Address" :formatter="formatter" />
+                    </el-table>
 
                 </el-col>
             </el-row>
