@@ -1,12 +1,13 @@
 import httpCodes from "@inip/http-codes"
 import { FastifyPlugin } from "fastify"
-import { BaseResponse, SaleReq, SaleReqSchema, AirdropDtoSchema, AirdropDto } from '@tokenizk/types'
+import { BaseResponse, AirdropDtoSchema, AirdropDto } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
 
-import { getConnection, In } from "typeorm"
+import { getConnection } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
-import { Airdrop, BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
-import { TokeniZkBasicToken } from "@tokenizk/contracts"
+import { Airdrop, BasiceToken } from "@tokenizk/entities"
+import { PublicKey } from "o1js";
+import { WHITELIST_TREE_ROOT } from "@tokenizk/contracts"
 
 const logger = getLogger('createSale');
 
@@ -29,6 +30,26 @@ const handler: RequestHandler<AirdropDto, null> = async function (
     res
 ): Promise<BaseResponse<number>> {
     const airdropDto = req.body
+
+    if (airdropDto?.airdropAddress) {
+        try {
+            PublicKey.fromBase58(airdropDto.airdropAddress);
+        } catch (error) {
+            throw req.throwError(httpCodes.BAD_REQUEST, "airdropAddress is invalid");
+        }
+    }
+    if (airdropDto?.tokenAddress) {
+        try {
+            PublicKey.fromBase58(airdropDto.tokenAddress);
+        } catch (error) {
+            throw req.throwError(httpCodes.BAD_REQUEST, "tokenAddress is invalid");
+        }
+    }
+    if (airdropDto?.whitelistMembers ) {
+        if(airdropDto.whitelistTreeRoot == WHITELIST_TREE_ROOT.toString() || airdropDto.whitelistTreeRoot.length == 0){
+            throw req.throwError(httpCodes.BAD_REQUEST, "whitelistTreeRoot is not aligned with whitelistMembers");
+        }
+    }
 
     try {
         const connection = getConnection();
