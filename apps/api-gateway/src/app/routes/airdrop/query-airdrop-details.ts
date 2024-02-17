@@ -6,6 +6,7 @@ import { RequestHandler } from '@/lib/types'
 import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Airdrop, UserTokenAirdrop, } from "@tokenizk/entities"
+import { PublicKey } from "o1js";
 
 const logger = getLogger('queryAirdropDetails');
 
@@ -28,6 +29,20 @@ const handler: RequestHandler<AirdropReq, null> = async function (
     res
 ): Promise<BaseResponse<AirdropClaimersDetailDto>> {
     const airdropReq = req.body
+    if (airdropReq?.airdropAddress) {
+        try {
+            PublicKey.fromBase58(airdropReq.airdropAddress);
+        } catch (error) {
+            throw req.throwError(httpCodes.BAD_REQUEST, "airdropAddress is invalid");
+        }
+    }
+    if (airdropReq?.tokenAddress) {
+        try {
+            PublicKey.fromBase58(airdropReq.tokenAddress);
+        } catch (error) {
+            throw req.throwError(httpCodes.BAD_REQUEST, "tokenAddress is invalid");
+        }
+    }
 
     try {
         const connection = getConnection();

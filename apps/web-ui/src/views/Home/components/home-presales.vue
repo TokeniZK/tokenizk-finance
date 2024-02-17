@@ -146,13 +146,11 @@ onMounted(async () => {
                         </li>
                     </ul>
 
-                    <!-- <el-carousel :interval="3000" type="card" height="500px" loop>
+                    <el-carousel :interval="3000" type="card" height="500px" loop v-if="saleType === 1" >
                         <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
-
                         <SaleBlock :saleDto="item" />
-
                         </el-carousel-item>
-                    </el-carousel> -->
+                    </el-carousel> 
 
                 </el-col>
 
@@ -224,6 +222,22 @@ onMounted(async () => {
             //         transform: translateX(-100%);
             //     }
             // }
+
+            .el-carousel__item h3 {
+                color: #475669;
+                opacity: 0.75;
+                line-height: 200px;
+                margin: 0;
+                text-align: center;
+            }
+
+            .el-carousel__item:nth-child(2n) {
+                background-color: #99a9bf;
+            }
+
+            .el-carousel__item:nth-child(2n + 1) {
+                background-color: #d3dce6;
+            }
 
 
         }
