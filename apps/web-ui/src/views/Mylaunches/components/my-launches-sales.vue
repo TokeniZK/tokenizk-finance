@@ -56,7 +56,7 @@ let presaleProjects = reactive({ saleList: renderSaleBlock });
 // 组件挂载完成后执行的函数  请求数据  
 onMounted(async () => {
     const maskId = 'querySale';
-    showLoadingMask({id: maskId, text: 'loading...'});
+    showLoadingMask({ id: maskId, text: 'loading...' });
 
     let saleReq = { tokenAddress: appState.tokeniZkBasicTokenKeyPair!.value } as SaleReq;
     fetchResult = (await querySale(saleReq)) ?? [] as any as SaleDtoExtend[];
@@ -103,12 +103,13 @@ onMounted(async () => {
 
                     <ul class="launchpads-ul">
 
-                        <li v-for="item in presaleProjects.saleList" :key="item.id">
+                        <li v-for="item in presaleProjects.saleList" :key="item.id" style="margin-bottom: 40px;">
 
                             <SaleBlock :saleDto="item" />
 
                         </li>
                     </ul>
+
                 </el-col>
             </el-row>
 
