@@ -14,6 +14,7 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
+    "zkp": "tsc -p tsconfig.json --module esnext && cross-env TEST_ON_BERKELEY=true node --experimental-specifier-resolution=node ./dist/scripts/zkp.js",
     "state": "tsc -p tsconfig.json --module esnext && cross-env TEST_ON_BERKELEY=true node --experimental-specifier-resolution=node ./dist/scripts/token_state.js",
     "genkeys": "tsc -p tsconfig.json --module esnext && node --experimental-specifier-resolution=node ./dist/scripts/genkeys.js",
     "deploy-all": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=true node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/deploy-all.js",
