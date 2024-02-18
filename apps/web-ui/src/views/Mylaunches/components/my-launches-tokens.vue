@@ -21,7 +21,7 @@ onMounted(async () => {
     }
 
     const maskId = 'queryToken';
-    showLoadingMask({id: maskId, text: 'loading...'});
+    showLoadingMask({ id: maskId, text: 'loading...' });
     // query token list
     const tokenDtoList = (await queryToken(appState.tokeniZkBasicTokenKeyPair?.value)) ?? [];
 
@@ -51,32 +51,36 @@ onMounted(async () => {
 
 <template>
     <el-row class="row-bg my-launches-tokens" v-if="tokenDtoForm.tokenDto.name">
+
         <el-col :span="24" class="tokenTable">
-            <el-row>
+
+            <el-row justify="flex-start">
                 <el-col :span="8">Name :</el-col>
-                <el-col :span="12">{{ tokenDtoForm.tokenDto.name }}</el-col>
+                <el-col :span="15">{{ tokenDtoForm.tokenDto.name }}</el-col>
             </el-row>
 
             <el-row>
                 <el-col :span="8">Symbol :</el-col>
-                <el-col :span="12">{{ tokenDtoForm.tokenDto.symbol }}</el-col>
+                <el-col :span="15">{{ tokenDtoForm.tokenDto.symbol }}</el-col>
             </el-row>
 
             <el-row>
                 <el-col :span="8">Total supply :</el-col>
-                <el-col :span="12">{{ tokenDtoForm.tokenDto.totalSupply }}</el-col>
+                <el-col :span="15">{{ tokenDtoForm.tokenDto.totalSupply }}</el-col>
             </el-row>
 
             <el-row>
                 <el-col :span="8">Total Amount In Circulation :</el-col>
-                <el-col :span="12">{{ tokenDtoForm.tokenDto.totalAmountInCirculation }}</el-col>
+                <el-col :span="15">{{ tokenDtoForm.tokenDto.totalAmountInCirculation }}</el-col>
             </el-row>
 
             <el-row>
                 <el-col :span="8">txHash :</el-col>
-                <el-col :span="12">{{ appState.explorerUrl.concat(tokenDtoForm.tokenDto.txHash) }}</el-col>
+                <el-col :span="15">{{ appState.explorerUrl.concat(tokenDtoForm.tokenDto.txHash) }}</el-col>
             </el-row>
+
         </el-col>
+
     </el-row>
 
     <el-row class="row-bg my-launches-tokens" v-else>
@@ -101,7 +105,7 @@ onMounted(async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
-        text-align: center;
+        // text-align: center;
 
         .JumpBtn {
             margin-top: 20px;

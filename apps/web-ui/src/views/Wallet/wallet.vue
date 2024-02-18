@@ -285,7 +285,6 @@ watch(() => appState.connectedWallet58, async (value, oldValue) => {
 
 interface User {
     date: string
-    name: string
     address: string
 }
 
@@ -293,26 +292,34 @@ const formatter = (row: User, column: TableColumnCtx<User>) => {
     return row.address
 }
 
-const tableData: User[] = [
+const transferData: User[] = [
     {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
+        date: '2024/01/02 10:31:53',
+        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
     },
     {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
+        date: '2024/01/03 20:18:21',
+        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
     },
     {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
+        date: '2024/01/04 13:11:45',
+        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
     },
     {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
+        date: '2024/01/06 23:55:25',
+        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+    },
+    {
+        date: '2024/01/08 07:32:33',
+        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+    },
+    {
+        date: '2024/01/20 07:39:15',
+        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+    },
+    {
+        date: '2024/01/21 22:51:50',
+        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
     },
 ]
 
@@ -335,27 +342,25 @@ onMounted(async () => {
 </script>
 
 <template>
-    <el-row class="row-bg Wallet" justify="center">
+    <el-row class="row-bg Wallet" justify="center" v-if="transferData.length <= 0">
         <el-col :span="24">
 
             <el-row>
+                <h1>Wallet Transfer</h1>
+            </el-row>
+
+            <el-row class="walletInfo">
                 <el-col :span="24">
 
-                    <el-row>
-                        <div class="create-basic-zktoken-title">
-                            <h1>Wallet Transfer</h1>
-                        </div>
-                    </el-row>
-
                     <el-form ref="ruleFormRef" :model="userFundFormRef" :rules="rules" label-width="100px"
-                        class="demo-ruleForm walletTable" size="large" status-icon label-position="left">
+                        class="demo-ruleForm walletForm" size="large" status-icon label-position="left">
 
                         <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
                         <el-form-item label="Token" prop="token">
                             <el-select v-model.trim="userFundFormRef.token" placeholder="Tokens You Hold"
                                 @change="tokenChoose">
-                                <el-option v-for="item in userTokenListRef.tokenList" :label="item.symbol"
+                                <el-option v-for="    item     in     userTokenListRef.tokenList    " :label="item.symbol"
                                     :value="item.address" :key="item.id" />
                             </el-select>
                         </el-form-item>
@@ -382,53 +387,71 @@ onMounted(async () => {
 
                     </el-form>
 
-                    <el-table :data="tableData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%">
-                        <el-table-column prop="date" label="Date" sortable width="180" />
-                        <el-table-column prop="name" label="Name" width="180" />
-                        <el-table-column prop="address" label="Address" :formatter="formatter" />
-                    </el-table>
-
                 </el-col>
             </el-row>
 
-            <!-- 创建后 -->
-            <!-- <el-row class="row-bg walletTable" justify="center" v-show="!flag">
+        </el-col>
+    </el-row>
+
+    <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
         <el-col :span="24">
 
-          <el-row> Your token was created ! </el-row>
+            <el-row>
+                <h1>Wallet Transfer</h1>
+            </el-row>
 
-          <el-row>
-            <el-col :span="4">Name</el-col>
-            <el-col :span="12">{{ ruleForm.name }}</el-col>
-          </el-row>
+            <el-row class="walletInfo">
 
-          <el-row>
-            <el-col :span="4">Symbol</el-col>
-            <el-col :span="12">{{ ruleForm.reciver }}</el-col>
-          </el-row>
+                <el-col :span="11">
+                    <el-form ref="ruleFormRef" :model="userFundFormRef" :rules="rules" label-width="100px"
+                        class="demo-ruleForm walletForm" size="large" status-icon label-position="left">
 
-          <el-row>
-            <el-col :span="4">Total supply</el-col>
-            <el-col :span="12">{{ ruleForm.totalSupply }}</el-col>
-          </el-row>
+                        <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
-          <el-row>
-            <el-col :span="4">Address</el-col>
-            <el-col :span="12">0xd550e943D6E7Cd1a425088a7C90b08738901CBfD</el-col>
-          </el-row>
+                        <el-form-item label="Token" prop="token">
+                            <el-select v-model.trim="userFundFormRef.token" placeholder="Tokens You Hold"
+                                @change="tokenChoose">
+                                <el-option v-for="    item     in     userTokenListRef.tokenList    " :label="item.symbol"
+                                    :value="item.address" :key="item.id" />
+                            </el-select>
+                        </el-form-item>
 
-          <el-button size="large" disabled>View transaction</el-button>
+                        <el-form-item label="Balance" prop="balance">
+                            {{ balanceRef }}
+                            <el-icon class="refreshBalanceRef" @click="tokenChoose">
+                                <Refresh />
+                            </el-icon>
+                        </el-form-item>
 
-          <el-button type="primary" size="large">
-            <router-link to="/create-token-sale" style="color: #fff;"> Create launchpad</router-link>
-          </el-button>
+                        <el-form-item label="Reciver" prop="reciver">
+                            <el-input v-model.trim="userFundFormRef.reciver" placeholder="Ex: B62xxx" />
+                        </el-form-item>
 
-          <el-button type="primary" size="large">
-            <router-link to="/create-token-sale" style="color: #fff;"> Create Fairlaunch</router-link>
-          </el-button>
+                        <el-form-item label="Amount" prop="amount">
+                            <el-input v-model.number.trim="userFundFormRef.amount" placeholder="0" />
+                        </el-form-item>
 
-        </el-col>
-      </el-row>  -->
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
+                            <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+                        </el-form-item>
+
+                    </el-form>
+                </el-col>
+
+                <el-col :span="1"></el-col>
+
+                <el-col :span="12">
+                    <div class="transferRecordTable">
+                        <h2>Transfer Record</h2>
+                        <el-table :data="transferData" height="250" style="width: 100%">
+                            <el-table-column prop="date" label="Date" width="180" />
+                            <el-table-column prop="address" label="Address" />
+                        </el-table>
+                    </div>
+                </el-col>
+
+            </el-row>
 
         </el-col>
     </el-row>
@@ -436,19 +459,52 @@ onMounted(async () => {
 
 <style lang="less" scoped>
 .Wallet {
-    width: 100%;
-    padding: 10% 20%;
+    padding: 10% 20% 10% 15%;
 
     .form-notes {
         font-size: 12px;
         color: #00c798;
     }
 
-    .walletTable {
+    .walletInfo {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
     }
+
+
+    .el-form-item {
+        margin-bottom: 35px;
+    }
+
+    .refreshBalanceRef {
+        margin-left: 20px;
+        font-size: 16px;
+        cursor: pointer;
+        color: #00c798;
+    }
+
+    .el-row {
+        margin-bottom: 40px;
+    }
+
+}
+
+.Wallet2 {
+    width: 100%;
+    padding: 10% 2% 10% 2%;
+
+    .form-notes {
+        font-size: 12px;
+        color: #00c798;
+    }
+
+    .walletInfo {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
 
     .el-form-item {
         margin-bottom: 35px;
