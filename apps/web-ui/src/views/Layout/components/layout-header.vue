@@ -1,22 +1,25 @@
 <script lang="ts" setup>
 import { CHANNEL_MINA, WalletEventType, type WalletEvent } from "@/common";
 import { useStatusStore } from "@/stores";
-import { useNavMenuItemActivation } from '@/stores/NavMenuItemActivation'
 import { omitAddress } from "@/utils";
 import { ElMessage } from 'element-plus'
-import { onUpdated, ref } from "vue";
+import { onUpdated, ref, onMounted } from "vue";
 import { generateTokenKey } from '@/utils/keys-gen';
 import { queryToken } from "@/apis/token-api";
-
-let { activeIndex,setActiveIndex } = useNavMenuItemActivation();
 
 const chan = new BroadcastChannel(CHANNEL_MINA);
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
-const handleSelect = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
-    setActiveIndex(key)
-}
+const activeIndex = ref('')
+// const handleMenuSelect = (key: string, keyPath: string[]) => {
+//     console.log(key, keyPath)
+// }
+
+// 当用户选择一个菜单项时  
+const handleMenuSelect = (index: string) => {
+    activeIndex.value = index; // 更新当前激活的菜单项  
+    localStorage.setItem('currentMenuItem', index); // 存储到 localStorage  
+};
 
 const connectWallet = async () => {
     console.log('connect wallet...');
@@ -70,6 +73,14 @@ const disconnect = async () => {
     } as WalletEvent);
 }
 
+// 在组件加载时，从 localStorage 获取并设置激活的菜单项  
+onMounted(() => {
+    const savedIndex = localStorage.getItem('currentMenuItem');
+    if (savedIndex) {
+        activeIndex.value = savedIndex;
+    }
+});
+
 
 </script>
 
@@ -79,7 +90,7 @@ const disconnect = async () => {
         <el-col :span="24">
 
             <el-menu :default-active="activeIndex" class="el-menu-demo LayoutHeader" mode="horizontal" :ellipsis="false"
-                @select="handleSelect" background-color="#000" active-text-color="#00FFC2">
+                @select="handleMenuSelect" background-color="#000" active-text-color="#00FFC2">
 
                 <el-menu-item>
                     <RouterLink class="logo" to="/" alt="Element logo" />
