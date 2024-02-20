@@ -139,24 +139,10 @@ onMounted(async () => {
 
                     <!-- 每个项目 -->
                     <ul>
-                        <!-- <li v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
+                        <li v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
                             <SaleBlock :saleDto="item" />
-                        </li> -->
-
-                        <el-carousel :interval="3000" type="card" height="500px" loop class="custom-carousel">
-                            <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
-                                <SaleBlock :saleDto="item" />
-                            </el-carousel-item>
-                        </el-carousel>
-
+                        </li>
                     </ul>
-
-                    <!-- <el-carousel :interval="3000" type="card" height="500px" loop v-if="saleType === 1">
-                            <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
-                                <SaleBlock :saleDto="item" />
-                            </el-carousel-item>
-                        </el-carousel> -->
-
 
                 </el-col>
 
@@ -206,63 +192,31 @@ onMounted(async () => {
                 display: flex;
                 flex-wrap: wrap;
                 display: inline-block;
-                // padding-right: 100%;
-                // animation: move 6s infinite linear;
-                // animation: move 6s infinite alternate linear backwards;
-                // animation: move 6s infinite alternate linear forwards;
+                animation: move 6s infinite linear backwards;
 
-
-                // .launchpadsLi {
-                //     display: inline-block;
-                //     margin-left: 30px;
-                //     margin-right: 50px;
-                // }
-
-                .custom-carousel {
-                    /* 自定义样式，比如减少留白 */
-                    margin: 0;
-                    padding: 0;
+                .launchpadsLi {
+                    display: inline-block;
+                    margin-left: 30px;
+                    margin-right: 50px;
                 }
 
-                /* 可能需要调整走马灯内部的样式，比如列表项或指示器等 */
-                .custom-carousel__item {
-                    margin: 0;
-                    padding: 0;
+            }
+
+            @keyframes move {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(-100%);
                 }
             }
-
-            // @keyframes move {
-            //     0% {
-            //         transform: translateX(0);
-            //     }
-
-            //     100% {
-            //         transform: translateX(-100%);
-            //     }
-            // }
-
-            .el-carousel__item h3 {
-                color: #475669;
-                opacity: 0.75;
-                line-height: 200px;
-                margin: 0;
-                text-align: center;
-            }
-
-            .el-carousel__item:nth-child(2n) {
-                background-color: #99a9bf;
-            }
-
-            .el-carousel__item:nth-child(2n + 1) {
-                background-color: #d3dce6;
-            }
-
 
         }
 
-        // .ongoingBox:hover ul {
-        //     animation-play-state: paused;
-        // }
+        .ongoingBox:hover ul {
+            animation-play-state: paused;
+        }
 
     }
 
