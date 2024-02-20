@@ -1,6 +1,7 @@
 import { fetchLastBlock } from "o1js";
 import $httpInstance from "./http";
 import type { BaseResponse } from "@tokenizk/types";
+import BigNumber from "bignumber.js";
 
 
 export const checkTx = async (
@@ -10,7 +11,7 @@ export const checkTx = async (
     const { checkZkappTransaction } = await import("o1js");
     // const Blockchain = Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL);
     // Mina.setActiveInstance(Blockchain);
-    const maxAttempts = options?.maxAttempts ?? 10;
+    const maxAttempts = options?.maxAttempts ?? 500;
     const interval = options?.interval ?? 60 * 1000;
     let attempts = 0;
     const executePoll = async (
@@ -79,3 +80,65 @@ export const syncLatestBlock = async () => {
     }
 
 }
+
+/**
+ * convertToMinaUnit 
+ * @param nanomina 
+ * @returns 
+ */
+const convertToMinaUnit = (
+    nanomina: string | number | bigint | null | undefined,
+) => {
+    if (nanomina === undefined || nanomina === null) {
+        return null;
+    }
+    let tempValue: string;
+    if (typeof nanomina === "bigint") {
+        if (nanomina === 0n) {
+            return new BigNumber(0);
+        }
+        tempValue = nanomina.toString();
+    } else if (typeof nanomina === "number") {
+        if (nanomina === 0) {
+            return new BigNumber(0);
+        }
+        tempValue = nanomina.toString();
+    } else {
+        tempValue = nanomina;
+    }
+
+    const x = new BigNumber(tempValue);
+    let result = x.dividedBy(MINA);
+    return result;
+};
+
+/**
+ * convertToNanoMinaUnit
+ * @param mina 
+ * @returns 
+ */
+const convertToNanoMinaUnit = (
+    mina: string | number | bigint | null | undefined,
+) => {
+    if (mina === undefined || mina === null) {
+        return null;
+    }
+    let tempValue: string;
+    if (typeof mina === "bigint") {
+        if (mina === 0n) {
+            return new BigNumber(0);
+        }
+        tempValue = mina.toString();
+    } else if (typeof mina === "number") {
+        if (mina === 0) {
+            return new BigNumber(0);
+        }
+        tempValue = mina.toString();
+    } else {
+        tempValue = mina;
+    }
+
+    const x = new BigNumber(tempValue);
+    let result = x.multipliedBy(MINA);
+    return result;
+};
