@@ -6,6 +6,7 @@ import { RequestHandler } from '@/lib/types'
 import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
+import { PublicKey } from "o1js";
 
 const logger = getLogger('createSale');
 
@@ -32,6 +33,20 @@ const handler: RequestHandler<TokenDto, null> = async function (
     res
 ): Promise<BaseResponse<string>> {
     const dto = req.body
+
+    try {
+        PublicKey.fromBase58(dto.address);
+    } catch (error) {
+        throw req.throwError(httpCodes.BAD_REQUEST, "tokenAddress is invalid");
+    }
+
+    if (!dto.symbol) {
+        throw req.throwError(httpCodes.BAD_REQUEST, "symbol cannot be empty");
+    }
+
+    if (dto.totalSupply <= 0) {
+        throw req.throwError(httpCodes.BAD_REQUEST, "totalSupply cannot be less than/equal to 0");
+    }
 
     try {
         const connection = getConnection();
