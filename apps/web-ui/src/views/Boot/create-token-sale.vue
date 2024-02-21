@@ -954,7 +954,8 @@ const title = computed(() => {
                                         </el-row>
 
                                         <el-form-item label="Sale Total Supply" prop="totalSaleSupply" v-if="saleType == 1">
-                                            <el-input v-model.number.trim="saleDto.totalSaleSupply" placeholder="0" @change="ChangeFairSalesSupply"/>
+                                            <el-input v-model.number.trim="saleDto.totalSaleSupply" placeholder="0"
+                                                @change="ChangeFairSalesSupply" />
                                         </el-form-item>
 
                                         <el-row class="row-bg">
@@ -1170,48 +1171,48 @@ const title = computed(() => {
                                 <!-- 步骤4 -->
                                 <el-row class="row-bg formTable2" v-show="flagX === 3">
                                     <el-col :span="24">
-                                        <el-row class="row-bg">
-                                            <el-col :span="12">Sale name</el-col>
-                                            <el-col :span="12">{{ saleDto.saleName }}</el-col>
+                                        <el-row>
+                                            <el-col :span="9" class="wide4">Sale name :</el-col>
+                                            <el-col :span="15">{{ saleDto.saleName }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Token name</el-col>
-                                            <el-col :span="12">{{ saleDto.tokenSymbol }}</el-col>
+                                            <el-col :span="9" class="wide4">Token name :</el-col>
+                                            <el-col :span="15">{{ saleDto.tokenSymbol }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Token address</el-col>
-                                            <el-col :span="12">{{ saleDto.tokenAddress }}</el-col>
-                                        </el-row>
-
-                                        <el-row>
-                                            <el-col :span="12">Sale contract address</el-col>
-                                            <el-col :span="12">{{ saleDto.saleAddress ?? `click 'confirm' to generate`
-                                            }}</el-col>
-                                        </el-row>
-                                        <el-row>
-                                            <el-col :span="12">Sale Supply</el-col>
-                                            <el-col :span="12">{{ saleDto.totalSaleSupply }} {{ saleDto.tokenSymbol
-                                            }}</el-col>
-                                        </el-row>
-                                        <!-- 注意 下面两项 -->
-                                        <el-row>
-                                            <el-col :span="12">Sale currency :</el-col>
-                                            <el-col :span="12">{{ saleDto.currency }}</el-col>
+                                            <el-col :span="9" class="wide4">Token address :</el-col>
+                                            <el-col :span="15">{{ saleDto.tokenAddress }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Sale creation fee :</el-col>
-                                            <el-col :span="12">{{ saleDto.feeRate }} {{ saleDto.currency }}</el-col>
+                                            <el-col :span="9" class="wide4">Sale contract address :</el-col>
+                                            <el-col :span="15">{{ saleDto.saleAddress ?? `click 'confirm' to
+                                                generate`}}</el-col>
+                                        </el-row>
+                                        <el-row>
+                                            <el-col :span="9" class="wide4">Sale Supply :</el-col>
+                                            <el-col :span="15">{{ saleDto.totalSaleSupply }} {{
+                                                saleDto.tokenSymbol }}</el-col>
+                                        </el-row>
+
+                                        <el-row>
+                                            <el-col :span="9" class="wide4">Sale currency :</el-col>
+                                            <el-col :span="15">{{ saleDto.currency }}</el-col>
+                                        </el-row>
+
+                                        <el-row>
+                                            <el-col :span="9" class="wide4">Sale creation fee :</el-col>
+                                            <el-col :span="15">{{ saleDto.feeRate }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row v-show="saleDto.saleRate">
-                                            <el-col :span="12">Sale Rate :</el-col>
-                                            <el-col :span="12">{{ saleDto.saleRate }}</el-col>
+                                            <el-col :span="9" class="wide4">Sale Rate :</el-col>
+                                            <el-col :span="15">{{ saleDto.saleRate }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Sale whitelist :</el-col>
-                                            <el-col :span="12">
+                                            <el-col :span="9" class="wide4">Sale whitelist :</el-col>
+                                            <el-col :span="15">
                                                 <!-- {{ saleDto.whitelistMembers }} -->
 
                                                 <div v-if="saleDto.whitelistMembers">
@@ -1232,93 +1233,92 @@ const title = computed(() => {
                                                         </ul>
                                                     </el-dialog>
                                                 </div>
-                                                <div v-else>
-                                                    No WhiteList Members
-                                                </div>
+
+                                                <div v-else> No WhiteList Members</div>
 
                                             </el-col>
                                         </el-row>
 
                                         <el-row v-show="saleType != 1">
-                                            <el-col :span="12">Softcap :</el-col>
-                                            <el-col :span="12">{{ saleDto.softCap }} {{ saleDto.currency }}</el-col>
+                                            <el-col :span="9" class="wide4">Softcap :</el-col>
+                                            <el-col :span="15">{{ saleDto.softCap }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row v-show="saleType != 1">
-                                            <el-col :span="12">HardCap :</el-col>
-                                            <el-col :span="12">{{ saleDto.hardCap }} {{ saleDto.currency }}</el-col>
+                                            <el-col :span="9" class="wide4">HardCap :</el-col>
+                                            <el-col :span="15">{{ saleDto.hardCap }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Minimum buy :</el-col>
-                                            <el-col :span="12">{{ saleDto.minimumBuy }} {{ saleDto.currency }}</el-col>
+                                            <el-col :span="9" class="wide4">Minimum buy :</el-col>
+                                            <el-col :span="15">{{ saleDto.minimumBuy }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Maximum buy :</el-col>
-                                            <el-col :span="12">{{ saleDto.maximumBuy }} {{ saleDto.currency }}</el-col>
+                                            <el-col :span="9" class="wide4">Maximum buy :</el-col>
+                                            <el-col :span="15">{{ saleDto.maximumBuy }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Start Time :</el-col>
-                                            <el-col :span="12">{{ new Date(saleDto.startTimestamp) }}</el-col>
+                                            <el-col :span="9" class="wide4">Start Time :</el-col>
+                                            <el-col :span="15">{{ new Date(saleDto.startTimestamp) }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">End Time :</el-col>
-                                            <el-col :span="12">{{ new Date(saleDto.endTimestamp) }} </el-col>
+                                            <el-col :span="9" class="wide4">End Time :</el-col>
+                                            <el-col :span="15">{{ new Date(saleDto.endTimestamp) }} </el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Liquidity cliffTime :</el-col>
-                                            <el-col :span="12">{{ saleDto.cliffTime }} slots (about {{ dynamicalCliffTime
-                                            }} minutes )</el-col>
+                                            <el-col :span="9" class="wide4">Liquidity cliffTime :</el-col>
+                                            <el-col :span="15">{{ saleDto.cliffTime }} slots (about {{ dynamicalCliffTime }}
+                                                minutes )</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Liquidity cliffAmountRate(%) :</el-col>
-                                            <el-col :span="12">{{ saleDto.cliffAmountRate }}%</el-col>
+                                            <el-col :span="9" class="wide4">Liquidity cliffAmountRate(%) :</el-col>
+                                            <el-col :span="15">{{ saleDto.cliffAmountRate }}%</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Liquidity vestingPeriod :</el-col>
-                                            <el-col :span="12">{{ saleDto.vestingPeriod }} slots (about
+                                            <el-col :span="9" class="wide4">Liquidity vestingPeriod :</el-col>
+                                            <el-col :span="5">{{ saleDto.vestingPeriod }} slots (about
                                                 {{ dynamicalVestingPeriod }} minutes )</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Liquidity vestingIncrement :</el-col>
-                                            <el-col :span="12">{{ saleDto.vestingIncrement }}%</el-col>
+                                            <el-col :span="9" class="wide4">Liquidity vestingIncrement :</el-col>
+                                            <el-col :span="15">{{ saleDto.vestingIncrement }}%</el-col>
                                         </el-row>
 
 
                                         <el-row style="overflow-wrap: break-word;">
-                                            <el-col :span="12">logoUrl :</el-col>
-                                            <el-col :span="12" style="">{{ saleDto.logoUrl }}</el-col>
+                                            <el-col :span="9" class="wide4">logoUrl :</el-col>
+                                            <el-col :span="15" style="">{{ saleDto.logoUrl }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Website :</el-col>
-                                            <el-col :span="12">{{ saleDto.website }}</el-col>
+                                            <el-col :span="9" class="wide4">Website :</el-col>
+                                            <el-col :span="15">{{ saleDto.website }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">facebook :</el-col>
-                                            <el-col :span="12">{{ saleDto.facebook }}</el-col>
+                                            <el-col :span="9" class="wide4">facebook :</el-col>
+                                            <el-col :span="15">{{ saleDto.facebook }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">github :</el-col>
-                                            <el-col :span="12">{{ saleDto.github }}</el-col>
+                                            <el-col :span="9" class="wide4">github :</el-col>
+                                            <el-col :span="15">{{ saleDto.github }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">twitter :</el-col>
-                                            <el-col :span="12">{{ saleDto.twitter }}</el-col>
+                                            <el-col :span="9" class="wide4">twitter :</el-col>
+                                            <el-col :span="15">{{ saleDto.twitter }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">telegram :</el-col>
-                                            <el-col :span="12">{{ saleDto.telegram }}</el-col>
+                                            <el-col :span="9" class="wide4">telegram :</el-col>
+                                            <el-col :span="15">{{ saleDto.telegram }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">discord :</el-col>
-                                            <el-col :span="12">{{ saleDto.discord }}</el-col>
+                                            <el-col :span="9" class="wide4">discord :</el-col>
+                                            <el-col :span="15">{{ saleDto.discord }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">reddit :</el-col>
-                                            <el-col :span="12">{{ saleDto.reddit }}</el-col>
+                                            <el-col :span="9" class="wide4">reddit :</el-col>
+                                            <el-col :span="15">{{ saleDto.reddit }}</el-col>
                                         </el-row>
 
                                     </el-col>
@@ -1401,7 +1401,6 @@ const title = computed(() => {
     }
 
     // 步骤4
-
     .formTable1 {
         background-color: #fff;
         padding: 20px;
@@ -1440,6 +1439,10 @@ const title = computed(() => {
 
         .el-row {
             border-bottom: 1px solid #e6e6e6;
+        }
+
+        .wide4 {
+            font-weight: 700;
         }
     }
 
@@ -1485,4 +1488,3 @@ const title = computed(() => {
 
 }
 </style>
-@/apis/sale-api

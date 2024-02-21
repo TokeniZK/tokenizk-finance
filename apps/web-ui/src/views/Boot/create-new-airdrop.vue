@@ -975,48 +975,48 @@ const title = computed(() => {
                                     <el-col :span="24">
 
                                         <el-row>
-                                            <el-col :span="12">Token name</el-col>
-                                            <el-col :span="12">{{ airdropDto.tokenSymbol }}</el-col>
+                                            <el-col :span="9" class="wide4">Token name :</el-col>
+                                            <el-col :span="15">{{ airdropDto.tokenSymbol }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Token address</el-col>
-                                            <el-col :span="12">{{ airdropDto.tokenAddress }}</el-col>
+                                            <el-col :span="9" class="wide4">Token address :</el-col>
+                                            <el-col :span="15">{{ airdropDto.tokenAddress }}</el-col>
                                         </el-row>
 
                                         <el-row class="row-bg">
-                                            <el-col :span="12">Airdrop name</el-col>
-                                            <el-col :span="12">{{ airdropDto.airdropName }}</el-col>
+                                            <el-col :span="9" class="wide4">Airdrop name :</el-col>
+                                            <el-col :span="15">{{ airdropDto.airdropName }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Airdrop contract address</el-col>
-                                            <el-col :span="12">{{ (airdropDto.airdropAddress != null ||
+                                            <el-col :span="9" class="wide4">Airdrop contract address :</el-col>
+                                            <el-col :span="15">{{ (airdropDto.airdropAddress != null ||
                                                 airdropDto.airdropAddress !=
                                                 '') ? `click 'confirm' to generate...` : airdropDto.airdropAddress
                                             }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Airdrop Total Supply</el-col>
-                                            <el-col :span="12">{{ airdropDto.totalAirdropSupply }}</el-col>
+                                            <el-col :span="9" class="wide4">Airdrop Total Supply :</el-col>
+                                            <el-col :span="15">{{ airdropDto.totalAirdropSupply }}</el-col>
                                         </el-row>
 
                                         <!-- 注意 下面两项 -->
                                         <el-row>
-                                            <el-col :span="12">Airdrop currency</el-col>
-                                            <el-col :span="12">{{ airdropDto.currency }}</el-col>
+                                            <el-col :span="9" class="wide4">Airdrop currency :</el-col>
+                                            <el-col :span="15">{{ airdropDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Airdrop creation fee</el-col>
-                                            <el-col :span="12">{{ airdropDto.feeRate }}</el-col>
+                                            <el-col :span="9" class="wide4">Airdrop creation fee :</el-col>
+                                            <el-col :span="15">{{ airdropDto.feeRate }}</el-col>
                                         </el-row>
 
                                         <el-row
                                             :hidden="airdropDto.whitelistMembers == null || airdropDto.whitelistMembers == ''">
-                                            <el-col :span="12">Airdrop whitelist</el-col>
-                                            <el-col :span="12">
+                                            <el-col :span="9" class="wide4">Airdrop whitelist :</el-col>
+                                            <el-col :span="15">
                                                 <!-- {{ airdropDto.whitelistMembers }} -->
 
                                                 <div v-if="airdropDto.whitelistMembers">
@@ -1044,8 +1044,8 @@ const title = computed(() => {
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Start at</el-col>
-                                            <el-col :span="12">{{ airdropDto.startTimestamp }}</el-col>
+                                            <el-col :span="9" class="wide4">Start at :</el-col>
+                                            <el-col :span="15">{{ airdropDto.startTimestamp }}</el-col>
                                         </el-row>
 
                                         <!-- <el-row>
@@ -1054,60 +1054,60 @@ const title = computed(() => {
                                         </el-row> -->
 
                                         <el-row>
-                                            <el-col :span="12">Liquidity cliffTime</el-col>
-                                            <el-col :span="12">{{ airdropDto.cliffTime }} slots (about {{ dynamicalCliffTime
+                                            <el-col :span="9" class="wide4">Liquidity cliffTime :</el-col>
+                                            <el-col :span="15">{{ airdropDto.cliffTime }} slots (about {{ dynamicalCliffTime
                                             }} minutes )</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Liquidity cliffAmountRate</el-col>
-                                            <el-col :span="12">{{ airdropDto.cliffAmountRate }} (about {{
+                                            <el-col :span="9" class="wide4">Liquidity cliffAmountRate :</el-col>
+                                            <el-col :span="15">{{ airdropDto.cliffAmountRate }} (about {{
                                                 dynamicalCliffAmount }} {{ tokenDto.symbol }})</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Liquidity vestingPeriod</el-col>
-                                            <el-col :span="12">{{ airdropDto.vestingPeriod }} (about
+                                            <el-col :span="9" class="wide4">Liquidity vestingPeriod :</el-col>
+                                            <el-col :span="15">{{ airdropDto.vestingPeriod }} (about
                                                 {{ dynamicalVestingPeriod }} minutes )</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">Liquidity vestingIncrement</el-col>
-                                            <el-col :span="12">{{ airdropDto.vestingIncrement }}
+                                            <el-col :span="9" class="wide4">Liquidity vestingIncrement :</el-col>
+                                            <el-col :span="15">{{ airdropDto.vestingIncrement }}
                                                 (about {{ dynamicalVestingIncrement }} {{ tokenDto.symbol }})
                                             </el-col>
                                         </el-row>
 
 
                                         <el-row>
-                                            <el-col :span="12">logoUrl</el-col>
-                                            <el-col :span="12">{{ airdropDto.logoUrl }}</el-col>
+                                            <el-col :span="9" class="wide4">logoUrl :</el-col>
+                                            <el-col :span="15">{{ airdropDto.logoUrl }}</el-col>
                                         </el-row>
 
                                         <el-row>
-                                            <el-col :span="12">Website</el-col>
-                                            <el-col :span="12">{{ airdropDto.website }}</el-col>
+                                            <el-col :span="9" class="wide4">Website :</el-col>
+                                            <el-col :span="15">{{ airdropDto.website }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">facebook</el-col>
-                                            <el-col :span="12">{{ airdropDto.facebook }}</el-col>
+                                            <el-col :span="9" class="wide4">facebook :</el-col>
+                                            <el-col :span="15">{{ airdropDto.facebook }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">github</el-col>
-                                            <el-col :span="12">{{ airdropDto.github }}</el-col>
+                                            <el-col :span="9" class="wide4">github :</el-col>
+                                            <el-col :span="15">{{ airdropDto.github }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">twitter</el-col>
-                                            <el-col :span="12">{{ airdropDto.twitter }}</el-col>
+                                            <el-col :span="9" class="wide4">twitter :</el-col>
+                                            <el-col :span="15">{{ airdropDto.twitter }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">telegram</el-col>
-                                            <el-col :span="12">{{ airdropDto.telegram }}</el-col>
+                                            <el-col :span="9" class="wide4">telegram :</el-col>
+                                            <el-col :span="15">{{ airdropDto.telegram }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">discord</el-col>
-                                            <el-col :span="12">{{ airdropDto.discord }}</el-col>
+                                            <el-col :span="9" class="wide4">discord :</el-col>
+                                            <el-col :span="15">{{ airdropDto.discord }}</el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="12">reddit</el-col>
-                                            <el-col :span="12">{{ airdropDto.reddit }}</el-col>
+                                            <el-col :span="9" class="wide4">reddit :</el-col>
+                                            <el-col :span="15">{{ airdropDto.reddit }}</el-col>
                                         </el-row>
 
                                     </el-col>
@@ -1230,14 +1230,18 @@ const title = computed(() => {
         .el-row {
             border-bottom: 1px solid #e6e6e6;
         }
+
+        .wide4 {
+            font-weight: 700;
+        }
     }
 
     .whiteListBtn {
         color: #00c798;
-            background-color: #e6fff9;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 10px;
+        background-color: #e6fff9;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 10px;
     }
 
     .whiteListUl {
