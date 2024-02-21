@@ -6,7 +6,7 @@ import { RequestHandler } from '@/lib/types'
 import { getConnection } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { Airdrop, BasiceToken } from "@tokenizk/entities"
-import { PublicKey } from "o1js";
+import { PublicKey, fetchAccount, TokenId } from "o1js";
 import { WHITELIST_TREE_ROOT } from "@tokenizk/contracts"
 
 const logger = getLogger('createSale');
@@ -61,6 +61,12 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             airdrop.txHash = airdropDto.txHash;
             airdrop = await airdropRepo.save(airdrop);
         } else {
+            const tokenAddr = PublicKey.fromBase58(airdropDto.tokenAddress);
+            const tokenAccount = await fetchAccount({ publicKey: tokenAddr, tokenId: TokenId.derive(tokenAddr) });
+            if (!tokenAccount || tokenAccount.error) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
+            }
+
             if (airdropDto.startTimestamp > airdropDto.endTimestamp) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "startTimestamp should not be greater than endTimestamp");
             }
@@ -81,13 +87,12 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             if (airdropDto.vestingIncrement < 0) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "vestingIncrement is not valid");
             }
-            if(!airdropDto.airdropName){
+            if (!airdropDto.airdropName) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "airdropName is not valid");
             }
-            if(airdropDto.totalAirdropSupply <= 0){// TODO
+            if (airdropDto.totalAirdropSupply <= 0 || Number(tokenAccount?.account?.balance.toString()) < airdropDto.totalAirdropSupply) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "totalAirdropSupply is not valid");
             }
-
 
             // transform from airdropDto to Sale
             airdrop = Airdrop.fromDto(airdropDto);
