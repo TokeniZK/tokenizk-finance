@@ -6,7 +6,7 @@ import { RequestHandler } from '@/lib/types'
 import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
-import { PublicKey } from "o1js";
+import { PublicKey, fetchAccount, TokenId } from "o1js";
 
 const logger = getLogger('createSale');
 
@@ -46,6 +46,12 @@ const handler: RequestHandler<TokenDto, null> = async function (
 
     if (dto.totalSupply <= 0) {
         throw req.throwError(httpCodes.BAD_REQUEST, "totalSupply cannot be less than/equal to 0");
+    }
+
+    const tokenAddr = PublicKey.fromBase58(dto.address);
+    const tokenAccount = await fetchAccount({ publicKey: tokenAddr, tokenId: TokenId.derive(tokenAddr) });
+    if (tokenAccount && tokenAccount.error) {
+        throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
     }
 
     try {
