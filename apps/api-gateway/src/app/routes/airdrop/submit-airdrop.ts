@@ -45,11 +45,6 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             throw req.throwError(httpCodes.BAD_REQUEST, "tokenAddress is invalid");
         }
     }
-    if (airdropDto?.whitelistMembers ) {
-        if(airdropDto.whitelistTreeRoot == WHITELIST_TREE_ROOT.toString() || airdropDto.whitelistTreeRoot.length == 0){
-            throw req.throwError(httpCodes.BAD_REQUEST, "whitelistTreeRoot is not aligned with whitelistMembers");
-        }
-    }
 
     try {
         const connection = getConnection();
@@ -66,8 +61,37 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             airdrop.txHash = airdropDto.txHash;
             airdrop = await airdropRepo.save(airdrop);
         } else {
+            if (airdropDto.startTimestamp > airdropDto.endTimestamp) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "startTimestamp should not be greater than endTimestamp");
+            }
+            if (airdropDto?.whitelistMembers) {
+                if (airdropDto.whitelistTreeRoot == WHITELIST_TREE_ROOT.toString() || airdropDto.whitelistTreeRoot.length == 0) {
+                    throw req.throwError(httpCodes.BAD_REQUEST, "whitelistTreeRoot is not aligned with whitelistMembers");
+                }
+            }
+            if (airdropDto.cliffAmountRate < 0) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "cliffAmountRate is not valid");
+            }
+            if (airdropDto.cliffTime <= 0) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "cliffTime is not valid");
+            }
+            if (airdropDto.vestingPeriod < 1) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "vestingPeriod is not valid");
+            }
+            if (airdropDto.vestingIncrement < 0) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "vestingIncrement is not valid");
+            }
+            if(!airdropDto.airdropName){
+                throw req.throwError(httpCodes.BAD_REQUEST, "airdropName is not valid");
+            }
+            if(airdropDto.totalAirdropSupply <= 0){// TODO
+                throw req.throwError(httpCodes.BAD_REQUEST, "totalAirdropSupply is not valid");
+            }
+
+
             // transform from airdropDto to Sale
             airdrop = Airdrop.fromDto(airdropDto);
+
             airdrop.createdAt = new Date();
             airdrop.updatedAt = new Date();
             airdrop = await airdropRepo.save(airdrop);

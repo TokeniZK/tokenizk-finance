@@ -2,7 +2,7 @@ import httpCodes from "@inip/http-codes"
 import { FastifyPlugin } from "fastify"
 import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
-
+import {  PublicKey} from "o1js";
 import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { Sale, UserTokenSale } from "@tokenizk/entities"
@@ -30,6 +30,22 @@ const handler: RequestHandler<SaleDto, null> = async function (
     res
 ): Promise<BaseResponse<number>> {
     const saleDto = req.body
+
+    try {
+        PublicKey.fromBase58(saleDto.saleAddress);
+    } catch (error) {
+        logger.error(`saleAddress: ${saleDto.saleAddress} is invalid`);
+
+        throw req.throwError(httpCodes.BAD_REQUEST, "saleAddress is invalid")
+    }
+
+    try {
+        PublicKey.fromBase58(saleDto.tokenAddress);
+    } catch (error) {
+        logger.error(`tokenAddress: ${saleDto.tokenAddress} is invalid`);
+
+        throw req.throwError(httpCodes.BAD_REQUEST, "tokenAddress is invalid")
+    }
 
     try {
         const connection = getConnection();

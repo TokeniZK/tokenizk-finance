@@ -36,6 +36,7 @@ const handler: RequestHandler<ClientProveTaskDto, null> = async function (
     try {
         if (Date.now() - fetchLastBlockTs >= 1.5 * 60 * 1000) {
             currentBlockHeight = Number((await fetchLastBlock()).blockchainLength.toString());
+            fetchLastBlockTs = Date.now();// update last block fetch record
         }
     } catch (err) {
         logger.error(err);
