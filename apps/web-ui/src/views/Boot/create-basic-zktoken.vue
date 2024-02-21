@@ -381,33 +381,33 @@ const checkIfDeployed = async () => {
             <el-row class="row-bg tokenTable" justify="center" v-show="!flag">
                 <el-col :span="24">
 
-                    <el-row> Your token was created ! </el-row>
+                    <el-row style=" color: #00c798;"> Your token was created ! </el-row>
 
                     <el-row>
                         <el-col :span="24">
 
                             <el-row>
-                                <el-col :span="4">Issuer Name : </el-col>
+                                <el-col :span="4" class="wide4">Issuer Name : </el-col>
                                 <el-col :span="19">{{ tokenDtoForm.name }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="4">Symbol : </el-col>
+                                <el-col :span="4" class="wide4">Symbol : </el-col>
                                 <el-col :span="19">{{ tokenDtoForm.symbol }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="4">Total supply : </el-col>
+                                <el-col :span="4" class="wide4">Total supply : </el-col>
                                 <el-col :span="19">{{ tokenDtoForm.totalSupply }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="4">Logo URL :</el-col>
+                                <el-col :span="4" class="wide4">Logo URL :</el-col>
                                 <el-col :span="19"> {{ tokenDtoForm.logoUrl }}</el-col>
                             </el-row>
 
                             <el-row>
-                                <el-col :span="4">txHash : </el-col>
+                                <el-col :span="4" class="wide4">txHash : </el-col>
                                 <el-col :span="19">{{ appState.explorerUrl.concat(tokenDtoForm.txHash) }}</el-col>
                             </el-row>
 
@@ -415,19 +415,19 @@ const checkIfDeployed = async () => {
                     </el-row>
 
                     <router-link to="/create-token-sale?saleType=0">
-                        <el-button type="primary" size="large" class="basicZkBtn">
+                        <el-button type="primary" size="large" class="basicZkBtn2">
                             Create PreSale
                         </el-button>
                     </router-link>
 
                     <router-link to="/create-token-sale?saleType=1">
-                        <el-button type="primary" size="large" class="basicZkBtn">
+                        <el-button type="primary" size="large" class="basicZkBtn2">
                             Create Fair Sale
                         </el-button>
                     </router-link>
 
                     <router-link to="/create-airdrop">
-                        <el-button type="primary" size="large" class="basicZkBtn">
+                        <el-button type="primary" size="large" class="basicZkBtn2">
                             Create Airdrop
                         </el-button>
                     </router-link>
@@ -452,6 +452,26 @@ const checkIfDeployed = async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
+    }
+
+    .basicZkBtn {
+        margin-right: 20px;
+
+        &:hover {
+            color: #00c798;
+        }
+    }
+
+    .basicZkBtn2 {
+        margin-right: 40px;
+
+        &:hover {
+            color: #00c798;
+        }
+    }
+
+    .wide4 {
+        font-weight: 700;
     }
 
 
