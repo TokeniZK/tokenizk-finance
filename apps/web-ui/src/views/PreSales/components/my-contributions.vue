@@ -5,6 +5,7 @@ import { type SaleDto, type SaleReq } from '@tokenizk/types'
 import SaleBlock from '../../../components/sale-block.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { querySaleUserContribution } from '@/apis/sale-api'
+import { ElMessage } from 'element-plus'
 
 
 let route = useRoute();
@@ -81,12 +82,20 @@ onMounted(async () => {
     let fetchResult = (await querySaleUserContribution(saleType.value, appState.connectedWallet58!)) as any as SaleUserDtoExtend[];
 
     console.log(`fetchResult: ${JSON.stringify(fetchResult)}`);
-    
 
     calcProjectProgress(fetchResult);
     transformProjectStatus(fetchResult);
 
     myContributionsList.saleList = fetchResult.map(a => a.saleDto);
+
+    if (myContributionsList.saleList.length == 0) {
+        ElMessage({
+            showClose: true,
+            type: 'info',
+            message: `My contribution list is empty.`,
+        });
+    }
+
 
     // 进入当前组件都会回到顶部
     window.scrollTo({

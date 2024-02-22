@@ -5,6 +5,7 @@ import type { AirdropDto } from '@tokenizk/types/src/airdrop-dto'
 import { useRoute, useRouter } from 'vue-router'
 import AirdropBlock from '@/components/airdrop-block.vue'
 import { queryAirdropUserContribution } from '@/apis/airdrop-api'
+import { ElMessage } from 'element-plus'
 
 const type = 0;
 
@@ -55,6 +56,14 @@ onMounted(async () => {
   // transformProjectStatus(fetchResult);
 
   myAirdropsList.airdropList = fetchResult;
+
+  if (myAirdropsList.airdropList.length == 0) {
+    ElMessage({
+      showClose: true,
+      type: 'info',
+      message: `My Airdrops List is empty.`,
+    });
+  }
 
   // 进入当前组件都会回到顶部
   window.scrollTo({
