@@ -555,12 +555,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 const ChangeFairSalesSupply = () => {
     if (saleDto.totalSaleSupply === 0) {
-        ElMessage.error({ message: 'Total Airdrop Supply must be > 0' });
+        ElMessage.error({ message: 'Total Sale Supply must be > 0' });
         return false;
     }
 
     if (saleDto.totalSaleSupply > (tokenDto.totalSupply - tokenDto.totalAmountInCirculation)) {
-        ElMessage.error({ message: 'Total Airdrop Supply must be < Token Total Supply' });
+        ElMessage.error({ message: 'Total Sale Supply must be < Token Total Supply' });
         return false;
     }
     return true;
