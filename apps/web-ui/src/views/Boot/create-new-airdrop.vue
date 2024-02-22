@@ -1161,6 +1161,10 @@ const title = computed(() => {
 
     .steps-Bar {
         margin-right: 30px;
+
+        &:hover {
+            color: #00c798;
+        }
     }
 
     // 日期选择器

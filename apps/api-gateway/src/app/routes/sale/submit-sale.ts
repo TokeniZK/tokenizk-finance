@@ -1,13 +1,35 @@
 import httpCodes from "@inip/http-codes"
 import { FastifyPlugin } from "fastify"
-import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema } from '@tokenizk/types'
+import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema, TokenDto } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
-import {  PublicKey} from "o1js";
 import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { Sale, UserTokenSale } from "@tokenizk/entities"
 import { PublicKey, fetchAccount, TokenId } from "o1js";
 import { WHITELIST_TREE_ROOT } from "@tokenizk/contracts"
+import { useRoute, useRouter } from 'vue-router'
+import { ref, reactive } from "vue";
+
+let route = useRoute();
+let saleType = ref(route.query.saleType as any as number);
+
+const tokenDtoInit: TokenDto = {
+    symbol: '',
+    id: 0,
+    txHash: '',
+    type: 0,
+    status: 0,
+    address: '',
+    name: '',
+    logoUrl: '',
+    zkappUri: '',
+    totalSupply: 0,
+    totalAmountInCirculation: 0,
+    updatedAt: 0,
+    createdAt: 0,
+};
+
+let tokenDto = reactive<TokenDto>(tokenDtoInit)
 
 const logger = getLogger('createSale');
 
@@ -64,16 +86,30 @@ const handler: RequestHandler<SaleDto, null> = async function (
             sale.updatedAt = new Date();
         } else {
 
+            if (saleType.value == 0 || saleType.value == 1) {
+                if (saleDto.totalSaleSupply > (tokenDto.totalSupply - tokenDto.totalAmountInCirculation)) {
+                    throw req.throwError(httpCodes.BAD_REQUEST, "Total Sale Supply should not be greater than Token Total Supply");
+                }
+            }
+
+            if (saleType.value == 0 || saleType.value == 2) {
+                if (saleDto.softCap > saleDto.hardCap) {
+                    throw req.throwError(httpCodes.BAD_REQUEST, "softCap should not be greater than hardCap");
+                }
+            }
+
+            if (saleDto.minimumBuy > saleDto.maximumBuy) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "minimumBuy should not be greater than maximumBuy");
+            }
+
             if (saleDto.startTimestamp > saleDto.endTimestamp) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "startTimestamp should not be greater than endTimestamp");
             }
-
             if (saleDto?.whitelistMembers) {
                 if (saleDto.whitelistTreeRoot == WHITELIST_TREE_ROOT.toString() || saleDto.whitelistTreeRoot.length == 0) {
                     throw req.throwError(httpCodes.BAD_REQUEST, "whitelistTreeRoot is not aligned with whitelistMembers");
                 }
             }
-
             if (saleDto.cliffAmountRate < 0) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "cliffAmountRate is not valid");
             }
@@ -92,6 +128,9 @@ const handler: RequestHandler<SaleDto, null> = async function (
             if (saleDto.totalSaleSupply <= 0) {// TODO
                 throw req.throwError(httpCodes.BAD_REQUEST, "totalSaleSupply is not valid");
             }
+            if (saleDto.logoUrl == '') {
+                throw req.throwError(httpCodes.BAD_REQUEST, "logoUrl is not valid");
+            }
 
             // transform from SaleDto to Sale
             sale = Sale.fromDto(saleDto);
@@ -99,6 +138,7 @@ const handler: RequestHandler<SaleDto, null> = async function (
             sale.createdAt = new Date();
             sale.updatedAt = new Date();
         }
+
         sale = await saleRepo.save(sale);
 
         return {
