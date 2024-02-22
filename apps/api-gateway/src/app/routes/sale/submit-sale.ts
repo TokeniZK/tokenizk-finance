@@ -1,35 +1,12 @@
 import httpCodes from "@inip/http-codes"
 import { FastifyPlugin } from "fastify"
-import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema, TokenDto } from '@tokenizk/types'
+import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
 import { getConnection, In } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { Sale, UserTokenSale } from "@tokenizk/entities"
 import { PublicKey, fetchAccount, TokenId } from "o1js";
 import { WHITELIST_TREE_ROOT } from "@tokenizk/contracts"
-import { useRoute, useRouter } from 'vue-router'
-import { ref, reactive } from "vue";
-
-let route = useRoute();
-let saleType = ref(route.query.saleType as any as number);
-
-const tokenDtoInit: TokenDto = {
-    symbol: '',
-    id: 0,
-    txHash: '',
-    type: 0,
-    status: 0,
-    address: '',
-    name: '',
-    logoUrl: '',
-    zkappUri: '',
-    totalSupply: 0,
-    totalAmountInCirculation: 0,
-    updatedAt: 0,
-    createdAt: 0,
-};
-
-let tokenDto = reactive<TokenDto>(tokenDtoInit)
 
 const logger = getLogger('createSale');
 
@@ -86,13 +63,17 @@ const handler: RequestHandler<SaleDto, null> = async function (
             sale.updatedAt = new Date();
         } else {
 
-            if (saleType.value == 0 || saleType.value == 1) {
-                if (saleDto.totalSaleSupply > (tokenDto.totalSupply - tokenDto.totalAmountInCirculation)) {
-                    throw req.throwError(httpCodes.BAD_REQUEST, "Total Sale Supply should not be greater than Token Total Supply");
-                }
+            const tokenAddr = PublicKey.fromBase58(saleDto.tokenAddress);
+            const tokenAccount = await fetchAccount({ publicKey: tokenAddr, tokenId: TokenId.derive(tokenAddr) });
+            if (!tokenAccount || tokenAccount.error) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
             }
 
-            if (saleType.value == 0 || saleType.value == 2) {
+            if (saleDto.totalSaleSupply <= 0 || Number(tokenAccount?.account?.balance.toString()) < saleDto.totalSaleSupply) {
+                throw req.throwError(httpCodes.BAD_REQUEST, "totalAirdropSupply is not valid");
+            }
+
+            if (saleDto.saleType == 0 || saleDto.saleType == 2) {
                 if (saleDto.softCap > saleDto.hardCap) {
                     throw req.throwError(httpCodes.BAD_REQUEST, "softCap should not be greater than hardCap");
                 }
