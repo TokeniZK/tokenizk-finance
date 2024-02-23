@@ -10,6 +10,7 @@ import { useRoute } from 'vue-router';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 import { fetchAccount, Mina, PrivateKey } from 'o1js';
 import { WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
+import SaleStatistic from "./sale-statistic.vue";
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -117,6 +118,9 @@ watch(() => curentUserContributionDto.currentUser, async (value, oldValue) => {
         && curentUserContributionDto.currentUser.contributorAddress != undefined;
 }, { immediate: true });
 
+
+let saleStatistic = reactive({ dataArr: [] });
+
 const init = async () => {
     // query sale and current user
     const saleContributorsDetailDto0 = (await querySaleDetails(saleAddress, tokenAddress)) as SaleContributorsDetailDtoExtend;
@@ -165,6 +169,20 @@ const init = async () => {
 
     saleAddressLinkPrefix.value = saleAddressLinkPrefix.value + (saleContributorsDetailDto.saleDto.saleAddress)
     tokenAddressLinkPrefix.value = tokenAddressLinkPrefix.value + (saleContributorsDetailDto.saleDto.tokenAddress)
+
+
+    const totalSaledTokenAmount = saleContributorsDetailDto.saleDto.totalContributedMina * saleContributorsDetailDto.saleDto.saleRate
+    const restUnsaledTokenAmount = saleContributorsDetailDto.saleDto.totalSaleSupply - totalSaledTokenAmount
+    saleStatistic.dataArr.push(
+        {
+            value: totalSaledTokenAmount,
+            name: 'distributed tokens'
+        },
+        {
+            value: restUnsaledTokenAmount,
+            name: 'rest tokens'
+        }
+    );
 
     console.log('refresh sale-detail info intervally: done!');
 }
@@ -1398,6 +1416,14 @@ onUnmounted(() => {
             </el-col>
 
         </el-row>
+
+                <el-row class="row-bg presale-details" justify="center"
+            v-if="saleContributorsDetailDto.saleDto.saleType == 0">
+                   
+            <SaleStatistic :dataArray="saleStatistic" />
+               
+        </el-row>
+
     </div>
 </template>
 
@@ -1550,5 +1576,4 @@ onUnmounted(() => {
         border-radius: 4px;
     }
 
-}
-</style>
+}</style>
