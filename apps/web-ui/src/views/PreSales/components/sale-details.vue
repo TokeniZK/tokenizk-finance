@@ -754,11 +754,26 @@ let refreshTimer = undefined as any;
 
 // Pagination
 const paginationValue = ref(false);
+
+const pageSize = ref(8); // 每页显示8条信息  
+const currentPage = ref(1); // 当前页码  
+
+// 计算总条目数  
+const totalItems = computed(() => whiteListArr.whitelist.length);
+
+// 计算当前页显示的条目  
+const currentPageItems = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return whiteListArr.whitelist.slice(start, end);
+});
+
 const handleSizeChange = (val: number) => {
-    console.log(`${val} items per page`)
+    pageSize.value = val;
+    currentPage.value = 1; // 当条数变化时，重置到第一页  
 }
 const handleCurrentChange = (val: number) => {
-    console.log(`current page: ${val}`)
+    currentPage.value = val;
 }
 
 // 组件挂载完成后执行的函数  
@@ -994,17 +1009,18 @@ onUnmounted(() => {
                                             whileList table
                                         </el-button>
 
-                                        <el-dialog v-model="dialogTableVisible" title="whileList table" style="width:600px">
+                                        <el-dialog v-model="dialogTableVisible" title="whileList table"
+                                            style="width:600px;height: 570px;">
                                             <ul>
                                                 <el-scrollbar max-height="700px">
 
-                                                    <li v-for="item in whiteListArr.whitelist" :key="item.index"
+                                                    <li v-for="item in currentPageItems" :key="item.index"
                                                         class="whiteListUl scrollbar-demo-item">{{ item }}</li>
 
-                                                    <el-pagination class="pagination-block" background :page-size="8"
-                                                        :pager-count="9" layout="prev, pager, next,jumper"
-                                                        :hide-on-single-page="paginationValue"
-                                                        :total="whiteListArr.whitelist.length"
+                                                    <el-pagination class="pagination-block" background :page-size="pageSize"
+                                                        :current-page="currentPage" :pager-count="6"
+                                                        layout="prev, pager, next,jumper"
+                                                        :hide-on-single-page="paginationValue" :total="totalItems"
                                                         @size-change="handleSizeChange"
                                                         @current-change="handleCurrentChange" />
 
@@ -1500,11 +1516,13 @@ onUnmounted(() => {
 
         .tableLine {
             border-bottom: 1px solid #e6e6e6;
+
+            .pagination-block {
+                margin-top: 30px;
+            }
         }
 
-        .pagination-block {
-            margin-top: 30px;
-        }
+
 
     }
 
