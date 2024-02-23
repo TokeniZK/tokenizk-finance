@@ -751,6 +751,16 @@ const zkTxLinkPrefix = ref(import.meta.env.VITE_EXPLORER_TX_URL);
 
 let refreshTimer = undefined as any;
 
+
+// Pagination
+const paginationValue = ref(false);
+const handleSizeChange = (val: number) => {
+    console.log(`${val} items per page`)
+}
+const handleCurrentChange = (val: number) => {
+    console.log(`current page: ${val}`)
+}
+
 // 组件挂载完成后执行的函数  
 onMounted(async () => {
     await init();
@@ -878,8 +888,8 @@ onUnmounted(() => {
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
                                     <a :href="tokenAddressLinkPrefix" class="titleContent" target="_blank">
-                                    {{saleContributorsDetailDto.saleDto.tokenAddress }}
-                                        </a>
+                                        {{ saleContributorsDetailDto.saleDto.tokenAddress }}
+                                    </a>
 
                                     <a :href="tokenAddressLinkPrefix" class="titleContent" target="_blank">
                                         <el-icon style="margin-left: 10px;">
@@ -901,7 +911,7 @@ onUnmounted(() => {
                                 <el-row justify="end" class="titleContent">
 
                                     <a :href="saleAddressLinkPrefix" class="titleContent" target="_blank">
-                                        {{saleContributorsDetailDto.saleDto.saleAddress }}
+                                        {{ saleContributorsDetailDto.saleDto.saleAddress }}
                                     </a>
 
                                     <a :href="saleAddressLinkPrefix" class="titleContent" target="_blank">
@@ -986,10 +996,18 @@ onUnmounted(() => {
 
                                         <el-dialog v-model="dialogTableVisible" title="whileList table" style="width:600px">
                                             <ul>
-                                                <el-scrollbar max-height="400px">
+                                                <el-scrollbar max-height="700px">
+
                                                     <li v-for="item in whiteListArr.whitelist" :key="item.index"
-                                                        class="whiteListUl scrollbar-demo-item">{{
-                                                            item }}</li>
+                                                        class="whiteListUl scrollbar-demo-item">{{ item }}</li>
+
+                                                    <el-pagination class="pagination-block" background :page-size="8"
+                                                        :pager-count="9" layout="prev, pager, next,jumper"
+                                                        :hide-on-single-page="paginationValue"
+                                                        :total="whiteListArr.whitelist.length"
+                                                        @size-change="handleSizeChange"
+                                                        @current-change="handleCurrentChange" />
+
                                                 </el-scrollbar>
                                             </ul>
                                         </el-dialog>
@@ -1482,6 +1500,10 @@ onUnmounted(() => {
 
         .tableLine {
             border-bottom: 1px solid #e6e6e6;
+        }
+
+        .pagination-block {
+            margin-top: 30px;
         }
 
     }
