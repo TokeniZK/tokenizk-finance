@@ -754,7 +754,6 @@ let refreshTimer = undefined as any;
 
 // Pagination
 const paginationValue = ref(false);
-
 const pageSize = ref(8); // 每页显示8条信息  
 const currentPage = ref(1); // 当前页码  
 
@@ -1019,7 +1018,7 @@ onUnmounted(() => {
 
                                                     <el-pagination class="pagination-block" background :page-size="pageSize"
                                                         :current-page="currentPage" :pager-count="6"
-                                                        layout="prev, pager, next,jumper"
+                                                        layout="total,prev, pager, next,jumper"
                                                         :hide-on-single-page="paginationValue" :total="totalItems"
                                                         @size-change="handleSizeChange"
                                                         @current-change="handleCurrentChange" />
