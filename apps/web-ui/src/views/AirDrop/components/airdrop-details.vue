@@ -25,7 +25,8 @@ const { airdropAddress: airdropAddress0, tokenAddress: tokenAddress0 } = route.q
 const airdropAddress = airdropAddress0 as string;
 const tokenAddress = tokenAddress0 as string;
 
-let airdropStatistic = reactive({ dataArr: [
+let airdropStatistic = reactive({
+    dataArr: [
         {
             value: 0,
             name: 'distributed tokens'
@@ -34,7 +35,8 @@ let airdropStatistic = reactive({ dataArr: [
             value: 0,
             name: 'rest tokens'
         }
-] });
+    ]
+});
 
 // 转换项目的状态
 const transformProjectStatus = (itmes: AirdropDtoExtend[]) => {
@@ -151,8 +153,8 @@ const init = async () => {
     airdropAddressLinkPrefix.value = airdropAddressLinkPrefix.value + (airdropClaimersDetailDto.airdropDto.airdropAddress)
     tokenAddressLinkPrefix.value = tokenAddressLinkPrefix.value + (airdropClaimersDetailDto.airdropDto.tokenAddress)
 
-    const totalAirdropTokenAmount = airdropClaimersDetailDto.claimerList.reduce((p, c)=>{
-        return p + c.amount;
+    const totalAirdropTokenAmount = airdropClaimersDetailDto.claimerList.reduce((p, c) => {
+        return p + Number(c.claimAmount);
     }, 0);
     const restUnsaledTokenAmount = airdropClaimersDetailDto.airdropDto.totalAirdropSupply - totalAirdropTokenAmount
     airdropStatistic.dataArr[0].value = totalAirdropTokenAmount;

@@ -66,8 +66,12 @@ const option: ECOption = {
     ]
 };
 
-var myChart = echarts.init(document.getElementById('airdrop-statistic'));
-myChart.setOption(option);
+document.addEventListener('DOMContentLoaded', function () {
+    let myChart = echarts.init(document.getElementById('airdrop-statistic'));
+    myChart.setOption(option);
+});
+
+
 
 </script>
 <template>
