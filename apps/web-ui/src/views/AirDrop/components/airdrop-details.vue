@@ -10,6 +10,7 @@ import { useRoute } from 'vue-router';
 import { fetchAccount, fetchLastBlock } from 'o1js';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 import { AirdropParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
+import AirdropStatistic from "./airdrop-statistic.vue";
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -23,6 +24,17 @@ const route = useRoute();
 const { airdropAddress: airdropAddress0, tokenAddress: tokenAddress0 } = route.query;// from route param
 const airdropAddress = airdropAddress0 as string;
 const tokenAddress = tokenAddress0 as string;
+
+let airdropStatistic = reactive({ dataArr: [
+        {
+            value: 0,
+            name: 'distributed tokens'
+        },
+        {
+            value: 0,
+            name: 'rest tokens'
+        }
+] });
 
 // 转换项目的状态
 const transformProjectStatus = (itmes: AirdropDtoExtend[]) => {
@@ -138,6 +150,13 @@ const init = async () => {
 
     airdropAddressLinkPrefix.value = airdropAddressLinkPrefix.value + (airdropClaimersDetailDto.airdropDto.airdropAddress)
     tokenAddressLinkPrefix.value = tokenAddressLinkPrefix.value + (airdropClaimersDetailDto.airdropDto.tokenAddress)
+
+    const totalAirdropTokenAmount = airdropClaimersDetailDto.claimerList.reduce((p, c)=>{
+        return p + c.amount;
+    }, 0);
+    const restUnsaledTokenAmount = airdropClaimersDetailDto.airdropDto.totalAirdropSupply - totalAirdropTokenAmount
+    airdropStatistic.dataArr[0].value = totalAirdropTokenAmount;
+    airdropStatistic.dataArr[1].value = restUnsaledTokenAmount;
 
     console.log('refresh airdrop-detail info intervally: done!');
 }
@@ -355,6 +374,30 @@ const airdropAddressLinkPrefix = ref(import.meta.env.VITE_EXPLORER_ACCOUNT_URL);
 const tokenAddressLinkPrefix = ref(import.meta.env.VITE_EXPLORER_ACCOUNT_URL);
 
 let refreshTimer = undefined as any;
+
+
+// Pagination
+const paginationValue = ref(false);
+const pageSize = ref(8); // 每页显示8条信息  
+const currentPage = ref(1); // 当前页码  
+
+// 计算总条目数  
+const totalItems = computed(() => whiteListArr.whitelist.length);
+
+// 计算当前页显示的条目  
+const currentPageItems = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return whiteListArr.whitelist.slice(start, end);
+});
+
+const handleSizeChange = (val: number) => {
+    pageSize.value = val;
+    currentPage.value = 1; // 当条数变化时，重置到第一页  
+}
+const handleCurrentChange = (val: number) => {
+    currentPage.value = val;
+}
 
 // 组件挂载完成后执行的函数  
 onMounted(async () => {
@@ -601,12 +644,20 @@ onUnmounted(() => {
                                         whileList table
                                     </el-button>
 
-                                    <el-dialog v-model="dialogTableVisible" title="whileList table" style="width:600px">
+                                    <el-dialog v-model="dialogTableVisible" title="whileList table"
+                                        style="width:600px;height: 570px;">
                                         <ul>
-                                            <el-scrollbar max-height="400px">
-                                                <li v-for="item in whiteListArr.whitelist" :key="item.index"
-                                                    class="whiteListUl scrollbar-demo-item">{{
-                                                        item }}</li>
+                                            <el-scrollbar max-height="700px">
+                                                <li v-for="item in currentPageItems" :key="item.index"
+                                                    class="whiteListUl scrollbar-demo-item">{{ item }}
+                                                </li>
+
+                                                <el-pagination class="pagination-block" background :page-size="pageSize"
+                                                    :current-page="currentPage" :pager-count="6"
+                                                    layout="total,prev, pager, next,jumper"
+                                                    :hide-on-single-page="paginationValue" :total="totalItems"
+                                                    @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+
                                             </el-scrollbar>
                                         </ul>
                                     </el-dialog>
@@ -926,6 +977,9 @@ onUnmounted(() => {
 
             </el-col>
 
+        </el-row>
+        <el-row class="row-bg preairdrop-details" justify="center">
+            <AirdropStatistic :dataArr="airdropStatistic.dataArr" />
         </el-row>
     </div>
 </template>
