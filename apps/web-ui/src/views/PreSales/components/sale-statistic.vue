@@ -66,8 +66,10 @@ const option: ECOption = {
     ]
 };
 
-var myChart = echarts.init(document.getElementById('sale-statistic'));
-myChart.setOption(option);
+document.addEventListener('DOMContentLoaded', function () {
+    let myChart = echarts.init(document.getElementById('sale-statistic'));
+    myChart.setOption(option);
+});
 
 </script>
 <template>

@@ -10,7 +10,7 @@ import { useRoute } from 'vue-router';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 import { fetchAccount, Mina, PrivateKey } from 'o1js';
 import { WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
-import SaleStatistic from "./sale-statistic.vue";
+import SaleStatistic from './sale-statistic.vue'
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -119,7 +119,18 @@ watch(() => curentUserContributionDto.currentUser, async (value, oldValue) => {
 }, { immediate: true });
 
 
-let saleStatistic = reactive({ dataArr: [] });
+let saleStatistic = reactive({
+    dataArr: [
+        {
+            value: 0,
+            name: 'distributed tokens'
+        },
+        {
+            value: 0,
+            name: 'rest tokens'
+        }
+    ]
+});
 
 const init = async () => {
     // query sale and current user
@@ -173,16 +184,6 @@ const init = async () => {
 
     const totalSaledTokenAmount = saleContributorsDetailDto.saleDto.totalContributedMina * saleContributorsDetailDto.saleDto.saleRate
     const restUnsaledTokenAmount = saleContributorsDetailDto.saleDto.totalSaleSupply - totalSaledTokenAmount
-    saleStatistic.dataArr.push(
-        {
-            value: totalSaledTokenAmount,
-            name: 'distributed tokens'
-        },
-        {
-            value: restUnsaledTokenAmount,
-            name: 'rest tokens'
-        }
-    );
 
     console.log('refresh sale-detail info intervally: done!');
 }
@@ -1417,10 +1418,9 @@ onUnmounted(() => {
 
         </el-row>
 
-                <el-row class="row-bg presale-details" justify="center"
-            v-if="saleContributorsDetailDto.saleDto.saleType == 0">
-                   
-            <SaleStatistic :dataArray="saleStatistic" />
+         <el-row class="row-bg presale-details" justify="center" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
+
+            <SaleStatistic :dataArr="saleStatistic.dataArr" />
                
         </el-row>
 
@@ -1576,4 +1576,5 @@ onUnmounted(() => {
         border-radius: 4px;
     }
 
-}</style>
+}
+</style>
