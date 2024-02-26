@@ -182,8 +182,11 @@ const init = async () => {
     tokenAddressLinkPrefix.value = tokenAddressLinkPrefix.value + (saleContributorsDetailDto.saleDto.tokenAddress)
 
 
-    const totalSaledTokenAmount = saleContributorsDetailDto.saleDto.totalContributedMina * saleContributorsDetailDto.saleDto.saleRate
+    const totalSaledTokenAmount = saleContributorsDetailDto.saleDto.totalContributedMina / (10 ** 9) * saleContributorsDetailDto.saleDto.saleRate
     const restUnsaledTokenAmount = saleContributorsDetailDto.saleDto.totalSaleSupply - totalSaledTokenAmount
+
+    saleStatistic.dataArr[0].value = totalSaledTokenAmount;
+    saleStatistic.dataArr[1].value = restUnsaledTokenAmount;
 
     console.log('refresh sale-detail info intervally: done!');
 }
@@ -1270,6 +1273,13 @@ onUnmounted(() => {
                     </el-col>
                 </el-row>
 
+                <!-- echarts -->
+                 <el-row class="row-bg" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
+
+                    <SaleStatistic :dataArr="saleStatistic.dataArr" />
+                       
+                </el-row>
+
             </el-col>
 
             <!-- 项目状态 -->
@@ -1416,12 +1426,6 @@ onUnmounted(() => {
 
             </el-col>
 
-        </el-row>
-
-         <el-row class="row-bg presale-details" justify="center" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
-
-            <SaleStatistic :dataArr="saleStatistic.dataArr" />
-               
         </el-row>
 
     </div>

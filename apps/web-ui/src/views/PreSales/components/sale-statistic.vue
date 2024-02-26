@@ -28,6 +28,7 @@ import type {
 import type {
     ComposeOption,
 } from 'echarts/core';
+import { onMounted } from 'vue';
 
 type ECOption = ComposeOption<
     | BarSeriesOption
@@ -58,22 +59,60 @@ const props = defineProps<{
 }>();
 
 const option: ECOption = {
+    tooltip: {
+        trigger: 'item'
+    },
+    legend: {
+        top: '5%',
+        left: 'center'
+    },
     series: [
         {
             type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+            },
+            label: {
+                show: false,
+                position: 'center'
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: 20,
+                    fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
             data: props.dataArr
         }
     ]
 };
 
-document.addEventListener('DOMContentLoaded', function () {
+onMounted(() => {
     let myChart = echarts.init(document.getElementById('sale-statistic'));
     myChart.setOption(option);
-});
+})
 
 </script>
+
 <template>
+    <h2>Token Metrics</h2>
     <div id="sale-statistic">
 
     </div>
 </template>
+
+<style scoped>
+#sale-statistic {
+    width: 600px;
+    height: 400px;
+    margin: 0 auto;
+}
+</style>
