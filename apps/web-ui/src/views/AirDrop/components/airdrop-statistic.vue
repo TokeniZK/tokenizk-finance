@@ -83,7 +83,7 @@ const option: ECOption = {
             emphasis: {
                 label: {
                     show: true,
-                    fontSize: 20,
+                    fontSize: 17,
                     fontWeight: 'bold'
                 }
             },
@@ -104,11 +104,30 @@ onMounted(() => {
 
 <template>
     <h2 style="padding-left: 5px;">Token Metrics</h2>
+    <div class="e-chart-btn">
+        <el-button size="small" round class="Echart-btn1">distributed tokens</el-button>
+        <el-button size="small" round class="Echart-btn2">rest tokens</el-button>
+    </div>
     <div id="airdrop-statistic"></div>
 </template>
 
 
-<style scoped>
+<style scoped lang="less">
+.e-chart-btn {
+    width: 600px;
+    padding-left: 5px;
+
+    .Echart-btn1 {
+        color: #fff;
+        background-color: #5470C6;
+    }
+
+    .Echart-btn2 {
+        color: #fff;
+        background-color: #91CC75;
+    }
+}
+
 #airdrop-statistic {
     width: 600px;
     height: 400px;
