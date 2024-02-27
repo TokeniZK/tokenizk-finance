@@ -1168,116 +1168,116 @@ onUnmounted(() => {
                             </el-col>
                         </el-row>
 
+
+                        <!-- echarts -->
+                         <el-row class="row-bg echarts-row" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
+                            <SaleStatistic :dataArr="saleStatistic.dataArr" />        
+                        </el-row>
+
                         <!-- <el-row justify="space-between" class="tableLine">
-                <el-col :span="4" class="titleName">
-                    logoUrl :
-                </el-col>
-                <el-col :span="20">
-                    <el-row justify="end" style="overflow-wrap: break-word;">
-                        {{ saleContributorsDetailDto.saleDto.logoUrl }}
-                    </el-row>
-                </el-col>
-            </el-row> 
+                                <el-col :span="4" class="titleName">
+                                    logoUrl :
+                                </el-col>
+                                <el-col :span="20">
+                                    <el-row justify="end" style="overflow-wrap: break-word;">
+                                        {{ saleContributorsDetailDto.saleDto.logoUrl }}
+                                    </el-row>
+                                </el-col>
+                            </el-row> 
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        Website :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ saleContributorsDetailDto.saleDto.website }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                            <el-row justify="space-between" class="tableLine">
+                                <el-col :span="8">
+                                    <el-row class="titleName">
+                                        Website :
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="16">
+                                    <el-row justify="end" class="titleContent">
+                                        {{ saleContributorsDetailDto.saleDto.website }}
+                                    </el-row>
+                                </el-col>
+                            </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        facebook :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ saleContributorsDetailDto.saleDto.facebook }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                            <el-row justify="space-between" class="tableLine">
+                                <el-col :span="8">
+                                    <el-row class="titleName">
+                                        facebook :
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="16">
+                                    <el-row justify="end" class="titleContent">
+                                        {{ saleContributorsDetailDto.saleDto.facebook }}
+                                    </el-row>
+                                </el-col>
+                            </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        github :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ saleContributorsDetailDto.saleDto.website }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                            <el-row justify="space-between" class="tableLine">
+                                <el-col :span="8">
+                                    <el-row class="titleName">
+                                        github :
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="16">
+                                    <el-row justify="end" class="titleContent">
+                                        {{ saleContributorsDetailDto.saleDto.website }}
+                                    </el-row>
+                                </el-col>
+                            </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        twitter :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ saleContributorsDetailDto.saleDto.twitter }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                            <el-row justify="space-between" class="tableLine">
+                                <el-col :span="8">
+                                    <el-row class="titleName">
+                                        twitter :
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="16">
+                                    <el-row justify="end" class="titleContent">
+                                        {{ saleContributorsDetailDto.saleDto.twitter }}
+                                    </el-row>
+                                </el-col>
+                            </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        telegram :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ saleContributorsDetailDto.saleDto.telegram }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                            <el-row justify="space-between" class="tableLine">
+                                <el-col :span="8">
+                                    <el-row class="titleName">
+                                        telegram :
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="16">
+                                    <el-row justify="end" class="titleContent">
+                                        {{ saleContributorsDetailDto.saleDto.telegram }}
+                                    </el-row>
+                                </el-col>
+                            </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        discord :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ saleContributorsDetailDto.saleDto.discord }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                            <el-row justify="space-between" class="tableLine">
+                                <el-col :span="8">
+                                    <el-row class="titleName">
+                                        discord :
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="16">
+                                    <el-row justify="end" class="titleContent">
+                                        {{ saleContributorsDetailDto.saleDto.discord }}
+                                    </el-row>
+                                </el-col>
+                            </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        reddit :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ saleContributorsDetailDto.saleDto.reddit }}
-                    </el-row>
-                </el-col>
-            </el-row>
-        -->
+                            <el-row justify="space-between" class="tableLine">
+                                <el-col :span="8">
+                                    <el-row class="titleName">
+                                        reddit :
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="16">
+                                    <el-row justify="end" class="titleContent">
+                                        {{ saleContributorsDetailDto.saleDto.reddit }}
+                                    </el-row>
+                                </el-col>
+                            </el-row>
+                        -->
+
                     </el-col>
-                </el-row>
-
-                <!-- echarts -->
-                 <el-row class="row-bg" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
-
-                    <SaleStatistic :dataArr="saleStatistic.dataArr" />
-                       
                 </el-row>
 
             </el-col>
@@ -1471,6 +1471,12 @@ onUnmounted(() => {
                 color: #000;
             }
         }
+
+        .echarts-row {
+            background: #f7f7f7;
+        }
+
+
     }
 
     .project-status {
