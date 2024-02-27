@@ -592,6 +592,31 @@ const prev = () => {
 
 const dialogTableVisible = ref(false)
 
+
+// Pagination
+const paginationValue = ref(false);
+const pageSize = ref(8); // 每页显示8条信息  
+const currentPage = ref(1); // 当前页码  
+
+// 计算总条目数  
+let totalItems = computed(() => airdropDto.whitelistMembers.split(',').length);
+
+// 计算当前页显示的条目  
+const currentPageItems = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    let whitelists = airdropDto.whitelistMembers.split(',');
+    return whitelists.slice(start, end);
+});
+
+const handleSizeChange = (val: number) => {
+    pageSize.value = val;
+    currentPage.value = 1; // 当条数变化时，重置到第一页  
+}
+const handleCurrentChange = (val: number) => {
+    currentPage.value = val;
+}
+
 // 组件挂载完成后执行的函数
 onMounted(async () => {
     /*
@@ -1026,13 +1051,26 @@ const title = computed(() => {
                                                     </el-button>
 
                                                     <el-dialog v-model="dialogTableVisible" title="whileList table"
-                                                        style="width:600px">
+                                                        style="width:600px;height: 570px;">
                                                         <ul>
-                                                            <el-scrollbar max-height="400px">
-                                                                <li v-for="item in airdropDto.whitelistMembers.split(',')"
+                                                            <el-scrollbar max-height="700px">
+
+                                                                <!-- <li v-for="item in airdropDto.whitelistMembers.split(',')"
                                                                     :key="item.index"
                                                                     class="whiteListUl scrollbar-demo-item">{{ item }}
+                                                                </li> -->
+
+                                                                <li v-for="item in currentPageItems" :key="item.index"
+                                                                    class="whiteListUl scrollbar-demo-item">{{ item }}
                                                                 </li>
+
+                                                                <el-pagination class="pagination-block" background
+                                                                    :page-size="pageSize" :current-page="currentPage"
+                                                                    :pager-count="6" layout="total,prev, pager, next,jumper"
+                                                                    :hide-on-single-page="paginationValue"
+                                                                    :total="totalItems" @size-change="handleSizeChange"
+                                                                    @current-change="handleCurrentChange" />
+
                                                             </el-scrollbar>
                                                         </ul>
                                                     </el-dialog>
@@ -1237,6 +1275,10 @@ const title = computed(() => {
 
         .wide4 {
             font-weight: 700;
+        }
+
+        .pagination-block {
+            margin-top: 30px;
         }
     }
 
