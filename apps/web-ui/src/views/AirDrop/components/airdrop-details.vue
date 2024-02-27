@@ -605,20 +605,22 @@ onUnmounted(() => {
                                 </el-row>
                             </el-col>
                         </el-row>
+
                         <!-- 
-                        <el-row justify="space-between" class="tableLine">
-                            <el-col :span="8">
-                                <el-row class="titleName">
-                                    Airdrop currency :
-                                </el-row>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-row justify="end" class="titleContent">
-                                    {{ airdropClaimersDetailDto.airdropDto.currency }}
-                                </el-row>
-                            </el-col>
-                        </el-row>
- -->
+                            <el-row justify="space-between" class="tableLine">
+                                <el-col :span="8">
+                                    <el-row class="titleName">
+                                        Airdrop currency :
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-row justify="end" class="titleContent">
+                                        {{ airdropClaimersDetailDto.airdropDto.currency }}
+                                    </el-row>
+                                </el-col>
+                            </el-row>
+                        -->
+
                         <el-row justify="space-between" class="tableLine">
                             <el-col :span="8">
                                 <el-row class="titleName">
@@ -750,108 +752,113 @@ onUnmounted(() => {
                             </el-col>
                         </el-row>
 
+                        <!-- e-charts -->
+                        <el-row class="row-bg echarts-row">
+                            <AirdropStatistic :dataArr="airdropStatistic.dataArr" />
+                        </el-row>
+
                         <!-- <el-row justify="space-between" class="tableLine">
-                <el-col :span="4" class="titleName">
-                    logoUrl :
-                </el-col>
-                <el-col :span="20">
-                    <el-row justify="end" style="overflow-wrap: break-word;">
-                        {{ airdropContributorsDetailDto.airdropDto.logoUrl }}
-                    </el-row>
-                </el-col>
-            </el-row> 
+                            <el-col :span="4" class="titleName">
+                                logoUrl :
+                            </el-col>
+                            <el-col :span="20">
+                                <el-row justify="end" style="overflow-wrap: break-word;">
+                                    {{ airdropContributorsDetailDto.airdropDto.logoUrl }}
+                                </el-row>
+                            </el-col>
+                        </el-row> 
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        Website :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ airdropContributorsDetailDto.airdropDto.website }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                        <el-row justify="space-between" class="tableLine">
+                            <el-col :span="8">
+                                <el-row class="titleName">
+                                    Website :
+                                </el-row>
+                            </el-col>
+                            <el-col :span="16">
+                                <el-row justify="end" class="titleContent">
+                                    {{ airdropContributorsDetailDto.airdropDto.website }}
+                                </el-row>
+                            </el-col>
+                        </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        facebook :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ airdropContributorsDetailDto.airdropDto.facebook }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                        <el-row justify="space-between" class="tableLine">
+                            <el-col :span="8">
+                                <el-row class="titleName">
+                                    facebook :
+                                </el-row>
+                            </el-col>
+                            <el-col :span="16">
+                                <el-row justify="end" class="titleContent">
+                                    {{ airdropContributorsDetailDto.airdropDto.facebook }}
+                                </el-row>
+                            </el-col>
+                        </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        github :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ airdropContributorsDetailDto.airdropDto.website }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                        <el-row justify="space-between" class="tableLine">
+                            <el-col :span="8">
+                                <el-row class="titleName">
+                                    github :
+                                </el-row>
+                            </el-col>
+                            <el-col :span="16">
+                                <el-row justify="end" class="titleContent">
+                                    {{ airdropContributorsDetailDto.airdropDto.website }}
+                                </el-row>
+                            </el-col>
+                        </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        twitter :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ airdropContributorsDetailDto.airdropDto.twitter }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                        <el-row justify="space-between" class="tableLine">
+                            <el-col :span="8">
+                                <el-row class="titleName">
+                                    twitter :
+                                </el-row>
+                            </el-col>
+                            <el-col :span="16">
+                                <el-row justify="end" class="titleContent">
+                                    {{ airdropContributorsDetailDto.airdropDto.twitter }}
+                                </el-row>
+                            </el-col>
+                        </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        telegram :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ airdropContributorsDetailDto.airdropDto.telegram }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                        <el-row justify="space-between" class="tableLine">
+                            <el-col :span="8">
+                                <el-row class="titleName">
+                                    telegram :
+                                </el-row>
+                            </el-col>
+                            <el-col :span="16">
+                                <el-row justify="end" class="titleContent">
+                                    {{ airdropContributorsDetailDto.airdropDto.telegram }}
+                                </el-row>
+                            </el-col>
+                        </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        discord :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ airdropContributorsDetailDto.airdropDto.discord }}
-                    </el-row>
-                </el-col>
-            </el-row>
+                        <el-row justify="space-between" class="tableLine">
+                            <el-col :span="8">
+                                <el-row class="titleName">
+                                    discord :
+                                </el-row>
+                            </el-col>
+                            <el-col :span="16">
+                                <el-row justify="end" class="titleContent">
+                                    {{ airdropContributorsDetailDto.airdropDto.discord }}
+                                </el-row>
+                            </el-col>
+                        </el-row>
 
-            <el-row justify="space-between" class="tableLine">
-                <el-col :span="8">
-                    <el-row class="titleName">
-                        reddit :
-                    </el-row>
-                </el-col>
-                <el-col :span="16">
-                     <el-row justify="end" class="titleContent">
-                        {{ airdropContributorsDetailDto.airdropDto.reddit }}
-                    </el-row>
-                </el-col>
-            </el-row>
-        -->
+                        <el-row justify="space-between" class="tableLine">
+                            <el-col :span="8">
+                                <el-row class="titleName">
+                                    reddit :
+                                </el-row>
+                            </el-col>
+                            <el-col :span="16">
+                                <el-row justify="end" class="titleContent">
+                                    {{ airdropContributorsDetailDto.airdropDto.reddit }}
+                                </el-row>
+                            </el-col>
+                        </el-row>
+                    -->
                     </el-col>
                 </el-row>
 
@@ -980,9 +987,6 @@ onUnmounted(() => {
             </el-col>
 
         </el-row>
-        <el-row class="row-bg preairdrop-details" justify="center">
-            <AirdropStatistic :dataArr="airdropStatistic.dataArr" />
-        </el-row>
     </div>
 </template>
 
@@ -1020,6 +1024,10 @@ onUnmounted(() => {
             margin-right: 20px;
             font-size: 20px;
             color: #000;
+        }
+
+        .echarts-row {
+            background: #f7f7f7;
         }
     }
 
