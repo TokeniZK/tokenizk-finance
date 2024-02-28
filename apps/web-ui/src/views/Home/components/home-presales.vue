@@ -1,5 +1,5 @@
 <script lang="ts" setup >
-import { ref, onMounted, reactive, computed, type ComputedRef } from 'vue'
+import { ref, onMounted, reactive, computed, type ComputedRef, watch } from 'vue'
 import { type SaleDto, type SaleReq } from '@tokenizk/types'
 import SaleBlock from '../../../components/sale-block.vue'
 import { useRoute, useRouter } from 'vue-router';
@@ -90,17 +90,61 @@ const getSearchProjects = async () => {
 
     renderSaleBlock = fetchResult;
     presaleProjects.saleList = renderSaleBlock
+
 }
 
+const marqueeList = ref<HTMLElement | null>(null);
 
-// 组件挂载完成后执行的函数  请求数据  
+const displayedItems = computed(() => {
+    return presaleProjects.saleList.slice(0, 3);
+});
+
+const scrollMarquee = () => {
+    if (marqueeList.value) {
+        const firstItem = marqueeList.value.firstChild as HTMLElement;
+        const lastItem = marqueeList.value.lastChild as HTMLElement;
+
+        if (firstItem && firstItem.nextElementSibling) {
+            marqueeList.value.appendChild(firstItem);
+        }
+        if (lastItem && lastItem.previousElementSibling) {
+            marqueeList.value.insertBefore(lastItem, marqueeList.value.firstChild);
+        }
+    }
+};
+
+
+watch(
+    () => presaleProjects.saleList,
+    (newItems) => {
+        if (newItems.length > 3) {
+            const newMarqueeList = document.createElement('ul');
+            newMarqueeList.className = 'marquee-list';
+
+            for (let i = 0; i < newItems.length; i++) {
+                const li = document.createElement('li');
+                li.className = 'marquee-item';
+                const component = document.createElement('div');
+
+                newMarqueeList.appendChild(li);
+                li.appendChild(component);
+            }
+
+            marqueeList.value?.parentNode?.replaceChild(newMarqueeList, marqueeList.value);
+            marqueeList.value = newMarqueeList;
+        }
+    }, { deep: true })
+
+
+
 onMounted(async () => {
 
     getSearchProjects();
 
+    // 启动走马灯动画  
+    setInterval(scrollMarquee, 3000);
+
 })
-
-
 
 
 </script>
@@ -138,7 +182,7 @@ onMounted(async () => {
                 <el-col :span="20" class="ongoingBox">
 
                     <!-- 每个项目 -->
-                    <ul>
+                    <ul class="marquee-list" ref="marqueeList">
                         <li v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
                             <SaleBlock :saleDto="item" />
                         </li>
@@ -192,7 +236,7 @@ onMounted(async () => {
                 display: flex;
                 flex-wrap: wrap;
                 display: inline-block;
-                animation: move 6s infinite linear backwards;
+                // animation: move 6s infinite linear backwards;
 
                 .launchpadsLi {
                     display: inline-block;
