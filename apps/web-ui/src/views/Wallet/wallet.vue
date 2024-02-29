@@ -432,7 +432,8 @@ onMounted(async () => {
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
+                            <el-button class="steps-Bar" type="primary" @click="submitForm(ruleFormRef)"> Create
+                            </el-button>
                             <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
                         </el-form-item>
 
@@ -470,6 +471,14 @@ onMounted(async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
+    }
+
+    .steps-Bar {
+        margin-right: 30px;
+
+        &:hover {
+            color: #00c798;
+        }
     }
 
 
