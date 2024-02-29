@@ -1,5 +1,5 @@
 <script lang="ts" setup >
-import { ref, onMounted, reactive, computed, type ComputedRef, watch } from 'vue'
+import { ref, onMounted, reactive, computed, type ComputedRef, watch, onUnmounted } from 'vue'
 import { type SaleDto, type SaleReq } from '@tokenizk/types'
 import SaleBlock from '../../../components/sale-block.vue'
 import { useRoute, useRouter } from 'vue-router';
@@ -67,6 +67,7 @@ const calcProjectProgress = (itmes: SaleDtoExtend[]) => {
     });
 }
 
+const marqueeList = ref<HTMLUListElement | null>(null);
 
 let renderSaleBlock: SaleDtoExtend[] = [];
 // 临时数据
@@ -79,7 +80,7 @@ const getSearchProjects = async () => {
         saleType,
         saleName: keyWord.value,
         queryBriefInfo: true,
-        take: 3
+        take: 4
     } as any as SaleReq;
 
     fetchResult = (await querySale(saleReq)) as SaleDtoExtend[];
@@ -93,58 +94,43 @@ const getSearchProjects = async () => {
 
 }
 
-const marqueeList = ref<HTMLElement | null>(null);
 
+// 显示前三个项目  
 const displayedItems = computed(() => {
-    return presaleProjects.saleList.slice(0, 3);
+    return presaleProjects.saleList.slice(0, 4);
 });
 
-const scrollMarquee = () => {
+// 初始化走马灯效果  
+const initMarquee = () => {
     if (marqueeList.value) {
-        const firstItem = marqueeList.value.firstChild as HTMLElement;
-        const lastItem = marqueeList.value.lastChild as HTMLElement;
-
-        if (firstItem && firstItem.nextElementSibling) {
-            marqueeList.value.appendChild(firstItem);
-        }
-        if (lastItem && lastItem.previousElementSibling) {
-            marqueeList.value.insertBefore(lastItem, marqueeList.value.firstChild);
+        const listItems = marqueeList.value.children as unknown as HTMLLIElement[];
+        if (listItems.length >= 4) {
+            // 将第一个元素移到末尾  
+            marqueeList.value.appendChild(listItems[0]);
+            // 将第二个元素移到倒数第二个位置  
+            marqueeList.value.insertBefore(listItems[1], listItems[listItems.length - 1]);
+            // 将第三个元素移到倒数第三个位置  
+            marqueeList.value.insertBefore(listItems[2], listItems[listItems.length - 2]);
+            // 将第四个元素移到倒数第三个位置 
+            marqueeList.value.insertBefore(listItems[2], listItems[listItems.length - 3]);
         }
     }
 };
 
-
-watch(
-    () => presaleProjects.saleList,
-    (newItems) => {
-        if (newItems.length > 3) {
-            const newMarqueeList = document.createElement('ul');
-            newMarqueeList.className = 'marquee-list';
-
-            for (let i = 0; i < newItems.length; i++) {
-                const li = document.createElement('li');
-                li.className = 'marquee-item';
-                const component = document.createElement('div');
-
-                newMarqueeList.appendChild(li);
-                li.appendChild(component);
-            }
-
-            marqueeList.value?.parentNode?.replaceChild(newMarqueeList, marqueeList.value);
-            marqueeList.value = newMarqueeList;
-        }
-    }, { deep: true })
-
-
+// 定时调用走马灯效果  
+const intervalId = setInterval(initMarquee, 6000); // 每3秒执行一次  
 
 onMounted(async () => {
 
     getSearchProjects();
 
-    // 启动走马灯动画  
-    setInterval(scrollMarquee, 3000);
-
+    // 初始化走马灯  
+    initMarquee();
 })
+
+onUnmounted(() => {
+    clearInterval(intervalId);
+});
 
 
 </script>
@@ -179,11 +165,11 @@ onMounted(async () => {
             <!-- 轮播图 -->
             <el-row class="row-bg ongoing-presales-carousel" justify="center">
 
-                <el-col :span="20" class="ongoingBox">
+                <el-col :span="24" class="ongoingBox">
 
                     <!-- 每个项目 -->
                     <ul class="marquee-list" ref="marqueeList">
-                        <li v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
+                        <li v-for="item in displayedItems" :key="item.id" class="marquee-item">
                             <SaleBlock :saleDto="item" />
                         </li>
                     </ul>
@@ -236,24 +222,14 @@ onMounted(async () => {
                 display: flex;
                 flex-wrap: wrap;
                 display: inline-block;
-                // animation: move 6s infinite linear backwards;
 
-                .launchpadsLi {
+                .marquee-item {
                     display: inline-block;
-                    margin-left: 30px;
-                    margin-right: 50px;
+                    flex-shrink: 0;
+                    margin-left: 18px;
+                    margin-right: 15px;
                 }
 
-            }
-
-            @keyframes move {
-                0% {
-                    transform: translateX(0);
-                }
-
-                100% {
-                    transform: translateX(-100%);
-                }
             }
 
         }
