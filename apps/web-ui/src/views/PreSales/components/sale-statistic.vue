@@ -10,8 +10,10 @@ import {
     TooltipComponent,
     GridComponent,
     DatasetComponent,
-    TransformComponent
+    TransformComponent,
+    LegendComponent
 } from 'echarts/components';
+
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import type {
@@ -51,7 +53,8 @@ echarts.use([
     PieChart,
     LabelLayout,
     UniversalTransition,
-    CanvasRenderer
+    CanvasRenderer,
+    LegendComponent
 ]);
 
 const props = defineProps<{
@@ -90,7 +93,7 @@ const option: ECOption = {
             labelLine: {
                 show: false
             },
-            data: props.dataArr
+            data: props.dataArr,
         }
     ]
 };
@@ -104,31 +107,12 @@ onMounted(() => {
 
 <template>
     <h2 style="padding-left: 5px;">Token Metrics</h2>
-    <div class="e-chart-btn">
-        <el-button size="small" round class="Echart-btn1">distributed tokens</el-button>
-        <el-button size="small" round class="Echart-btn2">rest tokens</el-button>
-    </div>
     <div id="sale-statistic">
 
     </div>
 </template>
 
 <style scoped lang="less">
-.e-chart-btn {
-    width: 600px;
-    padding-left: 5px;
-
-    .Echart-btn1 {
-        color: #fff;
-        background-color: #5470C6;
-    }
-
-    .Echart-btn2 {
-        color: #fff;
-        background-color: #91CC75;
-    }
-}
-
 #sale-statistic {
     width: 600px;
     height: 400px;
