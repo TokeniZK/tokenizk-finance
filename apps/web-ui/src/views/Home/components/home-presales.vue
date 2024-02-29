@@ -118,7 +118,7 @@ const initMarquee = () => {
 };
 
 // 定时调用走马灯效果  
-const intervalId = setInterval(initMarquee, 6000); // 每3秒执行一次  
+const intervalId = setInterval(initMarquee, 5000); // 每3秒执行一次  
 
 onMounted(async () => {
 
@@ -217,16 +217,17 @@ onUnmounted(() => {
             white-space: nowrap;
             margin-top: 40px;
 
-            ul {
+            .marquee-list {
                 width: 100%;
                 display: flex;
                 flex-wrap: wrap;
                 display: inline-block;
+                transition: transform 0.8s ease-in-out;
 
                 .marquee-item {
                     display: inline-block;
                     flex-shrink: 0;
-                    margin-left: 18px;
+                    margin-left: 15px;
                     margin-right: 15px;
                 }
 
