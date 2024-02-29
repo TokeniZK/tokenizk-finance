@@ -10,7 +10,8 @@ import {
     TooltipComponent,
     GridComponent,
     DatasetComponent,
-    TransformComponent
+    TransformComponent,
+    LegendComponent
 } from 'echarts/components';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -51,7 +52,8 @@ echarts.use([
     PieChart,
     LabelLayout,
     UniversalTransition,
-    CanvasRenderer
+    CanvasRenderer,
+    LegendComponent
 ]);
 
 const props = defineProps<{
