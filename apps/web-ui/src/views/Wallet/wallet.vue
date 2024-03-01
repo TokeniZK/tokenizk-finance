@@ -393,7 +393,7 @@ onMounted(async () => {
         </el-col>
     </el-row>
 
-    <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
+    <!-- <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
         <el-col :span="24">
 
             <el-row>
@@ -455,7 +455,7 @@ onMounted(async () => {
             </el-row>
 
         </el-col>
-    </el-row>
+    </el-row> -->
 </template>
 
 <style lang="less" scoped>
