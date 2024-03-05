@@ -11,6 +11,7 @@ import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 import { fetchAccount, Mina, PrivateKey } from 'o1js';
 import { WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 import SaleStatistic from './sale-statistic.vue'
+import CommentList from '@/components/comment-list.vue'
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -970,7 +971,7 @@ onUnmounted(() => {
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
                                     {{ saleContributorsDetailDto.saleDto.totalSaleSupply }} {{
-                                        saleContributorsDetailDto.saleDto.tokenSymbol }}
+        saleContributorsDetailDto.saleDto.tokenSymbol }}
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1038,9 +1039,9 @@ onUnmounted(() => {
                                                     <li v-for="item in currentPageItems" :key="item.index"
                                                         class="whiteListUl scrollbar-demo-item">{{ item }}</li>
 
-                                                    <el-pagination class="pagination-block" background :page-size="pageSize"
-                                                        :current-page="currentPage" :pager-count="6"
-                                                        layout="total,prev, pager, next,jumper"
+                                                    <el-pagination class="pagination-block" background
+                                                        :page-size="pageSize" :current-page="currentPage"
+                                                        :pager-count="6" layout="total,prev, pager, next,jumper"
                                                         :hide-on-single-page="paginationValue" :total="totalItems"
                                                         @size-change="handleSizeChange"
                                                         @current-change="handleCurrentChange" />
@@ -1123,7 +1124,7 @@ onUnmounted(() => {
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
                                     {{ saleContributorsDetailDto.saleDto.cliffTime }} slots (about {{
-                                        saleContributorsDetailDto.saleDto.cliffTime * 3 }} minutes)
+        saleContributorsDetailDto.saleDto.cliffTime * 3 }} minutes)
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1150,7 +1151,7 @@ onUnmounted(() => {
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
                                     {{ saleContributorsDetailDto.saleDto.vestingPeriod }} slots (about {{
-                                        saleContributorsDetailDto.saleDto.vestingPeriod * 3 }} minutes)
+        saleContributorsDetailDto.saleDto.vestingPeriod * 3 }} minutes)
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1172,6 +1173,10 @@ onUnmounted(() => {
                         <!-- echarts -->
                          <el-row class="row-bg echarts-row" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
                             <SaleStatistic :dataArr="saleStatistic.dataArr" />        
+                        </el-row>
+
+                        <el-row>
+                            <CommentList />
                         </el-row>
 
                         <!-- <el-row justify="space-between" class="tableLine">
@@ -1277,6 +1282,8 @@ onUnmounted(() => {
                             </el-row>
                         -->
 
+
+
                     </el-col>
                 </el-row>
 
@@ -1293,7 +1300,8 @@ onUnmounted(() => {
                     <el-row class="countdown">
                         <el-col v-if="saleContributorsDetailDto.saleDto.startTimestamp > ((new Date()).getTime())">
                             <el-countdown format="DD [days] HH:mm:ss"
-                                :value="saleContributorsDetailDto.saleDto.startTimestamp" @finish="countdownFinishCallback">
+                                :value="saleContributorsDetailDto.saleDto.startTimestamp"
+                                @finish="countdownFinishCallback">
                                 <template #title>
                                     <div style="display: inline-flex; align-items: center">Start of Sale</div>
                                 </template>
@@ -1301,7 +1309,9 @@ onUnmounted(() => {
                         </el-col>
                         <el-col v-else>
                             <el-countdown format="DD [days] HH:mm:ss"
-                                :value="saleContributorsDetailDto.saleDto.endTimestamp" @finish="countdownFinishCallback">
+                                :value="saleContributorsDetailDto.saleDto.endTimestamp"
+                                @finish="countdownFinishCallback">
+
                                 <template #title>
                                     <div style="display: inline-flex; align-items: center">End of Sale</div>
                                 </template>
@@ -1333,19 +1343,23 @@ onUnmounted(() => {
                         </el-row>
                         <el-row>
                             <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn === 1"
-                                @click="buyWithMina">buy with Mina</el-button>
+                                @click="buyWithMina">buy
+                                with Mina</el-button>
                         </el-row>
                     </div>
                     <div v-else>
                         <el-row v-if="currentUserHasContributed">
-                            You has contributed {{ Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
-                                (10 ** 9) }} Mina!
+                            You has contributed {{
+        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
+        (10 ** 9) }} Mina!
                         </el-row>
                         <el-row>
                             <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 2"
-                                @click="claimTokens">claim your Tokens</el-button>
+                                @click="claimTokens">claim
+                                your Tokens</el-button>
                             <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 3"
-                                @click="redeemFunds">redeem your
+                                @click="redeemFunds">redeem
+                                your
                                 Funds</el-button>
                         </el-row>
                     </div>
