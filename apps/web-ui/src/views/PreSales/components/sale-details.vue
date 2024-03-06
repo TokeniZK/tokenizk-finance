@@ -1171,8 +1171,8 @@ onUnmounted(() => {
 
 
                         <!-- echarts -->
-                         <el-row class="row-bg echarts-row" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
-                            <SaleStatistic :dataArr="saleStatistic.dataArr" />        
+                        <el-row class="row-bg echarts-row" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
+                            <SaleStatistic :dataArr="saleStatistic.dataArr" /> 
                         </el-row>
 
                         <el-row>
