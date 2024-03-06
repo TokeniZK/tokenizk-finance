@@ -393,7 +393,7 @@ onMounted(async () => {
         </el-col>
     </el-row>
 
-    <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
+    <!-- <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
         <el-col :span="24">
 
             <el-row>
@@ -432,7 +432,8 @@ onMounted(async () => {
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm(ruleFormRef)"> Create </el-button>
+                            <el-button class="steps-Bar" type="primary" @click="submitForm(ruleFormRef)"> Create
+                            </el-button>
                             <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
                         </el-form-item>
 
@@ -454,7 +455,7 @@ onMounted(async () => {
             </el-row>
 
         </el-col>
-    </el-row>
+    </el-row> -->
 </template>
 
 <style lang="less" scoped>
@@ -470,6 +471,14 @@ onMounted(async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
+    }
+
+    .steps-Bar {
+        margin-right: 30px;
+
+        &:hover {
+            color: #00c798;
+        }
     }
 
 
