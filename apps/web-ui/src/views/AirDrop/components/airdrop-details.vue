@@ -11,6 +11,7 @@ import { fetchAccount, fetchLastBlock } from 'o1js';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 import { AirdropParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 import AirdropStatistic from "./airdrop-statistic.vue";
+import Comment from '@/components/comment.vue'
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -755,6 +756,10 @@ onUnmounted(() => {
                         <!-- e-charts -->
                         <el-row class="row-bg echarts-row">
                             <AirdropStatistic :dataArr="airdropStatistic.dataArr" />
+                        </el-row>
+
+                        <el-row>
+                            <Comment />
                         </el-row>
 
                         <!-- <el-row justify="space-between" class="tableLine">
