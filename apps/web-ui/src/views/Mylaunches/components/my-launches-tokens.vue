@@ -55,27 +55,27 @@ onMounted(async () => {
         <el-col :span="24" class="tokenTable">
 
             <el-row justify="flex-start">
-                <el-col :span="8">Name :</el-col>
+                <el-col :span="8" class="wide4">Name :</el-col>
                 <el-col :span="15">{{ tokenDtoForm.tokenDto.name }}</el-col>
             </el-row>
 
             <el-row>
-                <el-col :span="8">Symbol :</el-col>
+                <el-col :span="8" class="wide4">Symbol :</el-col>
                 <el-col :span="15">{{ tokenDtoForm.tokenDto.symbol }}</el-col>
             </el-row>
 
             <el-row>
-                <el-col :span="8">Total supply :</el-col>
+                <el-col :span="8" class="wide4">Total supply :</el-col>
                 <el-col :span="15">{{ tokenDtoForm.tokenDto.totalSupply }}</el-col>
             </el-row>
 
             <el-row>
-                <el-col :span="8">Total Amount In Circulation :</el-col>
+                <el-col :span="8" class="wide4">Total Amount In Circulation :</el-col>
                 <el-col :span="15">{{ tokenDtoForm.tokenDto.totalAmountInCirculation }}</el-col>
             </el-row>
 
             <el-row>
-                <el-col :span="8">txHash :</el-col>
+                <el-col :span="8" class="wide4">txHash :</el-col>
                 <el-col :span="15">{{ appState.explorerUrl.concat(tokenDtoForm.tokenDto.txHash) }}</el-col>
             </el-row>
 
@@ -110,6 +110,13 @@ onMounted(async () => {
         .JumpBtn {
             margin-top: 20px;
             margin-left: 20px;
+            &:hover {
+                 color: #00c798;
+            }
+        }
+
+        .wide4 {
+            font-weight: 700;
         }
     }
 

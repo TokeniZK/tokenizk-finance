@@ -160,6 +160,9 @@ onMounted(async () => {
         .JumpBtn {
             margin-top: 20px;
             margin-left: 20px;
+            &:hover {
+                color: #00c798;
+            }
         }
     }
 }
