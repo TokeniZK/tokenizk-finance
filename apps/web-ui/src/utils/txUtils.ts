@@ -1,14 +1,12 @@
-import { fetchLastBlock } from "o1js";
 import $httpInstance from "./http";
 import type { BaseResponse } from "@tokenizk/types";
 import BigNumber from "bignumber.js";
-
 
 export const checkTx = async (
     txId: string,
     options?: { maxAttempts?: number; interval?: number },
 ) => {
-    const { checkZkappTransaction } = await import("o1js");
+    const { checkZkappTransaction } = await import('o1js');
     // const Blockchain = Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL);
     // Mina.setActiveInstance(Blockchain);
     const maxAttempts = options?.maxAttempts ?? 500;

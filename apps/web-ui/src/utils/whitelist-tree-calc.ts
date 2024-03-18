@@ -1,10 +1,11 @@
 import { WHITELIST_TREE_HEIGHT } from "@tokenizk/contracts";
 import { PoseidonHasher, StandardTree, newTree } from "@tokenizk/merkle-tree";
 import { Level } from "level";
-import { Field, Poseidon, PublicKey } from "o1js";
+
+const o1js = import('o1js');
 
 async function constructWhitelistTree(members: string[]) {
-    const leaves = members.map(m => Poseidon.hash(PublicKey.fromBase58(m).toFields()));
+    const leaves = members.map(m => (await o1js).Poseidon.hash((await o1js).PublicKey.fromBase58(m).toFields()));
     const poseidonHasher = new PoseidonHasher();
     const whitelistDB = new Level<string, Buffer>('', { valueEncoding: 'buffer' });
     const whitelistTree = await newTree(StandardTree,

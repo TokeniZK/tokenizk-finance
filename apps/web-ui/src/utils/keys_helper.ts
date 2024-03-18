@@ -1,9 +1,10 @@
-import { Field, Poseidon, PrivateKey, PublicKey, Signature } from "o1js";
 import { int256ToBuffer } from "./binary";
 import { HDKey } from "@scure/bip32";
 import { Buffer } from "buffer";
 import { sha256 } from "@noble/hashes/sha256";
 import { base58check as base58checker } from "@scure/base";
+
+const { Field, Poseidon, PrivateKey, PublicKey } = await import( 'o1js');
 
 const base58check = base58checker(sha256);
 
