@@ -121,7 +121,7 @@ onMounted(async () => {
 
             // 被选择的子选项
             &:not(.is-disabled):hover {
-                color: #00FFC2 !important;
+                color: #00c798 !important;
                 background-color: #E6FFF9 !important;
                 width: 100%;
                 text-align: center;
