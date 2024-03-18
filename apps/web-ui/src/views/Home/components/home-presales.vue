@@ -152,8 +152,8 @@ onUnmounted(() => {
 
                 <el-col :span="8" class="link">
                     <el-row class="mb-4" justify="end">
-                        <router-link to="/sales?saleType=0" class="main-btn">
-                            <el-button type="primary" size="large" round>
+                        <router-link to="/sales?saleType=0" >
+                            <el-button type="primary" size="large" class="main-btn" round>
                                 View All Item
                             </el-button>
                         </router-link>
@@ -203,6 +203,9 @@ onUnmounted(() => {
             .main-btn {
                 font-size: 16px;
                 color: #fff;
+                &:hover {
+                    color: #00c798;
+                }
             }
 
         }

@@ -122,8 +122,8 @@ onMounted(async () => {
 
                 <el-col :span="8" class="link">
                     <el-row class="mb-4" justify="end">
-                        <router-link to="/sales?saleType=1" class="main-btn">
-                            <el-button type="primary" size="large" round>
+                        <router-link to="/sales?saleType=1" >
+                            <el-button type="primary" size="large" class="main-btn" round>
                                 View All Item
                             </el-button>
                         </router-link>
@@ -183,6 +183,9 @@ onMounted(async () => {
             .main-btn {
                 font-size: 16px;
                 color: #fff;
+                &:hover {
+                    color: #00c798;
+                }
             }
 
         }
