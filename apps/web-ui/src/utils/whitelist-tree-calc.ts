@@ -5,7 +5,7 @@ import { Level } from "level";
 const o1js = import('o1js');
 
 async function constructWhitelistTree(members: string[]) {
-    const leaves = members.map(m => (await o1js).Poseidon.hash((await o1js).PublicKey.fromBase58(m).toFields()));
+    const leaves = members.map(async m => (await o1js).Poseidon.hash((await o1js).PublicKey.fromBase58(m).toFields()));
     const poseidonHasher = new PoseidonHasher();
     const whitelistDB = new Level<string, Buffer>('', { valueEncoding: 'buffer' });
     const whitelistTree = await newTree(StandardTree,
