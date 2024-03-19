@@ -6,11 +6,12 @@ import type { Token } from 'typescript';
 import { type TokenDto, type UserTokenTransferDto } from '@tokenizk/types';
 import { queryTokenByUser } from '@/apis/user-api';
 import { CircuitControllerState, useStatusStore } from '@/stores';
-import { PublicKey, TokenId, fetchAccount, Mina } from 'o1js';
 import { CHANNEL_MINA, WalletEventType, type WalletEvent } from '@/common';
 import { checkTx } from '@/utils/txUtils';
 import { submitTokenTransfer } from '@/apis/token-api';
 import type { TableColumnCtx } from 'element-plus'
+
+const o1js = import('o1js');
 
 const goToTop = () => {
     window.scrollTo({
@@ -180,7 +181,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                             to: to,
                             amount: value,
                             tokenAddress: basicTokenZkAppAddress,
-                            tokenId: TokenId.derive(PublicKey.fromBase58(basicTokenZkAppAddress)),
+                            tokenId: (await o1js).TokenId.derive((await o1js).PublicKey.fromBase58(basicTokenZkAppAddress)),
                             txHash: txHash,
                         } as unknown as UserTokenTransferDto;
 
@@ -245,8 +246,8 @@ const tokenChoose = async () => {
         showLoadingMask({ id: maskId, text: 'fetching balance...' });
 
         // fetch account
-        const tokenId = TokenId.derive(PublicKey.fromBase58(userFundFormRef.token));
-        const accountInfo = await fetchAccount({ publicKey: PublicKey.fromBase58(appState.connectedWallet58!), tokenId });// TODO!!!
+        const tokenId = (await o1js).TokenId.derive((await o1js).PublicKey.fromBase58(userFundFormRef.token));
+        const accountInfo = await (await o1js).fetchAccount({ publicKey: (await o1js).PublicKey.fromBase58(appState.connectedWallet58!), tokenId });// TODO!!!
         if (accountInfo.account) {
             balanceRef.value = Number(accountInfo.account.balance.toBigInt());
         } else {
@@ -360,8 +361,8 @@ onMounted(async () => {
                         <el-form-item label="Token" prop="token">
                             <el-select v-model.trim="userFundFormRef.token" placeholder="Tokens You Hold"
                                 @change="tokenChoose">
-                                <el-option v-for="    item     in     userTokenListRef.tokenList    "
-                                    :label="item.symbol" :value="item.address" :key="item.id" />
+                                <el-option v-for="    item     in     userTokenListRef.tokenList    " :label="item.symbol"
+                                    :value="item.address" :key="item.id" />
                             </el-select>
                         </el-form-item>
 
@@ -393,7 +394,7 @@ onMounted(async () => {
         </el-col>
     </el-row>
 
-    <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
+    <!-- <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
         <el-col :span="24">
 
             <el-row>
@@ -411,8 +412,8 @@ onMounted(async () => {
                         <el-form-item label="Token" prop="token">
                             <el-select v-model.trim="userFundFormRef.token" placeholder="Tokens You Hold"
                                 @change="tokenChoose">
-                                <el-option v-for="    item     in     userTokenListRef.tokenList    "
-                                    :label="item.symbol" :value="item.address" :key="item.id" />
+                                <el-option v-for="    item     in     userTokenListRef.tokenList    " :label="item.symbol"
+                                    :value="item.address" :key="item.id" />
                             </el-select>
                         </el-form-item>
 
@@ -432,8 +433,7 @@ onMounted(async () => {
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button class="steps-Bar" type="primary" @click="submitForm(ruleFormRef)">
-                                Create
+                            <el-button class="steps-Bar" type="primary" @click="submitForm(ruleFormRef)"> Create
                             </el-button>
                             <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
                         </el-form-item>
@@ -456,8 +456,7 @@ onMounted(async () => {
             </el-row>
 
         </el-col>
-    </el-row>
-
+    </el-row> -->
 </template>
 
 <style lang="less" scoped>
@@ -514,14 +513,6 @@ onMounted(async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
-
-        .steps-Bar {
-            margin-right: 30px;
-
-            &:hover {
-                color: #00c798;
-            }
-        }
     }
 
 
