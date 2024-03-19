@@ -615,12 +615,20 @@ const changeRateCap = () => {
 
 const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
-const handleWhitelistInput = () => {
+
+const handleWhitelistInput = async () => {
+
     const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
     saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
     if (saleDto.whitelistMembers) {
-        saleDto.whitelistMembers.split(',').forEach(item => {
+
+        const whitelistMembers = saleDto.whitelistMembers.split(',');
+
+        for (let i = 0; i < whitelistMembers.length; i++) {
+
+            const item = whitelistMembers[i];
+
             try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
@@ -629,9 +637,8 @@ const handleWhitelistInput = () => {
                 whiteListErrorAlert.whitelist.push(item)
                 // ElMessage.error({ message: item + ' is not a valid address!' });
             }
-        })
+        }
     }
-
 };
 
 const closeErrorWhitelistDialog = () => {
@@ -760,7 +767,8 @@ const title = computed(() => {
                 <el-col :span="24">
                     <el-steps :active="active" finish-status="success" align-center>
 
-                        <el-step title="Before you start" description="Input your awesome title and choose the currency" />
+                        <el-step title="Before you start"
+                            description="Input your awesome title and choose the currency" />
 
                         <el-step title="Launchpad Info"
                             description="Enter the launchpad information that you want to raise , that should be enter all details about your sale" />
@@ -786,7 +794,8 @@ const title = computed(() => {
                                 <!-- 步骤1 -->
                                 <el-row class="row-bg formTable1" v-show="flagX === 0">
                                     <el-col :span="24">
-                                        <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
+                                        <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.
+                                        </div>
 
                                         <el-row class="row-bg">
 
@@ -909,12 +918,14 @@ const title = computed(() => {
                                                 placeholder="Please input as comma-sperated Mina wallet addresses"
                                                 @blur="handleWhitelistInput" />
 
-                                            <el-dialog v-model="dialogTableVisibleErrorAlert" title="Error WhileList Items"
-                                                style="width:600px" @close="closeErrorWhitelistDialog">
+                                            <el-dialog v-model="dialogTableVisibleErrorAlert"
+                                                title="Error WhileList Items" style="width:600px"
+                                                @close="closeErrorWhitelistDialog">
                                                 <ul>
                                                     <el-scrollbar max-height="400px">
-                                                        <li v-for="item in whiteListErrorAlert.whitelist" :key="item.index"
-                                                            class="whiteListUl scrollbar-demo-item">{{ item }}</li>
+                                                        <li v-for="item in whiteListErrorAlert.whitelist"
+                                                            :key="item.index" class="whiteListUl scrollbar-demo-item">{{
+            item }}</li>
                                                     </el-scrollbar>
                                                 </ul>
                                             </el-dialog>
@@ -926,8 +937,8 @@ const title = computed(() => {
                                             <el-row class="row-bg">
                                                 <el-col :span="11">
                                                     <el-form-item label="cliffTime(slots)" prop="cliffTime">
-                                                        <el-input v-model.number.trim="saleDto.cliffTime" placeholder="0"
-                                                            @change="changeCliffTime" />
+                                                        <el-input v-model.number.trim="saleDto.cliffTime"
+                                                            placeholder="0" @change="changeCliffTime" />
                                                         <span v-if="dynamicalCliffTime">about {{ dynamicalCliffTime }}
                                                             minutes</span>
                                                     </el-form-item>
@@ -948,8 +959,9 @@ const title = computed(() => {
                                                     <el-form-item label="vestingPeriod(>=1 slot)" prop="vestingPeriod">
                                                         <el-input v-model.number.trim="saleDto.vestingPeriod"
                                                             placeholder="0" @change="changeVestingPeriod" />
-                                                        <span v-if="dynamicalVestingPeriod">about {{ dynamicalVestingPeriod
-                                                        }} minutes</span>
+                                                        <span v-if="dynamicalVestingPeriod">about {{
+            dynamicalVestingPeriod
+        }} minutes</span>
                                                     </el-form-item>
                                                 </el-col>
 
@@ -992,8 +1004,8 @@ const title = computed(() => {
                                                                 limit 1 file, new file will cover the old file
                                                             </div>
                                                         </template>
-                                                    </el-upload>
- -->
+</el-upload>
+-->
                                                     <!-- <div class="form-notes" style="margin-bottom: 0;">URL must end with a
                                                         supported image extension
                                                         png, jpg, jpeg or gif.You can upload your image at </div> -->
@@ -1091,7 +1103,7 @@ const title = computed(() => {
                                         <el-row>
                                             <el-col :span="9" class="wide4">Sale contract address :</el-col>
                                             <el-col :span="15">{{ (saleDto.saleAddress != null || saleDto.saleAddress !=
-                                                '') ? saleDto.saleAddress : `click 'confirm' to generate` }}</el-col>
+            '') ? saleDto.saleAddress : `click 'confirm' to generate` }}</el-col>
                                         </el-row>
                                         <!-- 
                                             <el-row>
@@ -1142,7 +1154,8 @@ const title = computed(() => {
 
                                                                 <el-pagination class="pagination-block" background
                                                                     :page-size="pageSize" :current-page="currentPage"
-                                                                    :pager-count="6" layout="total,prev, pager, next,jumper"
+                                                                    :pager-count="6"
+                                                                    layout="total,prev, pager, next,jumper"
                                                                     :hide-on-single-page="paginationValue"
                                                                     :total="totalItems" @size-change="handleSizeChange"
                                                                     @current-change="handleCurrentChange" />
@@ -1188,8 +1201,9 @@ const title = computed(() => {
                                         </el-row>
                                         <el-row>
                                             <el-col :span="9" class="wide4">Liquidity cliffTime :</el-col>
-                                            <el-col :span="15">{{ saleDto.cliffTime }} slots (about {{ dynamicalCliffTime
-                                            }} minutes )</el-col>
+                                            <el-col :span="15">{{ saleDto.cliffTime }} slots (about {{
+            dynamicalCliffTime
+        }} minutes )</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="9" class="wide4">Liquidity cliffAmountRate(%) :</el-col>
@@ -1255,7 +1269,8 @@ const title = computed(() => {
                                                 v-show="flagX != 3"
                                                 :disabled="checkIfTokenExist || !appState.connectedWallet58">Next
                                             </el-button>
-                                            <el-button type="primary" @click="submitForm(ruleFormRef)" v-show="flagX === 3">
+                                            <el-button type="primary" @click="submitForm(ruleFormRef)"
+                                                v-show="flagX === 3">
                                                 confirm </el-button>
                                         </el-form-item>
                                     </el-col>
