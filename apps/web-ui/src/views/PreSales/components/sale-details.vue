@@ -8,10 +8,11 @@ import { calcWhitelistMerkleWitness, getEmptyLeafWitness } from '@/utils/whiteli
 import { queryContributorWitnessByUser } from '@/apis/witness-api';
 import { useRoute } from 'vue-router';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
-import { fetchAccount, Mina, PrivateKey } from 'o1js';
-import { WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 import SaleStatistic from './sale-statistic.vue'
 import CommentList from '@/components/comment-list.vue'
+
+const ContractConstants = import('@tokenizk/contracts');
+const o1js = import('o1js');
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -267,7 +268,7 @@ const buyWithMina = async () => {
         // calc whitelist tree root
         let whitelistWitness: string[] = [];
         let leafIndex = 0;
-        if (saleDto.whitelistMembers?.length > 0 || saleDto.whitelistTreeRoot != WHITELIST_TREE_ROOT.toString()) {
+        if (saleDto.whitelistMembers?.length > 0 || saleDto.whitelistTreeRoot != (await ContractConstants).WHITELIST_TREE_ROOT.toString()) {
             showLoadingMask({ id: maskId, text: 'constructing whitelist tree...' });
 
             const members: string[] = saleDto.whitelistMembers.trim().split(',');
@@ -442,7 +443,7 @@ const claimTokens = async () => {
         const maskId = 'claimTokens';
 
         // deploy Redeem account
-        let redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58 });
+        let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
         if (!redeemAccount.account!.zkapp) {
             showLoadingMask({ id: maskId, text: 'compiling RedeemAccount circuit...' });
             const flag = await CircuitControllerState.remoteController!.compileRedeemAccount();
@@ -619,7 +620,7 @@ const redeemFunds = async () => {
         const maskId = 'redeemFunds';
 
         // deploy Redeem account
-        let redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58 });
+        let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
         if (!redeemAccount.account!.zkapp) {
             showLoadingMask({ id: maskId, text: 'compiling RedeemAccount circuit...' });
             const flag = await CircuitControllerState.remoteController!.compileRedeemAccount();
