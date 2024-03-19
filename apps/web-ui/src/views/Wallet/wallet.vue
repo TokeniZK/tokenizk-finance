@@ -360,8 +360,8 @@ onMounted(async () => {
                         <el-form-item label="Token" prop="token">
                             <el-select v-model.trim="userFundFormRef.token" placeholder="Tokens You Hold"
                                 @change="tokenChoose">
-                                <el-option v-for="    item     in     userTokenListRef.tokenList    " :label="item.symbol"
-                                    :value="item.address" :key="item.id" />
+                                <el-option v-for="    item     in     userTokenListRef.tokenList    "
+                                    :label="item.symbol" :value="item.address" :key="item.id" />
                             </el-select>
                         </el-form-item>
 
@@ -393,7 +393,7 @@ onMounted(async () => {
         </el-col>
     </el-row>
 
-    <!-- <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
+    <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
         <el-col :span="24">
 
             <el-row>
@@ -411,8 +411,8 @@ onMounted(async () => {
                         <el-form-item label="Token" prop="token">
                             <el-select v-model.trim="userFundFormRef.token" placeholder="Tokens You Hold"
                                 @change="tokenChoose">
-                                <el-option v-for="    item     in     userTokenListRef.tokenList    " :label="item.symbol"
-                                    :value="item.address" :key="item.id" />
+                                <el-option v-for="    item     in     userTokenListRef.tokenList    "
+                                    :label="item.symbol" :value="item.address" :key="item.id" />
                             </el-select>
                         </el-form-item>
 
@@ -432,7 +432,8 @@ onMounted(async () => {
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button class="steps-Bar" type="primary" @click="submitForm(ruleFormRef)"> Create
+                            <el-button class="steps-Bar" type="primary" @click="submitForm(ruleFormRef)">
+                                Create
                             </el-button>
                             <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
                         </el-form-item>
@@ -455,7 +456,8 @@ onMounted(async () => {
             </el-row>
 
         </el-col>
-    </el-row> -->
+    </el-row>
+
 </template>
 
 <style lang="less" scoped>
@@ -512,6 +514,14 @@ onMounted(async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
+
+        .steps-Bar {
+            margin-right: 30px;
+
+            &:hover {
+                color: #00c798;
+            }
+        }
     }
 
 
