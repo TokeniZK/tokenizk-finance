@@ -6,17 +6,17 @@ import { type AirdropReq, type AirdropDto, type TokenDto } from "@tokenizk/types
 import { useStatusStore, type AppState } from "@/stores";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { queryToken } from "@/apis/token-api";
-import { AirdropParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 import { calcWhitelistTreeRoot } from '@/utils/whitelist-tree-calc';
 import { download as downloadAsFile } from '@/utils/sale-key-download';
 import { useRoute, useRouter } from 'vue-router';
-import { genNewKeyPairBySignature } from '@/utils/keys_helper';
 import { generateTokenKey, generateLaunchContractKey } from '@/utils/keys-gen';
 import { UploadFilled } from '@element-plus/icons-vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { queryAirdrop, submitAirdrop } from '@/apis/airdrop-api';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
+
+const ContractConstants = import('@tokenizk/contracts');
 
 const o1js = import('o1js');
 
@@ -352,7 +352,7 @@ const handleWhitelistInput = () => {
     airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
     if (airdropDto.whitelistMembers) {
-        airdropDto.whitelistMembers.split(',').forEach(async item => {
+        airdropDto.whitelistMembers.split(',').forEach(item => {
             try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
@@ -423,7 +423,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                 console.log('whitelistTreeRoot: ' + airdropDto.whitelistTreeRoot);
             } else {
-                airdropDto.whitelistTreeRoot = WHITELIST_TREE_ROOT.toString();
+                airdropDto.whitelistTreeRoot = (await ContractConstants).WHITELIST_TREE_ROOT.toString();
                 console.log('whitelistTreeRoot: ' + airdropDto.whitelistTreeRoot);
             }
 

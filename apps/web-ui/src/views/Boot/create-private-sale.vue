@@ -6,18 +6,17 @@ import { type SaleReq, type SaleDto, type TokenDto } from "@tokenizk/types";
 import { useStatusStore, type AppState } from "@/stores";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { queryToken } from "@/apis/token-api";
-import { SaleParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 import { submitSale, querySale } from '@/apis/sale-api';
 import { calcWhitelistTreeRoot } from '@/utils/whitelist-tree-calc';
 import { download as downloadAsFile } from '@/utils/sale-key-download';
 import { useRoute, useRouter } from 'vue-router';
-import { genNewKeyPairBySignature } from '@/utils/keys_helper';
 import { generateTokenKey, generateLaunchContractKey } from '@/utils/keys-gen';
 import { UploadFilled } from '@element-plus/icons-vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 
+const ContractConstants = import('@tokenizk/contracts');
 const o1js = import('o1js');
 
 let route = useRoute();
@@ -386,7 +385,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                 console.log('whitelistTreeRoot: ' + saleDto1.whitelistTreeRoot);
             } else {
-                saleDto1.whitelistTreeRoot = WHITELIST_TREE_ROOT.toString();
+                saleDto1.whitelistTreeRoot = (await ContractConstants).WHITELIST_TREE_ROOT.toString();
                 console.log('whitelistTreeRoot: ' + saleDto1.whitelistTreeRoot);
             }
 
@@ -621,7 +620,7 @@ const handleWhitelistInput = () => {
     saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
     if (saleDto.whitelistMembers) {
-        saleDto.whitelistMembers.split(',').forEach(async item => {
+        saleDto.whitelistMembers.split(',').forEach(item => {
             try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {

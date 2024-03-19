@@ -6,10 +6,6 @@ import { type TokenDto } from "@tokenizk/types";
 import { useStatusStore, type AppState } from "@/stores";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { queryToken, submitToken } from '@/apis/token-api';
-import { download as downloadAsFile } from '@/utils/sale-key-download';
-import { genNewKeyPairBySignature } from '@/utils/keys_helper';
-import { generateTokenKey } from '@/utils/keys-gen';
-import { UploadFilled } from '@element-plus/icons-vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { checkTx } from '@/utils/txUtils';
