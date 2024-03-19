@@ -1,18 +1,26 @@
-import { WHITELIST_TREE_HEIGHT } from "@tokenizk/contracts";
-import { PoseidonHasher, StandardTree, newTree } from "@tokenizk/merkle-tree";
 import { Level } from "level";
 
 const o1js = import('o1js');
+const ContractConstants = import('@tokenizk/contracts');
+const MerkleTreeLib = import('@tokenizk/merkle-tree');
 
 async function constructWhitelistTree(members: string[]) {
-    const leaves = members.map(async m => (await o1js).Poseidon.hash((await o1js).PublicKey.fromBase58(m).toFields()));
-    const poseidonHasher = new PoseidonHasher();
+    if (members?.length == 0) {
+        throw new Error('members invalid');
+    }
+
+    const leaves: any[] = [];
+    for (let i = 0; i < members.length; i++) {
+        leaves.push((await o1js).Poseidon.hash((await o1js).PublicKey.fromBase58(members[i]).toFields()));
+    }
+
+    const poseidonHasher = new (await MerkleTreeLib).PoseidonHasher();
     const whitelistDB = new Level<string, Buffer>('', { valueEncoding: 'buffer' });
-    const whitelistTree = await newTree(StandardTree,
+    const whitelistTree = await (await MerkleTreeLib).newTree((await MerkleTreeLib).StandardTree,
         whitelistDB,
         poseidonHasher,
         `WHITELIST_TREE`,
-        WHITELIST_TREE_HEIGHT);
+        (await ContractConstants).WHITELIST_TREE_HEIGHT);
 
     await whitelistTree.appendLeaves(leaves);
 
@@ -35,13 +43,13 @@ export async function calcWhitelistMerkleWitness(members: string[], target: stri
 }
 
 export async function getEmptyLeafWitness() {
-    const poseidonHasher = new PoseidonHasher();
+    const poseidonHasher = new (await MerkleTreeLib).PoseidonHasher();
     const whitelistDB = new Level<string, Buffer>('', { valueEncoding: 'buffer' });
-    const whitelistTree = await newTree(StandardTree,
+    const whitelistTree = await (await MerkleTreeLib).newTree((await MerkleTreeLib).StandardTree,
         whitelistDB,
         poseidonHasher,
         `WHITELIST_TREE`,
-        WHITELIST_TREE_HEIGHT);
+        (await ContractConstants).WHITELIST_TREE_HEIGHT);
 
     const witness = (await whitelistTree.getSiblingPath(BigInt('0'), true)).path.map(f => f.toString());
 
