@@ -347,12 +347,14 @@ const changeVestingPeriod = () => {
 
 const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
-const handleWhitelistInput = () => {
+const handleWhitelistInput = async () => {
     const noSpacesValue = airdropDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
     airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
     if (airdropDto.whitelistMembers) {
-        airdropDto.whitelistMembers.split(',').forEach(item => {
+        const whitelistMembers = airdropDto.whitelistMembers.split(',');
+        for(let i = 0; i< whitelistMembers.length; i ++){
+            const item = whitelistMembers[i];
             try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
@@ -361,7 +363,7 @@ const handleWhitelistInput = () => {
                 whiteListErrorAlert.whitelist.push(item)
                 // ElMessage.error({ message: item + ' is not a valid address!' });
             }
-        })
+        }
     }
 };
 
