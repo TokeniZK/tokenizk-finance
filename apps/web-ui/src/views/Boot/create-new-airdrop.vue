@@ -347,12 +347,21 @@ const changeVestingPeriod = () => {
 
 const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
-const handleWhitelistInput = () => {
-    const noSpacesValue = airdropDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
+
+const handleWhitelistInput = async () => {
+
+    const noSpacesValue = airdropDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格 
+
     airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
     if (airdropDto.whitelistMembers) {
-        airdropDto.whitelistMembers.split(',').forEach(item => {
+
+        const whitelistMembers = airdropDto.whitelistMembers.split(',');
+
+        for (let i = 0; i < whitelistMembers.length; i++) {
+
+            const item = whitelistMembers[i];
+
             try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
@@ -361,7 +370,9 @@ const handleWhitelistInput = () => {
                 whiteListErrorAlert.whitelist.push(item)
                 // ElMessage.error({ message: item + ' is not a valid address!' });
             }
-        })
+
+        }
+
     }
 };
 
@@ -737,7 +748,8 @@ const title = computed(() => {
                                     </el-col>
 
                                     <el-col :span="24" v-else>
-                                        <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
+                                        <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.
+                                        </div>
 
                                         <el-row class="row-bg">
                                             <el-col>
@@ -796,7 +808,8 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="Airdrop Name" prop="airdropName">
-                                                    <el-input v-model="airdropDto.airdropName" placeholder="Ex: (await o1js).Mina." />
+                                                    <el-input v-model="airdropDto.airdropName"
+                                                        placeholder="Ex: (await o1js).Mina." />
                                                 </el-form-item>
                                             </el-col>
 
@@ -829,12 +842,14 @@ const title = computed(() => {
                                                 placeholder="Please input as comma-sperated (await o1js).Mina. wallet addresses"
                                                 @blur="handleWhitelistInput" />
 
-                                            <el-dialog v-model="dialogTableVisibleErrorAlert" title="Error WhileList Items"
-                                                style="width:600px" @close="closeErrorWhitelistDialog">
+                                            <el-dialog v-model="dialogTableVisibleErrorAlert"
+                                                title="Error WhileList Items" style="width:600px"
+                                                @close="closeErrorWhitelistDialog">
                                                 <ul>
                                                     <el-scrollbar max-height="400px">
-                                                        <li v-for="item in whiteListErrorAlert.whitelist" :key="item.index"
-                                                            class="whiteListUl scrollbar-demo-item">{{ item }}</li>
+                                                        <li v-for="item in whiteListErrorAlert.whitelist"
+                                                            :key="item.index" class="whiteListUl scrollbar-demo-item">{{
+            item }}</li>
                                                     </el-scrollbar>
                                                 </ul>
                                             </el-dialog>
@@ -846,8 +861,8 @@ const title = computed(() => {
                                             <el-row class="row-bg">
                                                 <el-col :span="11">
                                                     <el-form-item label="cliffTime" prop="cliffTime">
-                                                        <el-input v-model.number.trim="airdropDto.cliffTime" placeholder="0"
-                                                            @change="changeCliffTime" />
+                                                        <el-input v-model.number.trim="airdropDto.cliffTime"
+                                                            placeholder="0" @change="changeCliffTime" />
                                                         <span v-if="dynamicalCliffTime">about {{ dynamicalCliffTime }}
                                                             minutes</span>
                                                     </el-form-item>
@@ -859,7 +874,8 @@ const title = computed(() => {
                                                     <el-form-item label="cliffAmountRate(%)" prop="cliffAmountRate">
                                                         <el-input v-model.number.trim="airdropDto.cliffAmountRate"
                                                             placeholder="0" @change="changeCliffAmountRate" />
-                                                        <span v-if="dynamicalCliffAmount">about {{ dynamicalCliffAmount }}
+                                                        <span v-if="dynamicalCliffAmount">about {{ dynamicalCliffAmount
+                                                            }}
                                                             {{ tokenDto.symbol }}</span>
                                                     </el-form-item>
                                                 </el-col>
@@ -870,8 +886,9 @@ const title = computed(() => {
                                                     <el-form-item label="vestingPeriod(>=1)" prop="vestingPeriod">
                                                         <el-input v-model.number.trim="airdropDto.vestingPeriod"
                                                             placeholder="0" @change="changeVestingPeriod" />
-                                                        <span v-if="dynamicalVestingPeriod">about {{ dynamicalVestingPeriod
-                                                        }} minutes</span>
+                                                        <span v-if="dynamicalVestingPeriod">about {{
+            dynamicalVestingPeriod
+        }} minutes</span>
                                                     </el-form-item>
                                                 </el-col>
 
@@ -882,7 +899,7 @@ const title = computed(() => {
                                                         <el-input v-model.number.trim="airdropDto.vestingIncrement"
                                                             placeholder="0" @change="changeVestingIncrement" />
                                                         <span v-if="dynamicalVestingIncrement">about {{
-                                                            dynamicalVestingIncrement }}
+            dynamicalVestingIncrement }}
                                                             {{ tokenDto.symbol }}</span>
                                                     </el-form-item>
                                                 </el-col>
@@ -917,8 +934,8 @@ const title = computed(() => {
                                                                 limit 1 file, new file will cover the old file
                                                             </div>
                                                         </template>
-                                                    </el-upload>
- -->
+</el-upload>
+-->
                                                     <!-- <div class="form-notes" style="margin-bottom: 0;">URL must end with a
                                                         supported image extension
                                                         png, jpg, jpeg or gif.You can upload your image at </div> -->
@@ -1018,9 +1035,9 @@ const title = computed(() => {
                                         <el-row>
                                             <el-col :span="9" class="wide4">Airdrop contract address :</el-col>
                                             <el-col :span="15">{{ (airdropDto.airdropAddress != null ||
-                                                airdropDto.airdropAddress !=
-                                                '') ? `click 'confirm' to generate...` : airdropDto.airdropAddress
-                                            }}</el-col>
+            airdropDto.airdropAddress !=
+            '') ? `click 'confirm' to generate...` : airdropDto.airdropAddress
+                                                }}</el-col>
                                         </el-row>
 
                                         <el-row>
@@ -1067,7 +1084,8 @@ const title = computed(() => {
 
                                                                 <el-pagination class="pagination-block" background
                                                                     :page-size="pageSize" :current-page="currentPage"
-                                                                    :pager-count="6" layout="total,prev, pager, next,jumper"
+                                                                    :pager-count="6"
+                                                                    layout="total,prev, pager, next,jumper"
                                                                     :hide-on-single-page="paginationValue"
                                                                     :total="totalItems" @size-change="handleSizeChange"
                                                                     @current-change="handleCurrentChange" />
@@ -1094,13 +1112,14 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="9" class="wide4">Liquidity cliffTime :</el-col>
-                                            <el-col :span="15">{{ airdropDto.cliffTime }} slots (about {{ dynamicalCliffTime
-                                            }} minutes )</el-col>
+                                            <el-col :span="15">{{ airdropDto.cliffTime }} slots (about {{
+            dynamicalCliffTime
+        }} minutes )</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="9" class="wide4">Liquidity cliffAmountRate :</el-col>
                                             <el-col :span="15">{{ airdropDto.cliffAmountRate }} (about {{
-                                                dynamicalCliffAmount }} {{ tokenDto.symbol }})</el-col>
+            dynamicalCliffAmount }} {{ tokenDto.symbol }})</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="9" class="wide4">Liquidity vestingPeriod :</el-col>
@@ -1165,7 +1184,8 @@ const title = computed(() => {
                                                 v-show="flagX != 3"
                                                 :disabled="checkIfTokenExist || !appState.connectedWallet58">Next
                                             </el-button>
-                                            <el-button type="primary" @click="submitForm(ruleFormRef)" v-show="flagX === 3">
+                                            <el-button type="primary" @click="submitForm(ruleFormRef)"
+                                                v-show="flagX === 3">
                                                 confirm </el-button>
                                         </el-form-item>
                                     </el-col>
