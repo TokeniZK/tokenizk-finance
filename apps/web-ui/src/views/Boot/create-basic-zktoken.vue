@@ -6,7 +6,6 @@ import { type TokenDto } from "@tokenizk/types";
 import { useStatusStore, type AppState } from "@/stores";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { queryToken, submitToken } from '@/apis/token-api';
-import { Field, Mina, PrivateKey, PublicKey, Scalar, Signature } from 'o1js';
 import { download as downloadAsFile } from '@/utils/sale-key-download';
 import { genNewKeyPairBySignature } from '@/utils/keys_helper';
 import { generateTokenKey } from '@/utils/keys-gen';
@@ -15,6 +14,7 @@ import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { checkTx } from '@/utils/txUtils';
 
+const o1js = import('o1js');
 
 const upload = ref<UploadInstance>()
 const handleExceed: UploadProps['onExceed'] = (files) => {
@@ -192,10 +192,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 // closeLoadingMask(maskId);
                 return;
             }
-            let tx = Mina.Transaction.fromJSON(JSON.parse(txJson!));
+            let tx = (await o1js).Mina.Transaction.fromJSON(JSON.parse(txJson!));
             const targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == tokenAddress);
             targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-            tx = tx.sign([PrivateKey.fromBase58(tokenKey)]);
+            tx = tx.sign([(await o1js).PrivateKey.fromBase58(tokenKey)]);
 
             showLoadingMask({ id: maskId, text: 'sending transaction...' });
             const { hash: txHash } = await window.mina.sendTransaction({

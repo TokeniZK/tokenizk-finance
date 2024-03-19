@@ -6,7 +6,6 @@ import { type AirdropReq, type AirdropDto, type TokenDto } from "@tokenizk/types
 import { useStatusStore, type AppState } from "@/stores";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { queryToken } from "@/apis/token-api";
-import { Encoding, Field, Mina, PrivateKey, Scalar, Signature, PublicKey, fetchLastBlock } from 'o1js';
 import { AirdropParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 import { calcWhitelistTreeRoot } from '@/utils/whitelist-tree-calc';
 import { download as downloadAsFile } from '@/utils/sale-key-download';
@@ -18,6 +17,8 @@ import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { queryAirdrop, submitAirdrop } from '@/apis/airdrop-api';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
+
+const o1js = import('o1js');
 
 const upload = ref<UploadInstance>()
 
@@ -351,9 +352,9 @@ const handleWhitelistInput = () => {
     airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
     if (airdropDto.whitelistMembers) {
-        airdropDto.whitelistMembers.split(',').forEach(item => {
+        airdropDto.whitelistMembers.split(',').forEach(async item => {
             try {
-                PublicKey.fromBase58(item);
+                (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
                 dialogTableVisibleErrorAlert.value = true;
                 console.log(error);
@@ -428,7 +429,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             showLoadingMask({ id: maskId, text: 'generating airdrop contract KeyPair ...' });
 
-            const tokenKey = PrivateKey.fromBase58(appState.tokeniZkBasicTokenKeyPair?.key!);
+            const tokenKey = (await o1js).PrivateKey.fromBase58(appState.tokeniZkBasicTokenKeyPair?.key!);
             const tokenAddress = appState.tokeniZkBasicTokenKeyPair?.value;
 
             const airdropDtoList = (await queryAirdrop({ tokenAddress } as AirdropReq)) ?? [];
@@ -470,7 +471,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     try {
                         showLoadingMask({ id: maskId, text: 'sending transaction...' });
 
-                        let tx = Mina.Transaction.fromJSON(JSON.parse(txJson!));
+                        let tx = (await o1js).Mina.Transaction.fromJSON(JSON.parse(txJson!));
                         let airdropTargetAUList = tx.transaction.accountUpdates.filter(e => (e.body.publicKey.toBase58() == airdropAddress || e.body.publicKey.toBase58() == tokenAddress)
                             && e.body.authorizationKind.isSigned.toBoolean());
                         airdropTargetAUList.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
@@ -744,7 +745,7 @@ const title = computed(() => {
                                                     <el-col :span="8" hidden="true">
                                                         <el-form-item label="Token address" prop="tokenAddress">
                                                             <el-input v-model.trim="airdropDto.tokenAddress"
-                                                                placeholder="Ex: Mina" />
+                                                                placeholder="Ex: (await o1js).Mina." />
                                                         </el-form-item>
                                                     </el-col>
                                                     <el-col :span="8">
@@ -795,7 +796,7 @@ const title = computed(() => {
                                         <el-row class="row-bg">
                                             <el-col :span="11">
                                                 <el-form-item label="Airdrop Name" prop="airdropName">
-                                                    <el-input v-model="airdropDto.airdropName" placeholder="Ex: Mina" />
+                                                    <el-input v-model="airdropDto.airdropName" placeholder="Ex: (await o1js).Mina." />
                                                 </el-form-item>
                                             </el-col>
 
@@ -825,7 +826,7 @@ const title = computed(() => {
                                         <el-form-item label="Whitelist(optional)" prop="whitelistMembers">
                                             <el-input v-model.trim="airdropDto.whitelistMembers" type="textarea"
                                                 :autosize="{ minRows: 2, maxRows: 1000 }"
-                                                placeholder="Please input as comma-sperated Mina wallet addresses"
+                                                placeholder="Please input as comma-sperated (await o1js).Mina. wallet addresses"
                                                 @blur="handleWhitelistInput" />
 
                                             <el-dialog v-model="dialogTableVisibleErrorAlert" title="Error WhileList Items"

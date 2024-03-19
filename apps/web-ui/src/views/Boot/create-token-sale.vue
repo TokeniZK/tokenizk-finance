@@ -6,7 +6,6 @@ import { type SaleReq, type SaleDto, type TokenDto } from "@tokenizk/types";
 import { useStatusStore, type AppState } from "@/stores";
 import { createRemoteCircuitController, CircuitControllerState } from "@/stores"
 import { queryToken } from "@/apis/token-api";
-import { Encoding, Field, Mina, PrivateKey, Scalar, Signature, PublicKey, fetchLastBlock } from 'o1js';
 import { SaleParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 import { submitSale, querySale } from '@/apis/sale-api';
 import { calcWhitelistTreeRoot } from '@/utils/whitelist-tree-calc';
@@ -18,6 +17,8 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
+
+const o1js = import('o1js');
 
 type SaleDtoExtend = SaleDto; // & { saleStartTimeStamp: number, saleEndTimeStamp: number }
 
@@ -416,7 +417,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             showLoadingMask({ id: maskId, text: 'generating presale KeyPair ...' });
 
-            const tokenKey = PrivateKey.fromBase58(appState.tokeniZkBasicTokenKeyPair?.key!);
+            const tokenKey = (await o1js).PrivateKey.fromBase58(appState.tokeniZkBasicTokenKeyPair?.key!);
             const tokenAddress = appState.tokeniZkBasicTokenKeyPair?.value;
 
             const signData = saleType.value == 0 ? import.meta.env.VITE_PRESALE_KEY_SIGNING_DATA : (saleType.value == 1 ? import.meta.env.VITE_FAIRSALE_KEY_SIGNING_DATA : import.meta.env.VITE_PRIVATESALE_KEY_SIGNING_DATA)
@@ -468,7 +469,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     try {
                         showLoadingMask({ id: maskId, text: 'sending transaction...' });
 
-                        let tx = Mina.Transaction.fromJSON(JSON.parse(txJson!));
+                        let tx = (await o1js).Mina.Transaction.fromJSON(JSON.parse(txJson!));
 
                         let targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == saleAddress && e.body.authorizationKind.isSigned.toBoolean());
                         targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
@@ -673,9 +674,9 @@ const handleWhitelistInput = () => {
     saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
     if (saleDto.whitelistMembers) {
-        saleDto.whitelistMembers.split(',').forEach(item => {
+        saleDto.whitelistMembers.split(',').forEach(async item => {
             try {
-                PublicKey.fromBase58(item);
+                (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
                 dialogTableVisibleErrorAlert.value = true;
                 console.log(error);
