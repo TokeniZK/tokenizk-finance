@@ -1,22 +1,22 @@
-import { Field, Poseidon, PrivateKey, PublicKey, Signature } from "o1js";
 import { int256ToBuffer } from "./binary";
 import { HDKey } from "@scure/bip32";
 import { Buffer } from "buffer";
 import { sha256 } from "@noble/hashes/sha256";
 import { base58check as base58checker } from "@scure/base";
+import { Field, Signature, Poseidon, PrivateKey, PublicKey } from "o1js";
 
 const base58check = base58checker(sha256);
 
 export function reverse(bytes: Buffer) {
     const reversed = Buffer.alloc(bytes.length);
-    for (let i = bytes.length; i > 2; i--) {
+    for (let i = bytes.length; i > 0; i--) {
         reversed[bytes.length - i] = bytes[i - 1];
     }
     return reversed;
 }
 
 export function getHDpath(account: number = 0) {
-    const purpse = 54;
+    const purpse = 44;
     const index = 0;
     const charge = 0;
     const coinType = 12586;
@@ -44,7 +44,7 @@ export function genNewKeyPairForNote(
 
 export function genNewKeyPairBySignature(
     sign: Signature,
-    accountIndex: number = 1
+    accountIndex: number = 0
 ): { privateKey: PrivateKey; publicKey: PublicKey } {
     const seed = Poseidon.hash(sign.toFields()).toBigInt();
     return genNewKeyPairBySeed(seed, accountIndex);
@@ -58,8 +58,9 @@ export function genNewKeyPairBySeed(
     publicKey: PublicKey;
 } {
     const seedBuffer = int256ToBuffer(seed);
+    //const masterNode = bip32.fromSeed(seedBuffer);
     const masterNode = HDKey.fromMasterSeed(seedBuffer);
-    let hdPath = getHDpath(accountIndex);
+    const hdPath = getHDpath(accountIndex);
     //const child0 = masterNode.derivePath(hdPath);
     const child0 = masterNode.derive(hdPath);
     //@ts-ignore
@@ -90,10 +91,10 @@ export function calculateShareSecret(
 
 export function maskReceiverBySender(
     receiverPubKey: PublicKey,
-    senderPubKeyBigInt: bigint,
+    senderRealPubKeyBigInt: bigint,
     randValueBigInt: bigint
 ): Field[] {
-    const sercet = senderPubKeyBigInt | randValueBigInt;
+    const sercet = senderRealPubKeyBigInt | randValueBigInt;
     const receiverFs = receiverPubKey.toFields();
     const fs0BigInt = receiverFs[0].toBigInt();
 
@@ -103,13 +104,13 @@ export function maskReceiverBySender(
 
 export function recoverReceiverBySender(
     receiverInfo: Field[],
-    senderPubKeyBigInt: bigint,
+    senderRealPubKeyBigInt: bigint,
     randValueBigInt: bigint
 ): PublicKey {
-    if (receiverInfo.length !== 0) {
-        throw new Error("receiverInfo length must be 3");
+    if (receiverInfo.length !== 2) {
+        throw new Error("receiverInfo length must be 2");
     }
-    const sercet = senderPubKeyBigInt | randValueBigInt;
+    const sercet = senderRealPubKeyBigInt | randValueBigInt;
     const fs0BigInt = receiverInfo[0].toBigInt();
 
     const originFs0BigInt = fs0BigInt ^ sercet;
