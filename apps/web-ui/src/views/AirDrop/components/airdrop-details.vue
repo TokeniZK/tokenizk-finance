@@ -7,11 +7,12 @@ import { ElMessage } from 'element-plus';
 import { calcWhitelistMerkleWitness, getEmptyLeafWitness } from '@/utils/whitelist-tree-calc';
 import { queryAirdropClaimerWitnessByUser, queryContributorWitnessByUser } from '@/apis/witness-api';
 import { useRoute } from 'vue-router';
-import { fetchAccount, fetchLastBlock } from 'o1js';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
-import { AirdropParams, WHITELIST_TREE_ROOT } from '@tokenizk/contracts';
 import AirdropStatistic from "./airdrop-statistic.vue";
 import Comment from '@/components/comment.vue'
+
+const ContractConstants = import('@tokenizk/contracts');
+const o1js = import('o1js');
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -138,14 +139,14 @@ const init = async () => {
         currentAirdropClaimerDto.currentUser = airdropClaimersDetailDto.claimerList.filter(
             a => a.userAddress === appState.connectedWallet58)[0] ?? ({} as AirdropClaimerDto);
 
-        if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != WHITELIST_TREE_ROOT.toString()) {
+        if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != (await ContractConstants).WHITELIST_TREE_ROOT.toString()) {
             currentUserIsInWhiteList.value = airdropClaimersDetailDto.airdropDto.whitelistMembers.includes(appState.connectedWallet58);
         } else {
             currentUserIsInWhiteList.value = true;
         }
     }
 
-    if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != WHITELIST_TREE_ROOT.toString()) {
+    if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != (await ContractConstants).WHITELIST_TREE_ROOT.toString()) {
         couldClaimAmount.value = Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply / airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length);
     }
 
@@ -204,14 +205,14 @@ const claimTokens = async () => {
         return;
     }
 
-    if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot == WHITELIST_TREE_ROOT.toString() || airdropDto.whitelistMembers.includes(appState.connectedWallet58)) {
+    if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot == (await ContractConstants).WHITELIST_TREE_ROOT.toString() || airdropDto.whitelistMembers.includes(appState.connectedWallet58)) {
         // query whitelist witness
         const maskId = 'claimTokens';
 
         const txFee = 0.21 * (10 ** 9)
 
         // deploy Redeem account
-        let redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58 });
+        let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
         if (!redeemAccount.account!.zkapp) {
             showLoadingMask({ id: maskId, text: 'compiling RedeemAccount circuit...' });
             const flag = await CircuitControllerState.remoteController!.compileRedeemAccount();
@@ -283,7 +284,7 @@ const claimTokens = async () => {
         // calc whitelist tree root
         let membershipMerkleWitness: string[] = [];
         let leafIndex = 0;
-        if (airdropDto.whitelistTreeRoot != WHITELIST_TREE_ROOT.toString()) {
+        if (airdropDto.whitelistTreeRoot != (await ContractConstants).WHITELIST_TREE_ROOT.toString()) {
             membershipMerkleWitness = await calcWhitelistMerkleWitness(airdropDto.whitelistMembers.split(','), appState.connectedWallet58);
             leafIndex = airdropDto.whitelistMembers.split(',').findIndex(a => a == appState.connectedWallet58);
         } else {
@@ -409,7 +410,7 @@ onMounted(async () => {
     watch(() => appState.connectedWallet58, async (value, oldValue) => {
         if (appState.connectedWallet58) {
             currentAirdropClaimerDto.currentUser = airdropClaimersDetailDto.claimerList.filter(a => a.userAddress == appState.connectedWallet58)[0] ?? ({} as AirdropClaimerDto);
-            if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != WHITELIST_TREE_ROOT.toString()) {
+            if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != (await ContractConstants).WHITELIST_TREE_ROOT.toString()) {
                 currentUserIsInWhiteList.value = airdropClaimersDetailDto.airdropDto.whitelistMembers.includes(appState.connectedWallet58);
             } else {
                 currentUserIsInWhiteList.value = true;
