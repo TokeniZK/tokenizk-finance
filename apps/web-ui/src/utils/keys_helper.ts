@@ -3,8 +3,7 @@ import { HDKey } from "@scure/bip32";
 import { Buffer } from "buffer";
 import { sha256 } from "@noble/hashes/sha256";
 import { base58check as base58checker } from "@scure/base";
-
-const { Field, Poseidon, PrivateKey, PublicKey } = await import( 'o1js');
+import { Field, Signature, Poseidon, PrivateKey, PublicKey } from "o1js";
 
 const base58check = base58checker(sha256);
 
@@ -61,7 +60,7 @@ export function genNewKeyPairBySeed(
     const seedBuffer = int256ToBuffer(seed);
     //const masterNode = bip32.fromSeed(seedBuffer);
     const masterNode = HDKey.fromMasterSeed(seedBuffer);
-    let hdPath = getHDpath(accountIndex);
+    const hdPath = getHDpath(accountIndex);
     //const child0 = masterNode.derivePath(hdPath);
     const child0 = masterNode.derive(hdPath);
     //@ts-ignore

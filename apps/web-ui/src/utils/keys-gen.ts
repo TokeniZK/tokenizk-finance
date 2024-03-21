@@ -1,5 +1,4 @@
-import { genNewKeyPairBySignature } from "./keys_helper";
-
+const keys_helper = import("./keys_helper.js");
 const o1js = import('o1js');
 
 export const generateTokenKey = async (accountIndex?: number) => {
@@ -8,7 +7,7 @@ export const generateTokenKey = async (accountIndex?: number) => {
         message: signMessage,
     })
     console.log('sign result: ', signResult);
-    return genNewKeyPairBySignature((await o1js).Signature.fromObject({
+    return (await keys_helper).genNewKeyPairBySignature((await o1js).Signature.fromObject({
         r: (await o1js).Field(signResult.signature.field),
         s: (await o1js).Scalar.fromJSON(signResult.signature.scalar),
     }), accountIndex);
@@ -21,6 +20,6 @@ export const generateLaunchContractKey = async (tokenKey: any, signData: string,
     );
     console.log("sign: ", sign.toJSON());
 
-    return genNewKeyPairBySignature(sign, accountIndex);
+    return (await keys_helper).genNewKeyPairBySignature(sign, accountIndex);
 
 }
