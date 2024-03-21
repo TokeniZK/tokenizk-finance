@@ -1,5 +1,10 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive } from 'vue'
+import { useStatusStore } from '@/stores'
+import { ElMessage } from 'element-plus'
+import { omitAddress } from "@/utils";
+
+const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
 let commentDatalist = [
   {
@@ -59,19 +64,28 @@ let commentDatalist = [
 
 let commentProjects = reactive({ commenList: commentDatalist });
 
-// 定义响应式数据  
 const inputComment = ref('');
 const showItemId = ref('');
 
-// 定义方法  
-const likeClick = (item: { isLike: boolean; likeNum: number; }) => { // 根据 item 的实际结构定义类型  
+const likeClick = (item: { isLike: boolean; likeNum: number; }) => {
   if (item.isLike === null) {
-    // 在 Vue 3 中，直接修改响应式对象的属性即可触发视图更新  
     item.isLike = true;
     item.likeNum++;
   } else {
     item.likeNum += item.isLike ? -1 : 1;
     item.isLike = !item.isLike;
+  }
+}
+
+const replyClick = async () => {
+  if (!appState.connectedWallet58) {
+    ElMessage({
+      showClose: true,
+      type: 'warning',
+      message: `Please connect your wallet first, and then you can leave a comment .`,
+    });
+
+    return;
   }
 }
 
@@ -83,7 +97,7 @@ const commitComment = () => {
   console.log(inputComment.value);
 }
 
-const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => { // 根据 item 和 reply 的实际结构定义类型  
+const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
   if (reply) {
     inputComment.value = `@${reply.fromName} `;
   } else {
@@ -91,73 +105,93 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
   }
   showItemId.value = item.id;
 }
-</script> 
+</script>
 
 <template>
-    <div class="container">
+  <div class="container">
+    <div class="Comment">
 
-      <div class="Comment">
+      <h2 class="conment-title">全部评论</h2>
 
-        <div class="info">
-          <el-image class="avatar" src="https://tokenizk.finance/src/assets/images/21.png" />
-          <div class="right">
-            <div class="name">Tang</div>
-            <div class="date">2018-07-05 08:30</div>
+      <transition name="fade">
+        <div class="input-wrapper">
+
+          <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment">
+          </el-input>
+
+          <div class="first-comment-input">
+            <span class="cancel">Cancel</span>
+            <el-button class="btn" type="success" round @click="replyClick">Confirm</el-button>
+          </div>
+
+        </div>
+      </transition>
+
+      <div class="info">
+        <el-image class="avatar" src="https://tokenizk.finance/src/assets/images/21.png" />
+        <div class="right">
+          <!-- <div class="name">Tang</div> -->
+          <div class="name">{{ omitAddress(appState.connectedWallet58) }}</div>
+          <div class="date">2024-02-04 10:35</div>
+        </div>
+      </div>
+
+      <div class="content">非常靠谱的程序员</div>
+
+      <div class="control">
+        <!-- <span class="like">
+          <i class="iconfont icon-like"></i>
+          <span class="like-num">40人赞</span>
+        </span> -->
+        <span class="comment-reply" @click="replyClick">
+          <el-icon class="iconfont icon-comment">
+            <ChatDotSquare />
+          </el-icon>
+          <span>reply</span>
+        </span>
+      </div>
+
+      <div class="reply">
+
+        <div class="item">
+          <div class="reply-content">
+            <span class="from-name">cherry</span><span> : </span>
+            <span class="to-name">@Tang</span>
+            <span>赞同，很靠谱，水平很高</span>
+          </div>
+          <div class="reply-bottom">
+            <span>2024-02-05 08:35</span>
+
+            <span class="reply-text" @click="replyClick">
+              <el-icon class="iconfont icon-comment">
+                <ChatDotSquare />
+              </el-icon>
+              <span>reply</span>
+            </span>
+
           </div>
         </div>
 
-        <div class="content">非常靠谱的程序员</div>
-
-        <div class="control">
-          <span class="like">
-            <i class="iconfont icon-like"></i>
-            <span class="like-num">40人赞</span>
-          </span>
-          <span class="comment-reply">
-            <i class="iconfont icon-comment"></i>
-            <span>回复</span>
-          </span>
+        <div class="write-reply">
+          <i class="el-icon-edit"></i>
+          <span class="add-comment">Add new comment</span>
         </div>
 
-
-        <div class="reply">
-
-          <div class="item">
-            <div class="reply-content">
-              <span class="from-name">cherry</span><span> : </span>
-              <span class="to-name">@Tang</span>
-              <span>赞同，很靠谱，水平很高</span>
-            </div>
-            <div class="reply-bottom">
-              <span>2018-07-05 08:35</span>
-              <span class="reply-text">
-                <i class="iconfont icon-comment"></i>
-                <span>回复</span>
-              </span>
+        <transition name="fade">
+          <div class="input-wrapper">
+            <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment">
+            </el-input>
+            <div class="btn-control">
+              <span class="cancel">Cancel</span>
+              <el-button class="btn" type="success" round @click="replyClick">Confirm</el-button>
             </div>
           </div>
-
-          <div class="write-reply">
-            <i class="el-icon-edit"></i>
-            <span class="add-comment">添加新评论</span>
-          </div>
-
-          <transition name="fade">
-            <div class="input-wrapper" v-if="commentProjects">
-              <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="写下你的评论">
-              </el-input>
-              <div class="btn-control">
-                <span class="cancel">取消</span>
-                <el-button class="btn" type="success" round>确定</el-button>
-              </div>
-            </div>
-          </transition>
-
-        </div>
+        </transition>
 
       </div>
 
     </div>
+  </div>
 </template>
 
 
@@ -171,6 +205,42 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
     flex-direction: column;
     padding: 10px;
     border-bottom: 1px solid #F2F6FC;
+
+    .conment-title {
+      border-left: 4px solid #00FFC2;
+      padding-left: 12px;
+    }
+
+    .first-comment-input {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding-top: 10px;
+
+      .cancel {
+        font-size: 16px;
+        color: #606266;
+        margin-right: 20px;
+        cursor: pointer;
+
+        &:hover {
+          color: #333;
+        }
+      }
+
+      .btn {
+        font-size: 16px;
+        background-color: #00c798;
+
+        &:hover {
+          color: #333;
+        }
+      }
+
+      .confirm {
+        font-size: 16px;
+      }
+    }
 
     .info {
       display: flex;
@@ -235,6 +305,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
         display: flex;
         align-items: center;
         cursor: pointer;
+        font-size: 14px;
 
         &:hover {
           color: #333;
@@ -260,7 +331,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
         .reply-content {
           display: flex;
           align-items: center;
-          font-size: 14px;
+          font-size: 16px;
           color: #303133;
 
           .from-name {
@@ -278,7 +349,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
           display: flex;
           align-items: center;
           margin-top: 6px;
-          font-size: 12px;
+          font-size: 16px;
           color: #909399;
 
           .reply-text {
@@ -286,12 +357,14 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
             align-items: center;
             margin-left: 10px;
             cursor: pointer;
+            font-size: 14px;
 
             &:hover {
               color: #333;
             }
 
             .icon-comment {
+              font-size: 16px;
               margin-right: 5px;
             }
           }
@@ -344,6 +417,15 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
             color: #606266;
             margin-right: 20px;
             cursor: pointer;
+
+            &:hover {
+              color: #333;
+            }
+          }
+
+          .btn {
+            font-size: 16px;
+            background-color: #00c798;
 
             &:hover {
               color: #333;
