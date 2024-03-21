@@ -9,7 +9,7 @@ import { queryContributorWitnessByUser } from '@/apis/witness-api';
 import { useRoute } from 'vue-router';
 import { checkTx, syncLatestBlock } from '@/utils/txUtils';
 import SaleStatistic from './sale-statistic.vue'
-import CommentList from '@/components/comment-list.vue'
+import Comment from '@/components/comment.vue'
 
 const ContractConstants = import('@tokenizk/contracts');
 const o1js = import('o1js');
@@ -1173,11 +1173,11 @@ onUnmounted(() => {
 
                         <!-- echarts -->
                         <el-row class="row-bg echarts-row" v-if="saleContributorsDetailDto.saleDto.saleType == 0">
-                            <SaleStatistic :dataArr="saleStatistic.dataArr" /> 
+                            <SaleStatistic :dataArr="saleStatistic.dataArr" />
                         </el-row>
 
                         <el-row>
-                            <CommentList />
+                            <Comment />
                         </el-row>
 
                         <!-- <el-row justify="space-between" class="tableLine">
