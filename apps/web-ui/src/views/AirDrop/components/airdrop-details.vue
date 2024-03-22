@@ -761,8 +761,8 @@ onUnmounted(() => {
                             <AirdropStatistic :dataArr="airdropStatistic.dataArr" />
                         </el-row>
 
-                        <el-row class="row-bg comment-row" justify="start">
-                            <el-col span="24">
+                        <el-row class="comment-row">
+                            <el-col :span="24">
                                 <Comment />
                             </el-col>
                         </el-row>
@@ -1041,6 +1041,10 @@ onUnmounted(() => {
 
         .echarts-row {
             background: #f7f7f7;
+        }
+
+        .comment-row {
+            width: 100%;
         }
     }
 
