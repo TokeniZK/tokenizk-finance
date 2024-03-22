@@ -6,6 +6,19 @@ import { omitAddress } from "@/utils";
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
+// 定义响应式引用  
+const comments = ref<any[]>([]);
+const replyContext = ref('');
+const context = ref('');
+const username = ref('');
+const userId = ref('');
+const avatarUrl = ref('');
+const secIdx = ref(0);
+const firstIdx = ref(0);
+const isShowSec = ref('');
+const isClickId = ref('');
+const articleId = ref('');
+
 let commentDatalist = [
   {
     status: "成功",
@@ -105,13 +118,65 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
   }
   showItemId.value = item.id;
 }
+
+
+const addComment = async (id: string, replyName?: string) => {
+  let res: { data?: any } = {};
+
+  if (replyName) {
+    // 添加二级评论  
+    if (!replyContext.value) {
+      ElMessage.warning("评论或留言不能为空哦！");
+      return;
+    }
+
+    res.data = {
+      username: username.value,
+      userId: userId.value,
+      avatarUrl: avatarUrl.value,
+      _id: "sec" + secIdx.value++, // 评论id  
+      replyName,
+      date: "2022.09.01", // 创建日期  
+      favour: [], // 点赞的用户id  
+      content: replyContext.value // 评论内容  
+    };
+    // 提交成功后更新本地评论列表  
+    const comment = comments.value.find(item => item._id === id);
+    if (!comment?.replyInfo) {
+      comment.replyInfo = [];
+    }
+    comment.replyInfo.push(res.data);
+    replyContext.value = "";
+  } else {
+
+    if (!context.value) {
+      ElMessage.warning("评论或留言不能为空哦！");
+      return;
+    }
+
+    res.data = {
+      username: username.value,
+      avatarUrl: avatarUrl.value,
+      userId: userId.value,
+      _id: "first" + firstIdx.value++, // 评论id  
+      date: "2022.09.01", // 创建日期  
+      articleId: articleId.value, // 评论的文章id  
+      favour: [], // 点赞的用户id  
+      content: context.value // 评论内容  
+    };
+    // 提交成功后更新本地评论列表  
+    comments.value.push(res.data);
+    context.value = "";
+  }
+  isShowSec.value = isClickId.value = "";
+};  
 </script>
 
 <template>
   <div class="container">
     <div class="Comment">
 
-      <h2 class="conment-title">全部评论</h2>
+      <h2 class="conment-title">All comments</h2>
 
       <transition name="fade">
         <div class="input-wrapper">
@@ -224,7 +289,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
         cursor: pointer;
 
         &:hover {
-          color: #333;
+          color: #00c798;
         }
       }
 
@@ -308,7 +373,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
         font-size: 14px;
 
         &:hover {
-          color: #333;
+          color: #00c798;
         }
 
         .iconfont {
@@ -360,7 +425,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
             font-size: 14px;
 
             &:hover {
-              color: #333;
+              color: #00c798;
             }
 
             .icon-comment {
@@ -419,7 +484,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
             cursor: pointer;
 
             &:hover {
-              color: #333;
+              color: #00c798;
             }
           }
 

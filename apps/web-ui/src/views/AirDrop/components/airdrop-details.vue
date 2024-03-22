@@ -548,8 +548,8 @@ onUnmounted(() => {
                             <el-col :span="18">
                                 <el-row justify="end" class="titleContent">
                                     <a :href="tokenAddressLinkPrefix" target="_blank" class="titleContent">{{
-                                        airdropClaimersDetailDto.airdropDto.tokenAddress
-                                    }}</a>
+            airdropClaimersDetailDto.airdropDto.tokenAddress
+        }}</a>
                                     <a :href="tokenAddressLinkPrefix" target="_blank" class="titleContent">
                                         <el-icon style="margin-left: 10px;">
                                             <CopyDocument />
@@ -582,7 +582,7 @@ onUnmounted(() => {
                                 <el-row justify="end" class="titleContent">
 
                                     <a :href="airdropAddressLinkPrefix" target="_blank" class="titleContent">{{
-                                        airdropClaimersDetailDto.airdropDto.airdropAddress }}</a>
+            airdropClaimersDetailDto.airdropDto.airdropAddress }}</a>
 
                                     <a :href="airdropAddressLinkPrefix" target="_blank" class="titleContent">
                                         <el-icon style="margin-left: 10px;">
@@ -603,7 +603,7 @@ onUnmounted(() => {
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
                                     {{ airdropClaimersDetailDto.airdropDto.totalAirdropSupply }} {{
-                                        airdropClaimersDetailDto.airdropDto.tokenSymbol }}
+            airdropClaimersDetailDto.airdropDto.tokenSymbol }}
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -646,7 +646,8 @@ onUnmounted(() => {
 
                                 <el-row justify="end" class="titleContent"
                                     v-if="airdropClaimersDetailDto.airdropDto.whitelistMembers">
-                                    <el-button text @click="dialogTableVisible = true" type="success" class="whiteListBtn">
+                                    <el-button text @click="dialogTableVisible = true" type="success"
+                                        class="whiteListBtn">
                                         whileList table
                                     </el-button>
 
@@ -662,7 +663,8 @@ onUnmounted(() => {
                                                     :current-page="currentPage" :pager-count="6"
                                                     layout="total,prev, pager, next,jumper"
                                                     :hide-on-single-page="paginationValue" :total="totalItems"
-                                                    @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+                                                    @size-change="handleSizeChange"
+                                                    @current-change="handleCurrentChange" />
 
                                             </el-scrollbar>
                                         </ul>
@@ -697,7 +699,7 @@ onUnmounted(() => {
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
                                     {{ airdropClaimersDetailDto.airdropDto.cliffTime }} slots (about {{
-                                        airdropClaimersDetailDto.airdropDto.cliffTime * 3 }} minutes)
+            airdropClaimersDetailDto.airdropDto.cliffTime * 3 }} minutes)
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -713,10 +715,10 @@ onUnmounted(() => {
                                     {{ airdropClaimersDetailDto.airdropDto.cliffAmountRate }}%
                                     <span v-if="airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != '0'">(about
                                         {{
-                                            (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
-                                                airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length) *
-                                                (airdropClaimersDetailDto.airdropDto.cliffAmountRate / 100)).toFixed(2)
-                                        }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }}
+            (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
+                airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length) *
+                (airdropClaimersDetailDto.airdropDto.cliffAmountRate / 100)).toFixed(2)
+        }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }}
 
                                         )</span>
                                 </el-row>
@@ -732,7 +734,7 @@ onUnmounted(() => {
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
                                     {{ airdropClaimersDetailDto.airdropDto.vestingPeriod }} slots (about {{
-                                        airdropClaimersDetailDto.airdropDto.vestingPeriod * 3 }} minutes)
+            airdropClaimersDetailDto.airdropDto.vestingPeriod * 3 }} minutes)
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -746,10 +748,10 @@ onUnmounted(() => {
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
                                     {{ airdropClaimersDetailDto.airdropDto.vestingIncrement }}%(about {{
-                                        (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
-                                            airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length) *
-                                            (airdropClaimersDetailDto.airdropDto.vestingIncrement / 100)).toFixed(2)
-                                    }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }})
+            (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
+                airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length) *
+                (airdropClaimersDetailDto.airdropDto.vestingIncrement / 100)).toFixed(2)
+        }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }})
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -759,8 +761,10 @@ onUnmounted(() => {
                             <AirdropStatistic :dataArr="airdropStatistic.dataArr" />
                         </el-row>
 
-                        <el-row>
-                            <Comment />
+                        <el-row class="row-bg comment-row" justify="start">
+                            <el-col span="24">
+                                <Comment />
+                            </el-col>
                         </el-row>
 
                         <!-- <el-row justify="space-between" class="tableLine">
@@ -910,18 +914,21 @@ onUnmounted(() => {
                     <div>
                         <el-row v-if="appState.connectedWallet58 && currentUserIsInWhiteList && couldClaimAmount">
                             <div v-if="currentUserHasClaimed">
-                                You has claimed {{ couldClaimAmount }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol
-                                }}!
+                                You has claimed {{ couldClaimAmount }} {{
+            airdropClaimersDetailDto.airdropDto.tokenSymbol
+        }}!
                             </div>
                             <div v-else>
-                                You could claim {{ couldClaimAmount }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol
-                                }}!
+                                You could claim {{ couldClaimAmount }} {{
+            airdropClaimersDetailDto.airdropDto.tokenSymbol
+        }}!
                             </div>
                         </el-row>
 
                         <el-row
                             v-if='!appState.connectedWallet58 || (appState.connectedWallet58 && currentUserIsInWhiteList && !currentUserHasClaimed)'>
-                            <el-button type="primary" :disabled="contributionBtnDisabled" @click="claimTokens">claim your
+                            <el-button type="primary" :disabled="contributionBtnDisabled" @click="claimTokens">claim
+                                your
                                 Tokens</el-button>
                         </el-row>
                         <el-row v-if="appState.connectedWallet58 && !currentUserIsInWhiteList">
