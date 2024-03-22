@@ -1176,8 +1176,10 @@ onUnmounted(() => {
                             <SaleStatistic :dataArr="saleStatistic.dataArr" />
                         </el-row>
 
-                        <el-row>
-                            <Comment />
+                        <el-row class="row-bg comment-row" justify="start">
+                            <el-col span="24">
+                                <Comment />
+                            </el-col>
                         </el-row>
 
                         <!-- <el-row justify="space-between" class="tableLine">
@@ -1490,7 +1492,6 @@ onUnmounted(() => {
         .echarts-row {
             background: #f7f7f7;
         }
-
 
     }
 
