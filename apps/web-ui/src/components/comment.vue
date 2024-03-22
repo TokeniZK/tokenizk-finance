@@ -173,7 +173,7 @@ const addComment = async (id: string, replyName?: string) => {
 </script>
 
 <template>
-  <div class="container">
+  <div class="comment-container">
     <div class="Comment">
 
       <h2 class="conment-title">All comments</h2>
@@ -261,7 +261,7 @@ const addComment = async (id: string, replyName?: string) => {
 
 
 <style scoped lang="less">
-.container {
+.comment-container {
   padding: 0 10px;
   box-sizing: border-box;
 
@@ -270,6 +270,7 @@ const addComment = async (id: string, replyName?: string) => {
     flex-direction: column;
     padding: 10px;
     border-bottom: 1px solid #F2F6FC;
+    width: 100%;
 
     .conment-title {
       border-left: 4px solid #00FFC2;
