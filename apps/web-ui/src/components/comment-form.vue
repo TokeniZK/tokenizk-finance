@@ -1,47 +1,70 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { type Comment } from '@/models/comment'
+import { ref, defineProps, defineEmits, onMounted } from 'vue';
 
-const author = ref('');
-const text = ref('');
+interface Comment {
+  id: number;
+  content: string;
+  parentId: number | null;
+  children: Comment[];
+  user: { name: string };
+  showReply: boolean;
+}
 
-const submitComment = async () => {
-  if (author.value && text.value) {
-    const newComment: Comment = {
-      id: Date.now(), // 临时 ID，实际应从后端获取  
-      author: author.value,
-      text: text.value,
-      timestamp: new Date(),
-    };
+const props = defineProps({
+  comments: {
+    type: Array as () => Comment[],
+    required: true,
+  },
+});
 
-    // 发送评论到后端  
-    await postCommentToBackend(newComment);
+const emit = defineEmits(['reply']);
 
-    // 清空表单  
-    author.value = '';
-    text.value = '';
+const newComment = ref('');
+const replyInput = ref('');
+const replyTarget = ref<{ name: string }>({ name: '' });
+
+const postComment = () => {
+  if (newComment.value) {
+    newComment.value = '';
   }
 };
 
-// 模拟发送评论到后端  
-const postCommentToBackend = async (comment: Comment) => {
-  // 使用 axios 或其他 HTTP 客户端发送数据到后端  
-  // 假设后端接口是 /api/comments  
-  await fetch('/api/comments', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(comment),
-  });
-};  
-</script>
+const postReply = (comment: Comment) => {
+  if (replyInput.value) {
+    replyInput.value = '';
+    replyTarget.value = { name: '' };
+    comment.showReply = false;
+  }
+};
 
+const showReplyInput = (comment: Comment) => {
+  comment.showReply = true;
+  replyTarget.value = comment.user;
+};
+
+
+</script>
 <template>
-  <div class="comment-form">
-    <input type="text" v-model="author" placeholder="Author" />
-    <el-input class="comment-textarea" v-model="text" placeholder="Comment" type="textarea" />
-    <el-button type="primary" class="comment-submit" @click="submitComment">Submit</el-button>
+  <div>
+    <div v-for="comment in comments" :key="comment.id" class="comment">
+      <div class="comment-header">
+        <span class="user-name">{{ comment.user.name }}</span>
+        <button @click="showReplyInput(comment)">回复</button>
+      </div>
+      <div class="comment-content">{{ comment.content }}</div>
+      <div class="reply-input" v-if="comment.showReply">
+        <input type="text" v-model="replyInput" :placeholder="`@${replyTarget.name} `"
+          @keyup.enter="postReply(comment)" />
+        <button @click="postReply(comment)">发送</button>
+      </div>
+      <div class="child-comments">
+        <CommentItem v-for="child in comment.children" :key="child.id" :comment="child" @reply="showReplyInput" />
+      </div>
+    </div>
+    <div class="new-comment">
+      <input type="text" v-model="newComment" @keyup.enter="postComment" />
+      <button @click="postComment">发表评论</button>
+    </div>
   </div>
 </template>
 
