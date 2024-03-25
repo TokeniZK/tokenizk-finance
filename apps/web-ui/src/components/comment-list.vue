@@ -1,41 +1,67 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-import {type Comment} from '@/models/comment' 
-  
-const comments = ref<Comment[]>([]);  
-  
-// 模拟从后端获取评论数据  
-const fetchComments = async () => {  
-  // 使用 axios 或其他 HTTP 客户端从后端获取数据  
-  // 假设返回的数据格式是 Comment[]  
-  const response = await fetch('/api/comments');  
-  const data = await response.json();  
-  comments.value = data;  
-};  
-  
-// 在组件挂载时获取评论数据  
-onMounted(fetchComments);  
+import { ref, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
 
+interface Comment {
+  id: number;
+  content: string;
+  favour: string[];
+}
+
+const props = defineProps({
+  userId: {
+    type: String,
+    required: true,
+  },
+  comments: {
+    type: Array,
+    required: true,
+  },
+});
+
+const comments = ref<Comment[]>([]);
+const userId = ref<string>('');
+const handleUpdateComment = (updatedComment: Comment) => {
+  // 根据评论ID更新评论列表中的对应项  
+  const index = comments.value.findIndex(comment => comment.id === updatedComment.id);
+  if (index !== -1) {
+    comments.value[index] = updatedComment;
+  }
+}
+
+const handleDeleteComment = (commentId: number) => {
+  // 根据评论ID从评论列表中删除对应项  
+  const index = comments.value.findIndex(comment => comment.id === commentId);
+  if (index !== -1) {
+    // 假设删除评论是异步操作，需要向后端发送请求  
+    // 这里简化处理，直接删除本地数据  
+    comments.value.splice(index, 1);
+    ElMessage.success('评论删除成功！');
+  } else {
+    ElMessage.error('评论不存在！');
+  }
+}
 </script>
 
-<template>  
-  <div class="comment-list">  
-    <div v-for="comment in comments" :key="comment.id" class="comment-item">  
-      <h3>{{ comment.author }}</h3>  
-      <p>{{ comment.text }}</p>  
-      <span>{{ comment.timestamp.toLocaleString() }}</span>  
-    </div>  
-  </div>  
+<template>
+  <div class="comment-list">
+    <div v-for="(comment, index) in comments" :key="index" class="comment-item">
+      <p>{{ comment.content }}</p>
+      <button @click="handleDeleteComment(index)">Delete</button>
+    </div>
+  </div>
 </template>
 
-<style scoped>  
-.comment-list {  
-  /* 样式美化 */  
-}  
-  
-.comment-item {  
-  /* 样式美化 */  
-}  
+<style scoped>
+.comment-list {
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.comment-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
 </style>
-
-
