@@ -289,6 +289,36 @@ interface User {
     address: string
 }
 
+interface TransferRecord {
+    from: string;
+    to: string;
+    amount: number;
+}
+
+const transferRecords = ref<TransferRecord[]>([]);
+const fromName = ref('');
+const toName = ref('');
+const amount = ref(0);
+
+const addTransferRecord = () => {
+    if (fromName.value && toName.value && amount.value > 0) {
+        transferRecords.value.push({
+            from: fromName.value,
+            to: toName.value,
+            amount: amount.value,
+        });
+        fromName.value = '';
+        toName.value = '';
+        amount.value = 0;
+    } else {
+        ElMessage({
+            showClose: true,
+            type: 'warning',
+            message: `Please enter complete transfer information!`,
+        });
+    }
+};
+
 const formatter = (row: User, column: TableColumnCtx<User>) => {
     return row.address
 }
@@ -339,7 +369,6 @@ onMounted(async () => {
 
 })
 
-
 </script>
 
 <template>
@@ -361,8 +390,8 @@ onMounted(async () => {
                         <el-form-item label="Token" prop="token">
                             <el-select v-model.trim="userFundFormRef.token" placeholder="Tokens You Hold"
                                 @change="tokenChoose">
-                                <el-option v-for="    item     in     userTokenListRef.tokenList    " :label="item.symbol"
-                                    :value="item.address" :key="item.id" />
+                                <el-option v-for="    item     in     userTokenListRef.tokenList    "
+                                    :label="item.symbol" :value="item.address" :key="item.id" />
                             </el-select>
                         </el-form-item>
 
@@ -394,7 +423,7 @@ onMounted(async () => {
         </el-col>
     </el-row>
 
-    <!-- <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
+    <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
         <el-col :span="24">
 
             <el-row>
@@ -412,8 +441,8 @@ onMounted(async () => {
                         <el-form-item label="Token" prop="token">
                             <el-select v-model.trim="userFundFormRef.token" placeholder="Tokens You Hold"
                                 @change="tokenChoose">
-                                <el-option v-for="    item     in     userTokenListRef.tokenList    " :label="item.symbol"
-                                    :value="item.address" :key="item.id" />
+                                <el-option v-for="    item     in     userTokenListRef.tokenList    "
+                                    :label="item.symbol" :value="item.address" :key="item.id" />
                             </el-select>
                         </el-form-item>
 
@@ -456,7 +485,7 @@ onMounted(async () => {
             </el-row>
 
         </el-col>
-    </el-row> -->
+    </el-row>
 </template>
 
 <style lang="less" scoped>
@@ -475,7 +504,7 @@ onMounted(async () => {
     }
 
     .steps-Bar {
-        margin-right: 30px;
+        margin-right: 20px;
 
         &:hover {
             color: #00c798;
@@ -513,6 +542,14 @@ onMounted(async () => {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
+    }
+
+    .steps-Bar {
+        margin-right: 20px;
+
+        &:hover {
+            color: #00c798;
+        }
     }
 
 
