@@ -29,18 +29,18 @@ export const submitComment: FastifyPlugin = async function (
 const handler: RequestHandler<CommentDto, null> = async function (
     req,
     res
-): Promise<BaseResponse<Array<CommentDto>>> {
+): Promise<BaseResponse<string>> {
     const dto = req.body;
 
     // check signature to avoid evil submit
     // TODO check it
     const target = createHash('SHA256').update(dto.projectAddress.concat(dto.message)).digest('hex');
-    const rs = Signature.fromBase58(dto.signature).verify(PublicKey.fromBase58(dto.fromId), Field(target));
+    const rs = Signature.fromBase58(dto.signature).verify(PublicKey.fromBase58(dto.fromId), [Field(target)]);
 
     if(!rs){
         return {
             code: 1,
-            data: null,
+            data: '',
             msg: 'signature not valid'
         }
     }
@@ -64,13 +64,13 @@ const handler: RequestHandler<CommentDto, null> = async function (
                 await commentRepo.save(comment);
                 return {
                     code: 0,
-                    data: null,
+                    data: '',
                     msg: ''
                 }
             } else {
                 return {
                     code: 1,
-                    data: null,
+                    data: '',
                     msg: 'parent comment not found'
                 }
             }
@@ -87,7 +87,7 @@ const handler: RequestHandler<CommentDto, null> = async function (
                 if(!airdrop){
                     return {
                         code: 1,
-                        data: null,
+                        data: '',
                         msg: 'project not found'
                     }
                 }
@@ -102,7 +102,7 @@ const handler: RequestHandler<CommentDto, null> = async function (
                 if (!sale) {
                     return {
                         code: 1,
-                        data: null,
+                        data: '',
                         msg: 'project not found'
                     }
                 }
@@ -130,11 +130,7 @@ const schema = {
                     type: 'number',
                 },
                 data: {
-                    type: 'array',
-                    items: {
-                        type: CommentDtoSchema.type,
-                        properties: CommentDtoSchema.properties
-                    }
+                    type: 'string'
                 },
                 msg: {
                     type: 'string'
