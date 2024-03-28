@@ -18,7 +18,7 @@ const activeIndex = ref('')
 // 当用户选择一个菜单项时  
 const handleMenuSelect = (index: string) => {
     activeIndex.value = index; // 更新当前激活的菜单项  
-    localStorage.setItem('currentMenuItem', index); // 存储到 localStorage  
+    sessionStorage.setItem('currentMenuItem', index);
 };
 
 const connectWallet = async () => {
@@ -73,11 +73,13 @@ const disconnect = async () => {
     } as WalletEvent);
 }
 
-// 在组件加载时，从 localStorage 获取并设置激活的菜单项  
+// 在组件加载时，从 sessionStorage 获取并设置激活的菜单项  
 onMounted(() => {
-    const savedIndex = localStorage.getItem('currentMenuItem');
+    const savedIndex = sessionStorage.getItem('currentMenuItem');
     if (savedIndex) {
         activeIndex.value = savedIndex;
+    } else {
+        activeIndex.value = '1';
     }
 });
 

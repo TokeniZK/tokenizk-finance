@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, ref, onMounted, watch } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { useConnectStatusStore } from '@/stores/connectStatus'
 import type { Token } from 'typescript';
 import { type TokenDto, type UserTokenTransferDto } from '@tokenizk/types';
@@ -299,6 +299,7 @@ const transferRecords = ref<TransferRecord[]>([]);
 const fromName = ref('');
 const toName = ref('');
 const amount = ref(0);
+const deleteIndex = ref<number | null>(null);
 
 const addTransferRecord = () => {
     if (fromName.value && toName.value && amount.value > 0) {
@@ -318,6 +319,31 @@ const addTransferRecord = () => {
         });
     }
 };
+
+const removeTransfer = (index: number) => {
+    transferRecords.value.splice(index, 1);
+}
+
+const confirmRemoveTransfer = (index: number) => {
+    deleteIndex.value = index;
+    ElMessageBox.confirm('Are you sure you want to delete this transfer record?')
+}
+
+const handleConfirmDelete = () => {
+    if (deleteIndex.value !== null) {
+        transferRecords.value.splice(deleteIndex.value, 1);
+        deleteIndex.value = null;
+        ElMessage({
+            showClose: true,
+            type: 'success',
+            message: 'Transfer record deleted successfully',
+        });
+    }
+}
+
+const handleCancelDelete = () => {
+    deleteIndex.value = null;
+}
 
 const formatter = (row: User, column: TableColumnCtx<User>) => {
     return row.address
@@ -432,7 +458,7 @@ onMounted(async () => {
 
             <el-row class="walletInfo">
 
-                <el-col :span="11">
+                <el-col :span="17">
                     <el-form ref="ruleFormRef" :model="userFundFormRef" :rules="rules" label-width="100px"
                         class="demo-ruleForm walletForm" size="large" status-icon label-position="left">
 
@@ -470,9 +496,10 @@ onMounted(async () => {
                     </el-form>
                 </el-col>
 
-                <el-col :span="1"></el-col>
+            </el-row>
 
-                <el-col :span="12">
+            <el-row>
+                <el-col :span="24">
                     <div class="transferRecordTable">
                         <h2>Transfer Record</h2>
                         <el-table :data="transferData" height="250" style="width: 100%">
@@ -481,7 +508,6 @@ onMounted(async () => {
                         </el-table>
                     </div>
                 </el-col>
-
             </el-row>
 
         </el-col>
@@ -490,7 +516,7 @@ onMounted(async () => {
 
 <style lang="less" scoped>
 .Wallet {
-    padding: 10% 20% 10% 15%;
+    padding: 10% 15%;
 
     .form-notes {
         font-size: 12px;
@@ -531,7 +557,7 @@ onMounted(async () => {
 
 .Wallet2 {
     width: 100%;
-    padding: 10% 2% 10% 2%;
+    padding: 10% 15%;
 
     .form-notes {
         font-size: 12px;
