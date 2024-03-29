@@ -763,7 +763,7 @@ onUnmounted(() => {
 
                         <el-row class="comment-row">
                             <el-col :span="24">
-                                <Comment />
+                                <Comment :address="airdropClaimersDetailDto.airdropDto.airdropAddress"/>
                             </el-col>
                         </el-row>
 
