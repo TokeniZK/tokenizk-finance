@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useStatusStore } from '@/stores'
 import { ElMessage } from 'element-plus'
-import { omitAddress } from "@/utils";
+import { omitAddress } from "@/utils"
+import { queryCommentByProjectAddr } from '@/apis/comment-api'
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -19,63 +20,74 @@ const isShowSec = ref('');
 const isClickId = ref('');
 const articleId = ref('');
 
-let commentDatalist = [
-  {
-    status: "成功",
-    code: 200,
-    data: [
-      {
-        id: 'comment0001', //主键id
-        date: '2018-07-05 08:30',  //评论时间
-        ownerId: 'talents100020', //文章的id
-        fromId: 'errhefe232213',  //评论者id
-        fromName: 'Tang评论家',   //评论者昵称
-        fromAvatar: 'http://ww4.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2pddjuj30v90uvagf.jpg', //评论者头像
-        likeNum: 3, //点赞人数
-        content: '非常靠谱的程序员',  //评论内容
-        reply: [  //回复，或子评论
-          {
-            id: '34523244545',  //主键id
-            commentId: 'comment0001',  //父评论id，即父亲的id
-            fromId: 'observer223432',  //评论者id
-            fromName: 'cherry',  //评论者昵称
-            fromAvatar: 'https://wx4.sinaimg.cn/mw690/69e273f8gy1ft1541dmb7j215o0qv7wh.jpg', //评论者头像
-            toId: 'errhefe232213',  //被评论者id
-            toName: 'Tang评论家',  //被评论者昵称
-            toAvatar: 'http://ww4.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2pddjuj30v90uvagf.jpg',  //被评论者头像
-            content: '赞同，很靠谱，水平很高',  //评论内容
-            date: '2018-07-05 08:35'   //评论时间
-          },
-          {
-            id: '34523244545',
-            commentId: 'comment0001',
-            fromId: 'observer567422',
-            fromName: '清晨一缕阳光',
-            fromAvatar: 'http://imgsrc.baidu.com/imgad/pic/item/c2fdfc039245d688fcba1b80aec27d1ed21b245d.jpg',
-            toId: 'observer223432',
-            toName: 'cherry',
-            toAvatar: 'https://wx4.sinaimg.cn/mw690/69e273f8gy1ft1541dmb7j215o0qv7wh.jpg',
-            content: '大神一个！',
-            date: '2018-07-05 08:50'
-          }
-        ]
-      },
-      {
-        id: 'comment0002',
-        date: '2018-07-05 08:30',
-        ownerId: 'talents100020',
-        fromId: 'errhefe232213',
-        fromName: '毒蛇郭德纲',
-        fromAvatar: 'http://ww1.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2q2p8pj30v90uzmzz.jpg',
-        likeNum: 0,
-        content: '从没见过这么优秀的人',
-        reply: []
-      }
-    ]
-  }
-];
+// let commentDatalist = [
+//   {
+//     status: "成功",
+//     code: 200,
+//     data: [
+//       {
+//         id: 'comment0001', //主键id
+//         date: '2018-07-05 08:30',  //评论时间
+//         ownerId: 'talents100020', //文章的id
+//         fromId: 'errhefe232213',  //评论者id
+//         fromName: 'Tang评论家',   //评论者昵称
+//         fromAvatar: 'http://ww4.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2pddjuj30v90uvagf.jpg', //评论者头像
+//         likeNum: 3, //点赞人数
+//         content: '非常靠谱的程序员',  //评论内容
+//         reply: [  //回复，或子评论
+//           {
+//             id: '34523244545',  //主键id
+//             commentId: 'comment0001',  //父评论id，即父亲的id
+//             fromId: 'observer223432',  //评论者id
+//             fromName: 'cherry',  //评论者昵称
+//             fromAvatar: 'https://wx4.sinaimg.cn/mw690/69e273f8gy1ft1541dmb7j215o0qv7wh.jpg', //评论者头像
+//             toId: 'errhefe232213',  //被评论者id
+//             toName: 'Tang评论家',  //被评论者昵称
+//             toAvatar: 'http://ww4.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2pddjuj30v90uvagf.jpg',  //被评论者头像
+//             content: '赞同，很靠谱，水平很高',  //评论内容
+//             date: '2018-07-05 08:35'   //评论时间
+//           },
+//           {
+//             id: '34523244545',
+//             commentId: 'comment0001',
+//             fromId: 'observer567422',
+//             fromName: '清晨一缕阳光',
+//             fromAvatar: 'http://imgsrc.baidu.com/imgad/pic/item/c2fdfc039245d688fcba1b80aec27d1ed21b245d.jpg',
+//             toId: 'observer223432',
+//             toName: 'cherry',
+//             toAvatar: 'https://wx4.sinaimg.cn/mw690/69e273f8gy1ft1541dmb7j215o0qv7wh.jpg',
+//             content: '大神一个！',
+//             date: '2018-07-05 08:50'
+//           }
+//         ]
+//       },
+//       {
+//         id: 'comment0002',
+//         date: '2018-07-05 08:30',
+//         ownerId: 'talents100020',
+//         fromId: 'errhefe232213',
+//         fromName: '毒蛇郭德纲',
+//         fromAvatar: 'http://ww1.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2q2p8pj30v90uzmzz.jpg',
+//         likeNum: 0,
+//         content: '从没见过这么优秀的人',
+//         reply: []
+//       }
+//     ]
+//   }
+// ];
 
-let commentProjects = reactive({ commenList: commentDatalist });
+// let commentProjects = reactive({ commenList: commentDatalist });
+
+const props = defineProps<{
+  address: string;
+}>()
+
+const commentData = queryCommentByProjectAddr(props.address)
+
+console.log('commentData:', commentData);
+
+
+let commentDatalist = reactive({ commentlist: commentData });
 
 const inputComment = ref('');
 const showItemId = ref('');
@@ -119,14 +131,13 @@ const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
   showItemId.value = item.id;
 }
 
-
 const addComment = async (id: string, replyName?: string) => {
   let res: { data?: any } = {};
 
   if (replyName) {
     // 添加二级评论  
     if (!replyContext.value) {
-      ElMessage.warning("评论或留言不能为空哦！");
+      ElMessage.warning("Comments or comments cannot be empty!");
       return;
     }
 
@@ -150,7 +161,7 @@ const addComment = async (id: string, replyName?: string) => {
   } else {
 
     if (!context.value) {
-      ElMessage.warning("评论或留言不能为空哦！");
+      ElMessage.warning("Comments or comments cannot be empty!");
       return;
     }
 
@@ -169,16 +180,20 @@ const addComment = async (id: string, replyName?: string) => {
     context.value = "";
   }
   isShowSec.value = isClickId.value = "";
-};  
+};
+
+
+
 </script>
 
 <template>
   <div class="comment-container">
-    <div class="Comment">
 
-      <h2 class="conment-title">All comments</h2>
+    <h2 class="conment-title">All comments</h2>
 
-      <transition name="fade">
+    <div class="Comment" v-for="items in commentDatalist.commentlist" :key="items.id">
+
+      <!-- <transition name="fade">
         <div class="input-wrapper">
 
           <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment">
@@ -190,18 +205,18 @@ const addComment = async (id: string, replyName?: string) => {
           </div>
 
         </div>
-      </transition>
+      </transition> -->
 
       <div class="info">
-        <el-image class="avatar" src="https://tokenizk.finance/src/assets/images/21.png" />
+        <el-image class="avatar" :src="items.fromAvatar" />
         <div class="right">
           <!-- <div class="name">Tang</div> -->
-          <div class="name">{{ omitAddress(appState.connectedWallet58) }}</div>
-          <div class="date">2024-02-04 10:35</div>
+          <div class="name">{{ items.fromName }}</div>
+          <div class="date">{{ items.date }}</div>
         </div>
       </div>
 
-      <div class="content">非常靠谱的程序员</div>
+      <div class="content">{{ items.content }}</div>
 
       <div class="control">
         <!-- <span class="like">
@@ -218,16 +233,16 @@ const addComment = async (id: string, replyName?: string) => {
 
       <div class="reply">
 
-        <div class="item">
+        <div class="item" v-for="reply in items.reply" :key="reply.id">
           <div class="reply-content">
-            <span class="from-name">cherry</span><span> : </span>
-            <span class="to-name">@Tang</span>
-            <span>赞同，很靠谱，水平很高</span>
+            <span class="from-name">{{ reply.fromName }}</span><span> : </span>
+            <span class="to-name">@{{ reply.toName }}</span>
+            <span>{{ reply.content }}</span>
           </div>
           <div class="reply-bottom">
-            <span>2024-02-05 08:35</span>
+            <span>{{ reply.date }}</span>
 
-            <span class="reply-text" @click="replyClick">
+            <span class="reply-text" @click="showCommentInput(items, reply)">
               <el-icon class="iconfont icon-comment">
                 <ChatDotSquare />
               </el-icon>
@@ -237,14 +252,15 @@ const addComment = async (id: string, replyName?: string) => {
           </div>
         </div>
 
-        <div class="write-reply">
+        <div class="write-reply" v-if="items.reply.length > 0" @click="showCommentInput(items, reply)">
           <i class="el-icon-edit"></i>
           <span class="add-comment">Add new comment</span>
         </div>
 
         <transition name="fade">
-          <div class="input-wrapper">
-            <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment">
+          <div class="input-wrapper" v-if="showItemId === items.id">
+            <el-input class="gray-bg-input" v-model="inputComment" type="textarea" :rows="3" autofocus
+              placeholder="Write your comment">
             </el-input>
             <div class="btn-control">
               <span class="cancel">Cancel</span>

@@ -1178,7 +1178,7 @@ onUnmounted(() => {
 
                         <el-row class="comment-row">
                             <el-col :span="24">
-                                <Comment />
+                                <Comment :address="saleContributorsDetailDto.saleDto.saleAddress" />
                             </el-col>
                         </el-row>
 
