@@ -2,8 +2,8 @@ const keys_helper = import("./keys_helper.js");
 const o1js = import('o1js');
 
 export const generateTokenKey = async (accountIndex?: number) => {
-    const signMessage = import.meta.env.VITE_TOKEN_KEY_SIGNING_DATA;
-    const signResult = await window.mina.signMessage({
+    const signMessage = (import.meta as any).env.VITE_TOKEN_KEY_SIGNING_DATA;
+    const signResult = await (window as any).mina.signMessage({
         message: signMessage,
     })
     console.log('sign result: ', signResult);
