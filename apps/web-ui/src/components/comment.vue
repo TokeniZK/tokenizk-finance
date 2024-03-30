@@ -193,7 +193,7 @@ const addComment = async (id: string, replyName?: string) => {
        <transition name="fade">
                 <div class="input-wrapper">
                     <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus
-            placeholder="Write your comment">
+            placeholder="Write your comment" v-model="inputComment">
                       </el-input>
                     <div class="first-comment-input">
                         <span class="cancel">Cancel</span>
