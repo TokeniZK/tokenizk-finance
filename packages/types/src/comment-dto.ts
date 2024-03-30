@@ -21,7 +21,7 @@ export interface CommentDto{
     toId: string
 
     
-    parentCommentId: string
+    parentCommentId: number
 
     comment: string
 

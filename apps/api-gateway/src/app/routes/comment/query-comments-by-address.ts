@@ -43,14 +43,18 @@ const handler: RequestHandler<null, {address: string}> = async function (
                 createdAt: 'DESC'
             }
         });
-
+        return {
+            code: 0,
+            data: comments as CommentDto[],
+            msg: ''
+        };
     } catch (err) {
         logger.error(err);
         console.error(err);
     }
     return {
-        code: 0,
-        data: comments as CommentDto[],
+        code: 1,
+        data: [],
         msg: ''
     };
 
