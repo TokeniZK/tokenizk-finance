@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref, onMounted, watch } from 'vue'
+import { reactive, ref, onMounted, watch,computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { useConnectStatusStore } from '@/stores/connectStatus'
 import type { Token } from 'typescript';
@@ -380,6 +380,30 @@ const transferData: User[] = [
     },
 ]
 
+// Pagination
+const paginationValue = ref(false);
+const pageSize = ref(5); // 每页显示5条信息  
+const currentPage = ref(1); // 当前页码      
+
+// 计算总条目数  
+const totalItems = computed(() => transferData.length);
+
+// 计算当前页显示的条目  
+const currentPageItems = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return transferData.slice(start, end);
+});
+
+const handleSizeChange = (val: number) => {
+    pageSize.value = val;
+    currentPage.value = 1; // 当条数变化时，重置到第一页  
+}
+const handleCurrentChange = (val: number) => {
+    currentPage.value = val;
+}
+
+
 // 组件挂载完成后执行的函数
 onMounted(async () => {
 
@@ -502,10 +526,18 @@ onMounted(async () => {
                 <el-col :span="24">
                     <div class="transferRecordTable">
                         <h2>Transfer Record</h2>
-                        <el-table :data="transferData" height="250" style="width: 100%">
+                        <el-table :data="currentPageItems" height="250" style="width: 100%">
                             <el-table-column prop="date" label="Date" width="180" />
                             <el-table-column prop="address" label="Address" />
                         </el-table>
+                        <!-- 分页 -->
+                        <el-scrollbar max-height="700px" style="margin-top: 20px;">
+                                <el-pagination class="pagination-block" background :page-size="pageSize"
+                                    :current-page="currentPage" :pager-count="6" layout="total,prev, pager, next,jumper"
+                                    :hide-on-single-page="paginationValue" :total="totalItems"
+                                    @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+                        </el-scrollbar>
+
                     </div>
                 </el-col>
             </el-row>
