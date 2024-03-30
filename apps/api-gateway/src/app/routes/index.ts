@@ -7,6 +7,7 @@ import { userEndpoint } from "./user";
 import { witnessEndpoint } from "./witness";
 import { proofReqEndpoint } from "./proof";
 import { networkEndpoint } from "./network";
+import { commentsEndpoint } from "./comment";
 
 export const routes: FastifyPlugin = async function (
     instance,
@@ -21,4 +22,5 @@ export const routes: FastifyPlugin = async function (
     instance.register(airdropEndpoint);
     instance.register(proofReqEndpoint);
     instance.register(networkEndpoint);
+    instance.register(commentsEndpoint);
 }
