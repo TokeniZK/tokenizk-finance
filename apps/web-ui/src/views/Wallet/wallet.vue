@@ -286,7 +286,8 @@ watch(() => appState.connectedWallet58, async (value, oldValue) => {
 
 interface User {
     date: string
-    address: string
+    receiver: string
+    amount:string
 }
 
 interface TransferRecord {
@@ -352,31 +353,38 @@ const formatter = (row: User, column: TableColumnCtx<User>) => {
 const transferData: User[] = [
     {
         date: '2024/01/02 10:31:53',
-        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        amount:'200'
     },
     {
         date: '2024/01/03 20:18:21',
-        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        amount:'600'
     },
     {
         date: '2024/01/04 13:11:45',
-        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        amount:'3000'
     },
     {
         date: '2024/01/06 23:55:25',
-        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        amount:'700'
     },
     {
         date: '2024/01/08 07:32:33',
-        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        amount:'1800'
     },
     {
         date: '2024/01/20 07:39:15',
-        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        amount:'100'
     },
     {
         date: '2024/01/21 22:51:50',
-        address: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+        amount:'5000'
     },
 ]
 
@@ -528,7 +536,8 @@ onMounted(async () => {
                         <h2>Transfer Record</h2>
                         <el-table :data="currentPageItems" height="250" style="width: 100%">
                             <el-table-column prop="date" label="Date" width="180" />
-                            <el-table-column prop="address" label="Address" />
+                            <el-table-column prop="receiver" label="Receiver" width="560"/>
+                            <el-table-column prop="amount" label="Amount" />
                         </el-table>
                         <!-- 分页 -->
                         <el-scrollbar max-height="700px" style="margin-top: 20px;">
@@ -626,4 +635,5 @@ onMounted(async () => {
         margin-bottom: 40px;
     }
 }
+
 </style>
