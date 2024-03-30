@@ -113,6 +113,11 @@ const handler: RequestHandler<CommentDto, null> = async function (
         logger.error(err);
         console.error(err);
     }
+    return {
+        code: 1,
+        data: '',
+        msg: 'signature not valid'
+    }
 }
 
 const schema = {
