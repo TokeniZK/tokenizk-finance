@@ -46,7 +46,7 @@ const handler: RequestHandler<null, {address: string}> = async function (
 
         return {
             code: 0,
-            data: comments as CommentDto[],
+            data: comments as any as CommentDto[],
             msg: ''
         };
     
