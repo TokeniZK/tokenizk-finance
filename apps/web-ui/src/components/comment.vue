@@ -3,7 +3,10 @@ import { ref, reactive, onMounted } from 'vue'
 import { useStatusStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import { omitAddress } from "@/utils"
+import {CommentDto} from '@tokenizk/types'
 import { queryCommentByProjectAddr } from '@/apis/comment-api'
+
+type CommentDtoExtend = CommentDto & {children:CommentDto[]}
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -82,12 +85,19 @@ const props = defineProps<{
   address: string;
 }>()
 
-const commentData = queryCommentByProjectAddr(props.address)
-
+const commentData = await queryCommentByProjectAddr(props.address)
 console.log('commentData:', commentData);
 
+// transform data into tree-pattern
+const renderComments = commentData.filter(c1 => {
+  return c1.parentCommentId
+}) as CommentDtoExtend[];
+renderComments.forEach(c => {
+  c.children = commentData.filter(c2 => c2.parentCommentId == c.id)
+} );
+console.log('renderComments:', renderComments);
 
-let commentDatalist = reactive({ commentlist: commentData });
+let commentDatalist = reactive({ commentlist: renderComments });
 
 const inputComment = ref('');
 const showItemId = ref('');
@@ -122,9 +132,9 @@ const commitComment = () => {
   console.log(inputComment.value);
 }
 
-const showCommentInput = (item: { id: string; }, reply: { fromName: any; }) => {
+const showCommentInput = (item: { id: string; }, reply: { fromId: any; }) => {
   if (reply) {
-    inputComment.value = `@${reply.fromName} `;
+    inputComment.value = `@${reply.fromId} `;
   } else {
     inputComment.value = '';
   }
@@ -208,12 +218,12 @@ const addComment = async (id: string, replyName?: string) => {
       <div class="info">
         <el-image class="avatar" :src="items.fromAvatar" />
         <div class="right">
-          <div class="name">{{ items.fromName }}</div>
-          <div class="date">{{ items.date }}</div>
+          <div class="name">{{ items.fromId }}</div>
+          <div class="date">{{ items.createdAt }}</div>
         </div>
       </div>
 
-      <div class="content">{{ items.content }}</div>
+      <div class="content">{{ items.comment }}</div>
 
       <div class="control">
         <!-- <span class="like">
@@ -230,14 +240,14 @@ const addComment = async (id: string, replyName?: string) => {
 
       <div class="reply">
 
-        <div class="item" v-for="reply in items.reply" :key="reply.id">
+        <div class="item" v-for="reply in items.children" :key="reply.id">
           <div class="reply-content">
-            <span class="from-name">{{ reply.fromName }}</span><span> : </span>
-            <span class="to-name">@{{ reply.toName }}</span>
-            <span>{{ reply.content }}</span>
+            <span class="from-name">{{ reply.fromId }}</span><span> : </span>
+            <span class="to-name">@{{ reply.toId }}</span>
+            <span>{{ reply.comment }}</span>
           </div>
           <div class="reply-bottom">
-            <span>{{ reply.date }}</span>
+            <span>{{ reply.createdAt }}</span>
 
             <span class="reply-text" @click="showCommentInput(items, reply)">
               <el-icon class="iconfont icon-comment">
