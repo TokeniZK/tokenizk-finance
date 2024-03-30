@@ -182,8 +182,6 @@ const addComment = async (id: string, replyName?: string) => {
   isShowSec.value = isClickId.value = "";
 };
 
-
-
 </script>
 
 <template>
@@ -191,26 +189,25 @@ const addComment = async (id: string, replyName?: string) => {
 
     <h2 class="conment-title">All comments</h2>
 
+    <div class="Comment" style="margin-top: -40px;">
+       <transition name="fade">
+                <div class="input-wrapper">
+                    <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus
+            placeholder="Write your comment">
+                      </el-input>
+                    <div class="first-comment-input">
+                        <span class="cancel">Cancel</span>
+                        <el-button class="btn" type="success" round @click="replyClick">Confirm</el-button>
+                      </div>
+                  </div>
+          </transition>
+    </div>
+
     <div class="Comment" v-for="items in commentDatalist.commentlist" :key="items.id">
-
-      <!-- <transition name="fade">
-        <div class="input-wrapper">
-
-          <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment">
-          </el-input>
-
-          <div class="first-comment-input">
-            <span class="cancel">Cancel</span>
-            <el-button class="btn" type="success" round @click="replyClick">Confirm</el-button>
-          </div>
-
-        </div>
-      </transition> -->
 
       <div class="info">
         <el-image class="avatar" :src="items.fromAvatar" />
         <div class="right">
-          <!-- <div class="name">Tang</div> -->
           <div class="name">{{ items.fromName }}</div>
           <div class="date">{{ items.date }}</div>
         </div>
@@ -302,7 +299,7 @@ const addComment = async (id: string, replyName?: string) => {
       .cancel {
         font-size: 16px;
         color: #606266;
-        margin-right: 20px;
+        // margin-right: 20px;
         cursor: pointer;
 
         &:hover {
