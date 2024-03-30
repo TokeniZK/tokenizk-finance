@@ -7,7 +7,7 @@ import { getConnection } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { ClientProveTask, UserTokenAirdrop, Comment } from "@tokenizk/entities"
 import { $axiosCore, $axiosProofGen } from "@/lib/api"
-import { ClientProofReqType, CommentDto } from "@tokenizk/types"
+import { ClientProofReqType, CommentDto, CommentDtoSchema } from "@tokenizk/types"
 import { fetchLastBlock } from 'o1js';
 
 const logger = getLogger('queryNewCommentsByUserAddr');

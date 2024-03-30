@@ -7,7 +7,7 @@ import { getConnection } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { ClientProveTask, UserTokenAirdrop, Comment, Airdrop,Sale } from "@tokenizk/entities"
 import { $axiosCore, $axiosProofGen } from "@/lib/api"
-import { ClientProofReqType, CommentDto } from "@tokenizk/types"
+import { ClientProofReqType, CommentDto, CommentDtoSchema } from "@tokenizk/types"
 import { Signature, PublicKey,Field } from 'o1js';
 import { createHash } from "crypto";
 
@@ -34,7 +34,7 @@ const handler: RequestHandler<CommentDto, null> = async function (
 
     // check signature to avoid evil submit
     // TODO check it
-    const target = createHash('SHA256').update(dto.projectAddress.concat(dto.message)).digest('hex');
+    const target = createHash('SHA256').update(dto.projectAddress.concat(dto.comment)).digest('hex');
     const rs = Signature.fromBase58(dto.signature).verify(PublicKey.fromBase58(dto.fromId), [Field(target)]);
 
     if(!rs){
@@ -60,7 +60,7 @@ const handler: RequestHandler<CommentDto, null> = async function (
             if (parentComment) {
                 // submit comment
                 const comment = new Comment();
-                Object.assign(comment, CommentDto);
+                Object.assign(comment, dto);
                 await commentRepo.save(comment);
                 return {
                     code: 0,
