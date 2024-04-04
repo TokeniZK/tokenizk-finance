@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, reactive, watch, computed, type ComputedRef } from 'vue'
+import { ref, onMounted, onUnmounted, reactive, watch, computed, type ComputedRef, Suspense } from 'vue'
 import type { SaleDto, UserContributionDto } from '@tokenizk/types'
 import { CircuitControllerState, useStatusStore } from '@/stores';
 import { querySaleDetails, submitContribution } from '@/apis/sale-api';
@@ -1179,7 +1179,7 @@ onUnmounted(() => {
                         <el-row class="comment-row">
                             <el-col :span="24">
                                 <Suspense>
-                                    <Comment :address="saleContributorsDetailDto.saleDto.saleAddress" />
+                                    <Comment :address="saleContributorsDetailDto.saleDto.saleAddress" :projectType="saleContributorsDetailDto.saleDto.saleType" />
                                 </Suspense>
                             </el-col>
                         </el-row>

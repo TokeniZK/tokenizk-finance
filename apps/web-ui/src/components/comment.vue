@@ -4,7 +4,7 @@ import { useStatusStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import { omitAddress } from "@/utils"
 import { type CommentDto } from '@tokenizk/types'
-import { queryCommentByProjectAddr } from '@/apis/comment-api'
+import { queryCommentByProjectAddr, submitComment } from '@/apis/comment-api'
 
 type CommentDtoExtend = CommentDto & { children: CommentDto[] }
 
@@ -23,17 +23,75 @@ const isShowSec = ref('');
 const isClickId = ref('');
 const articleId = ref('');
 
+// let commentDatalist = [
+//   {
+//     status: "成功",
+//     code: 200,
+//     data: [
+//       {
+//         id: 'comment0001', //主键id
+//         date: '2018-07-05 08:30',  //评论时间
+//         ownerId: 'talents100020', //文章的id
+//         fromId: 'errhefe232213',  //评论者id
+//         fromName: 'Tang评论家',   //评论者昵称
+//         fromAvatar: 'http://ww4.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2pddjuj30v90uvagf.jpg', //评论者头像
+//         likeNum: 3, //点赞人数
+//         content: '非常靠谱的程序员',  //评论内容
+//         reply: [  //回复，或子评论
+//           {
+//             id: '34523244545',  //主键id
+//             commentId: 'comment0001',  //父评论id，即父亲的id
+//             fromId: 'observer223432',  //评论者id
+//             fromName: 'cherry',  //评论者昵称
+//             fromAvatar: 'https://wx4.sinaimg.cn/mw690/69e273f8gy1ft1541dmb7j215o0qv7wh.jpg', //评论者头像
+//             toId: 'errhefe232213',  //被评论者id
+//             toName: 'Tang评论家',  //被评论者昵称
+//             toAvatar: 'http://ww4.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2pddjuj30v90uvagf.jpg',  //被评论者头像
+//             content: '赞同，很靠谱，水平很高',  //评论内容
+//             date: '2018-07-05 08:35'   //评论时间
+//           },
+//           {
+//             id: '34523244545',
+//             commentId: 'comment0001',
+//             fromId: 'observer567422',
+//             fromName: '清晨一缕阳光',
+//             fromAvatar: 'http://imgsrc.baidu.com/imgad/pic/item/c2fdfc039245d688fcba1b80aec27d1ed21b245d.jpg',
+//             toId: 'observer223432',
+//             toName: 'cherry',
+//             toAvatar: 'https://wx4.sinaimg.cn/mw690/69e273f8gy1ft1541dmb7j215o0qv7wh.jpg',
+//             content: '大神一个！',
+//             date: '2018-07-05 08:50'
+//           }
+//         ]
+//       },
+//       {
+//         id: 'comment0002',
+//         date: '2018-07-05 08:30',
+//         ownerId: 'talents100020',
+//         fromId: 'errhefe232213',
+//         fromName: '毒蛇郭德纲',
+//         fromAvatar: 'http://ww1.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2q2p8pj30v90uzmzz.jpg',
+//         likeNum: 0,
+//         content: '从没见过这么优秀的人',
+//         reply: []
+//       }
+//     ]
+//   }
+// ];
+
+// let commentProjects = reactive({ commenList: commentDatalist });
+
 const props = defineProps<{
   address: string;
+  projectType: number;
 }>()
 
-// const commentData = await queryCommentByProjectAddr(props.address)
-const commentData = [] as CommentDto[];
+const commentData = await queryCommentByProjectAddr(props.address)
 console.log('commentData:', commentData);
 
 // transform data into tree-pattern
 const renderComments = commentData.filter(c1 => {
-  return c1.parentCommentId
+  return c1.parentCommentId == -1
 }) as CommentDtoExtend[];
 renderComments.forEach(c => {
   c.children = commentData.filter(c2 => c2.parentCommentId == c.id)
@@ -46,17 +104,17 @@ const inputComment = ref('');
 const inputComment2 = ref('');
 const showItemId = ref('');
 
-// const likeClick = (item: { isLike: boolean; likeNum: number; }) => {
-//   if (item.isLike === null) {
-//     item.isLike = true;
-//     item.likeNum++;
-//   } else {
-//     item.likeNum += item.isLike ? -1 : 1;
-//     item.isLike = !item.isLike;
-//   }
-// }
+const likeClick = (item: { isLike: boolean; likeNum: number; }) => {
+  if (item.isLike === null) {
+    item.isLike = true;
+    item.likeNum++;
+  } else {
+    item.likeNum += item.isLike ? -1 : 1;
+    item.isLike = !item.isLike;
+  }
+}
 
-const replyClick = async () => {
+const addComment = async () => {
   if (!appState.connectedWallet58) {
     ElMessage({
       showClose: true,
@@ -66,6 +124,18 @@ const replyClick = async () => {
 
     return;
   }
+
+  // trigger signature
+  //
+
+  // submit
+  await submitComment({
+    projectType: props.projectType,
+    projectAddress: props.address,
+    fromId: appState.connectedWallet58,
+    comment: inputComment.value,
+    signature: ''
+  } as CommentDto);
 }
 
 // 点击回复按钮时切换回复框的显示与隐藏状态
@@ -82,18 +152,14 @@ const InputCancel2 = () => {
   inputComment2.value = '';
 }
 
+const cancel = () => {
+  showItemId.value = '';
+}
+
 const commitComment = () => {
   console.log(inputComment.value);
 }
 
-/**
- * 点击评论按钮显示输入框
- * item: 当前大评论
- * reply: 当前回复的评论
- */
-
-const itemObj = { id: 'item123' };
-const replyObj = { fromId: 'user456' };
 const showCommentInput = (item: { id: string; }, reply: { fromId: any; }) => {
   if (reply) {
     inputComment.value = `@${reply.fromId} `;
@@ -103,7 +169,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromId: any; }) => {
   showItemId.value = item.id;
 }
 
-const addComment = async (id: string, replyName?: string) => {
+const replyClick = async (id: string, replyName?: string) => {
   let res: { data?: any } = {};
 
   if (replyName) {
@@ -161,37 +227,33 @@ const addComment = async (id: string, replyName?: string) => {
 
     <h2 class="conment-title">All comments</h2>
 
-    <div class="Comment" style="margin-top: -40px;">
-       <transition name="fade">
-                <div class="input-wrapper">
-                    <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment"
+    <div class="Comment">
+      <transition name="fade">
+        <div class="input-wrapper" v-show="true">
+          <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment"
             v-model="inputComment">
-                     </el-input>
-                    <div class="first-comment-input">
-                        <span class="cancel" @click="InputCancel">Cancel</span>
-                        <el-button class="btn" type="success" round @click="replyClick">Confirm</el-button>
-                      </div>
-                  </div>
-          </transition>
+          </el-input>
+          <div class="first-comment-input">
+            <span class="cancel" @click="InputCancel">Cancel</span>
+            <el-button class="btn" type="success" round @click="addComment">Confirm</el-button>
+          </div>
+        </div>
+      </transition>
     </div>
 
-    <div class="Comment" v-for="items in commentDatalist.commentlist" :key="items.id">
+
+    <div class="Comment" v-for="item in commentDatalist.commentlist" :key="item.id">
 
       <div class="info">
-        <el-image class="avatar" :src="items" />
         <div class="right">
-          <div class="name">{{ items.fromId }}</div>
-          <div class="date">{{ items.createdAt }}</div>
+          <div class="name">{{ item.fromId }}</div>
+          <div class="date">{{ item.createdAt }}</div>
         </div>
       </div>
 
-      <div class="content">{{ items.comment }}</div>
+      <div class="content">{{ item.comment }}</div>
 
       <div class="control">
-        <!-- <span class="like">
-          <i class="iconfont icon-like"></i>
-          <span class="like-num">40人赞</span>
-        </span> -->
         <span class="comment-reply" @click="replyClick">
           <el-icon class="iconfont icon-comment">
             <ChatDotSquare />
@@ -201,7 +263,8 @@ const addComment = async (id: string, replyName?: string) => {
       </div>
 
       <div class="reply">
-        <div class="item" v-for="reply in items.children" :key="reply.id">
+
+        <div class="item" v-for="reply in item.children" :key="reply.id">
           <div class="reply-content">
             <span class="from-name">{{ reply.fromId }}</span><span> : </span>
             <span class="to-name">@{{ reply.toId }}</span>
@@ -209,22 +272,24 @@ const addComment = async (id: string, replyName?: string) => {
           </div>
           <div class="reply-bottom">
             <span>{{ reply.createdAt }}</span>
-            <span class="reply-text" @click="showCommentInput(itemObj, replyObj)">
+
+            <span class="reply-text" @click="showCommentInput(item, reply)">
               <el-icon class="iconfont icon-comment">
                 <ChatDotSquare />
               </el-icon>
               <span>reply</span>
             </span>
+
           </div>
         </div>
 
-        <div class="write-reply" v-if="items.children.length > 0" @click="showCommentInput(itemObj, replyObj)">
+        <div class="write-reply" @click="showCommentInput(item, reply)">
           <i class="el-icon-edit"></i>
           <span class="add-comment">Add new comment</span>
         </div>
 
         <transition name="fade" v-if="ShowReplyInput">
-          <div class="input-wrapper" v-if="true">
+          <div class="input-wrapper" v-if="showItemId === item.id">
             <el-input class="gray-bg-input" v-model="inputComment" type="textarea" :rows="3" autofocus
               placeholder="Write your comment">
             </el-input>
@@ -234,6 +299,7 @@ const addComment = async (id: string, replyName?: string) => {
             </div>
           </div>
         </transition>
+
       </div>
 
     </div>
@@ -268,7 +334,7 @@ const addComment = async (id: string, replyName?: string) => {
       .cancel {
         font-size: 16px;
         color: #606266;
-        // margin-right: 20px;
+        margin-right: 20px;
         cursor: pointer;
 
         &:hover {
