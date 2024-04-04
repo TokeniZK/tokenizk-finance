@@ -10,18 +10,6 @@ type CommentDtoExtend = CommentDto & { children: CommentDto[] }
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
-// 定义响应式引用  
-const comments = ref<any[]>([]);
-const replyContext = ref('');
-const context = ref('');
-const username = ref('');
-const userId = ref('');
-const avatarUrl = ref('');
-const secIdx = ref(0);
-const firstIdx = ref(0);
-const isShowSec = ref('');
-const isClickId = ref('');
-const articleId = ref('');
 
 // let commentDatalist = [
 //   {
@@ -82,8 +70,8 @@ const articleId = ref('');
 // let commentProjects = reactive({ commenList: commentDatalist });
 
 const props = defineProps<{
-  address: string;
-  projectType: number;
+    address: string;
+    projectType: number;
 }>()
 
 const commentData = await queryCommentByProjectAddr(props.address)
@@ -91,10 +79,10 @@ console.log('commentData:', commentData);
 
 // transform data into tree-pattern
 const renderComments = commentData.filter(c1 => {
-  return c1.parentCommentId == -1
+    return c1.parentCommentId == -1
 }) as CommentDtoExtend[];
 renderComments.forEach(c => {
-  c.children = commentData.filter(c2 => c2.parentCommentId == c.id)
+    c.children = commentData.filter(c2 => c2.parentCommentId == c.id)
 });
 console.log('renderComments:', renderComments);
 
@@ -102,456 +90,443 @@ let commentDatalist = reactive({ commentlist: renderComments });
 
 const inputComment = ref('');
 const inputComment2 = ref('');
-const showItemId = ref('');
-
-const likeClick = (item: { isLike: boolean; likeNum: number; }) => {
-  if (item.isLike === null) {
-    item.isLike = true;
-    item.likeNum++;
-  } else {
-    item.likeNum += item.isLike ? -1 : 1;
-    item.isLike = !item.isLike;
-  }
-}
+const showItemId = ref(-1);
 
 const addComment = async () => {
-  if (!appState.connectedWallet58) {
-    ElMessage({
-      showClose: true,
-      type: 'warning',
-      message: `Please connect your wallet first, and then you can leave a comment .`,
-    });
+    if (!appState.connectedWallet58) {
+        ElMessage({
+            showClose: true,
+            type: 'warning',
+            message: `Please connect your wallet first, and then you can leave a comment .`,
+        });
 
-    return;
-  }
+        return;
+    }
 
-  // trigger signature
-  //
+    // trigger signature
+    //
 
-  // submit
-  await submitComment({
-    projectType: props.projectType,
-    projectAddress: props.address,
-    fromId: appState.connectedWallet58,
-    comment: inputComment.value,
-    signature: ''
-  } as CommentDto);
+    // submit
+    const dto = {
+        projectType: props.projectType,
+        projectAddress: props.address,
+        fromId: appState.connectedWallet58,
+        comment: inputComment.value,
+        signature: '',
+        createdAt: new Date()
+    } as CommentDto;
+    const id = await submitComment(dto);
+    if (id != -1) {
+        dto.id = id;
+        (dto as any as CommentDtoExtend).children = [];
+        commentDatalist.commentlist.push((dto as any as CommentDtoExtend));
+    }
+
+    inputComment.value = '';
 }
 
-// 点击回复按钮时切换回复框的显示与隐藏状态
-let ShowReplyInput = ref(false)
-let toggleReplyBox = () => {
-  ShowReplyInput.value = !ShowReplyInput.value;
-};
+const addChildComment = async (parentCommentId: number, toId: string) => {
+    // trigger signature
+    //
+
+    // submit
+    const dto = {
+        projectType: props.projectType,
+        projectAddress: props.address,
+        fromId: appState.connectedWallet58,
+        toId,
+        parentCommentId,
+        signature: '',
+        createdAt: new Date()
+    } as CommentDto;
+    
+    if(inputComment2.value.indexOf(`@${omitAddress(toId)}`) == 0){
+       dto.comment = inputComment2.value.substring(inputComment2.value.indexOf(`@${omitAddress(toId)}`) + `@${omitAddress(toId)}`.length)
+    } else if(inputComment2.value.indexOf(`@${omitAddress(toId)} `) == 0){
+       dto.comment = inputComment2.value.substring(inputComment2.value.indexOf(`@${omitAddress(toId)} `) + `@${omitAddress(toId)} `.length)
+    } else {
+        dto.comment = inputComment2.value;
+    }
+
+    const id = await submitComment(dto);
+    if (id != -1) {
+        dto.id = id;
+        (dto as any as CommentDtoExtend).children = [];
+        commentDatalist.commentlist.filter(c => c.id == parentCommentId)[0].children.push((dto as any as CommentDtoExtend));
+    }
+
+    showItemId.value = -1;
+    inputComment2.value = '';
+}
 
 const InputCancel = () => {
-  inputComment.value = '';
+    inputComment.value = '';
 }
 
 const InputCancel2 = () => {
-  inputComment2.value = '';
+    inputComment2.value = '';
 }
 
-const cancel = () => {
-  showItemId.value = '';
-}
+const replyClick = async (parentCommentId: number, currentCommentId: number, toId?: string) => {
+    if (!appState.connectedWallet58) {
+        ElMessage({
+            showClose: true,
+            type: 'warning',
+            message: `Please connect your wallet first, and then you can leave a comment .`,
+        });
 
-const commitComment = () => {
-  console.log(inputComment.value);
-}
-
-const showCommentInput = (item: { id: string; }, reply: { fromId: any; }) => {
-  if (reply) {
-    inputComment.value = `@${reply.fromId} `;
-  } else {
-    inputComment.value = '';
-  }
-  showItemId.value = item.id;
-}
-
-const replyClick = async (id: string, replyName?: string) => {
-  let res: { data?: any } = {};
-
-  if (replyName) {
-    // 添加二级评论  
-    if (!replyContext.value) {
-      ElMessage.warning("Comments or comments cannot be empty!");
-      return;
+        return;
     }
 
-    res.data = {
-      username: username.value,
-      userId: userId.value,
-      avatarUrl: avatarUrl.value,
-      _id: "sec" + secIdx.value++, // 评论id  
-      replyName,
-      date: "2022.09.01", // 创建日期  
-      favour: [], // 点赞的用户id  
-      content: replyContext.value // 评论内容  
-    };
-    // 提交成功后更新本地评论列表  
-    const comment = comments.value.find(item => item._id === id);
-    if (!comment?.replyInfo) {
-      comment.replyInfo = [];
-    }
-    comment.replyInfo.push(res.data);
-    replyContext.value = "";
-  } else {
+    // add prefix
+    inputComment2.value = `@${omitAddress(toId)} `;
 
-    if (!context.value) {
-      ElMessage.warning("Comments or comments cannot be empty!");
-      return;
-    }
-
-    res.data = {
-      username: username.value,
-      avatarUrl: avatarUrl.value,
-      userId: userId.value,
-      _id: "first" + firstIdx.value++, // 评论id  
-      date: "2022.09.01", // 创建日期  
-      articleId: articleId.value, // 评论的文章id  
-      favour: [], // 点赞的用户id  
-      content: context.value // 评论内容  
-    };
-    // 提交成功后更新本地评论列表  
-    comments.value.push(res.data);
-    context.value = "";
-  }
-  isShowSec.value = isClickId.value = "";
+    // show reply input
+    showItemId.value = currentCommentId;
 };
 
 </script>
 
 <template>
-  <div class="comment-container">
+    <div class="comment-container">
 
-    <h2 class="conment-title">All comments</h2>
+        <h2 class="conment-title">All comments</h2>
 
-    <div class="Comment">
-      <transition name="fade">
-        <div class="input-wrapper" v-show="true">
-          <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment"
-            v-model="inputComment">
-          </el-input>
-          <div class="first-comment-input">
-            <span class="cancel" @click="InputCancel">Cancel</span>
-            <el-button class="btn" type="success" round @click="addComment">Confirm</el-button>
-          </div>
-        </div>
-      </transition>
-    </div>
-
-
-    <div class="Comment" v-for="item in commentDatalist.commentlist" :key="item.id">
-
-      <div class="info">
-        <div class="right">
-          <div class="name">{{ item.fromId }}</div>
-          <div class="date">{{ item.createdAt }}</div>
-        </div>
-      </div>
-
-      <div class="content">{{ item.comment }}</div>
-
-      <div class="control">
-        <span class="comment-reply" @click="replyClick">
-          <el-icon class="iconfont icon-comment">
-            <ChatDotSquare />
-          </el-icon>
-          <span>reply</span>
-        </span>
-      </div>
-
-      <div class="reply">
-
-        <div class="item" v-for="reply in item.children" :key="reply.id">
-          <div class="reply-content">
-            <span class="from-name">{{ reply.fromId }}</span><span> : </span>
-            <span class="to-name">@{{ reply.toId }}</span>
-            <span>{{ reply.comment }}</span>
-          </div>
-          <div class="reply-bottom">
-            <span>{{ reply.createdAt }}</span>
-
-            <span class="reply-text" @click="showCommentInput(item, reply)">
-              <el-icon class="iconfont icon-comment">
-                <ChatDotSquare />
-              </el-icon>
-              <span>reply</span>
-            </span>
-
-          </div>
+        <div class="Comment" style="margin-top: -40px;">
+            <transition name="fade">
+                <div class="input-wrapper" v-show="true">
+                    <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment"
+                        v-model="inputComment">
+                    </el-input>
+                    <div class="first-comment-input">
+                        <span class="cancel" @click="InputCancel">Cancel</span>
+                        <el-button class="btn" type="success" round @click="addComment">Confirm</el-button>
+                    </div>
+                </div>
+            </transition>
         </div>
 
-        <div class="write-reply" @click="showCommentInput(item, reply)">
-          <i class="el-icon-edit"></i>
-          <span class="add-comment">Add new comment</span>
-        </div>
 
-        <transition name="fade" v-if="ShowReplyInput">
-          <div class="input-wrapper" v-if="showItemId === item.id">
-            <el-input class="gray-bg-input" v-model="inputComment" type="textarea" :rows="3" autofocus
-              placeholder="Write your comment">
-            </el-input>
-            <div class="btn-control">
-              <span class="cancel" @click="InputCancel2">Cancel</span>
-              <el-button class="btn" type="success" round @click="replyClick">Confirm</el-button>
+        <div class="Comment" v-for="item in commentDatalist.commentlist" :key="item.id">
+
+            <div class="info">
+                <div class="right">
+                    <div class="name" v-if="item.fromId == appState.connectedWallet58">You</div>
+                    <div class="name" v-else>{{ omitAddress(item.fromId) }}</div>
+                    <div class="date">{{ item.createdAt }}</div>
+                </div>
             </div>
-          </div>
-        </transition>
 
-      </div>
+            <div class="content">{{ item.comment }}</div>
+
+            <div class="control">
+                <span class="comment-reply" @click="replyClick(item.id, item.id, item.fromId)">
+                    <el-icon class="iconfont icon-comment">
+                        <ChatDotSquare />
+                    </el-icon>
+                    <span>reply</span>
+                </span>
+
+                <div v-if="showItemId == item.id">
+                    <el-input class="gray-bg-input" v-model="inputComment2" type="textarea" :rows="3" autofocus
+                        placeholder="Write your comment">
+                    </el-input>
+                    <div class="btn-control">
+                        <span class="cancel" @click="InputCancel2">Cancel</span>
+                        <el-button class="btn" type="success" round
+                            @click="addChildComment(item.id, item.fromId)">Confirm</el-button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reply">
+
+                <div class="item" v-for="reply in item.children" :key="reply.id">
+                    <div class="reply-content">
+                        <div>
+                            <span class="from-name" v-if="reply.fromId == appState.connectedWallet58">You</span>
+                            <span class="from-name" v-else>{{ omitAddress(reply.fromId) }}</span>
+                            <span> : </span>
+                        </div>
+
+                        <span class="to-name" v-if="reply.toId == appState.connectedWallet58">@You</span>
+                        <span class="to-name" v-else>@{{ omitAddress(reply.toId) }}</span>
+                        <span>{{ reply.comment }}</span>
+                    </div>
+                    <div class="reply-bottom">
+                        <span>{{ reply.createdAt }}</span>
+
+                        <span class="reply-text" @click="replyClick(item.id, reply.id, reply.fromId)">
+                            <el-icon class="iconfont icon-comment">
+                                <ChatDotSquare />
+                            </el-icon>
+                            <span>reply</span>
+                        </span>
+                    </div>
+
+                    <div class="input-wrapper" v-if="showItemId == reply.id">
+                        <el-input class="gray-bg-input" v-model="inputComment2" type="textarea" :rows="3" autofocus
+                            placeholder="Write your comment">
+                        </el-input>
+                        <div class="btn-control">
+                            <span class="cancel" @click="InputCancel2">Cancel</span>
+                            <el-button class="btn" type="success" round
+                                @click="addChildComment(item.id, reply.fromId)">Confirm</el-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
     </div>
-
-  </div>
 </template>
 
 
 <style scoped lang="less">
 .comment-container {
-  padding: 0 10px;
-  box-sizing: border-box;
+    padding: 0 10px;
+    box-sizing: border-box;
 
-  .Comment {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    border-bottom: 1px solid #F2F6FC;
-    width: 100%;
-
-    .conment-title {
-      border-left: 4px solid #00FFC2;
-      padding-left: 12px;
-    }
-
-    .first-comment-input {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding-top: 10px;
-
-      .cancel {
-        font-size: 16px;
-        color: #606266;
-        margin-right: 20px;
-        cursor: pointer;
-
-        &:hover {
-          color: #00c798;
-        }
-      }
-
-      .btn {
-        font-size: 16px;
-        background-color: #00c798;
-
-        &:hover {
-          color: #333;
-        }
-      }
-
-      .confirm {
-        font-size: 16px;
-      }
-    }
-
-    .info {
-      display: flex;
-      align-items: center;
-
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-      }
-
-      .right {
+    .Comment {
         display: flex;
         flex-direction: column;
-        margin-left: 10px;
+        padding: 10px;
+        border-bottom: 1px solid #F2F6FC;
+        width: 100%;
 
-        .name {
-          font-size: 16px;
-          color: #00c798;
-          margin-bottom: 5px;
-          font-weight: 500;
+        .conment-title {
+            border-left: 4px solid #00FFC2;
+            padding-left: 12px;
         }
 
-        .date {
-          font-size: 12px;
-          color: #909399;
-        }
-      }
-    }
+        .first-comment-input {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-top: 10px;
 
-    .content {
-      font-size: 16px;
-      color: #303133;
-      line-height: 20px;
-      padding: 10px 0;
-    }
+            .cancel {
+                font-size: 16px;
+                color: #606266;
+                // margin-right: 20px;
+                cursor: pointer;
 
-    .control {
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-      color: #909399;
+                &:hover {
+                    color: #00c798;
+                }
+            }
 
-      .like {
-        display: flex;
-        align-items: center;
-        margin-right: 20px;
-        cursor: pointer;
+            .btn {
+                font-size: 16px;
+                background-color: #00c798;
 
-        &.active,
-        &:hover {
-          color: #303133;
-        }
+                &:hover {
+                    color: #333;
+                }
+            }
 
-        .iconfont {
-          font-size: 14px;
-          margin-right: 5px;
-        }
-      }
-
-      .comment-reply {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        font-size: 14px;
-
-        &:hover {
-          color: #00c798;
+            .confirm {
+                font-size: 16px;
+            }
         }
 
-        .iconfont {
-          font-size: 16px;
-          margin-right: 5px;
-        }
-      }
-
-    }
-
-    .reply {
-      margin: 10px 0;
-      border-left: 2px solid #DCDFE6;
-
-      .item {
-        margin: 0 10px;
-        padding: 10px 0;
-        border-bottom: 1px dashed #EBEEF5;
-
-        .reply-content {
-          display: flex;
-          align-items: center;
-          font-size: 16px;
-          color: #303133;
-
-          .from-name {
-            color: #00c798;
-          }
-
-          .to-name {
-            color: #00c798;
-            margin-left: 5px;
-            margin-right: 5px;
-          }
-        }
-
-        .reply-bottom {
-          display: flex;
-          align-items: center;
-          margin-top: 6px;
-          font-size: 16px;
-          color: #909399;
-
-          .reply-text {
+        .info {
             display: flex;
             align-items: center;
-            margin-left: 10px;
-            cursor: pointer;
+
+            .avatar {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+            }
+
+            .right {
+                display: flex;
+                flex-direction: column;
+                margin-left: 10px;
+
+                .name {
+                    font-size: 16px;
+                    color: #00c798;
+                    margin-bottom: 5px;
+                    font-weight: 500;
+                }
+
+                .date {
+                    font-size: 12px;
+                    color: #909399;
+                }
+            }
+        }
+
+        .content {
+            font-size: 16px;
+            color: #303133;
+            line-height: 20px;
+            padding: 10px 0;
+        }
+
+        .control {
+            display: flex;
+            align-items: center;
             font-size: 14px;
+            color: #909399;
 
-            &:hover {
-              color: #00c798;
+            .like {
+                display: flex;
+                align-items: center;
+                margin-right: 20px;
+                cursor: pointer;
+
+                &.active,
+                &:hover {
+                    color: #303133;
+                }
+
+                .iconfont {
+                    font-size: 14px;
+                    margin-right: 5px;
+                }
             }
 
-            .icon-comment {
-              font-size: 16px;
-              margin-right: 5px;
+            .comment-reply {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                font-size: 14px;
+
+                &:hover {
+                    color: #00c798;
+                }
+
+                .iconfont {
+                    font-size: 16px;
+                    margin-right: 5px;
+                }
             }
-          }
-        }
-      }
 
-      .write-reply {
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-        color: #909399;
-        padding: 10px;
-        cursor: pointer;
-
-        &:hover {
-          color: #303133;
         }
 
-        .el-icon-edit {
-          margin-right: 5px;
-        }
-      }
+        .reply {
+            margin: 10px 0;
+            border-left: 2px solid #DCDFE6;
 
-      .fade-enter-active,
-      fade-leave-active {
-        transition: opacity 0.5s;
-      }
+            .item {
+                margin: 0 10px;
+                padding: 10px 0;
+                border-bottom: 1px dashed #EBEEF5;
 
-      .fade-enter,
-      .fade-leave-to {
-        opacity: 0;
-      }
+                .reply-content {
+                    display: flex;
+                    align-items: center;
+                    font-size: 16px;
+                    color: #303133;
 
-      .input-wrapper {
-        padding: 10px;
+                    .from-name {
+                        color: #00c798;
+                    }
 
-        // .gray-bg-input,
-        // .el-input__inner {
-        //   /*background-color: #67C23A;*/
-        // }
+                    .to-name {
+                        color: #00c798;
+                        margin-left: 5px;
+                        margin-right: 5px;
+                    }
+                }
 
-        .btn-control {
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-          padding-top: 10px;
+                .reply-bottom {
+                    display: flex;
+                    align-items: center;
+                    margin-top: 6px;
+                    font-size: 16px;
+                    color: #909399;
 
-          .cancel {
-            font-size: 16px;
-            color: #606266;
-            margin-right: 20px;
-            cursor: pointer;
+                    .reply-text {
+                        display: flex;
+                        align-items: center;
+                        margin-left: 10px;
+                        cursor: pointer;
+                        font-size: 14px;
 
-            &:hover {
-              color: #00c798;
+                        &:hover {
+                            color: #00c798;
+                        }
+
+                        .icon-comment {
+                            font-size: 16px;
+                            margin-right: 5px;
+                        }
+                    }
+                }
             }
-          }
 
-          .btn {
-            font-size: 16px;
-            background-color: #00c798;
+            .write-reply {
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                color: #909399;
+                padding: 10px;
+                cursor: pointer;
 
-            &:hover {
-              color: #333;
+                &:hover {
+                    color: #303133;
+                }
+
+                .el-icon-edit {
+                    margin-right: 5px;
+                }
             }
-          }
 
-          .confirm {
-            font-size: 16px;
-          }
+            .fade-enter-active,
+            fade-leave-active {
+                transition: opacity 0.5s;
+            }
+
+            .fade-enter,
+            .fade-leave-to {
+                opacity: 0;
+            }
+
+            .input-wrapper {
+                padding: 10px;
+
+                // .gray-bg-input,
+                // .el-input__inner {
+                //   /*background-color: #67C23A;*/
+                // }
+
+                .btn-control {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+                    padding-top: 10px;
+
+                    .cancel {
+                        font-size: 16px;
+                        color: #606266;
+                        margin-right: 20px;
+                        cursor: pointer;
+
+                        &:hover {
+                            color: #00c798;
+                        }
+                    }
+
+                    .btn {
+                        font-size: 16px;
+                        background-color: #00c798;
+
+                        &:hover {
+                            color: #333;
+                        }
+                    }
+
+                    .confirm {
+                        font-size: 16px;
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 </style>

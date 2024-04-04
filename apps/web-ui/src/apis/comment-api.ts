@@ -5,17 +5,18 @@ import type { BaseResponse, CommentDto} from "@tokenizk/types";
 export async function submitComment(commentDto: CommentDto) {
     try {
         // request sequencer for the result.
-        const rs = await $httpInstance.post<BaseResponse<string>>('/submit-comments', commentDto).then(r => {
-            return r.data.data
+        const rs = await $httpInstance.post<BaseResponse<number>>('/submit-comments', commentDto).then(r => {
+            return r.data
         });
         if (rs.code == 0) {
-            return true;
+            return rs.data!;
         }
+        return -1;
+
     } catch (error) {
         console.error(error);
-
     }
-    return false;
+    return -1;
 }
 
 // query Comment By Project Addr
