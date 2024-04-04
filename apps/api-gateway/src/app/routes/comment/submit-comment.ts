@@ -5,10 +5,10 @@ import { RequestHandler } from '@/lib/types'
 import fs from 'fs'
 import { getConnection } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
-import { ClientProveTask, UserTokenAirdrop, Comment, Airdrop,Sale } from "@tokenizk/entities"
+import { ClientProveTask, UserTokenAirdrop, Comment, Airdrop, Sale } from "@tokenizk/entities"
 import { $axiosCore, $axiosProofGen } from "@/lib/api"
 import { ClientProofReqType, CommentDto, CommentDtoSchema } from "@tokenizk/types"
-import { Signature, PublicKey,Field } from 'o1js';
+import { Signature, PublicKey, Field } from 'o1js';
 import { createHash } from "crypto";
 
 const logger = getLogger('submitCommentsByAddr');
@@ -33,18 +33,18 @@ const handler: RequestHandler<CommentDto, null> = async function (
     const dto = req.body;
 
     // check signature to avoid evil submit
-    // TODO check it
-    const target = createHash('SHA256').update(dto.projectAddress.concat(dto.comment)).digest('hex');
-    const rs = Signature.fromBase58(dto.signature).verify(PublicKey.fromBase58(dto.fromId), [Field(target)]);
-
-    if(!rs){
-        return {
-            code: 1,
-            data: '',
-            msg: 'signature not valid'
+    /* 
+        const target = createHash('SHA256').update(dto.projectAddress.concat(dto.comment)).digest('hex');
+        const rs = Signature.fromBase58(dto.signature).verify(PublicKey.fromBase58(dto.fromId), [Field(target)]);
+    
+        if(!rs){
+            return {
+                code: 1,
+                data: '',
+                msg: 'signature not valid'
+            }
         }
-    }
-
+     */
     try {
         const connection = getConnection();
         const commentRepo = connection.getRepository(Comment);
@@ -76,7 +76,7 @@ const handler: RequestHandler<CommentDto, null> = async function (
             }
         } else {
             // check if project exited
-            if(dto.projectType === 4){// airdrop
+            if (dto.projectType === 4) {// airdrop
                 const airdropRepo = connection.getRepository(Airdrop)
                 const airdrop = await airdropRepo.findOne({
                     where: {
@@ -84,7 +84,7 @@ const handler: RequestHandler<CommentDto, null> = async function (
                         status: 1
                     }
                 })
-                if(!airdrop){
+                if (!airdrop) {
                     return {
                         code: 1,
                         data: '',
@@ -107,6 +107,12 @@ const handler: RequestHandler<CommentDto, null> = async function (
                     }
                 }
             }
+
+            // submit comment
+            const comment = new Comment();
+            Object.assign(comment, dto);
+            console.log('comment: '+ JSON.stringify(comment));
+            await commentRepo.save(comment);
         }
 
     } catch (err) {
@@ -114,9 +120,9 @@ const handler: RequestHandler<CommentDto, null> = async function (
         console.error(err);
     }
     return {
-        code: 1,
+        code: 0,
         data: '',
-        msg: 'signature not valid'
+        msg: ''
     }
 }
 

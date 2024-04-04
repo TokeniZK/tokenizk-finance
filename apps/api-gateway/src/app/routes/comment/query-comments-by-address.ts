@@ -25,12 +25,12 @@ export const queryCommentsByAddr: FastifyPlugin = async function (
     })
 }
 
-const handler: RequestHandler<null, {address: string}> = async function (
+const handler: RequestHandler<null, null, { address: string }, null> = async function (
     req,
     res
 ): Promise<BaseResponse<Array<CommentDto>>> {
-    const address = req.params.address;
-
+    const { address } = req.query;
+    console.log('address: '+ address);
     try {
         const connection = getConnection();
         const commentRepo = connection.getRepository(Comment);
@@ -43,6 +43,7 @@ const handler: RequestHandler<null, {address: string}> = async function (
                 createdAt: 'DESC'
             }
         });
+
         return {
             code: 0,
             data: comments as any as CommentDto[],
@@ -63,7 +64,7 @@ const handler: RequestHandler<null, {address: string}> = async function (
 const schema = {
     description: 'query comments by project address',
     tags: ["Comments"],
-    params: {
+    querystring: {
         type: 'object',
         properties: {
             address: {

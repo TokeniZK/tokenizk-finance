@@ -3,16 +3,21 @@ import {
     FastifyReply,
     RequestParamsDefault,
     RequestBodyDefault,
-    RequestQuerystringDefault
+    RequestQuerystringDefault,
+    RequestHeadersDefault
 } from 'fastify';
 
 export type RequestHandler<
     Body = RequestBodyDefault,
-    Params = RequestParamsDefault
+    Params = RequestParamsDefault,
+    Querystring = RequestQuerystringDefault,
+    Headers = RequestHeadersDefault
 > = (
     req: FastifyRequest<{
         Body: Body,
-        Params: Params
+        Params: Params,
+        Querystring: Querystring,
+        Headers: Headers
     }>,
     res: FastifyReply
 ) => any
