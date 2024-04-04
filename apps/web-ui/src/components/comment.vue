@@ -3,10 +3,10 @@ import { ref, reactive, onMounted } from 'vue'
 import { useStatusStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import { omitAddress } from "@/utils"
-import {CommentDto} from '@tokenizk/types'
-import { queryCommentByProjectAddr } from '@/apis/comment-api'
+import { type CommentDto } from '@tokenizk/types'
+import { queryCommentByProjectAddr, submitComment } from '@/apis/comment-api'
 
-type CommentDtoExtend = CommentDto & {children:CommentDto[]}
+type CommentDtoExtend = CommentDto & { children: CommentDto[] }
 
 const { appState, showLoadingMask, setConnectedWallet, closeLoadingMask } = useStatusStore();
 
@@ -83,6 +83,7 @@ const articleId = ref('');
 
 const props = defineProps<{
   address: string;
+  projectType: number;
 }>()
 
 const commentData = await queryCommentByProjectAddr(props.address)
@@ -90,16 +91,17 @@ console.log('commentData:', commentData);
 
 // transform data into tree-pattern
 const renderComments = commentData.filter(c1 => {
-  return c1.parentCommentId
+  return c1.parentCommentId == -1
 }) as CommentDtoExtend[];
 renderComments.forEach(c => {
   c.children = commentData.filter(c2 => c2.parentCommentId == c.id)
-} );
+});
 console.log('renderComments:', renderComments);
 
 let commentDatalist = reactive({ commentlist: renderComments });
 
 const inputComment = ref('');
+const inputComment2 = ref('');
 const showItemId = ref('');
 
 const likeClick = (item: { isLike: boolean; likeNum: number; }) => {
@@ -112,7 +114,7 @@ const likeClick = (item: { isLike: boolean; likeNum: number; }) => {
   }
 }
 
-const replyClick = async () => {
+const addComment = async () => {
   if (!appState.connectedWallet58) {
     ElMessage({
       showClose: true,
@@ -122,6 +124,32 @@ const replyClick = async () => {
 
     return;
   }
+
+  // trigger signature
+  //
+
+  // submit
+  await submitComment({
+    projectType: props.projectType,
+    projectAddress: props.address,
+    fromId: appState.connectedWallet58,
+    comment: inputComment.value,
+    signature: ''
+  } as CommentDto);
+}
+
+// 点击回复按钮时切换回复框的显示与隐藏状态
+let ShowReplyInput = ref(false)
+let toggleReplyBox = () => {
+  ShowReplyInput.value = !ShowReplyInput.value;
+};
+
+const InputCancel = () => {
+  inputComment.value = '';
+}
+
+const InputCancel2 = () => {
+  inputComment2.value = '';
 }
 
 const cancel = () => {
@@ -141,7 +169,7 @@ const showCommentInput = (item: { id: string; }, reply: { fromId: any; }) => {
   showItemId.value = item.id;
 }
 
-const addComment = async (id: string, replyName?: string) => {
+const replyClick = async (id: string, replyName?: string) => {
   let res: { data?: any } = {};
 
   if (replyName) {
@@ -199,37 +227,33 @@ const addComment = async (id: string, replyName?: string) => {
 
     <h2 class="conment-title">All comments</h2>
 
-    <div class="Comment" style="margin-top: -40px;">
-       <transition name="fade">
-                <div class="input-wrapper">
-                    <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus
-            placeholder="Write your comment" v-model="inputComment">
-                      </el-input>
-                    <div class="first-comment-input">
-                        <span class="cancel">Cancel</span>
-                        <el-button class="btn" type="success" round @click="replyClick">Confirm</el-button>
-                      </div>
-                  </div>
-          </transition>
+    <div class="Comment">
+      <transition name="fade">
+        <div class="input-wrapper" v-show="true">
+          <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment"
+            v-model="inputComment">
+          </el-input>
+          <div class="first-comment-input">
+            <span class="cancel" @click="InputCancel">Cancel</span>
+            <el-button class="btn" type="success" round @click="addComment">Confirm</el-button>
+          </div>
+        </div>
+      </transition>
     </div>
 
-    <div class="Comment" v-for="items in commentDatalist.commentlist" :key="items.id">
+
+    <div class="Comment" v-for="item in commentDatalist.commentlist" :key="item.id">
 
       <div class="info">
-        <el-image class="avatar" :src="items.fromAvatar" />
         <div class="right">
-          <div class="name">{{ items.fromId }}</div>
-          <div class="date">{{ items.createdAt }}</div>
+          <div class="name">{{ item.fromId }}</div>
+          <div class="date">{{ item.createdAt }}</div>
         </div>
       </div>
 
-      <div class="content">{{ items.comment }}</div>
+      <div class="content">{{ item.comment }}</div>
 
       <div class="control">
-        <!-- <span class="like">
-          <i class="iconfont icon-like"></i>
-          <span class="like-num">40人赞</span>
-        </span> -->
         <span class="comment-reply" @click="replyClick">
           <el-icon class="iconfont icon-comment">
             <ChatDotSquare />
@@ -240,7 +264,7 @@ const addComment = async (id: string, replyName?: string) => {
 
       <div class="reply">
 
-        <div class="item" v-for="reply in items.children" :key="reply.id">
+        <div class="item" v-for="reply in item.children" :key="reply.id">
           <div class="reply-content">
             <span class="from-name">{{ reply.fromId }}</span><span> : </span>
             <span class="to-name">@{{ reply.toId }}</span>
@@ -249,7 +273,7 @@ const addComment = async (id: string, replyName?: string) => {
           <div class="reply-bottom">
             <span>{{ reply.createdAt }}</span>
 
-            <span class="reply-text" @click="showCommentInput(items, reply)">
+            <span class="reply-text" @click="showCommentInput(item, reply)">
               <el-icon class="iconfont icon-comment">
                 <ChatDotSquare />
               </el-icon>
@@ -259,18 +283,18 @@ const addComment = async (id: string, replyName?: string) => {
           </div>
         </div>
 
-        <div class="write-reply" v-if="items.reply.length > 0" @click="showCommentInput(items, reply)">
+        <div class="write-reply" @click="showCommentInput(item, reply)">
           <i class="el-icon-edit"></i>
           <span class="add-comment">Add new comment</span>
         </div>
 
-        <transition name="fade">
-          <div class="input-wrapper" v-if="showItemId === items.id">
+        <transition name="fade" v-if="ShowReplyInput">
+          <div class="input-wrapper" v-if="showItemId === item.id">
             <el-input class="gray-bg-input" v-model="inputComment" type="textarea" :rows="3" autofocus
               placeholder="Write your comment">
             </el-input>
             <div class="btn-control">
-              <span class="cancel">Cancel</span>
+              <span class="cancel" @click="InputCancel2">Cancel</span>
               <el-button class="btn" type="success" round @click="replyClick">Confirm</el-button>
             </div>
           </div>
@@ -279,6 +303,7 @@ const addComment = async (id: string, replyName?: string) => {
       </div>
 
     </div>
+
   </div>
 </template>
 
@@ -309,7 +334,7 @@ const addComment = async (id: string, replyName?: string) => {
       .cancel {
         font-size: 16px;
         color: #606266;
-        // margin-right: 20px;
+        margin-right: 20px;
         cursor: pointer;
 
         &:hover {
