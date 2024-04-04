@@ -29,7 +29,7 @@ export const submitComment: FastifyPlugin = async function (
 const handler: RequestHandler<CommentDto, null> = async function (
     req,
     res
-): Promise<BaseResponse<string>> {
+): Promise<BaseResponse<number>> {
     const dto = req.body;
 
     // check signature to avoid evil submit
@@ -59,60 +59,65 @@ const handler: RequestHandler<CommentDto, null> = async function (
 
             if (parentComment) {
                 // submit comment
-                const comment = new Comment();
+                let comment = new Comment();
                 Object.assign(comment, dto);
-                await commentRepo.save(comment);
+                comment = await commentRepo.save(comment);
                 return {
                     code: 0,
-                    data: '',
+                    data: comment.id,
                     msg: ''
                 }
-            } else {
+            }
+            return {
+                code: 1,
+                data: 0,
+                msg: 'parent comment not found'
+            }
+        }
+
+        dto.parentCommentId = -1;
+        // check if project exited
+        if (dto.projectType === 4) {// airdrop
+            const airdropRepo = connection.getRepository(Airdrop)
+            const airdrop = await airdropRepo.findOne({
+                where: {
+                    airdropAddress: dto.projectAddress,
+                    status: 1
+                }
+            })
+            if (!airdrop) {
                 return {
                     code: 1,
-                    data: '',
-                    msg: 'parent comment not found'
+                    data: 0,
+                    msg: 'project not found'
                 }
             }
-        } else {
-            // check if project exited
-            if (dto.projectType === 4) {// airdrop
-                const airdropRepo = connection.getRepository(Airdrop)
-                const airdrop = await airdropRepo.findOne({
-                    where: {
-                        airdropAddress: dto.projectAddress,
-                        status: 1
-                    }
-                })
-                if (!airdrop) {
-                    return {
-                        code: 1,
-                        data: '',
-                        msg: 'project not found'
-                    }
+        } else {//sale
+            const saleRepo = connection.getRepository(Sale)
+            const sale = await saleRepo.findOne({
+                where: {
+                    saleAddress: dto.projectAddress,
+                    status: 1
                 }
-            } else {//sale
-                const saleRepo = connection.getRepository(Sale)
-                const sale = await saleRepo.findOne({
-                    where: {
-                        saleAddress: dto.projectAddress,
-                        status: 1
-                    }
-                })
-                if (!sale) {
-                    return {
-                        code: 1,
-                        data: '',
-                        msg: 'project not found'
-                    }
+            })
+            if (!sale) {
+                return {
+                    code: 1,
+                    data: 0,
+                    msg: 'project not found'
                 }
             }
+        }
 
-            // submit comment
-            const comment = new Comment();
-            Object.assign(comment, dto);
-            console.log('comment: '+ JSON.stringify(comment));
-            await commentRepo.save(comment);
+        // submit comment
+        let comment = new Comment();
+        Object.assign(comment, dto);
+        console.log('comment: ' + JSON.stringify(comment));
+        comment = await commentRepo.save(comment);
+        return {
+            code: 0,
+            data: comment.id,
+            msg: ''
         }
 
     } catch (err) {
@@ -120,8 +125,8 @@ const handler: RequestHandler<CommentDto, null> = async function (
         console.error(err);
     }
     return {
-        code: 0,
-        data: '',
+        code: 1,
+        data: 0,
         msg: ''
     }
 }
@@ -141,7 +146,7 @@ const schema = {
                     type: 'number',
                 },
                 data: {
-                    type: 'string'
+                    type: 'number'
                 },
                 msg: {
                     type: 'string'

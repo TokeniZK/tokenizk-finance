@@ -40,7 +40,7 @@ const handler: RequestHandler<null, null, {address: string}, null> = async funct
                 toId: address
             },
             order: {
-                createdAt: 'DESC'
+                createdAt: 'ASC'
             }
         });
 
