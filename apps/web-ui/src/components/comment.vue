@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import { omitAddress } from "@/utils"
 import { type CommentDto } from '@tokenizk/types'
 import { queryCommentByProjectAddr, submitComment } from '@/apis/comment-api'
+import { UserFilled } from '@element-plus/icons-vue'
 
 type CommentDtoExtend = CommentDto & { children: CommentDto[] }
 
@@ -139,11 +140,11 @@ const addChildComment = async (parentCommentId: number, toId: string) => {
         signature: '',
         createdAt: new Date()
     } as CommentDto;
-    
-    if(inputComment2.value.indexOf(`@${omitAddress(toId)}`) == 0){
-       dto.comment = inputComment2.value.substring(inputComment2.value.indexOf(`@${omitAddress(toId)}`) + `@${omitAddress(toId)}`.length)
-    } else if(inputComment2.value.indexOf(`@${omitAddress(toId)} `) == 0){
-       dto.comment = inputComment2.value.substring(inputComment2.value.indexOf(`@${omitAddress(toId)} `) + `@${omitAddress(toId)} `.length)
+
+    if (inputComment2.value.indexOf(`@${omitAddress(toId)}`) == 0) {
+        dto.comment = inputComment2.value.substring(inputComment2.value.indexOf(`@${omitAddress(toId)}`) + `@${omitAddress(toId)}`.length)
+    } else if (inputComment2.value.indexOf(`@${omitAddress(toId)} `) == 0) {
+        dto.comment = inputComment2.value.substring(inputComment2.value.indexOf(`@${omitAddress(toId)} `) + `@${omitAddress(toId)} `.length)
     } else {
         dto.comment = inputComment2.value;
     }
@@ -192,7 +193,7 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
 
         <h2 class="conment-title">All comments</h2>
 
-        <div class="Comment" style="margin-top: -40px;">
+        <div class="Comment">
             <transition name="fade">
                 <div class="input-wrapper" v-show="true">
                     <el-input class="gray-bg-input" type="textarea" :rows="3" autofocus placeholder="Write your comment"
@@ -211,15 +212,22 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
 
             <div class="info">
                 <div class="right">
-                    <div class="name" v-if="item.fromId == appState.connectedWallet58">You</div>
-                    <div class="name" v-else>{{ omitAddress(item.fromId) }}</div>
-                    <div class="date">{{ item.createdAt }}</div>
+                    <el-row>
+                        <el-col :span="1"><el-avatar :icon="UserFilled" class="avatar" /></el-col>
+                        <el-col :span="1"></el-col>
+                        <el-col :span="21">
+                            <div class="name" v-if="item.fromId == appState.connectedWallet58">You</div>
+                            <div class="name" v-else>{{ omitAddress(item.fromId) }}</div>
+                            <div class="date">{{ item.createdAt }}</div>
+                        </el-col>
+                    </el-row>
                 </div>
             </div>
 
             <div class="content">{{ item.comment }}</div>
 
             <div class="control">
+
                 <span class="comment-reply" @click="replyClick(item.id, item.id, item.fromId)">
                     <el-icon class="iconfont icon-comment">
                         <ChatDotSquare />
@@ -227,21 +235,25 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
                     <span>reply</span>
                 </span>
 
-                <div v-if="showItemId == item.id">
-                    <el-input class="gray-bg-input" v-model="inputComment2" type="textarea" :rows="3" autofocus
-                        placeholder="Write your comment">
-                    </el-input>
-                    <div class="btn-control">
-                        <span class="cancel" @click="InputCancel2">Cancel</span>
-                        <el-button class="btn" type="success" round
-                            @click="addChildComment(item.id, item.fromId)">Confirm</el-button>
+                <transition name="fade">
+                    <div class="input-wrapper" v-if="showItemId == item.id">
+                        <el-input class="gray-bg-input" v-model="inputComment2" type="textarea" :rows="3" autofocus
+                            placeholder="Write your comment">
+                        </el-input>
+                        <div class="btn-control">
+                            <span class="cancel" @click="InputCancel2">Cancel</span>
+                            <el-button class="btn" type="success" round
+                                @click="addChildComment(item.id, item.fromId)">Confirm</el-button>
+                        </div>
                     </div>
-                </div>
+                </transition>
+
             </div>
 
             <div class="reply">
 
                 <div class="item" v-for="reply in item.children" :key="reply.id">
+
                     <div class="reply-content">
                         <div>
                             <span class="from-name" v-if="reply.fromId == appState.connectedWallet58">You</span>
@@ -253,6 +265,7 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
                         <span class="to-name" v-else>@{{ omitAddress(reply.toId) }}</span>
                         <span>{{ reply.comment }}</span>
                     </div>
+
                     <div class="reply-bottom">
                         <span>{{ reply.createdAt }}</span>
 
@@ -264,17 +277,21 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
                         </span>
                     </div>
 
-                    <div class="input-wrapper" v-if="showItemId == reply.id">
-                        <el-input class="gray-bg-input" v-model="inputComment2" type="textarea" :rows="3" autofocus
-                            placeholder="Write your comment">
-                        </el-input>
-                        <div class="btn-control">
-                            <span class="cancel" @click="InputCancel2">Cancel</span>
-                            <el-button class="btn" type="success" round
-                                @click="addChildComment(item.id, reply.fromId)">Confirm</el-button>
+                    <transition name="fade">
+                        <div class="input-wrapper" v-if="showItemId == reply.id">
+                            <el-input class="gray-bg-input" v-model="inputComment2" type="textarea" :rows="3" autofocus
+                                placeholder="Write your comment">
+                            </el-input>
+                            <div class="btn-control">
+                                <span class="cancel" @click="InputCancel2">Cancel</span>
+                                <el-button class="btn" type="success" round
+                                    @click="addChildComment(item.id, reply.fromId)">Confirm</el-button>
+                            </div>
                         </div>
-                    </div>
+                    </transition>
+
                 </div>
+
             </div>
 
         </div>
@@ -309,7 +326,7 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
             .cancel {
                 font-size: 16px;
                 color: #606266;
-                // margin-right: 20px;
+                margin-right: 20px;
                 cursor: pointer;
 
                 &:hover {
@@ -335,16 +352,17 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
             display: flex;
             align-items: center;
 
-            .avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-            }
-
             .right {
+                width: 100%;
                 display: flex;
                 flex-direction: column;
-                margin-left: 10px;
+                // margin-left: 10px;
+
+                .avatar {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                }
 
                 .name {
                     font-size: 16px;
@@ -368,7 +386,8 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
         }
 
         .control {
-            display: flex;
+            width: 100%;
+            // display: flex;
             align-items: center;
             font-size: 14px;
             color: #909399;
@@ -438,7 +457,7 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
                     display: flex;
                     align-items: center;
                     margin-top: 6px;
-                    font-size: 16px;
+                    font-size: 12px;
                     color: #909399;
 
                     .reply-text {
@@ -487,43 +506,83 @@ const replyClick = async (parentCommentId: number, currentCommentId: number, toI
                 opacity: 0;
             }
 
-            .input-wrapper {
-                padding: 10px;
+            // .input-wrapper {
+            //     padding: 10px;
 
-                // .gray-bg-input,
-                // .el-input__inner {
-                //   /*background-color: #67C23A;*/
-                // }
+            //     // .gray-bg-input,
+            //     // .el-input__inner {
+            //     //   /*background-color: #67C23A;*/
+            //     // }
 
-                .btn-control {
-                    display: flex;
-                    justify-content: flex-end;
-                    align-items: center;
-                    padding-top: 10px;
+            //     .btn-control {
+            //         display: flex;
+            //         justify-content: flex-end;
+            //         align-items: center;
+            //         padding-top: 10px;
 
-                    .cancel {
-                        font-size: 16px;
-                        color: #606266;
-                        margin-right: 20px;
-                        cursor: pointer;
+            //         .cancel {
+            //             font-size: 16px;
+            //             color: #606266;
+            //             margin-right: 20px;
+            //             cursor: pointer;
 
-                        &:hover {
-                            color: #00c798;
-                        }
+            //             &:hover {
+            //                 color: #00c798;
+            //             }
+            //         }
+
+            //         .btn {
+            //             font-size: 16px;
+            //             background-color: #00c798;
+
+            //             &:hover {
+            //                 color: #333;
+            //             }
+            //         }
+
+            //         .confirm {
+            //             font-size: 16px;
+            //         }
+            //     }
+            // }
+        }
+
+        .input-wrapper {
+            padding: 10px;
+
+            // .gray-bg-input,
+            // .el-input__inner {
+            //   /*background-color: #67C23A;*/
+            // }
+
+            .btn-control {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                padding-top: 10px;
+
+                .cancel {
+                    font-size: 16px;
+                    color: #606266;
+                    margin-right: 20px;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: #00c798;
                     }
+                }
 
-                    .btn {
-                        font-size: 16px;
-                        background-color: #00c798;
+                .btn {
+                    font-size: 16px;
+                    background-color: #00c798;
 
-                        &:hover {
-                            color: #333;
-                        }
+                    &:hover {
+                        color: #333;
                     }
+                }
 
-                    .confirm {
-                        font-size: 16px;
-                    }
+                .confirm {
+                    font-size: 16px;
                 }
             }
         }
