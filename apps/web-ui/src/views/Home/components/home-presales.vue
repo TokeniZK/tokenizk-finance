@@ -1,4 +1,4 @@
-<script lang="ts" setup >
+<script lang="ts" setup>
 import { ref, onMounted, reactive, computed, type ComputedRef, watch, onUnmounted } from 'vue'
 import { type SaleDto, type SaleReq } from '@tokenizk/types'
 import SaleBlock from '../../../components/sale-block.vue'
@@ -118,7 +118,7 @@ const initMarquee = () => {
 };
 
 // 定时调用走马灯效果  
-const intervalId = setInterval(initMarquee, 5000); // 每3秒执行一次  
+const intervalId = setInterval(initMarquee, 4500); // 每4.5秒执行一次  
 
 onMounted(async () => {
 
@@ -152,7 +152,7 @@ onUnmounted(() => {
 
                 <el-col :span="8" class="link">
                     <el-row class="mb-4" justify="end">
-                        <router-link to="/sales?saleType=0" >
+                        <router-link to="/sales?saleType=0">
                             <el-button type="primary" size="large" class="main-btn" round>
                                 View All Item
                             </el-button>
@@ -203,6 +203,7 @@ onUnmounted(() => {
             .main-btn {
                 font-size: 16px;
                 color: #fff;
+
                 &:hover {
                     color: #00c798;
                 }
@@ -222,16 +223,15 @@ onUnmounted(() => {
 
             .marquee-list {
                 width: 100%;
-                display: flex;
                 flex-wrap: wrap;
                 display: inline-block;
                 transition: transform 0.8s ease-in-out;
+                display: flex;
+                justify-content: space-between;
 
                 .marquee-item {
                     display: inline-block;
                     flex-shrink: 0;
-                    margin-left: 15px;
-                    margin-right: 15px;
                 }
 
             }
@@ -246,4 +246,3 @@ onUnmounted(() => {
 
 }
 </style>
-

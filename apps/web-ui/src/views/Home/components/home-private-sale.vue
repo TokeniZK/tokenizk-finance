@@ -1,4 +1,4 @@
-<script lang="ts" setup >
+<script lang="ts" setup>
 import { ref, onMounted, reactive, computed, type ComputedRef } from 'vue'
 import { type SaleDto, type SaleReq } from '@tokenizk/types'
 import SaleBlock from '../../../components/sale-block.vue'
@@ -50,7 +50,7 @@ const transformProjectStatus = async (itmes: SaleDtoExtend[]) => {
         } else {
             item.projectStatus = 'All Status'
         }
-    }); 
+    });
 }
 
 // 项目进度条
@@ -121,7 +121,7 @@ onMounted(async () => {
 
                 <el-col :span="8" class="link">
                     <el-row class="mb-4" justify="end">
-                        <router-link to="/sales?saleType=2" >
+                        <router-link to="/sales?saleType=2">
                             <el-button type="primary" size="large" class="main-btn" round>
                                 View All Item
                             </el-button>
@@ -132,9 +132,11 @@ onMounted(async () => {
             </el-row>
 
             <!-- 轮播图 -->
-            <el-row class="row-bg private-sales-carousel" justify="center">
+            <el-row class="row-bg private-sales-carousel" justify="space-between">
 
-                <el-col :span="20" class="ongoingBox">
+                <el-col :span="2"></el-col>
+
+                <el-col :span="19" class="ongoingBox">
 
                     <!-- 每个项目 -->
                     <ul>
@@ -145,15 +147,9 @@ onMounted(async () => {
                         </li>
                     </ul>
 
-                    <!-- <el-carousel :interval="3000" type="card" height="500px" loop>
-                        <el-carousel-item v-for="item in presaleProjects.saleList" :key="item.id" class="launchpadsLi">
-
-                        <SaleBlock :saleDto="item" />
-
-                        </el-carousel-item>
-                    </el-carousel> -->
-
                 </el-col>
+
+                <el-col :span="2"></el-col>
 
             </el-row>
 
@@ -182,6 +178,7 @@ onMounted(async () => {
             .main-btn {
                 font-size: 16px;
                 color: #fff;
+
                 &:hover {
                     color: #00c798;
                 }
@@ -201,41 +198,19 @@ onMounted(async () => {
 
             ul {
                 width: 100%;
-                display: flex;
                 flex-wrap: wrap;
                 display: inline-block;
-                // padding-right: 100%;
-                // animation: move 6s infinite linear;
-                // animation: move 6s infinite alternate linear backwards;
-                // animation: move 6s infinite alternate linear forwards;
-
+                display: flex;
+                justify-content: space-between;
 
                 .launchpadsLi {
                     display: inline-block;
-                    margin-left: 30px;
-                    margin-right: 50px;
                 }
             }
 
-            // @keyframes move {
-            //     0% {
-            //         transform: translateX(0);
-            //     }
-
-            //     100% {
-            //         transform: translateX(-100%);
-            //     }
-            // }
-
-
         }
-
-        // .ongoingBox:hover ul {
-        //     animation-play-state: paused;
-        // }
 
     }
 
 }
 </style>
-

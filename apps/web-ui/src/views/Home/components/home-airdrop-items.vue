@@ -112,7 +112,7 @@ onMounted(() => {
 
         <el-col :span="8" class="link">
           <el-row class="mb-4" justify="end">
-            <router-link to="/airdrop-list" >
+            <router-link to="/airdrop-list">
               <el-button type="primary" size="large" class="main-btn" round>
                 View All Item
               </el-button>
@@ -125,17 +125,25 @@ onMounted(() => {
 
       <!-- 每个项目 -->
       <el-row class="row-bg" justify="center">
-        <el-col :span="20">
+
+        <el-col :span="2"></el-col>
+
+        <el-col :span="19">
 
           <ul class="airdrops-ul">
+
             <li v-for="item in airdropProjects.airdropList" :key="item.id" style="margin-bottom: 40px;">
 
               <AirdropBlock :airdropDto="item" />
 
             </li>
+
           </ul>
 
         </el-col>
+
+        <el-col :span="2"></el-col>
+
       </el-row>
 
 
@@ -162,8 +170,9 @@ onMounted(() => {
       .main-btn {
         font-size: 16px;
         color: #fff;
+
         &:hover {
-            color: #00c798;
+          color: #00c798;
         }
       }
 
@@ -175,7 +184,7 @@ onMounted(() => {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-between;
     overflow: hidden;
     margin-top: 40px;
   }
