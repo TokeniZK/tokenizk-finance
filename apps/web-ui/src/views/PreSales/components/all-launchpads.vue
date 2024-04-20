@@ -1,4 +1,4 @@
-<script lang="ts" setup >
+<script lang="ts" setup>
 import { ref, onMounted, reactive, computed, type ComputedRef, onUpdated } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { type SaleDto, type SaleReq } from '@tokenizk/types'
@@ -230,10 +230,31 @@ const triggerFilterProjects = async () => {
 
 // 根据 用户选择 sortBy的选项 sort排序 由近到远
 const triggerSortProjects = () => {
-    // sort
-    sortProjects(sortBy.value, renderSaleBlock);
 
-    renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock));
+    // sort
+    // sortProjects(sortBy.value, renderSaleBlock);
+    // renderSaleBlock = JSON.parse(JSON.stringify(renderSaleBlock));
+
+    triggerFilterProjects();
+
+    if (sortBy.value == '1') {
+        renderSaleBlock = fetchResult.sort((a, b) => {
+            return Number(a.softCap) - Number(b.softCap);
+        });
+    } else if (sortBy.value == '2') {
+        renderSaleBlock = fetchResult.sort((a, b) => {
+            return Number(b.hardCap) - Number(a.hardCap);
+        });
+    } else if (sortBy.value == '3') {
+        renderSaleBlock = fetchResult.sort((a, b) => {
+            return Number(b.startTimestamp) - Number(a.startTimestamp);
+        });
+    } else if (sortBy.value == '4') {
+        renderSaleBlock = fetchResult.sort((a, b) => {
+            return Number(b.endTimestamp) - Number(a.endTimestamp);
+        });
+    }
+
     presaleProjects.saleList = renderSaleBlock;
 }
 
@@ -254,7 +275,7 @@ onUpdated(async () => {
 
     console.log('onUpdated...');
 
-    if(saleTypeOld != saleType.value){
+    if (saleTypeOld != saleType.value) {
         await getSearchProjects();
         saleTypeOld = saleType.value;
     }
@@ -279,7 +300,7 @@ onUpdated(async () => {
                 <el-col :span="13">
                     <div style="height: 19.59px;"></div>
 
-                    <div class="mt-4">
+                    <div>
                         <el-input v-model="keyWord" placeholder="Please input" class="input-with-select" size="large"
                             @input="inputChangeTigger">
                             <template #append>
@@ -292,17 +313,17 @@ onUpdated(async () => {
                 <!-- 过滤器 -->
                 <el-col :span="3">
                     <div>Filter By</div>
-                    <el-select v-model="filterBy" class="m-2 filterBy" placeholer="Select" size="large">
-                        <el-option v-for="item in filterByOptions" :key="item.value" :label="item.label" :value="item.value"
-                            @click="triggerFilterProjects()" />
+                    <el-select v-model="filterBy" class="filterBy" placeholer="Select" size="large">
+                        <el-option v-for="item in filterByOptions" :key="item.value" :label="item.label"
+                            :value="item.value" @click="triggerFilterProjects()" />
                     </el-select>
                 </el-col>
 
                 <el-col :span="3">
                     <div>Sort By</div>
-                    <el-select v-model="sortBy" class="m-2 sortBy" placeholder="Select" size="large">
-                        <el-option v-for="item in sortByOptions" :key="item.value" :label="item.label" :value="item.value"
-                            @click="triggerSortProjects()" />
+                    <el-select v-model="sortBy" class="sortBy" placeholder="Select" size="large">
+                        <el-option v-for="item in sortByOptions" :key="item.value" :label="item.label"
+                            :value="item.value" @click="triggerSortProjects()" />
                     </el-select>
                 </el-col>
 
