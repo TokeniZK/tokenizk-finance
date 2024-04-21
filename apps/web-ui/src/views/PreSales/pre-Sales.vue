@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed, onUpdated } from 'vue'
-import { useStatusStore, type AppState } from "@/stores";
-import { ElMessage } from 'element-plus';
-import { useRoute, useRouter } from 'vue-router';
+import { useStatusStore, type AppState } from "@/stores"
+import { ElMessage } from 'element-plus'
+import { useRoute, useRouter } from 'vue-router'
+import type { TabsPaneContext } from 'element-plus'
 
 let route = useRoute();
 let saleType = ref(route.query.saleType as any as number);
@@ -21,23 +22,23 @@ router.afterEach(async (to, from, next) => {
         console.log(`changed saleType...`)
     }
 
-    
+
     if (from.path == '/sales/my-contributions' && to.path == '/sales') {
         const query = to.query;
         saleType.value = query.saleType as any as number;
         console.log(`changed saleType...`)
     }
 
-    if(to.path == '/sales'){
+    if (to.path == '/sales') {
         isASelected.value = true;
         isBSelected.value = false;
-    } else if(to.path == '/sales/my-contributions') {
+    } else if (to.path == '/sales/my-contributions') {
         isASelected.value = false;
         isBSelected.value = true;
     }
 });
-const allSaleUrl = computed(()=>'/sales?saleType=' + saleType.value);
-const myContriUrl = computed(()=>'/sales/my-contributions?saleType=' + saleType.value);
+const allSaleUrl = computed(() => '/sales?saleType=' + saleType.value);
+const myContriUrl = computed(() => '/sales/my-contributions?saleType=' + saleType.value);
 
 let salePageTitle = computed(() => {
     return `Current ${saleType.value == 0 ? 'PreSale' : (saleType.value == 1 ? 'FairSale' : 'PrivateSale')}`
@@ -74,6 +75,16 @@ const checkConnectedWallet = () => {
 
 }
 
+const activeTabName = ref('0')
+
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+    if (tab.props.name == '1') {
+        if (appState.connectedWallet58 == '' || appState.connectedWallet58 == null) {
+            checkConnectedWallet()
+        }
+    }
+}
+
 
 onMounted(() => {
 
@@ -108,28 +119,31 @@ onUpdated(() => {
             </el-row>
 
             <el-row style="margin:50px auto;" justify="center">
+                <el-col span="24">
 
-                <el-col :span="8"></el-col>
+                    <el-tabs v-model="activeTabName" class="custom-tabs" @tab-click="handleClick">
 
-                <el-col :span="6">
-                    <router-link :to="allSaleUrl" :class="{ 'activeMenu': isASelected }" @click="handleAClick">
-                        <!-- All launchpads -->
-                        {{ SecondaryRoutingTitle }}
-                    </router-link>
+                        <el-tab-pane :label=SecondaryRoutingTitle name="0">
+                            <template>
+                                <router-link :to="allSaleUrl">{{ SecondaryRoutingTitle }} </router-link>Add Tabs tab
+                            </template>
+                        </el-tab-pane>
+
+                        <el-tab-pane label="My Contributions" name="1">
+                            <template>
+                                <router-link :to="myContriUrl"
+                                    v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">
+                                </router-link>
+
+                                <div v-else @click="checkConnectedWallet">
+                                    My Contributions
+                                </div>
+                            </template>
+                        </el-tab-pane>
+
+                    </el-tabs>
+
                 </el-col>
-
-                <el-col :span="6">
-                    <router-link :to="myContriUrl" :class="{ 'activeMenu': isBSelected }" @click="handleBClick"
-                        v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">My
-                        Contributions</router-link>
-
-                    <div v-else @click="checkConnectedWallet">
-                        <span>My Contributions</span>
-                    </div>
-                </el-col>
-
-                <el-col :span="4"></el-col>
-
             </el-row>
 
             <!-- 三级路由出口组件 -->
@@ -150,8 +164,18 @@ onUpdated(() => {
     width: 100%;
     padding-top: 120px;
 
-    .activeMenu {
-        border-bottom: 2px solid #00FFC2;
+    .custom-tabs {
+        width: 100%;
+
+        .el-tabs__item {
+            flex: none;
+            min-width: auto;
+            font-weight: bold;
+            color: #333;
+            border-radius: 10px 10px 0 0;
+            background-color: #f5f7fa;
+            transition: background-color 0.3s;
+        }
     }
 
 }
