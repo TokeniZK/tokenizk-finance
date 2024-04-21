@@ -1,11 +1,3 @@
-syntax = "proto3";
-
-package coreservice;
-
-service CoreService {
-  rpc queryUserContributionWitness(queryUserContributionWitnessReq) returns (queryUserContributionWitnessResp) {}
-}
-
 message QueryUserContributionWitnessReq {
   string tokenAddr = 1;
   string airdropAddr = 2;

@@ -1,0 +1,13 @@
+message queryUserMetaStatesReq{
+    string userAddress = 1;
+}
+
+message queryUserMetaStatesResp {
+    message data {
+        string root = 1;
+        number depth = 2;
+        number leaves = 3;
+    };
+    number code = 1;
+    string msg = 2;
+}

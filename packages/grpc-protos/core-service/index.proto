@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package coreservice;
+
+import "./query-user-contribution-witness.proto";
+import "./query-user-meta-states.proto";
+import "./query-user-airdrop-witness.proto";
+
+service CoreService {
+  rpc queryUserContributionWitness(queryUserContributionWitnessReq) returns (queryUserContributionWitnessResp) {}
+  rpc queryUserMetaStates(queryUserMetaStatesReq) returns (queryUserMetaStatesResp) {}
+  rpc queryUserAirdropWitness(queryUserAirdropWitnessReq) returns (queryUserAirdropWitnessResp) {}
+}
