@@ -1,0 +1,34 @@
+message QueryUserContributionWitnessReq {
+  string tokenAddr = 1;
+  string airdropAddr = 2;
+  string userAddr = 3;
+}
+
+message QueryUserContributionWitnessResp {
+  message data {
+    message saleContributorMembershipWitnessData {
+        message leafData {
+          string tokenAddress = 1;
+          string tokenId = 2;
+          string saleContractAddress = 3;
+          string contributorAddress = 4;
+          number minaAmount = 5;
+        };
+        repeated string siblingPath = 1;
+        string index = 2;
+    };
+
+    message lowLeafWitness {
+        message leafData {
+            string value = 1;
+            string nextValue = 2;
+            string nextIndex = 3;
+        };
+        repeated string siblingPath = 1;
+        string index = 2;
+    };
+    repeated string oldNullWitness = 1;
+  };
+  int32 code = 1;
+  string msg = 2;
+}

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package coreservice;
+
+message ProofCallbackReq {
+  string taskType = 1;
+  any index = 2;
+  any payload = 3;
+}
