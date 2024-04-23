@@ -1,10 +1,18 @@
-message QueryUserContributionWitnessReq {
+syntax = "proto3";
+
+package coreservice;
+
+service CoreService {
+  rpc queryUserAirdropWitness(queryUserAirdropWitnessReq) returns (queryUserAirdropWitnessResp) {}
+}
+
+message QueryUserAirdropWitnessReq {
   string tokenAddr = 1;
   string airdropAddr = 2;
   string userAddr = 3;
 }
 
-message QueryUserContributionWitnessResp {
+message QueryUserAirdropWitnessResp {
   message data {
     message saleContributorMembershipWitnessData {
         message leafData {

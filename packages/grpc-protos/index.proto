@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package coreservice;
+
+import "./query-user-contribution-witness.proto";
+import "./query-user-meta-states.proto";
+import "./query-user-airdrop-witness.proto";
+import "./profile-callback.proto";
+import "./sync-user-airdrop-nullifier.proto";
+import "./sync-user-sale-nullifier.proto";
+
+service CoreService {
+  rpc queryUserContributionWitness(queryUserContributionWitnessReq) returns (queryUserContributionWitnessResp) {}
+  rpc queryUserMetaStates(queryUserMetaStatesReq) returns (queryUserMetaStatesResp) {}
+  rpc queryUserAirdropWitness(queryUserAirdropWitnessReq) returns (queryUserAirdropWitnessResp) {}
+  rpc syncUserAirdropNullifier() returns (syncUserAirdropNullifierResp) {}
+  rpc syncUserSaleNullifier() returns () {}
+  rpc profileCallback() returns (profileCallbackResp) {}
+}
