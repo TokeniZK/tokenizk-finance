@@ -6,6 +6,7 @@ import { getLogger } from "@/lib/logUtils";
 import { Sale, SaleRollupProverParam, UserTokenSale } from "@tokenizk/entities";
 import { SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleContribution, SaleRollupState, ContributorsMembershipMerkleWitness } from "@tokenizk/contracts";
 import { $axiosProofGenerator } from "@/lib";
+import { pgClient } from ".";
 import { ProofTaskDto, ProofTaskType, BaseResponse, MerkleTreeId } from "@tokenizk/types";
 import { getDateString } from "@/lib/timeUtils";
 import  * as StateDB from "@/app/grpc-endpoints/state-util"
@@ -191,11 +192,12 @@ export const maintainSaleContributors = async function () {
             const fileName = `./${ProofTaskType[ProofTaskType.SALE_BATCH_MERGE]}_proofTaskDto_proofReq_${sale.id}_${getDateString()}.json`;
             fs.writeFileSync(fileName, JSON.stringify(proofTaskDto));
 
-            await $axiosProofGenerator.post<BaseResponse<string>>('/proof-gen', proofTaskDto).then(r => {
+            await pgClient.proofGen(proofTaskDto).then(r => {
                 if (r.data.code == 1) {
                     throw new Error(r.data.msg);
                 }
             });
+
         } catch (error) {
             logger.error(error);
         }
