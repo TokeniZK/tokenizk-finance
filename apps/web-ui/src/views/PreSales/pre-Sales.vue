@@ -119,6 +119,31 @@ onUpdated(() => {
             </el-row>
 
             <el-row style="margin:50px auto;" justify="center">
+
+                <el-col :span="8"></el-col>
+
+                <el-col :span="6">
+                    <router-link :to="allSaleUrl" :class="{ 'activeMenu': isASelected }" @click="handleAClick">
+                        {{ SecondaryRoutingTitle }}
+                    </router-link>
+                </el-col>
+
+                <el-col :span="6">
+                    <router-link :to="myContriUrl" :class="{ 'activeMenu': isBSelected }" @click="handleBClick"
+                        v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">
+                        My Contributions
+                    </router-link>
+
+                    <div v-else @click="checkConnectedWallet">
+                        <span>My Contributions</span>
+                    </div>
+                </el-col>
+
+                <el-col :span="4"></el-col>
+
+            </el-row>
+
+            <!-- <el-row style="margin:50px auto;" justify="center">
                 <el-col span="24">
 
                     <el-tabs v-model="activeTabName" class="custom-tabs" @tab-click="handleClick">
@@ -127,10 +152,10 @@ onUpdated(() => {
                             <template>
                                 <router-link :to="allSaleUrl">{{ SecondaryRoutingTitle }} </router-link>Add Tabs tab
                             </template>
-                        </el-tab-pane>
+</el-tab-pane>
 
-                        <el-tab-pane label="My Contributions" name="1">
-                            <template>
+<el-tab-pane label="My Contributions" name="1">
+    <template>
                                 <router-link :to="myContriUrl"
                                     v-if="appState.connectedWallet58 != '' && appState.connectedWallet58 != null">
                                 </router-link>
@@ -139,12 +164,12 @@ onUpdated(() => {
                                     My Contributions
                                 </div>
                             </template>
-                        </el-tab-pane>
+</el-tab-pane>
 
-                    </el-tabs>
+</el-tabs>
 
-                </el-col>
-            </el-row>
+</el-col>
+</el-row> -->
 
             <!-- 三级路由出口组件 -->
             <el-row class="row-bg" justify="center">
@@ -163,6 +188,10 @@ onUpdated(() => {
 .pre-Sales {
     width: 100%;
     padding-top: 120px;
+
+    .activeMenu {
+        border-bottom: 2px solid #00FFC2;
+    }
 
     .custom-tabs {
         width: 100%;
