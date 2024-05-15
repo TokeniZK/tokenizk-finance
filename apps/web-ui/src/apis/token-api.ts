@@ -1,5 +1,5 @@
 import { $httpInstance } from "@/utils"
-import type { BaseResponse, TokenDto,UserTokenTransferDto } from "@tokenizk/types";
+import type { BaseResponse, TokenDto, UserTokenTransferDto } from "@tokenizk/types";
 
 // submit token
 export async function submitToken(tokenDto: TokenDto) {
@@ -62,4 +62,56 @@ export async function submitTokenTransfer(userTokenTransferDto: UserTokenTransfe
 
     }
     return false;
+}
+
+export async function queryTokenTransferRecord(userAddr: string, tokenAddr: string) {
+    try {
+        /*
+        // request sequencer for the result.
+        const rs = await $httpInstance.post<BaseResponse<TokenDto[]>>(`/token/record`, {owner: userAddr, tokenAddr}).then(r => {
+            return r.data.data
+        });
+        return rs ?? [];
+        */
+        return [
+            {
+                date: '2024/05/15 15:01:53',
+                receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
+                amount: '+200'
+            },
+            {
+                date: '2024/05/15 14:18:21',
+                receiver: 'B62qmqL2tgB8r1ZWxeyY3Zc711drXzuN1NTNaUenDQDuMNbrAMKqcep',
+                amount: '-600'
+            },
+            {
+                date: '2024/05/15 12:11:45',
+                receiver: 'B62qmqL2tgB8r1ZWxeyuMNbrAMKqcepY3Zc711drXzuN1NTNaUenDQD',
+                amount: '-3000'
+            },
+            {
+                date: '2024/05/14 20:55:25',
+                receiver: 'B62qmqL2tgKqcepY3Zc711drXzuNB8r1ZWxey1NTNaUenDQDuMNbrAM',
+                amount: '+700'
+            },
+            {
+                date: '2024/05/14 09:32:33',
+                receiver: 'B62qmqL2brAMKqcepY3Zc711drXzuNtgB8r1ZWxey1NTNaUenDQDuMN',
+                amount: '-1800'
+            },
+            {
+                date: '2024/05/14 06:39:15',
+                receiver: 'B62qmqL2tqcepY3Zc711drXzuNgB8r1ZWxey1NTNaUenDQDuMNbrAMK',
+                amount: '-100'
+            },
+            {
+                date: '2024/05/14 02:51:50',
+                receiver: 'B62qmqL2tg1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuNB8r1ZWxey',
+                amount: '+5000'
+            },
+        ];
+    } catch (error) {
+        console.error(error);
+    }
+    return [];
 }

@@ -8,7 +8,7 @@ import { queryTokenByUser } from '@/apis/user-api';
 import { CircuitControllerState, useStatusStore } from '@/stores';
 import { CHANNEL_MINA, WalletEventType, type WalletEvent } from '@/common';
 import { checkTx } from '@/utils/txUtils';
-import { submitTokenTransfer } from '@/apis/token-api';
+import { queryTokenTransferRecord, submitTokenTransfer } from '@/apis/token-api';
 import type { TableColumnCtx } from 'element-plus'
 
 const o1js = import('o1js');
@@ -140,7 +140,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     basicTokenZkAppAddress,
                     from,
                     to,
-                    value,
+                    value * (10 ** 9), // TODO consider if need * (10 ** 9)!!!,
                     feePayerAddress,
                     txFee
                 ))!;
@@ -243,11 +243,14 @@ const tokenChoose = async () => {
     console.log(`userFundFormRef.token: ${userFundFormRef.token}`);
     const maskId = 'fetchBalance'
     try {
+
         showLoadingMask({ id: maskId, text: 'fetching balance...' });
 
+        const { Mina, fetchAccount,TokenId,PublicKey } = await import('o1js');
+        Mina.setActiveInstance(Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL));
         // fetch account
-        const tokenId = (await o1js).TokenId.derive((await o1js).PublicKey.fromBase58(userFundFormRef.token));
-        const accountInfo = await (await o1js).fetchAccount({ publicKey: (await o1js).PublicKey.fromBase58(appState.connectedWallet58!), tokenId });// TODO!!!
+        const tokenId = TokenId.derive(PublicKey.fromBase58(userFundFormRef.token));
+        const accountInfo = await fetchAccount({ publicKey: PublicKey.fromBase58(appState.connectedWallet58!), tokenId });// TODO!!!
         if (accountInfo.account) {
             balanceRef.value = Number(accountInfo.account.balance.toBigInt());
         } else {
@@ -265,6 +268,9 @@ const tokenChoose = async () => {
             message: `fetch balance failed, please retry.`,
         });
     }
+    // TODO temp place it here
+    transferData.datas = await queryTokenTransferRecord(appState.connectedWallet58!, userFundFormRef.token);
+
     closeLoadingMask(maskId);
 }
 // 重置
@@ -350,43 +356,7 @@ const formatter = (row: User, column: TableColumnCtx<User>) => {
     return row.address
 }
 
-const transferData: User[] = [
-    {
-        date: '2024/01/02 10:31:53',
-        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
-        amount: '200'
-    },
-    {
-        date: '2024/01/03 20:18:21',
-        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
-        amount: '600'
-    },
-    {
-        date: '2024/01/04 13:11:45',
-        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
-        amount: '3000'
-    },
-    {
-        date: '2024/01/06 23:55:25',
-        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
-        amount: '700'
-    },
-    {
-        date: '2024/01/08 07:32:33',
-        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
-        amount: '1800'
-    },
-    {
-        date: '2024/01/20 07:39:15',
-        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
-        amount: '100'
-    },
-    {
-        date: '2024/01/21 22:51:50',
-        receiver: 'B62qmqL2tgB8r1ZWxey1NTNaUenDQDuMNbrAMKqcepY3Zc711drXzuN',
-        amount: '5000'
-    },
-]
+let transferData: {datas: User[]} = reactive({datas: []});
 
 // Pagination
 const paginationValue = ref(false);
@@ -394,13 +364,13 @@ const pageSize = ref(5); // 每页显示5条信息
 const currentPage = ref(1); // 当前页码      
 
 // 计算总条目数  
-const totalItems = computed(() => transferData.length);
+const totalItems = computed(() => transferData.datas.length);
 
 // 计算当前页显示的条目  
 const currentPageItems = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return transferData.slice(start, end);
+    return transferData.datas.slice(start, end);
 });
 
 const handleSizeChange = (val: number) => {
@@ -411,12 +381,14 @@ const handleCurrentChange = (val: number) => {
     currentPage.value = val;
 }
 
+const connectAddress = ref('B62qoLrv1LQDY5aMXLrjBJ1XqSzZ7MLYQMjvhXuLksdRjBEfd2b3V2B')
 
 // 组件挂载完成后执行的函数
 onMounted(async () => {
 
     if (appState.connectedWallet58 != '' && appState.connectedWallet58 != null) {
         userTokenListRef.tokenList = (await queryTokenByUser(appState.connectedWallet58)) ?? [];
+
     }
 
     // 进入当前组件都会回到顶部
@@ -430,7 +402,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <el-row class="row-bg Wallet" justify="center" v-if="transferData.length <= 0">
+    <el-row class="row-bg Wallet" justify="center" v-if="transferData.datas.length <= 0">
         <el-col :span="24">
 
             <el-row>
@@ -481,7 +453,7 @@ onMounted(async () => {
         </el-col>
     </el-row>
 
-    <el-row class="row-bg Wallet2" justify="center" v-if="transferData.length > 0">
+    <el-row class="row-bg Wallet2" justify="center" v-if="transferData.datas.length > 0">
         <el-col :span="24">
 
             <el-row>
@@ -530,13 +502,14 @@ onMounted(async () => {
 
             </el-row>
 
-            <el-row v-if="appState.connectedWallet58">
+            <el-row v-if="appState.connectedWallet58 === connectAddress">
                 <el-col :span="24">
+
                     <div class="transferRecordTable">
                         <h2>Transfer Record</h2>
                         <el-table :data="currentPageItems" height="250" style="width: 100%">
                             <el-table-column prop="date" label="Date" width="180" />
-                            <el-table-column prop="receiver" label="Receiver" width="560" />
+                            <el-table-column prop="receiver" label="From/To" width="560" />
                             <el-table-column prop="amount" label="Amount" />
                         </el-table>
                         <!-- 分页 -->
@@ -546,8 +519,8 @@ onMounted(async () => {
                                 :hide-on-single-page="paginationValue" :total="totalItems"
                                 @size-change="handleSizeChange" @current-change="handleCurrentChange" />
                         </el-scrollbar>
-
                     </div>
+
                 </el-col>
             </el-row>
 
