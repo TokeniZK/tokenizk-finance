@@ -8,18 +8,18 @@ import {
     PublicKey,
     Permissions,
     Field,
-    Struct,
     UInt32,
     Poseidon,
     Provable,
     Signature,
     Reducer,
     Bool,
+    TransactionVersion,
 } from 'o1js';
 import { STANDARD_TREE_INIT_ROOT_16, WHITELIST_TREE_ROOT } from './constants';
 import { SaleRollupProof } from './sale-rollup-prover';
 import {
-    ContributorsMembershipMerkleWitness, ContributionEvent, SaleContribution,
+    ContributionEvent, SaleContribution,
     SaleParams, SaleParamsConfigurationEvent, SaleContributorMembershipWitnessData,
     UserLowLeafWitnessData, UserNullifierMerkleWitness, WhitelistMembershipMerkleWitness,
     ClaimTokenEvent, MaintainContributorsEvent
@@ -59,7 +59,7 @@ export class TokeniZkFairSale extends SmartContract {
             editState: Permissions.proof(),
             receive: Permissions.proof(),
             access: Permissions.proofOrSignature(),
-            setVerificationKey: Permissions.proof()
+            setVerificationKey: {auth: Permissions.proof(), txnVersion: TransactionVersion.current()}
         });
     }
 
@@ -103,7 +103,7 @@ export class TokeniZkFairSale extends SmartContract {
     public totalContributedMina = State<UInt64>();
 
     @method
-    configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
+    async configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
         // cannot be changed after ('startTime' - 60 * 60 * 1000)
         // ~this.network.blockchainLength.requireBetween(saleParams0.startTime.sub(10), UInt32.MAXINT());~
         this.network.timestamp.requireBetween(saleParams0.startTime.sub(10 * 3 * 60 * 1000), UInt64.MAXINT());
@@ -134,7 +134,7 @@ export class TokeniZkFairSale extends SmartContract {
         saleParams1.softCap.assertEquals(UInt64.from(0));// !
         saleParams1.hardCap.assertEquals(UInt64.from(0));// !
 
-        this.self.account.balance.assertBetween(saleParams1.totalSaleSupply, UInt64.MAXINT());
+        this.self.account.balance.requireBetween(saleParams1.totalSaleSupply, UInt64.MAXINT());
 
         this.saleParamsHash.set(hash1);
         this.vestingParamsHash.set(saleParams1.vestingParamsHash());
@@ -151,7 +151,7 @@ export class TokeniZkFairSale extends SmartContract {
      * @param minaAmount MINA amount
      */
     @method
-    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
+    async contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
         membershipMerkleWitness: WhitelistMembershipMerkleWitness, leafIndex: Field) {
         // check  params
         this.saleParamsHash.getAndRequireEquals().assertEquals(
@@ -205,7 +205,7 @@ export class TokeniZkFairSale extends SmartContract {
      * @param adminSignature 
      */
     @method
-    maintainContributors(saleParams: SaleParams, saleRollupProof: SaleRollupProof) {
+    async maintainContributors(saleParams: SaleParams, saleRollupProof: SaleRollupProof) {
         // check if  params is aligned with the existing ones
         const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
@@ -215,7 +215,7 @@ export class TokeniZkFairSale extends SmartContract {
         // this.network.timestamp.requireBetween(saleParams.endTime, UInt64.MAXINT());
 
         // check actionState
-        this.account.actionState.assertEquals(
+        this.account.actionState.requireEquals(
             saleRollupProof.publicOutput.target.currentActionsHash
         );
         // check proof
@@ -253,7 +253,7 @@ export class TokeniZkFairSale extends SmartContract {
      * @param leafIndex 
      */
     @method
-    claimTokens(saleParams: SaleParams,
+    async claimTokens(saleParams: SaleParams,
         saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
         lowLeafWitness: UserLowLeafWitnessData,
         oldNullWitness: UserNullifierMerkleWitness) {
@@ -278,7 +278,7 @@ export class TokeniZkFairSale extends SmartContract {
         this.self.balance.subInPlace(saleContribution.minaAmount.div(10 ** 9).mul(saleParams.saleRate));
 
         const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
-        redeemAccount.updateState(
+        await redeemAccount.updateState(
             saleContribution.hash(),
             lowLeafWitness,
             oldNullWitness

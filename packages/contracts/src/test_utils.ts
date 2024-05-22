@@ -7,7 +7,6 @@ import {
   PublicKey,
   UInt32,
   Types,
-  isReady,
   PrivateKey,
 } from 'o1js';
 import fs from 'fs';
@@ -31,7 +30,7 @@ interface TestContext {
   getNetworkStatus(): Promise<ReturnType<typeof Mina.getNetworkState>>;
   waitForBlock(blockHeight?: UInt32): Promise<void>;
   submitTx(
-    tx: Mina.Transaction,
+    tx: Mina.Transaction<false, false>,
     params: {
       feePayerKey: PrivateKey;
       contractKeys?: PrivateKey[];
@@ -46,10 +45,10 @@ interface TestContext {
 }
 
 /**
- * Generate a test context according to the setting of the current environment variable.
- * Context contains the method that can be reused both in Berkeley and Local
- * Support proofsEnabled setting
- */
+* Generate a test context according to the setting of the current environment variable.
+* Context contains the method that can be reused both in Berkeley and Local
+* Support proofsEnabled setting
+*/
 function getTestContext(onlySupportProof = false): TestContext {
   let deployToBerkeley = false;
   if (process.env.TEST_ON_BERKELEY === 'true') {
@@ -76,7 +75,6 @@ function getTestContext(onlySupportProof = false): TestContext {
   };
 
   let initMinaNetwork = async () => {
-    await isReady;
 
     let Blockchain;
 
@@ -88,7 +86,7 @@ function getTestContext(onlySupportProof = false): TestContext {
       console.log('endpoint-mina: ', config.networks.berkeley.mina);
       console.log('endpoint-archive: ', config.networks.berkeley.archive);
     } else {
-      Blockchain = Mina.LocalBlockchain({
+      Blockchain = await Mina.LocalBlockchain({
         proofsEnabled,
         enforceTransactionLimits: true,
       });
@@ -138,9 +136,7 @@ function getTestContext(onlySupportProof = false): TestContext {
         );
       }
     } else {
-      (
-        Mina.activeInstance as ReturnType<typeof Mina.LocalBlockchain>
-      ).setBlockchainLength(blockHeight);
+      (Mina.activeInstance as Awaited<ReturnType<typeof Mina.LocalBlockchain>>).setBlockchainLength(blockHeight);
     }
 
     console.log(
@@ -150,7 +146,7 @@ function getTestContext(onlySupportProof = false): TestContext {
   };
 
   let submitTx = async (
-    tx: Mina.Transaction,
+    tx: Mina.Transaction<false, false>,
     params: {
       feePayerKey: PrivateKey;
       contractKeys?: PrivateKey[];
@@ -173,20 +169,20 @@ function getTestContext(onlySupportProof = false): TestContext {
       signKeys = signKeys.concat(params.otherSignKeys);
     }
     console.log('tx fee: ', DEFAULT_TX_FEE);
-    tx = tx.sign(signKeys);
-    console.log(`tx: ${tx.toJSON()}`);
+    const tx1 = tx.sign(signKeys);
+    console.log(`tx: ${tx1.toJSON()}`);
 
-    let txId = await tx.send();
+    let pendingTxPromise = await tx1.send();
     let logLabel =
       params.logLabel !== undefined ? params.logLabel + ' txId: ' : 'txId: ';
-    console.log(logLabel, txId.hash());
+    console.log(logLabel, pendingTxPromise.hash);
 
     try {
-      await txId.wait({ maxAttempts: 100000 });
+      await pendingTxPromise.wait({ maxAttempts: 100000 });
     } catch (err) {
       console.error(err);
       setTimeout(
-        async () => await txId.wait({ maxAttempts: 100000 }),
+        async () => await pendingTxPromise.wait({ maxAttempts: 100000 }),
         1 * 60 * 1000
       );
     }
@@ -242,7 +238,7 @@ function getTestContext(onlySupportProof = false): TestContext {
       fundedAddress = fundedKey.toPublicKey();
       console.log('add fund to local account');
       (
-        Mina.activeInstance as ReturnType<typeof Mina.LocalBlockchain>
+        Mina.activeInstance as Awaited<ReturnType<typeof Mina.LocalBlockchain>>
       ).addAccount(fundedAddress, fundMINA.toString());
     }
 

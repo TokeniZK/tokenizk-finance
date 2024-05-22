@@ -8,7 +8,6 @@ import {
     PublicKey,
     Permissions,
     Field,
-    Struct,
     UInt32,
     Poseidon,
     Provable,
@@ -16,6 +15,7 @@ import {
     Reducer,
     TokenId,
     Bool,
+    TransactionVersion,
 } from 'o1js';
 import { SaleRollupProof } from './sale-rollup-prover';
 import {
@@ -32,8 +32,8 @@ import { WHITELIST_TREE_ROOT } from './constants';
 
 export class TokeniZkPresale extends SmartContract {
 
-    deployZkApp(presaleParams: SaleParams, contributorTreeRoot: Field) {
-        super.deploy();
+    async deployZkApp(presaleParams: SaleParams, contributorTreeRoot: Field) {
+        await super.deploy();
 
         /*
         const presaleParams = new PresaleParams({
@@ -64,7 +64,7 @@ export class TokeniZkPresale extends SmartContract {
             editState: Permissions.proof(),
             send: Permissions.proof(),
             access: Permissions.proofOrSignature(),
-            setVerificationKey: Permissions.proof()
+            setVerificationKey: {auth: Permissions.proof(), txnVersion: TransactionVersion.current()}
         });
     }
 
@@ -114,7 +114,7 @@ export class TokeniZkPresale extends SmartContract {
     public totalContributedMina = State<UInt64>();
 
     @method
-    configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
+    async configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
         // cannot be changed after ('startTime' - 60 * 60 * 1000)
         // this.network.blockchainLength.requireBetween(saleParams0.startTime.sub(10), UInt32.MAXINT());
         this.network.timestamp.requireBetween(saleParams0.startTime.sub(10 * 3 * 60 * 1000), UInt64.MAXINT());
@@ -155,7 +155,7 @@ export class TokeniZkPresale extends SmartContract {
         this.self.balance.addInPlace(valueChangeX);// TODO for simplify, check if this method could accept negative value?
         this.self.balance.subInPlace(valueChangeY);
         */
-        this.self.account.balance.assertBetween(saleParams1.totalSaleSupply, UInt64.MAXINT());
+        this.self.account.balance.requireBetween(saleParams1.totalSaleSupply, UInt64.MAXINT());
 
         this.saleParamsHash.set(hash1);
         this.vestingParamsHash.set(saleParams1.vestingParamsHash());
@@ -172,7 +172,7 @@ export class TokeniZkPresale extends SmartContract {
      * @param minaAmount MINA amount
      */
     @method
-    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
+    async contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
         membershipMerkleWitness: WhitelistMembershipMerkleWitness, leafIndex: Field) {
         // check presale params
         this.saleParamsHash.getAndRequireEquals().assertEquals(
@@ -189,7 +189,7 @@ export class TokeniZkPresale extends SmartContract {
         // check if exceed presale_token_account balance
         const toPurchaseTokenAmount = minaAmount.div(10 ** 9).mul(saleParams.saleRate);
         // TODO do we really need this check ?? or indirectly check it by 'this.balance.subInPlace' ?
-        this.account.balance.assertBetween(toPurchaseTokenAmount, UInt64.MAXINT());
+        this.account.balance.requireBetween(toPurchaseTokenAmount, UInt64.MAXINT());
 
         // check whitelist
         const leaf = Provable.if(
@@ -230,7 +230,7 @@ export class TokeniZkPresale extends SmartContract {
      * @param adminSignature 
      */
     @method
-    maintainContributors(saleParams: SaleParams, saleRollupProof: SaleRollupProof) {
+    async maintainContributors(saleParams: SaleParams, saleRollupProof: SaleRollupProof) {
         // check if presale params is aligned with the existing ones
         const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
@@ -240,7 +240,7 @@ export class TokeniZkPresale extends SmartContract {
         // this.network.timestamp.requireBetween(saleParams.endTime, UInt64.MAXINT());
 
         // check actionState
-        this.account.actionState.assertEquals(
+        this.account.actionState.requireEquals(
             saleRollupProof.publicOutput.target.currentActionsHash
         );
         // check proof
@@ -279,7 +279,7 @@ export class TokeniZkPresale extends SmartContract {
      * @param leafIndex 
      */
     @method
-    claimTokens(saleParams: SaleParams,
+    async claimTokens(saleParams: SaleParams,
         saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
         lowLeafWitness: UserLowLeafWitnessData,
         oldNullWitness: UserNullifierMerkleWitness) {
@@ -304,7 +304,7 @@ export class TokeniZkPresale extends SmartContract {
         this.self.balance.subInPlace(saleContribution.minaAmount.div(10 ** 9).mul(saleParams.saleRate));
 
         const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
-        redeemAccount.updateState(
+        await redeemAccount.updateState(
             saleContribution.hash(),
             lowLeafWitness,
             oldNullWitness
@@ -324,7 +324,7 @@ export class TokeniZkPresale extends SmartContract {
      * @param leafIndex 
      */
     @method
-    redeemCheck(saleParams: SaleParams,
+    async redeemCheck(saleParams: SaleParams,
         saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData) {
 
         // check if presale params is aligned with the existing ones
@@ -374,7 +374,7 @@ export class PresaleMinaFundHolder extends SmartContract {
      * @param oldNullWitness 
      */
     @method
-    redeem(saleParams: SaleParams,
+    async redeem(saleParams: SaleParams,
         totalContributedMina: UInt64,
         contributorTreeRoot: Field,
         saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
@@ -398,14 +398,14 @@ export class PresaleMinaFundHolder extends SmartContract {
         saleContributorMembershipWitnessData.checkMembershipAndAssert(contributorTreeRoot);
 
         const tokenContract = new TokeniZkBasicToken(tokenAddress);
-        tokenContract.approveAnyAccountUpdate(saleAU);
+        await tokenContract.approveAccountUpdate(saleAU);
 
         const presaleContribution = saleContributorMembershipWitnessData.leafData;
         const contributorAddress = presaleContribution.contributorAddress;
         const minaAmount = presaleContribution.minaAmount;
 
         const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
-        redeemAccount.updateState(
+        await redeemAccount.updateState(
             presaleContribution.hash(),
             lowLeafWitness,
             oldNullWitness
@@ -420,7 +420,7 @@ export class PresaleMinaFundHolder extends SmartContract {
 
     /* !!!could work originally !!!
       @method
-      redeem(saleParams: SaleParams,
+      async redeem(saleParams: SaleParams,
           saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
           lowLeafWitness: UserLowLeafWitnessData,
           oldNullWitness: UserNullifierMerkleWitness) {
@@ -430,14 +430,14 @@ export class PresaleMinaFundHolder extends SmartContract {
           // check if meet redeeming conditions
           saleContract.redeemCheck(saleParams, saleContributorMembershipWitnessData);
           const tokenContract = new TokeniZkBasicToken(tokenAddress);
-          tokenContract.approveAnyAccountUpdate(saleContract.self);
+          await tokenContract.approveAccountUpdate(saleContract.self);
   
           const presaleContribution = saleContributorMembershipWitnessData.leafData;
           const contributorAddress = presaleContribution.contributorAddress;
           const minaAmount = presaleContribution.minaAmount;
   
           const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
-          redeemAccount.updateState(
+          await redeemAccount.updateState(
               presaleContribution.hash(),
               lowLeafWitness,
               oldNullWitness

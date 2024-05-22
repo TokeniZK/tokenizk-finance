@@ -98,7 +98,7 @@ export class TokeniZkPrivateSale extends SmartContract {
 
 
     @method
-    configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
+    async configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
         // cannot be changed after ('startTime' - 60 * 60 * 1000)
         // ~this.network.blockchainLength.requireBetween(saleParams0.startTime.sub(10), UInt32.MAXINT());~
         this.network.timestamp.requireBetween(saleParams0.startTime.sub(10 * 3 * 60 * 1000), UInt64.MAXINT());
@@ -141,7 +141,7 @@ export class TokeniZkPrivateSale extends SmartContract {
      * @param minaAmount MINA amount
      */
     @method
-    contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
+    async contribute(saleParams: SaleParams, contributorAddress: PublicKey, minaAmount: UInt64,
         membershipMerkleWitness: WhitelistMembershipMerkleWitness, leafIndex: Field) {
         // check privateSale params
         this.saleParamsHash.getAndRequireEquals().assertEquals(
@@ -195,7 +195,7 @@ export class TokeniZkPrivateSale extends SmartContract {
      * @param adminSignature 
      */
     @method
-    maintainContributors(saleParams: SaleParams, saleRollupProof: SaleRollupProof) {
+    async maintainContributors(saleParams: SaleParams, saleRollupProof: SaleRollupProof) {
         // check if privateSale params is aligned with the existing ones
         const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
@@ -205,7 +205,7 @@ export class TokeniZkPrivateSale extends SmartContract {
         // this.network.timestamp.requireBetween(saleParams.endTime, UInt64.MAXINT());
 
         // check actionState
-        this.account.actionState.assertEquals(
+        this.account.actionState.requireEquals(
             saleRollupProof.publicOutput.target.currentActionsHash
         );
 
@@ -234,7 +234,7 @@ export class TokeniZkPrivateSale extends SmartContract {
      * @param signature 
      */
     @method
-    claim(saleParams: SaleParams, receiverAddress: PublicKey, signature: Signature) {
+    async claim(saleParams: SaleParams, receiverAddress: PublicKey, signature: Signature) {
         // check if privateSale params is aligned with the existing ones
         const hash0 = saleParams.hash();
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
@@ -282,7 +282,7 @@ export class TokeniZkPrivateSale extends SmartContract {
      * @param leafIndex 
      */
     @method
-    redeem(saleParams: SaleParams,
+    async redeem(saleParams: SaleParams,
         saleContributorMembershipWitnessData: SaleContributorMembershipWitnessData,
         lowLeafWitness: UserLowLeafWitnessData,
         oldNullWitness: UserNullifierMerkleWitness) {
@@ -306,7 +306,7 @@ export class TokeniZkPrivateSale extends SmartContract {
         const minaAmount = saleContribution.minaAmount;
 
         const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
-        redeemAccount.updateState(
+        await redeemAccount.updateState(
             saleContribution.hash(),
             lowLeafWitness,
             oldNullWitness

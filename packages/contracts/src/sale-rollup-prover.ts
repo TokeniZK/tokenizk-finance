@@ -33,7 +33,7 @@ let  SaleRollupProver = ZkProgram({
         processActionsInBatch: {
             privateInputs: [ SaleRollupState,  SaleActionBatch],
 
-            method(state:  SaleRollupState, actionBatch:  SaleActionBatch) {
+            async method(state:  SaleRollupState, actionBatch:  SaleActionBatch) {
                 let currMembershipTreeRoot = state.membershipTreeRoot;
                 let currIndex = state.currentIndex;
                 let currActionsHash = state.currentActionsHash;
@@ -102,7 +102,7 @@ let  SaleRollupProver = ZkProgram({
         mergeStates: {
             privateInputs: [SelfProof, SelfProof],
 
-            method(
+            async method(
                 p1: SelfProof<Empty,  SaleRollupStateTransition>,
                 p2: SelfProof<Empty,  SaleRollupStateTransition>
             ) {
