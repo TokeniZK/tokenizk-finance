@@ -1,33 +1,13 @@
 
 import {
-    isReady,
-    method,
     Mina,
-    AccountUpdate,
     PrivateKey,
-    SmartContract,
-    PublicKey,
-    UInt64,
-    Int64,
-    Experimental,
-    Permissions,
-    DeployArgs,
-    VerificationKey,
-    TokenId,
-    state,
-    State,
     Field,
-    Bool,
-    Provable,
-    UInt32,
     fetchAccount,
 } from 'o1js';
 
-import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness } from "../src";
+import { TokeniZkFactory, TokeniZkBasicToken, LauchpadPlatformParams } from "../src";
 import { getTestContext } from '../src/test_utils';
-import { PoseidonHasher, StandardTree, newTree } from '@tokenizk/merkle-tree';
-import { Level } from 'level';
-import { WhitelistMembershipMerkleWitness } from '../src';
 
 // ================
 const ctx = getTestContext();
@@ -185,14 +165,14 @@ await ctx.submitTx(tx, {
 console.log('deploy TokeniZkBasicToken');
 
 let basicTokenZkApp = new TokeniZkBasicToken(basicTokenZkAppAddress);
-let tokenId = basicTokenZkApp.token.id;
+let tokenId = basicTokenZkApp.deriveTokenId();
 tx = await Mina.transaction(
     {
         sender: feePayer,
         fee: ctx.txFee,
         memo: 'Deploy BasicToken contract',
     },
-    () => {
+    async () => {
         // AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVKX, Field(2100 * 10000));
     }

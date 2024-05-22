@@ -62,7 +62,7 @@ class TokenContract extends SmartContract {
     }
 
     @method
-    setParam(saleParamsHash1: Field, startTimeStamp: UInt64) {
+    async setParam(saleParamsHash1: Field, startTimeStamp: UInt64) {
         this.saleParamsHash.getAndRequireEquals().assertNotEquals(saleParamsHash1);
 
         this.network.timestamp.requireBetween(startTimeStamp, UInt64.MAXINT());
@@ -81,7 +81,7 @@ let tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy TokenContract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenZkApp.deployZkApp();
     }
@@ -100,7 +100,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'set Param',
     },
-    () => {
+    async () => {
         tokenZkApp.setParam(Field(1), startTimestamp);
     }
 );

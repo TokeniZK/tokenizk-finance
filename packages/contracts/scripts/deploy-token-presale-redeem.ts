@@ -1,23 +1,11 @@
 
 import {
-    isReady,
-    method,
     Mina,
     AccountUpdate,
     PrivateKey,
-    SmartContract,
-    PublicKey,
     UInt64,
-    Int64,
-    Experimental,
-    Permissions,
-    DeployArgs,
-    VerificationKey,
     TokenId,
-    state,
-    State,
     Field,
-    Bool,
     Provable,
     UInt32,
     fetchAccount,
@@ -25,7 +13,7 @@ import {
     fetchLastBlock
 } from 'o1js';
 
-import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, AirdropParams, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, UserNullifierMerkleWitness, AirdropClaim, SaleContribution, SaleContributorMembershipWitnessData, SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleRollupState } from "../src";
+import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, SaleContribution, SaleContributorMembershipWitnessData, SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleRollupState } from "../src";
 import { getTestContext } from '../src/test_utils';
 import { LeafData, PoseidonHasher, StandardIndexedTree, StandardTree, newTree } from '@tokenizk/merkle-tree';
 import { Level } from 'level';
@@ -197,7 +185,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy tokenFactory contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.deployZkApp(lauchpadPlatformParams);
     }
@@ -221,7 +209,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy BasicToken contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
     }
@@ -282,7 +270,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy Presale contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer, 2);
         basicTokenZkApp.createPresale(lauchpadPlatformParams, presaleZkAppAddress, tokeniZkPresaleVK, presaleParams, presaleMinaFundHolderVK);
     }
@@ -308,9 +296,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'user1 contribute',
     },
-    () => {
+    async () => {
         tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress, contributeMinaAmount, whitelistMembershipMerkleWitness, whitelistLeafIndex);
-        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
+        basicTokenZkApp.approveAccountUpdate(tokeniZkPresaleZkapp.self);
     }
 );
 console.log('generated tx: ' + tx.toJSON());
@@ -332,9 +320,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'user2 contribute',
     },
-    () => {
+    async () => {
         tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress2, contributeMinaAmount2, whitelistMembershipMerkleWitness2, whitelistLeafIndex2);
-        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
+        basicTokenZkApp.approveAccountUpdate(tokeniZkPresaleZkapp.self);
 
     }
 );
@@ -444,9 +432,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'maintain contributors',
     },
-    () => {
+    async () => {
         tokeniZkPresaleZkapp.maintainContributors(presaleParams, saleRollupProof);
-        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
+        basicTokenZkApp.approveAccountUpdate(tokeniZkPresaleZkapp.self);
     }
 );
 await ctx.submitTx(tx, {
@@ -469,7 +457,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Create Redeem Account',
     },
-    () => {
+    async () => {
         // AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.createRedeemAccount(lauchpadPlatformParams, redeemAccountZkAppAddress, TokeniZkFactory.redeemAccountVk);
     }
@@ -575,7 +563,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'redeem MINA',
     },
-    () => {
+    async () => {
         //presaleMinaFundHolderZkapp.redeem(presaleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
         presaleMinaFundHolderZkapp.redeem(presaleParams, totalContributedMina, contributorTreeRoot, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
     }
@@ -605,7 +593,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'transfer tokens',
     },
-    () => {
+    async () => {
         basicTokenZkApp.transferToken(redeemAccountZkAppAddress, to, UInt64.from(11));
     }
 );

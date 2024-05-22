@@ -1,29 +1,14 @@
 import fs from "fs";
 import {
-    isReady,
-    method,
     Mina,
     AccountUpdate,
     PrivateKey,
-    SmartContract,
-    PublicKey,
     UInt64,
-    Int64,
-    Experimental,
-    Permissions,
-    DeployArgs,
-    VerificationKey,
-    TokenId,
-    state,
-    State,
     Field,
-    Bool,
-    Provable,
-    UInt32,
     fetchAccount,
 } from 'o1js';
 
-import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop } from "../src";
+import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleRollupProver, RedeemAccount, TokeniZkFairSale, TokeniZkPrivateSale, TokeniZkAirdrop } from "../src";
 import { getTestContext } from '../src/test_utils';
 
 // ================
@@ -32,7 +17,7 @@ await ctx.initMinaNetwork();
 // ================
 
 // let feePayerKey = Local.testAccounts[0].privateKey;
-let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEDgneTyC6VimEUWF4jrreDaR4ntSvJdjw6ckfDQCtMG5aJtMGP') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
+let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKDrANogDMiondrfdHsCn6tiASsQKjAEezVNHutB2Bn9vJCCVJG2') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
 let feePayer = feePayerKey.toPublicKey();
 if (process.env.TEST_ON_BERKELEY === 'true') {
     const feePayerAcctInfo = await fetchAccount({ publicKey: feePayer });
@@ -108,7 +93,7 @@ fs.writeFileSync('./deploy/verification-keys/TokeniZkBasicToken-VK.json', JSON.s
 let tokenFactoryZkApp = new TokeniZkFactory(tokenFactoryZkAppAddress);
 
 let basicTokenZkApp = new TokeniZkBasicToken(basicTokenZkAppAddress);
-let tokenId = basicTokenZkApp.token.id;
+let tokenId = basicTokenZkApp.deriveTokenId();
 
 console.time('compile (SaleRollupProver)');
 const saleRollupProverVK = (await SaleRollupProver.compile()).verificationKey;
@@ -229,9 +214,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy TokenFactory contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
-        tokenFactoryZkApp.deployZkApp(lauchpadPlatformParams);
+        await tokenFactoryZkApp.deployZkApp(lauchpadPlatformParams);
     }
 );
 await ctx.submitTx(tx, {
@@ -250,9 +235,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy BasicToken contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
-        tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
+        await tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
     }
 );
 console.log('generated tx: ' + tx.toJSON());
