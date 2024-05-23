@@ -1,6 +1,5 @@
 import os from 'os';
 import cp, { ChildProcess as Worker } from "child_process";
-import { PublicKey } from "o1js";
 import { ProofPayload } from './constant';
 import { getLogger } from "./lib/logUtils";
 import { fileURLToPath } from 'url';

@@ -65,7 +65,7 @@ export const saleRollupBatchAndMerge = async (subProcessCordinator: SubProcessCo
         }
 
     } else {
-        subProcessCordinator.saleContributorsBatch(proofPayloads[0], sendCallBack);
+        await subProcessCordinator.saleContributorsBatch(proofPayloads[0], sendCallBack);
     }
 
 };

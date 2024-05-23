@@ -42,8 +42,8 @@ function processMsgFromMaster() {
                     }
 
                     const tokeniZkSaleZkApp = new TokeniZkPrivateSale(params.contractAddress);
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
-                        tokeniZkSaleZkApp.contribute(params.methodParams.saleParams,
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+                        await tokeniZkSaleZkApp.contribute(params.methodParams.saleParams,
                             params.methodParams.contributorAddress,
                             params.methodParams.minaAmount,
                             params.methodParams.membershipMerkleWitness,
@@ -64,7 +64,7 @@ function processMsgFromMaster() {
                         contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
                         methodParams: {
                             saleParams: SaleParams.fromJSON(message.payload.methodParams.saleParams) as SaleParams,//??? rm 'as SaleParams'?
-                            saleRollupProof: SaleRollupProof.fromJSON(message.payload.methodParams.saleRollupProof)
+                            saleRollupProof: await SaleRollupProof.fromJSON(message.payload.methodParams.saleRollupProof)
                         }
                     }
 
@@ -81,8 +81,8 @@ function processMsgFromMaster() {
 
                     const saleContract = new TokeniZkPrivateSale(params.contractAddress);
 
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
-                        saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+                        await saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
                     });
                     await tx.prove();
 
@@ -110,11 +110,11 @@ function processMsgFromMaster() {
                     const holderAccount = await syncAcctInfo(params.methodParams.receiverAddress);// fetch account.
 
                     const tokeniZkSaleZkApp = new TokeniZkPrivateSale(params.contractAddress);
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
                         if (!holderAccount) {
                             AccountUpdate.fundNewAccount(params.feePayer);
                         }
-                        tokeniZkSaleZkApp.claim(
+                        await tokeniZkSaleZkApp.claim(
                             params.methodParams.saleParams,
                             params.methodParams.receiverAddress,
                             params.methodParams.signature);
@@ -146,16 +146,16 @@ function processMsgFromMaster() {
 
                     const tokeniZkSaleZkApp = new TokeniZkPrivateSale(params.contractAddress);
                     let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
-                        tokeniZkSaleZkApp.redeem(
+                        await tokeniZkSaleZkApp.redeem(
                             params.methodParams.saleParams,
                             params.methodParams.saleContributorMembershipWitnessData,
                             params.methodParams.lowLeafWitness,
                             params.methodParams.oldNullWitness
                         );
-                        await tx.prove();
-
-                        return tx;
                     });
+                    await tx.prove();
+
+                    return tx;
                 });
                 break;
 

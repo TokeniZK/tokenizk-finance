@@ -58,18 +58,18 @@ function processMsgFromMaster() {
 
                     const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(params.tokenAddress);
                     const tokeniZkSaleZkApp = new TokeniZkFairSale(params.contractAddress, tokenId);
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
                         /*
                         if (!holderAccount) {
                             AccountUpdate.fundNewAccount(params.feePayer);
                         }
                         */
-                        tokeniZkSaleZkApp.contribute(params.methodParams.saleParams,
+                        await tokeniZkSaleZkApp.contribute(params.methodParams.saleParams,
                             params.methodParams.contributorAddress,
                             params.methodParams.minaAmount,
                             params.methodParams.membershipMerkleWitness,
                             params.methodParams.leafIndex);
-                        tokeniZkBasicTokenZkApp.approveAnyAccountUpdate(tokeniZkSaleZkApp.self);
+                        await tokeniZkBasicTokenZkApp.approveAccountUpdate(tokeniZkSaleZkApp.self);
 
                     });
                     await tx.prove();
@@ -87,7 +87,7 @@ function processMsgFromMaster() {
                         contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
                         methodParams: {
                             saleParams: SaleParams.fromJSON(message.payload.methodParams.saleParams) as SaleParams,//??? rm 'as SaleParams'?
-                            saleRollupProof: SaleRollupProof.fromJSON(message.payload.methodParams.saleRollupProof)
+                            saleRollupProof: await SaleRollupProof.fromJSON(message.payload.methodParams.saleRollupProof)
                         }
                     }
 
@@ -106,9 +106,9 @@ function processMsgFromMaster() {
                     let tokenZkApp = new TokeniZkBasicToken(params.methodParams.saleParams.tokenAddress);
                     const saleContract = new TokeniZkFairSale(params.contractAddress, tokenId);
 
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
-                        saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
-                        tokenZkApp.approveAnyAccountUpdate(saleContract.self);
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+                        await saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
+                        await tokenZkApp.approveAccountUpdate(saleContract.self);
                     });
                     await tx.prove();
 
@@ -144,17 +144,17 @@ function processMsgFromMaster() {
                     const vestingParams = params.methodParams.saleParams.vestingParams();
                     const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(params.tokenAddress);
                     const tokeniZkSaleZkApp = new TokeniZkFairSale(params.contractAddress, tokenId);
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
                         if (!holderAccount) {
                             AccountUpdate.fundNewAccount(params.feePayer);
                         }
 
-                        tokeniZkSaleZkApp.claimTokens(
+                        await tokeniZkSaleZkApp.claimTokens(
                             params.methodParams.saleParams,
                             params.methodParams.saleContributorMembershipWitnessData,
                             params.methodParams.lowLeafWitness,
                             params.methodParams.oldNullWitness);
-                        tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkSaleZkApp.self,
+                        await tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkSaleZkApp.self,
                             redeemAccount,
                             minaAmount,
                             vestingParams);

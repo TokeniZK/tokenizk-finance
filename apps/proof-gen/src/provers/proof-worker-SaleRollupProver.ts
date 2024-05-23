@@ -41,8 +41,8 @@ function processMsgFromMaster() {
             case `ROLLUP_MERGE`:
                 await execCircuit(message, async () => {
                     let params = {
-                        presaleRollupProof1: SaleRollupProof.fromJSON(message.payload.presaleRollupProof1),
-                        presaleRollupProof2: SaleRollupProof.fromJSON(message.payload.presaleRollupProof2)
+                        presaleRollupProof1: await SaleRollupProof.fromJSON(message.payload.presaleRollupProof1),
+                        presaleRollupProof2: await SaleRollupProof.fromJSON(message.payload.presaleRollupProof2)
                     }
 
                     const presaleRollupProof1 = params.presaleRollupProof1;
