@@ -28,22 +28,22 @@ export class TokeniZkBasicToken extends TokenContract {
     /**
      * Total supply of tokens
      */
-    @state(UInt64) totalSupply = State<UInt64>();
+    @state(Field) totalSupply = State<Field>();
 
     /**
      * Total amount in circulation
      */
-    @state(UInt64) totalAmountInCirculation = State<UInt64>();
+    @state(Field) totalAmountInCirculation = State<Field>();
 
     @state(PublicKey) tokeniZkFactoryAddress = State<PublicKey>();
 
 
-    deployZkApp(totalSupply: UInt64) {
+    deployZkApp(totalSupply: Field) {
         super.deploy();
 
         this.totalSupply.set(totalSupply);// TODO should be as a constant inside circuit, rather than a state !!!
 
-        this.totalAmountInCirculation.set(UInt64.from(0));
+        this.totalAmountInCirculation.set(Field.from(0));
 
         // this.account.tokenSymbol.set('');
         // this.account.zkappUri.set('');
@@ -214,7 +214,7 @@ export class TokeniZkBasicToken extends TokenContract {
         let totalAmountInCirculation = this.totalAmountInCirculation.getAndRequireEquals();
         let totalSupply = this.totalSupply.getAndRequireEquals();
 
-        let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
+        let newTotalAmountInCirculation = totalAmountInCirculation.add(amount.toFields()[0]);
         newTotalAmountInCirculation.assertLessThanOrEqual(
             totalSupply,
             "Can't mint more than the total supply"
@@ -277,9 +277,9 @@ export class TokeniZkBasicToken extends TokenContract {
         let totalAmountInCirculation = this.totalAmountInCirculation.get();
         this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
 
-        let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
+        let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount.toFields()[0]);
         totalAmountInCirculation.assertGreaterThanOrEqual(
-            UInt64.from(0),
+            0,
             "Can't burn less than 0"
         );
 
@@ -324,7 +324,10 @@ export class TokeniZkBasicToken extends TokenContract {
         receiverAddress: PublicKey,
         amount: UInt64,
     ) {
-        await this.transfer(zkappUpdate, receiverAddress, amount);
+        const tokenId = this.deriveTokenId();
+        let receiverAccountUpdate = AccountUpdate.createSigned(receiverAddress, tokenId);
+        this.approve(receiverAccountUpdate); 
+        receiverAccountUpdate.balance.addInPlace(amount);
 
         this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
             tokenAddress: this.address,
@@ -349,13 +352,18 @@ export class TokeniZkBasicToken extends TokenContract {
         amount: UInt64,
         vestingParams: VestingParams
     ) {
-        await this.approveTransferCallback(zkappUpdate, receiverAddress, amount);
-
-        // increase receiver's token
         const tokenId = this.deriveTokenId();
-        let receiverAccountUpdate = AccountUpdate.create(receiverAddress, tokenId);
+        let receiverAccountUpdate = AccountUpdate.createSigned(receiverAddress, tokenId);      
         this.approve(receiverAccountUpdate);
         receiverAccountUpdate.balance.addInPlace(amount);
+
+        this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
+            tokenAddress: this.address,
+            tokenId: this.deriveTokenId(),
+            from: zkappUpdate.publicKey,
+            to: receiverAddress,
+            value: amount
+        }));
         
         AccountUpdate.assertEquals(
             zkappUpdate.body.preconditions.account.state[1],
@@ -372,7 +380,6 @@ export class TokeniZkBasicToken extends TokenContract {
             vestingPeriod: vestingParams.vestingPeriod,
             vestingIncrement
         });
-        receiverAccountUpdate.requireSignature();
     }
 
 }
