@@ -109,7 +109,7 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
         await l1Tx.sign([PrivateKey.fromBase58(config.txFeePayerPrivateKey)]);
 
         await l1Tx.send().then(async txId => {// TODO what if it fails currently!
-            const txHash0 = txId.hash()!;
+            const txHash0 = txId.hash!;
 
             if ((!txHash0)) {
                 logger.warn('error: broadcast tokenizkRollupContract\'s l1Tx failed!!!');
