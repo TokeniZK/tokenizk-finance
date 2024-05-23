@@ -449,7 +449,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                         let targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == saleAddress && e.body.authorizationKind.isSigned.toBoolean());
                         targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-                        tx = tx.sign([saleKey]);
+                        tx.sign([saleKey]);
 
                         txJson = tx.toJSON();
                         console.log('createSale txJson: ' + txJson);

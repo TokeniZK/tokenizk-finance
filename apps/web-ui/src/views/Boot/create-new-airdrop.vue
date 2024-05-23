@@ -486,7 +486,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                         let airdropTargetAUList = tx.transaction.accountUpdates.filter(e => (e.body.publicKey.toBase58() == airdropAddress || e.body.publicKey.toBase58() == tokenAddress)
                             && e.body.authorizationKind.isSigned.toBoolean());
                         airdropTargetAUList.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-                        tx = tx.sign([airdropKey, tokenKey]);
+                        tx.sign([airdropKey, tokenKey]);
 
                         txJson = tx.toJSON();
                         console.log('createAirdrop txJson: ' + txJson);
