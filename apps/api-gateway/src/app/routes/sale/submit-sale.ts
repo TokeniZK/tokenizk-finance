@@ -62,14 +62,13 @@ const handler: RequestHandler<SaleDto, null> = async function (
             sale.txHash = saleDto.txHash;
             sale.updatedAt = new Date();
         } else {
-
             const tokenAddr = PublicKey.fromBase58(saleDto.tokenAddress);
-            const tokenAccount = await fetchAccount({ publicKey: tokenAddr, tokenId: TokenId.derive(tokenAddr) });
+            const tokenAccount = await fetchAccount({ publicKey: tokenAddr});
             if (!tokenAccount || tokenAccount.error) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
             }
 
-            if (saleDto.totalSaleSupply <= 0 || Number(tokenAccount?.account?.balance.toString()) < saleDto.totalSaleSupply) {
+            if (saleDto.totalSaleSupply <= 0 /* || Number(tokenAccount?.account?.balance.toString()) < saleDto.totalSaleSupply */) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "totalAirdropSupply is not valid");
             }
 

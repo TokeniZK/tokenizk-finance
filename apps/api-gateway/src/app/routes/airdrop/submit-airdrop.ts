@@ -62,7 +62,7 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             airdrop = await airdropRepo.save(airdrop);
         } else {
             const tokenAddr = PublicKey.fromBase58(airdropDto.tokenAddress);
-            const tokenAccount = await fetchAccount({ publicKey: tokenAddr, tokenId: TokenId.derive(tokenAddr) });
+            const tokenAccount = await fetchAccount({ publicKey: tokenAddr});
             if (!tokenAccount || tokenAccount.error) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
             }

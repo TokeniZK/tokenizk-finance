@@ -49,7 +49,7 @@ const handler: RequestHandler<TokenDto, null> = async function (
     }
 
     const tokenAddr = PublicKey.fromBase58(dto.address);
-    const tokenAccount = await fetchAccount({ publicKey: tokenAddr, tokenId: TokenId.derive(tokenAddr) });
+    const tokenAccount = await fetchAccount({ publicKey: tokenAddr});
     if (tokenAccount && tokenAccount.error) {
         throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
     }
