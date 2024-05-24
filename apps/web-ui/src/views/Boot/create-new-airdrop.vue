@@ -456,9 +456,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             const factoryAddress = appState.tokeniZkFactoryAddress;
             const basicTokenZkAppAddress = tokenAddress;
 
+            airdropDto.totalAirdropSupply = airdropDto.totalAirdropSupply * (10 ** 9);// TODO consider if need * (10 ** 9)!!!
             const airdropParams = {
                 tokenAddress: airdropDto.tokenAddress,
-                totalAirdropSupply: airdropDto.totalAirdropSupply,// TODO consider if need * (10 ** 9)!!!
+                totalAirdropSupply: airdropDto.totalAirdropSupply,
                 totalMembersNumber: airdropDto.whitelistMembers.split(',').length,
                 whitelistTreeRoot: airdropDto.whitelistTreeRoot,
                 startTime: airdropDto.startTimestamp,

@@ -438,9 +438,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             saleDto1.minimumBuy = saleDto.minimumBuy * (10 ** 9);
             saleDto1.softCap = saleDto.softCap * (10 ** 9);
             saleDto1.hardCap = saleDto.hardCap * (10 ** 9);
+            saleDto1.totalSaleSupply = saleDto.totalSaleSupply * (10 ** 9);
             const saleParams = {
                 tokenAddress: saleDto1.tokenAddress,
-                totalSaleSupply: saleDto1.totalSaleSupply,// TODO consider if need * (10 ** 9)!!!
+                totalSaleSupply: saleDto1.totalSaleSupply,
                 saleRate: saleDto1.saleRate,
                 whitelistTreeRoot: saleDto1.whitelistTreeRoot,
                 softCap: saleDto1.softCap,
