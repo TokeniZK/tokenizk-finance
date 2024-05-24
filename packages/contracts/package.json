@@ -27,8 +27,8 @@
     "check-user-nullifier": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/check-user-nullifier.js",
     "deploy-redeem-account": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/deploy-redeem-account.js",
     "simple": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=true node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/simple.js",
-    "deploy-token-presale-redeem": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/deploy-token-presale-redeem.js",
-    "deploy-token-presale-claim": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=false node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/deploy-token-presale-claim.js",
+    "deploy-token-presale-redeem": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=true node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/deploy-token-presale-redeem.js",
+    "deploy-token-presale-claim": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=true node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/deploy-token-presale-claim.js",
     "airdrop-test": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=true node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/airdrop-test.js",
     "check-global-slot-genesis": "tsc -p tsconfig.json && cross-env TEST_ON_BERKELEY=true node --max-old-space-size=8192 --stack-trace-limit=1000 --experimental-wasm-memory64 --experimental-specifier-resolution=node ./dist/scripts/check-global-slot-genesis.js",
     "encrypt": "tsc -p tsconfig.json && node --experimental-specifier-resolution=node ./dist/scripts/encrypt.js",
@@ -73,6 +73,7 @@
     "@tokenizk/util": "^0.0.1",
     "level": "^8.0.0",
     "levelup": "^5.1.1",
-    "memdown": "^6.1.1"
+    "memdown": "^6.1.1",
+    "o1js-pack": "0.6.0"
   }
 }

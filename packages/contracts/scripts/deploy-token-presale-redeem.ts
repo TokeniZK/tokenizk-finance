@@ -25,9 +25,10 @@ const ctx = getTestContext();
 await ctx.initMinaNetwork();
 // ================
 
-// let feePayerKey = Local.testAccounts[0].privateKey;
-let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEm81DLyU44Gpu4egbX9g1zgrVS7NnGCcbNZYGrKiG4XRQacKRK') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
+let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKDrANogDMiondrfdHsCn6tiASsQKjAEezVNHutB2Bn9vJCCVJG2') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
 let feePayer = feePayerKey.toPublicKey();
+console.log('feePayer: ', feePayerKey.toBase58());
+console.log('feePayerAddress: ', feePayer.toBase58());
 
 if (process.env.TEST_ON_BERKELEY === 'true') {
     await fetchAccount({ publicKey: feePayer });

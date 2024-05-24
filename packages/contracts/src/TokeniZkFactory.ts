@@ -16,7 +16,7 @@ import {
     Bool,
     UInt32,
 } from 'o1js';
-import { SaleParams, AirdropParams } from './sale-models';
+import { SaleParams, AirdropParams, PartailSaleParams } from './sale-models';
 import { CONTRIBUTORS_TREE_ROOT, INDEX_TREE_INIT_ROOT_8 } from './constants';
 
 export class LauchpadPlatformParams extends Struct({
@@ -134,8 +134,10 @@ export class CreateBasicTokenEvent extends Struct({
 export class CreateSaleEvent extends Struct({
     basicTokenAddress: PublicKey,
     saleContractAddress: PublicKey,
-    fee: UInt64,
-    saleParams: SaleParams
+    fee: UInt64, 
+
+    // saleParams: SaleParams //  TODO !!!temporarily comment this param to decrease the size of each event!!!
+
 }) { }
 
 export class CreateAirdropEvent extends Struct({
@@ -223,6 +225,7 @@ export class TokeniZkFactory extends SmartContract {
         this.emitEvent('configPlatfromFeeAddress', new ConfigPlatfromFeeAddressEvent({
             platfromFeeAddress: address
         }));
+
     }
 
     @method.returns(Field)
@@ -315,10 +318,12 @@ export class TokeniZkFactory extends SmartContract {
         feePayer.send({ to: feeReceiverAU, amount: newParams.presaleCreationFee });
 
         this.emitEvent('createPresale', new CreateSaleEvent({
+             
             basicTokenAddress: tokenAddr,
             saleContractAddress: presaleAddress,
-            fee: newParams.presaleCreationFee,
-            saleParams
+            fee: newParams.presaleCreationFee, 
+
+            /*saleParams*/
         }));
     }
 
@@ -333,12 +338,14 @@ export class TokeniZkFactory extends SmartContract {
         // const feeReceiverAU = AccountUpdate.create(platfromFeeAddress);
         const feeReceiverAU = AccountUpdate.create(this.address);
         feePayer.send({ to: feeReceiverAU, amount: lauchpadPlatformParams.fairSaleCreationFee });
-
+ 
         this.emitEvent('createFairsale', new CreateSaleEvent({
+            
             basicTokenAddress: tokenAddr,
             saleContractAddress: fairsaleAddress,
-            fee: lauchpadPlatformParams.fairSaleCreationFee,
-            saleParams
+            fee: lauchpadPlatformParams.fairSaleCreationFee, 
+
+            /* saleParams*/
         }));
     }
 
@@ -400,10 +407,12 @@ export class TokeniZkFactory extends SmartContract {
         feePayer.send({ to: feeReceiverAU, amount: lauchpadPlatformParams.privateSaleCreationFee });
 
         this.emitEvent('createPrivateSale', new CreateSaleEvent({
+             
             basicTokenAddress: tokenAddr,// no token at private sale
             saleContractAddress: saleAddress,
-            fee: lauchpadPlatformParams.privateSaleCreationFee,
-            saleParams
+            fee: lauchpadPlatformParams.privateSaleCreationFee, 
+
+            /*saleParams*/
         }));
 
     }

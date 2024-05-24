@@ -14,6 +14,7 @@ import {
     WHITELIST_TREE_HEIGHT,
 } from './constants';
 import { SiblingPath } from '@tokenizk/merkle-tree';
+import { PackedUInt32Factory } from 'o1js-pack';
 
 import {
     SALE_ACTION_BATCH_SIZE,
@@ -40,6 +41,45 @@ export class VestingParams extends Struct({
         ];
     }
 }
+
+/**
+ * Pack (softCap + hardCap + minimumBuy + maximumBuy)
+ */
+export class PartailSaleParams extends PackedUInt32Factory() {}
+
+export class PackedSaleParams extends Struct({
+
+    tokenAddress: PublicKey,
+
+    totalSaleSupply: UInt64,
+
+    /**
+     * Presale rate: the amount of tokens returned for each Mina during contribution
+     */
+    saleRate: UInt64,
+
+    /**
+     * Whitelist Tree Root: default empty merkle tree root
+     */
+    whitelistTreeRoot: Field,
+
+    partailSaleParams: PartailSaleParams,
+
+    /** 
+     * Start time stamp
+     */
+    startTime: UInt64,
+
+    /**
+     * End time stamp
+     */
+    endTime: UInt64,
+
+    cliffTime: UInt32,
+    cliffAmountRate: UInt64,
+    vestingPeriod: UInt32, // 0 is not allowed, default value is 1
+    vestingIncrement: UInt64
+ }){}
 
 export class SaleParams extends Struct({
     tokenAddress: PublicKey,
