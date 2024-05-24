@@ -132,7 +132,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 const basicTokenZkAppAddress = userFundFormRef.token;
                 const from = appState.connectedWallet58;
                 const to = userFundFormRef.reciver;
-                const value = Number(userFundFormRef.amount);
+                const value = Number(userFundFormRef.amount) * (10 ** 9);
                 const feePayerAddress = appState.connectedWallet58;
                 const txFee = 0.21 * (10 ** 9);
 
@@ -140,7 +140,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     basicTokenZkAppAddress,
                     from,
                     to,
-                    value * (10 ** 9), // TODO consider if need * (10 ** 9)!!!,
+                    value, // TODO consider if need * (10 ** 9)!!!,
                     feePayerAddress,
                     txFee
                 ))!;
@@ -252,7 +252,7 @@ const tokenChoose = async () => {
         const tokenId = TokenId.derive(PublicKey.fromBase58(userFundFormRef.token));
         const accountInfo = await fetchAccount({ publicKey: PublicKey.fromBase58(appState.connectedWallet58!), tokenId });// TODO!!!
         if (accountInfo.account) {
-            balanceRef.value = Number(accountInfo.account.balance.toBigInt());
+            balanceRef.value = Number(accountInfo.account.balance.toBigInt())/(10 ** 9);
         } else {
             ElMessage({
                 showClose: true,
