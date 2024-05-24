@@ -56,6 +56,7 @@ export async function standardFetchFactoryEvents() {
                 const e = eventList[i];
                 logger.info(`e.type: ${e.type}`);
                 const txHash = e.event.transactionInfo.transactionHash.toString();
+
                 const blockHeight = Number(e.blockHeight.toBigint());
 
                 if (e.type == 'configLauchpadPlatformParams') {
@@ -106,9 +107,11 @@ export async function standardFetchFactoryEvents() {
                         saleAddress: createSaleEvent.saleContractAddress.toBase58()
                     }))![0];
 
-                    sale.feeRate = createSaleEvent.fee.toString();
+                    //sale.feeRate = createSaleEvent.fee.toString();// !! TODO just comment here
                     sale.status = 1;
                     sale.txHash = txHash;
+
+                    /* 
                     // must update the params!
                     sale.totalSaleSupply = Number(createSaleEvent.saleParams.totalSaleSupply.toString());
                     sale.saleRate = Number(createSaleEvent.saleParams.saleRate.toString());
@@ -123,6 +126,7 @@ export async function standardFetchFactoryEvents() {
                     sale.cliffAmountRate = Number(createSaleEvent.saleParams.cliffAmountRate.toString());
                     sale.vestingPeriod = Number(createSaleEvent.saleParams.vestingPeriod.toString());
                     sale.vestingIncrement = Number(createSaleEvent.saleParams.vestingIncrement.toString());
+                    */
 
                     await queryRunner.manager.save(sale);
 
