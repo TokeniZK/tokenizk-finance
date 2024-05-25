@@ -929,7 +929,7 @@ const title = computed(() => {
 
                                         <el-form-item label="Creation Fee Options" prop="feeRate">
                                             <el-radio-group v-model="saleDto.feeRate">
-                                                <el-radio label="1">1 MINA</el-radio>
+                                                <el-radio label="1000000000">1 MINA</el-radio>
                                                 <!-- <el-radio label="0">Other</el-radio> -->
                                             </el-radio-group>
                                         </el-form-item>

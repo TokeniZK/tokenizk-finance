@@ -185,7 +185,7 @@ const init = async () => {
 
 
     const totalSaledTokenAmount = saleContributorsDetailDto.saleDto.totalContributedMina / (10 ** 9) * saleContributorsDetailDto.saleDto.saleRate
-    const restUnsaledTokenAmount = saleContributorsDetailDto.saleDto.totalSaleSupply - totalSaledTokenAmount
+    const restUnsaledTokenAmount = saleContributorsDetailDto.saleDto.totalSaleSupply / (10 ** 9) - totalSaledTokenAmount
 
     saleStatistic.dataArr[0].value = totalSaledTokenAmount;
     saleStatistic.dataArr[1].value = restUnsaledTokenAmount;
@@ -971,7 +971,7 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
-                                    {{ saleContributorsDetailDto.saleDto.totalSaleSupply }} {{
+                                    {{ saleContributorsDetailDto.saleDto.totalSaleSupply / (10 ** 9) }} {{
         saleContributorsDetailDto.saleDto.tokenSymbol }}
                                 </el-row>
                             </el-col>
@@ -1354,7 +1354,7 @@ onUnmounted(() => {
                     </div>
                     <div v-else>
                         <el-row v-if="currentUserHasContributed">
-                            You has contributed {{
+                            You have contributed {{
         Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
         (10 ** 9) }} Mina!
                         </el-row>
