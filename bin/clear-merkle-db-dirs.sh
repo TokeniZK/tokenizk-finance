@@ -1,4 +1,8 @@
 #!/bin/bash
 
-cd /opt/tokenizk-network-data/leveldb/
+cd /opt/tokenizk-data/trees/
 rm -rf ./*
+
+cd /opt/tokenizk-data/logs/
+rm -rf ./*
+
