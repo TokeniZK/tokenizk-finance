@@ -48,11 +48,15 @@ const handler: RequestHandler<TokenDto, null> = async function (
         throw req.throwError(httpCodes.BAD_REQUEST, "totalSupply cannot be less than/equal to 0");
     }
 
-    const tokenAddr = PublicKey.fromBase58(dto.address);
-    const tokenAccount = await fetchAccount({ publicKey: tokenAddr});
-    if (tokenAccount && tokenAccount.error) {
-        throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
-    }
+/*     try {
+        const tokenAddr = PublicKey.fromBase58(dto.address);
+        const tokenAccount = await fetchAccount({ publicKey: tokenAddr});
+        if (tokenAccount.account) {
+            throw req.throwError(httpCodes.BAD_REQUEST, "token Account has been exiting yet!");
+        }
+    } catch (error) {
+        console.error(error);
+    } */
 
     try {
         const connection = getConnection();
