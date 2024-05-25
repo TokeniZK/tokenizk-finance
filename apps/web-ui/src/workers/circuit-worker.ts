@@ -784,11 +784,11 @@ const claimTokensSale = async (
         const saleParams = SaleParams.fromDto(saleParams0)
 
         const saleContribution = SaleContribution.fromJSON({
-            tokenAddress: PublicKey.fromBase58(saleContribution0.tokenAddress),
-            tokenId: Field(saleContribution0.tokenId),
-            saleContractAddress: PublicKey.fromBase58(saleContribution0.saleContractAddress),
-            contributorAddress: PublicKey.fromBase58(saleContribution0.contributorAddress),
-            minaAmount: UInt64.from(saleContribution0.minaAmount)
+            tokenAddress: saleContribution0.tokenAddress,
+            tokenId: saleContribution0.tokenId,
+            saleContractAddress: saleContribution0.saleContractAddress,
+            contributorAddress: saleContribution0.contributorAddress,
+            minaAmount: saleContribution0.minaAmount
         });
 
         const saleContributorMembershipWitnessData = SaleContributorMembershipWitnessData.fromDTO(saleContributorMembershipWitnessData0);
