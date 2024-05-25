@@ -16,7 +16,7 @@ import {
     Bool,
     UInt32,
 } from 'o1js';
-import { SaleParams, AirdropParams, PartailSaleParams } from './sale-models';
+import { SaleParams, AirdropParams } from './sale-models';
 import { CONTRIBUTORS_TREE_ROOT, INDEX_TREE_INIT_ROOT_8 } from './constants';
 
 export class LauchpadPlatformParams extends Struct({
