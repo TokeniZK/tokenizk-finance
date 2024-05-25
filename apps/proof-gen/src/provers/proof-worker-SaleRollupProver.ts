@@ -41,23 +41,23 @@ function processMsgFromMaster() {
             case `ROLLUP_MERGE`:
                 await execCircuit(message, async () => {
                     let params = {
-                        presaleRollupProof1: await SaleRollupProof.fromJSON(message.payload.presaleRollupProof1),
-                        presaleRollupProof2: await SaleRollupProof.fromJSON(message.payload.presaleRollupProof2)
+                        saleRollupProof1: await SaleRollupProof.fromJSON(message.payload.saleRollupProof1),
+                        saleRollupProof2: await SaleRollupProof.fromJSON(message.payload.saleRollupProof2)
                     }
 
-                    const presaleRollupProof1 = params.presaleRollupProof1;
-                    const presaleRollupProof2 = params.presaleRollupProof2;
+                    const saleRollupProof1 = params.saleRollupProof1;
+                    const saleRollupProof2 = params.saleRollupProof2;
 
-                    logger.info(`currently process [presaleRollupProof1.publicOutput.source: {currentActionsHash: ${presaleRollupProof1.publicOutput.source.currentActionsHash}, currentIndex: ${presaleRollupProof1.publicOutput.source.currentIndex}}]`);
-                    logger.info(`currently process [presaleRollupProof1.publicOutput.target: {currentActionsHash: ${presaleRollupProof1.publicOutput.target.currentActionsHash}, currentIndex: ${presaleRollupProof1.publicOutput.target.currentIndex}}]`);
+                    logger.info(`currently process [saleRollupProof1.publicOutput.source: {currentActionsHash: ${saleRollupProof1.publicOutput.source.currentActionsHash}, currentIndex: ${saleRollupProof1.publicOutput.source.currentIndex}}]`);
+                    logger.info(`currently process [saleRollupProof1.publicOutput.target: {currentActionsHash: ${saleRollupProof1.publicOutput.target.currentActionsHash}, currentIndex: ${saleRollupProof1.publicOutput.target.currentIndex}}]`);
 
-                    logger.info(`currently process [presaleRollupProof2.publicOutput.source: {currentActionsHash: ${presaleRollupProof2.publicOutput.source.currentActionsHash}, currentIndex: ${presaleRollupProof2.publicOutput.source.currentIndex}}]`);
-                    logger.info(`currently process [presaleRollupProof2.publicOutput.target: {currentActionsHash: ${presaleRollupProof2.publicOutput.target.currentActionsHash}, currentIndex: ${presaleRollupProof2.publicOutput.target.currentIndex}}]`);
+                    logger.info(`currently process [saleRollupProof2.publicOutput.source: {currentActionsHash: ${saleRollupProof2.publicOutput.source.currentActionsHash}, currentIndex: ${saleRollupProof2.publicOutput.source.currentIndex}}]`);
+                    logger.info(`currently process [saleRollupProof2.publicOutput.target: {currentActionsHash: ${saleRollupProof2.publicOutput.target.currentActionsHash}, currentIndex: ${saleRollupProof2.publicOutput.target.currentIndex}}]`);
 
-                    await mergeStates(presaleRollupProof1, presaleRollupProof2);
+                    await mergeStates(saleRollupProof1, saleRollupProof2);
                     logger.info(`exec 'merge' outside circuit smoothly`);
 
-                    const proof = await SaleRollupProver.mergeStates(presaleRollupProof1, presaleRollupProof2);
+                    const proof = await SaleRollupProver.mergeStates(saleRollupProof1, saleRollupProof2);
                     logger.info(`exec 'merge' inside circuit: done`);
 
                     return proof;
