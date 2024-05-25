@@ -191,7 +191,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             let tx = (await o1js).Mina.Transaction.fromJSON(JSON.parse(txJson!));
             const targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == tokenAddress);
             targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-            tx.sign([(await o1js).PrivateKey.fromBase58(tokenKey)]);
+            tx = tx.sign([(await o1js).PrivateKey.fromBase58(tokenKey)]);
 
             showLoadingMask({ id: maskId, text: 'sending transaction...' });
             const { hash: txHash } = await window.mina.sendTransaction({
