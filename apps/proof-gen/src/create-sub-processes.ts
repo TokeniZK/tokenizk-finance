@@ -132,8 +132,8 @@ export const createSubProcesses = async () => {
                         }
                     };
 
-                    const fromJsonFn = (proofJson: any) => {
-                        return SaleRollupProof.fromJSON(proofJson);
+                    const fromJsonFn = async (proofJson: any) => {
+                        return await SaleRollupProof.fromJSON(proofJson);
                     }
 
                     generateProof(workerMap.get(CircuitName_SaleRollupProver)!, msg, fromJsonFn, resolve, reject, sendCallBack);
@@ -156,8 +156,8 @@ export const createSubProcesses = async () => {
                         },
                     };
 
-                    const fromJsonFn = (proofJson: any) => {
-                        return SaleRollupProof.fromJSON(proofJson);
+                    const fromJsonFn = async (proofJson: any) => {
+                        return await SaleRollupProof.fromJSON(proofJson);
                     }
 
                     generateProof(workerMap.get(CircuitName_SaleRollupProver)!, msg, fromJsonFn, resolve, reject, sendCallBack);
@@ -355,7 +355,7 @@ function generateProof(
 
         let workerE = workerEntity as { worker: Worker, status: WorkerStatus, type: string };
 
-        const handler = (message: any) => {
+        const handler = async (message: any) => {
             if (message.type == 'error') {// when meet errors (it's wasm32memory issue at great probability), defaultly restart the childProcess
                 workerE.status = 'IsReady';
                 return;
@@ -369,7 +369,7 @@ function generateProof(
                         sendCallBack((typeof proofJson == 'string') ? JSON.parse(proofJson) : proofJson);
                     }
 
-                    let proof = fromJsonFn(proofJson);
+                    let proof = await fromJsonFn(proofJson);
                     resolve({
                         isProof: true,
                         payload: proof,
