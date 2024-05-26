@@ -4,7 +4,7 @@ import { FastifyPlugin } from "fastify"
 import { getConnection } from 'typeorm';
 import { RequestHandler } from '@/lib/types'
 import { BaseResponse, ProofTaskDto, ProofTaskType, ProofTaskDtoSchema, SaleType } from "@tokenizk/types";
-import { Mina, PrivateKey, PublicKey } from "o1js";
+import { Mina, PrivateKey, PublicKey, Transaction } from "o1js";
 import fs from "fs";
 import { getLogger } from "@/lib/logUtils";
 import config from "@/lib/config";
@@ -108,30 +108,31 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
         l1Tx.transaction.feePayer.lazyAuthorization = { kind: 'lazy-signature' };
         await l1Tx.sign([PrivateKey.fromBase58(config.txFeePayerPrivateKey)]);
 
-        await l1Tx.send().then(async txId => {// TODO what if it fails currently!
-            const txHash0 = txId.hash!;
+        await l1Tx.send().then(async pendingTx => {// TODO what if it fails currently!
+            try {
+                const includedTx = await pendingTx.wait();
+                logger.info('tx is confirmed, hash: ' + includedTx.hash);
+                // insert L1 tx into db, underlying 
+                const connection = getConnection();
+                const queryRunner = connection.createQueryRunner();
+                await queryRunner.startTransaction();
+                try {
+                    const presale = (await queryRunner.manager.find(Sale, {}) ?? [])[0];
 
-            if ((!txHash0)) {
+                    presale.contributorsMaintainFlag = 1;
+
+                    await queryRunner.manager.save(presale);
+
+                    await queryRunner.commitTransaction();
+                } catch (error) {
+                    logger.error(error);
+                    await queryRunner.rollbackTransaction();
+                } finally {
+                    await queryRunner.release();
+                }
+            } catch (error) {
                 logger.warn('error: broadcast tokenizkRollupContract\'s l1Tx failed!!!');
                 return;
-            }
-            // insert L1 tx into db, underlying 
-            const connection = getConnection();
-            const queryRunner = connection.createQueryRunner();
-            await queryRunner.startTransaction();
-            try {
-                const presale = (await queryRunner.manager.find(Sale, {}) ?? [])[0];
-
-                presale.contributorsMaintainFlag = 1;
-
-                await queryRunner.manager.save(presale);
-
-                await queryRunner.commitTransaction();
-            } catch (error) {
-                logger.error(error);
-                await queryRunner.rollbackTransaction();
-            } finally {
-                await queryRunner.release();
             }
 
         }).catch(reason => {
