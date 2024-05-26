@@ -444,6 +444,15 @@ const claimTokens = async () => {
 
         // deploy Redeem account
         let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
+        if(!redeemAccount.account){
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: 'fetchAccount failed! Please check graphql endpoint and retry.',
+            });
+            return;
+        }
+
         if (!redeemAccount.account!.zkapp) {
             showLoadingMask({ id: maskId, text: 'compiling RedeemAccount circuit...' });
             const flag = await CircuitControllerState.remoteController!.compileRedeemAccount();
@@ -621,6 +630,15 @@ const redeemFunds = async () => {
 
         // deploy Redeem account
         let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
+        if(!redeemAccount.account){
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: 'fetchAccount failed! Please check graphql endpoint and retry.',
+            });
+            return;
+        }
+
         if (!redeemAccount.account!.zkapp) {
             showLoadingMask({ id: maskId, text: 'compiling RedeemAccount circuit...' });
             const flag = await CircuitControllerState.remoteController!.compileRedeemAccount();
