@@ -105,15 +105,17 @@ const addComment = async () => {
     }
 
     // trigger signature
-    //
-
+    // sha256
+    const signResult = await window.mina.signMessage({
+        message: inputComment.value,
+    })
     // submit
     const dto = {
         projectType: props.projectType,
         projectAddress: props.address,
         fromId: appState.connectedWallet58,
         comment: inputComment.value,
-        signature: '',
+        signature: signResult,
         createdAt: new Date()
     } as CommentDto;
     const id = await submitComment(dto);
