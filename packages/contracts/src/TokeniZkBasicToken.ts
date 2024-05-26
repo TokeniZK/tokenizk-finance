@@ -216,7 +216,7 @@ export class TokeniZkBasicToken extends TokenContract {
 
         let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
         newTotalAmountInCirculation.assertLessThanOrEqual(
-            totalSupply.mul(10**9),
+            totalSupply,
             "Can't mint more than the total supply"
         );
 

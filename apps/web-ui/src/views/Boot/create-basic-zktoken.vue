@@ -172,6 +172,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             const { key: tokenKey, value: tokenAddress } = appState.tokeniZkBasicTokenKeyPair!;
             tokenDtoForm.address = tokenAddress;
+            tokenDtoForm.totalSupply = tokenDtoForm.totalSupply * (10 ** 9);
             // downloadAsFile(`{"Key": ${tokenKey.toBase58()}, "Address": ${tokenAddress}}`, 'TokenizkBasicToken-Key.json');
 
             showLoadingMask({ id: maskId, text: 'witness calculating...' });
@@ -394,7 +395,7 @@ const checkIfDeployed = async () => {
 
                             <el-row>
                                 <el-col :span="4" class="wide4">Total supply : </el-col>
-                                <el-col :span="19">{{ tokenDtoForm.totalSupply }}</el-col>
+                                <el-col :span="19">{{ tokenDtoForm.totalSupply / (10 ** 9) }}</el-col>
                             </el-row>
 
                             <el-row>

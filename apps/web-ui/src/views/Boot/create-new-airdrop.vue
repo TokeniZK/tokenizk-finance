@@ -767,7 +767,7 @@ const title = computed(() => {
                                                         </el-form-item></el-col>
                                                     <el-col :span="8">
                                                         <el-form-item label="Token Total Supply">
-                                                            {{ tokenDto.totalSupply }}
+                                                            {{ tokenDto.totalSupply / (10 ** 9) }}
                                                         </el-form-item>
                                                     </el-col>
                                                     <el-col :span="8">
