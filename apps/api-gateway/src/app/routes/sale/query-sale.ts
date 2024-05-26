@@ -3,7 +3,7 @@ import { FastifyPlugin } from "fastify"
 import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
 
-import { getConnection, In } from "typeorm"
+import { getConnection, In, IsNull, Not } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
 
@@ -87,6 +87,7 @@ const handler: RequestHandler<SaleReq, null> = async function (
                     s.totalContributedMina = (await userTokenSaleRepo.find({
                         where: {
                             saleId: s.id,
+                            contributeTxHash: Not(IsNull())
                             // status: 1  // TODO !!! when fetchEvent is ok, then need it!!!
                         }
                     }) ?? []).reduce<number>((p, c)=>{

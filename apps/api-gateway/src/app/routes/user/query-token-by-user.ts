@@ -3,7 +3,7 @@ import { FastifyPlugin } from "fastify"
 import { BaseResponse, SaleReq, SaleReqSchema, TokenDto, TokenDtoSchema } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
 
-import { getConnection, In } from "typeorm"
+import { getConnection, In, IsNull, Not } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Sale, UserTokenAirdrop, UserTokenSale } from "@tokenizk/entities"
 
@@ -34,7 +34,7 @@ const handler: RequestHandler<{ address: string }, null> = async function (
     try {
         const connection = getConnection();
         const userTokenSaleRepo = connection.getRepository(UserTokenSale);
-        const userTokenSaleList = (await userTokenSaleRepo.find({ where: { contributorAddress: address } })) ?? [];
+        const userTokenSaleList = (await userTokenSaleRepo.find({ where: { contributorAddress: address, contributeTxHash: Not(IsNull()) } })) ?? [];
         const userTokenAirdropRepo = connection.getRepository(UserTokenAirdrop);
         const userTokenAirdropList = (await userTokenAirdropRepo.find({ where: { userAddress: address } })) ?? [];
 
