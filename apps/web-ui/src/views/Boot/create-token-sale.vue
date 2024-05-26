@@ -682,7 +682,8 @@ const handleWhitelistInput = async () => {
 
             const item = whitelistMembers[i];
 
-            try {
+            if(item){
+                try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
                 dialogTableVisibleErrorAlert.value = true;
@@ -690,7 +691,7 @@ const handleWhitelistInput = async () => {
                 whiteListErrorAlert.whitelist.push(item)
                 // ElMessage.error({ message: item + ' is not a valid address!' });
             }
-
+            }
         }
     }
 
@@ -1243,7 +1244,7 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="9" class="wide4">Sale creation fee :</el-col>
-                                            <el-col :span="15">{{ saleDto.feeRate }} {{ saleDto.currency }}</el-col>
+                                            <el-col :span="15">{{ Number(saleDto.feeRate)/(10**9) }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row v-show="saleDto.saleRate">

@@ -172,13 +172,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             const { key: tokenKey, value: tokenAddress } = appState.tokeniZkBasicTokenKeyPair!;
             tokenDtoForm.address = tokenAddress;
-            tokenDtoForm.totalSupply = tokenDtoForm.totalSupply * (10 ** 9);
             // downloadAsFile(`{"Key": ${tokenKey.toBase58()}, "Address": ${tokenAddress}}`, 'TokenizkBasicToken-Key.json');
 
             showLoadingMask({ id: maskId, text: 'witness calculating...' });
             const factoryAddress = appState.tokeniZkFactoryAddress;
             const basicTokenZkAppAddress = tokenDtoForm.address;
-            const totalSupply = tokenDtoForm.totalSupply;
+            const totalSupply = tokenDtoForm.totalSupply * (10 ** 9);
             const feePayerAddress = appState.connectedWallet58;
             const txFee = 0.3 * (10 ** 9)
             const txJson = await CircuitControllerState.remoteController?.createBasicToken(factoryAddress, basicTokenZkAppAddress, totalSupply, feePayerAddress, txFee);
@@ -207,7 +206,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             // send back to backend for recording
             showLoadingMask({ id: maskId, text: 'submit to backend...' });
-            const rs = await submitToken(tokenDtoForm);// TODO!!! 本尊
+            const dto = JSON.parse(JSON.stringify(tokenDtoForm));
+            dto.totalSupply = tokenDtoForm.totalSupply * (10 ** 9);
+            const rs = await submitToken(dto);// TODO!!! 本尊
             if (!rs) {
                 showLoadingMask({ id: maskId, text: 'submit to backend failed...' });
             }
