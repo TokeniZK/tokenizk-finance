@@ -289,8 +289,10 @@ const initWorker = async () => {
     console.timeEnd('RedeemAccount.compile');
 
     console.time('TokeniZkPresale.compile');
-    await TokeniZkPresale.compile();
+    const saleVk = await TokeniZkPresale.compile();
     console.timeEnd('TokeniZkPresale.compile');
+
+    console.log('saleVk.verificationKey.hash:'+saleVk.verificationKey.hash);
 
     console.time('PresaleMinaFundHolder.compile');
     await PresaleMinaFundHolder.compile()
