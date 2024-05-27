@@ -27,6 +27,8 @@ import TokeniZkPrivateSaleVK from "../../../../packages/contracts/deploy/verific
 import TokeniZkAirdropVK from "../../../../packages/contracts/deploy/verification-keys/TokeniZkAirdrop-VK.json";
 import RedeemAccountVK from "../../../../packages/contracts/deploy/verification-keys/RedeemAccount-VK.json";
 import { proofReq, checkProofResult } from '@/apis/proof-api';
+import { random } from 'nanoid';
+import { randomUUID } from 'crypto';
 // import SaleRollupProverVK from "../../../../packages/contracts/deploy/verification-keys/SaleRollupProver-VK.json";
 
 // Error.stackTraceLimit = Infinity;
@@ -595,8 +597,10 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
         }
     }
 
+    let sessionId = randomUUID().toString()
     const clientProveTaskDto: ClientProveTaskDto = {
         id: 0,
+        sessionId,
         type: saleType,
         params: JSON.stringify(contributeTxParams),
         result: '',
@@ -615,7 +619,7 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
             //
             //
             //
-            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress, sessionId });
         } catch (error) {
             console.error(error);
         }
@@ -738,9 +742,11 @@ const claimTokensSale = async (
         }
     }
 
+    let sessionId = randomUUID().toString()
     const clientProveTaskDto: ClientProveTaskDto = {
         id: undefined as any as number,
         type: saleType,
+        sessionId,
         params: JSON.stringify(contributeTxParams),
         result: undefined as any as string,
         userAddress: feePayerAddress,
@@ -758,7 +764,7 @@ const claimTokensSale = async (
             //
             //
             //
-            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress, sessionId });
         } catch (error) {
             console.error(error);
         }
@@ -907,9 +913,11 @@ const redeemFunds = async (
         }
     }
 
+    let sessionId = randomUUID().toString()
     const clientProveTaskDto: ClientProveTaskDto = {
         id: undefined as any as number,
         type: saleType,
+        sessionId,
         params: JSON.stringify(contributeTxParams),
         result: undefined as any as string,
         userAddress: feePayerAddress,
@@ -927,7 +935,7 @@ const redeemFunds = async (
             //
             //
             //
-            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress, sessionId });
         } catch (error) {
             console.error(error);
         }
@@ -1054,9 +1062,11 @@ const claimTokensAirdrop = async (
 
     console.log("claimTokensAirdropParams:" + JSON.stringify(claimTokensAirdropParams));
 
+    let sessionId = randomUUID().toString();
     const clientProveTaskDto: ClientProveTaskDto = {
         id: 0,
         type: ClientProofReqType.AIRDROP_CLAIM_TOKEN,
+        sessionId,
         params: JSON.stringify(claimTokensAirdropParams),
         result: '',
         userAddress: feePayerAddress,
@@ -1073,7 +1083,7 @@ const claimTokensAirdrop = async (
         //
         //
         //
-        return await checkProofResult({ userAddress: feePayerAddress, targetAddress: airdropAddress0 });
+        return await checkProofResult({ userAddress: feePayerAddress, targetAddress: airdropAddress0, sessionId });
     }
 
     const saleTag = 'Airdrop';

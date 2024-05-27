@@ -24,18 +24,18 @@ export const proofResult: FastifyPlugin = async function (
   })
 }
 
-const handler: RequestHandler<{ userAddress: string, targetAddress: string }, null> = async function (
+const handler: RequestHandler<{ userAddress: string, targetAddress: string, sessionId: string }, null> = async function (
   req,
   res
 ): Promise<BaseResponse<string>> {
-  const { userAddress, targetAddress } = req.body
+  const { userAddress, targetAddress, sessionId } = req.body
 
   let result = '';
   try {
     const connection = getConnection();
     const clientProveTaskRepo = connection.getRepository(ClientProveTask)
 
-    const clientProveTask = await clientProveTaskRepo.findOne({ userAddress, targetAddress, status: 1 });
+    const clientProveTask = await clientProveTaskRepo.findOne({ userAddress, targetAddress, status: 1, sessionId });
 
     result = clientProveTask?.result ?? '';
 
@@ -61,6 +61,9 @@ const schema = {
       type: 'string'
     },
     targetAddress: {
+      type: 'string'
+    },
+    sessionId: {
       type: 'string'
     }
   },

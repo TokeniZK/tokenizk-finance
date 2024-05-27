@@ -28,7 +28,6 @@ setInterval(fetchSaleContributorActions, periodRange); // exec/1.5mins
 export async function fetchSaleContributorActions() {
     logger.info('start fetchSaleContributorActions ...');
 
-    const lastBlockInfo = await fetchLastBlock()
     try {
         const connection = getConnection();
 
@@ -36,7 +35,7 @@ export async function fetchSaleContributorActions() {
         const saleList = (await saleRepo.find({
             where: {
                 status: SaleStatus.CONFIRMED,
-                endTimestamp: LessThan(Number(lastBlockInfo.blockchainLength.toString())),// must guarantee this is later than fetch-events
+                endTimestamp: LessThan(Date.now() + 1.5 * 60 * 1000),// must guarantee this is later than fetch-events
                 contributorsFetchFlag: 0 // has NOT fetch actions
             }
         })) ?? [];

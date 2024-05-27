@@ -9,6 +9,7 @@ export interface ClientProveTaskDto {
 
   type: number
 
+  sessionId: string
 
   params: string
 

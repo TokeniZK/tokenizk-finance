@@ -14,7 +14,7 @@ export async function proofReq(proofParams: any) {
     return rs;
 }
 
-export async function proofResult(proofParams: { userAddress: string, targetAddress: string }) {
+export async function proofResult(proofParams: { userAddress: string, targetAddress: string, sessionId:string }) {
     let rs = null;
     try {
         // request sequencer for the result.
@@ -29,7 +29,7 @@ export async function proofResult(proofParams: { userAddress: string, targetAddr
 
 
 export const checkProofResult = async (
-    proofParams: { userAddress: string, targetAddress: string },
+    proofParams: { userAddress: string, targetAddress: string, sessionId:string },
     options?: { maxAttempts?: number; interval?: number },
 ) => {
     const maxAttempts = options?.maxAttempts ?? 500;

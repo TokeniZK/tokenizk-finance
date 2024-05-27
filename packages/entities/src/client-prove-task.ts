@@ -29,6 +29,12 @@ export class ClientProveTask {
   @Column()
   type: number
 
+  /**
+   * identify current task corresponding to the current operation of user
+   */
+  @Column()
+  sessionId: string
+
   @Column()
   params: string
 

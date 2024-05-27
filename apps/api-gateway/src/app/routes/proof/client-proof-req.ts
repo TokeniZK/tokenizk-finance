@@ -39,7 +39,8 @@ const handler: RequestHandler<ClientProveTaskDto, null> = async function (
             where: {
                 tokenAddress: clientProveTaskDto.tokenAddress,
                 targetAddress: clientProveTaskDto.targetAddress,
-                userAddress: clientProveTaskDto.userAddress
+                userAddress: clientProveTaskDto.userAddress,
+                sessionId: clientProveTaskDto.sessionId
             }
         });
 
