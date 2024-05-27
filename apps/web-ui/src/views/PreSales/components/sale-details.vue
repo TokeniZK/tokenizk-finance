@@ -311,6 +311,8 @@ const buyWithMina = async () => {
                     try {
                         showLoadingMask({ id: maskId, text: 'sending transaction...' });
 
+                        console.log('txJson: '+ txJson);
+
                         let txHash = (await window.mina.sendTransaction({
                             transaction: txJson,
                             feePayer: {
