@@ -597,7 +597,7 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
         }
     }
 
-    let sessionId = randomUUID().toString()
+    let sessionId = Math.random().toString(36).slice(2)
     const clientProveTaskDto: ClientProveTaskDto = {
         id: 0,
         sessionId,
@@ -742,7 +742,7 @@ const claimTokensSale = async (
         }
     }
 
-    let sessionId = randomUUID().toString()
+    let sessionId = Math.random().toString(36).slice(2)
     const clientProveTaskDto: ClientProveTaskDto = {
         id: undefined as any as number,
         type: saleType,
@@ -913,7 +913,7 @@ const redeemFunds = async (
         }
     }
 
-    let sessionId = randomUUID().toString()
+    let sessionId = Math.random().toString(36).slice(2)
     const clientProveTaskDto: ClientProveTaskDto = {
         id: undefined as any as number,
         type: saleType,
@@ -1062,7 +1062,7 @@ const claimTokensAirdrop = async (
 
     console.log("claimTokensAirdropParams:" + JSON.stringify(claimTokensAirdropParams));
 
-    let sessionId = randomUUID().toString();
+    let sessionId = Math.random().toString(36).slice(2);
     const clientProveTaskDto: ClientProveTaskDto = {
         id: 0,
         type: ClientProofReqType.AIRDROP_CLAIM_TOKEN,
