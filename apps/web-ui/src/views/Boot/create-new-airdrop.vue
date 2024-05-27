@@ -362,13 +362,15 @@ const handleWhitelistInput = async () => {
 
             const item = whitelistMembers[i];
 
-            try {
-                (await o1js).PublicKey.fromBase58(item);
-            } catch (error) {
-                dialogTableVisibleErrorAlert.value = true;
-                console.log(error);
-                whiteListErrorAlert.whitelist.push(item)
-                // ElMessage.error({ message: item + ' is not a valid address!' });
+            if (item) {
+                try {
+                    (await o1js).PublicKey.fromBase58(item);
+                } catch (error) {
+                    dialogTableVisibleErrorAlert.value = true;
+                    console.log(error);
+                    whiteListErrorAlert.whitelist.push(item)
+                    // ElMessage.error({ message: item + ' is not a valid address!' });
+                }
             }
 
         }
@@ -429,7 +431,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                 console.log('members: ' + airdropDto.whitelistMembers);
 
-                const members = airdropDto.whitelistMembers.trim().split(',');
+                let whiteListMems: string = airdropDto.whitelistMembers.trim();
+                if(whiteListMems.endsWith(',')){
+                    whiteListMems = whiteListMems.substring(0, whiteListMems.length - 1);
+                }
+                const members = whiteListMems.split(',').filter(s => s.trim() != '');
                 airdropDto.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
 
                 console.log('whitelistTreeRoot: ' + airdropDto.whitelistTreeRoot);
@@ -772,7 +778,7 @@ const title = computed(() => {
                                                     </el-col>
                                                     <el-col :span="8">
                                                         <el-form-item label="Amount In Circulation">
-                                                            {{ tokenDto.totalAmountInCirculation }}
+                                                            {{ tokenDto.totalAmountInCirculation / (10 ** 9) }}
                                                         </el-form-item>
                                                     </el-col>
                                                 </el-row>

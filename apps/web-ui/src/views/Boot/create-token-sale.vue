@@ -406,7 +406,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                 console.log('members: ' + saleDto1.whitelistMembers);
 
-                const members = saleDto1.whitelistMembers.trim().split(',');
+                let whiteListMems: string = saleDto1.whitelistMembers.trim();
+                if(whiteListMems.endsWith(',')){
+                    whiteListMems = whiteListMems.substring(0, whiteListMems.length - 1);
+                }
+                const members = whiteListMems.split(',').filter(s => s.trim() != '');;
                 saleDto1.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
 
                 console.log('whitelistTreeRoot: ' + saleDto1.whitelistTreeRoot);
@@ -910,7 +914,7 @@ const title = computed(() => {
                                                     </el-col>
                                                     <el-col :span="8">
                                                         <el-form-item label="Amount In Circulation">
-                                                            {{ tokenDto.totalAmountInCirculation }}
+                                                            {{ tokenDto.totalAmountInCirculation / (10 ** 9) }}
                                                         </el-form-item>
                                                     </el-col>
                                                 </el-row>

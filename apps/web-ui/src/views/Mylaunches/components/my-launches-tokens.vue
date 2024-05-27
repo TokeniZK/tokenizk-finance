@@ -71,7 +71,7 @@ onMounted(async () => {
 
             <el-row>
                 <el-col :span="8" class="wide4">Total Amount In Circulation :</el-col>
-                <el-col :span="15">{{ tokenDtoForm.tokenDto.totalAmountInCirculation }}</el-col>
+                <el-col :span="15">{{ tokenDtoForm.tokenDto.totalAmountInCirculation / (10 ** 9) }}</el-col>
             </el-row>
 
             <el-row>

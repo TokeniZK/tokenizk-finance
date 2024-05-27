@@ -380,7 +380,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             // calc whitelist tree root
             if (saleDto1.whitelistMembers) {
                 showLoadingMask({ id: maskId, text: 'constructing whitelist tree...' });
-                const members = saleDto1.whitelistMembers.trim().split(',');
+
+                let whiteListMems: string = saleDto1.whitelistMembers.trim();
+                if(whiteListMems.endsWith(',')){
+                    whiteListMems = whiteListMems.substring(0, whiteListMems.length - 1);
+                }
+                const members = whiteListMems.split(',').filter(s => s.trim() != '');;
                 saleDto1.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
 
                 console.log('whitelistTreeRoot: ' + saleDto1.whitelistTreeRoot);
@@ -629,13 +634,15 @@ const handleWhitelistInput = async () => {
 
             const item = whitelistMembers[i];
 
-            try {
-                (await o1js).PublicKey.fromBase58(item);
-            } catch (error) {
-                dialogTableVisibleErrorAlert.value = true;
-                console.log(error);
-                whiteListErrorAlert.whitelist.push(item)
-                // ElMessage.error({ message: item + ' is not a valid address!' });
+            if(item){
+                try {
+                    (await o1js).PublicKey.fromBase58(item);
+                } catch (error) {
+                    dialogTableVisibleErrorAlert.value = true;
+                    console.log(error);
+                    whiteListErrorAlert.whitelist.push(item)
+                    // ElMessage.error({ message: item + ' is not a valid address!' });
+                }
             }
         }
     }
