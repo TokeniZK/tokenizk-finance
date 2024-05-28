@@ -111,11 +111,6 @@ const presaleMinaFundHolderVK = (await PresaleMinaFundHolder.compile()).verifica
 TokeniZkFactory.presaleMinaFundHolderVk = presaleMinaFundHolderVK;
 console.timeEnd('compile (PresaleMinaFundHolder)');
 
-console.time('compile (TokeniZkAirdrop)');
-let tokeniZkAirdropVK = (await TokeniZkAirdrop.compile()).verificationKey;
-TokeniZkFactory.airdropVk = tokeniZkAirdropVK;
-console.timeEnd('compile (TokeniZkAirdrop)');
-
 console.time('compile (RedeemAccount)');
 let redeemAccountVk = (await RedeemAccount.compile()).verificationKey;
 TokeniZkFactory.redeemAccountVk = redeemAccountVk;
@@ -123,7 +118,7 @@ console.timeEnd('compile (RedeemAccount)');
 
 const metaEnv = {
     VITE_MINA_NETWORK: "Berkeley",
-    VITE_EXPLORER_URL: "https://minascan.io/berkeley/zk-tx/",
+    VITE_EXPLORER_URL: "https://minascan.io/devnet/zk-tx/",
 
     VITE_TOKENIZK_FACTORY_ADDR: tokenFactoryZkAppAddress.toBase58(),
 
@@ -135,14 +130,14 @@ const metaEnv = {
     VITE_TOKENIZK_PRESALE_SERVICE_FEE_RATE: 10,
     VITE_TOKENIZK_PRESALE_MINA_FUND_HOLDER_VK: TokeniZkFactory.presaleMinaFundHolderVk.hash.toString(),
 
-    VITE_TOKENIZK_FAIRSALE_VK: "5711107540178421197243482233532083938508251491438902584293724442780141074845",
+    VITE_TOKENIZK_FAIRSALE_VK: "17539417214210625958281318223941001599533520444554323923175772616556602275101",
     VITE_TOKENIZK_FAIRSALE_CREATION_FEE: 1,
     VITE_TOKENIZK_FAIRSALE_SERVICE_FEE_RATE: 10,
-    VITE_TOKENIZK_PRIVATESALE_VK: "27497478064496651044002647918087358394468556579612291364828180282252508727928",
+    VITE_TOKENIZK_PRIVATESALE_VK: "4336020902171883469746374749320150388196832995966644287313506059985478817805",
     VITE_TOKENIZK_PRIVATESALE_CREATION_FEE: 1,
     VITE_TOKENIZK_PRIVATESALE_SERVICE_FEE_RATE: 10,
 
-    VITE_TOKENIZK_AIRDROP_VK: "27497478064496651044002647918087358394468556579612291364828180282252508727928",
+    VITE_TOKENIZK_AIRDROP_VK: "20143490128670456148084503281839199030695599865951076260259159743873805669969",
     VITE_TOKENIZK_AIRDROP_CREATION_FEE: 10,
 
     VITE_TOKENIZK_REDEEM_ACCOUNT_VK: TokeniZkFactory.redeemAccountVk.hash.toString()
@@ -171,6 +166,7 @@ const launchpadParamDto = {
     redeemAccountVk: metaEnv.VITE_TOKENIZK_REDEEM_ACCOUNT_VK
 };
 const lauchpadPlatformParams = LauchpadPlatformParams.fromDto(launchpadParamDto);
+console.log('lauchpadPlatformParams.hash(): ', lauchpadPlatformParams.hash());
 
 console.log('============= deploy TokeniZkFactory =============');
 let tokenFactoryZkApp = new TokeniZkFactory(tokenFactoryZkAppAddress);
@@ -236,7 +232,6 @@ if (process.env.TEST_ON_BERKELEY === 'true') {
     console.log('sync Berkeley Network status: done!');
 }
 console.log('current network state: ', JSON.stringify(Mina.activeInstance.getNetworkState()));
-const currentBlockHeight = Mina.activeInstance.getNetworkState().blockchainLength;
 
 const presaleParams = new SaleParams({
     tokenAddress: basicTokenZkAppAddress,
