@@ -32,7 +32,9 @@ const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
     let currentTime = new Date().getTime();
 
     itmes.forEach(item => {
-        if (item.startTimestamp > currentTime) {
+        if( item.totalContributedMina == item.hardCap){
+            item.projectStatus = 'Ended'
+        }else if (item.startTimestamp > currentTime) {
             item.projectStatus = 'Upcoming'
         } else if (item.startTimestamp <= currentTime && currentTime < item.endTimestamp) {
             item.projectStatus = 'Ongoing'
@@ -79,7 +81,7 @@ const checkSaleStatusDynamically = () => {
         if (item.endTimestamp <= currentTime) { // endTimestamp 已结束
 
             ifSaleEnded.value = true;
-            if (item.totalContributedMina >= item.softCap) {// claim tokens
+            if (item.totalContributedMina >= item.softCap * (10 ** 9)) {// claim tokens
                 flagBtn.value = 2
                 contributionBtnDisabled.value = false   //  启用按钮
                 tokenInput.value = item.saleRate * Number(curentUserContributionDto.currentUser.contributeCurrencyAmount)
@@ -137,13 +139,13 @@ let saleStatistic = reactive({
 const init = async () => {
     // query sale and current user
     const saleContributorsDetailDto0 = (await querySaleDetails(saleAddress, tokenAddress)) as SaleContributorsDetailDtoExtend;
-
+    /*
     if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
         appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
         appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
     }
 
-    /*
+    
     saleContributorsDetailDto0.saleDto.saleStartTimeStamp = Date.now() + (saleContributorsDetailDto0.saleDto.startTimestamp - Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000;
     console.log('saleContributorsDetailDto0.saleDto.saleStartTimeStamp:' + saleContributorsDetailDto0.saleDto.saleStartTimeStamp);
 
@@ -444,8 +446,10 @@ const claimTokens = async () => {
         // query whitelist witness
         const maskId = 'claimTokens';
 
+        const { Mina, fetchAccount } = await import('o1js');
+        Mina.setActiveInstance(Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL));
         // deploy Redeem account
-        let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
+        let redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58 });
         if(!redeemAccount.account){
             ElMessage({
                 showClose: true,
@@ -630,8 +634,10 @@ const redeemFunds = async () => {
         // query whitelist witness
         const maskId = 'redeemFunds';
 
+        const { Mina, fetchAccount } = await import('o1js');
+        Mina.setActiveInstance(Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL));
         // deploy Redeem account
-        let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
+        let redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58 });
         if(!redeemAccount.account){
             ElMessage({
                 showClose: true,
