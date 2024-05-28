@@ -439,7 +439,7 @@ export class TokeniZkFactory extends SmartContract {
         zkapp.account.isNew.assertEquals(Bool(true));
         zkapp.requireSignature();
         */
-        let zkapp = AccountUpdate.createSigned(redeemAccountAddress);
+        let zkapp = AccountUpdate.createSigned(redeemAccountAddress);// TODO next version: add FactoryTokenId as a param.
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], INDEX_TREE_INIT_ROOT_8);//nullifierRoot
         AccountUpdate.setValue(zkapp.body.update.appState[1], Field(1));//nullStartIndex
