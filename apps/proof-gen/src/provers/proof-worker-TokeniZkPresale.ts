@@ -136,7 +136,12 @@ function processMsgFromMaster() {
                     await syncAcctInfo(params.feePayer);
                     await syncAcctInfo(params.tokenAddress);// fetch account.
                     await syncAcctInfo(params.contractAddress, tokenId);// fetch account.
-                    const holderAccount = await syncAcctInfo(params.feePayer, tokenId);// fetch account.
+                    let holderAccount;
+                    try {
+                        holderAccount = await syncAcctInfo(params.feePayer, tokenId);// fetch account.
+                    } catch (error) {
+                        logger.info(`cannot fetchAccount of (${params.feePayer}, ${tokenId})`);
+                    }
 
                     const redeemAccount = params.feePayer;
                     const saleContribution = params.methodParams.saleContributorMembershipWitnessData.leafData;
