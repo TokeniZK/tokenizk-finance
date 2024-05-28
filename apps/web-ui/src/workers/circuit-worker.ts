@@ -757,7 +757,7 @@ const claimTokensSale = async (
         updatedAt: 0,
         createdAt: 0
     };
-    const rs = 1;// await proofReq(clientProveTaskDto);
+    const rs = await proofReq(clientProveTaskDto);
     if (rs > 0) {
         try {
             // setInterval to fetch result back
@@ -928,7 +928,7 @@ const redeemFunds = async (
         updatedAt: 0,
         createdAt: 0
     };
-    const rs = 1; //await proofReq(clientProveTaskDto);
+    const rs = await proofReq(clientProveTaskDto);
     if (rs > 0) {
         try {
             // setInterval to fetch result back
