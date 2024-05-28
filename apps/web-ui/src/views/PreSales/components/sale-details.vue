@@ -72,6 +72,8 @@ const saleContributorsDetailDto = reactive({
 const tokenInput = ref(0)
 const contributionBtnDisabled = ref(false);
 let flagBtn = ref(1)
+let hasRedeemedTxtShow = ref(false);
+let hasClaimedTxtShow = ref(false);
 
 const ifSaleEnded = ref(false);
 
@@ -120,6 +122,17 @@ const currentUserHasContributed = ref(false);
 watch(() => curentUserContributionDto.currentUser, async (value, oldValue) => {
     currentUserHasContributed.value = curentUserContributionDto.currentUser.saleAddress != null
         && curentUserContributionDto.currentUser.contributorAddress != undefined;
+
+    if(curentUserContributionDto.currentUser.redeemTxHash){
+        // show 
+        hasRedeemedTxtShow.value = true;
+    }
+
+    if(curentUserContributionDto.currentUser.claimTxHash){
+        // show 
+        hasClaimedTxtShow.value = true;
+    }
+
 }, { immediate: true });
 
 
@@ -630,6 +643,14 @@ const redeemFunds = async () => {
     const txFee = 0.21 * (10 ** 9)
 
     if (curentUserContributionDto.currentUser.contributorAddress) {
+        if(curentUserContributionDto.currentUser.redeemTxHash){
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: 'You have redeemed funds.',
+            });
+            return;
+        }
 
         // query whitelist witness
         const maskId = 'redeemFunds';
@@ -747,7 +768,7 @@ const redeemFunds = async () => {
                 transaction: txJson,
                 feePayer: {
                     fee: 0.301,
-                    memo: `${saleTag.value}.claimToken`
+                    memo: `${saleTag.value}.redeemFunds`
                 },
             });
             console.log('tx send success, txHash: ', txHash);
@@ -1379,19 +1400,26 @@ onUnmounted(() => {
                         </el-row>
                     </div>
                     <div v-else>
-                        <el-row v-if="currentUserHasContributed">
+                        <el-row v-if="hasRedeemedTxtShow">
+                            You have redeemed {{
+        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
+        (10 ** 9) }} Mina!
+                        </el-row>
+                        <el-row v-if="hasClaimedTxtShow">
+                            You have claimed {{
+        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
+        (10 ** 9) * saleContributorsDetailDto.saleDto.saleRate}}  tokens!
+                        </el-row>
+                        <el-row v-if="currentUserHasContributed && !hasClaimedTxtShow && !hasRedeemedTxtShow">
                             You have contributed {{
         Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
         (10 ** 9) }} Mina!
                         </el-row>
                         <el-row>
-                            <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 2"
-                                @click="claimTokens">claim
-                                your Tokens</el-button>
-                            <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 3"
-                                @click="redeemFunds">redeem
-                                your
-                                Funds</el-button>
+                            <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 2 && !hasClaimedTxtShow"
+                                @click="claimTokens">claim your Tokens</el-button>
+                            <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 3 && !hasRedeemedTxtShow"
+                                @click="redeemFunds">redeem your Funds</el-button>
                         </el-row>
                     </div>
                 </div>
