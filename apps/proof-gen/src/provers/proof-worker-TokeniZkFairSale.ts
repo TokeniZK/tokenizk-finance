@@ -140,7 +140,7 @@ function processMsgFromMaster() {
                     try {
                         holderAccount = await syncAcctInfo(params.feePayer, tokenId);// fetch account.
                     } catch (error) {
-                        logger.info(`cannot fetchAccount of (${params.feePayer}, ${tokenId})`);
+                        logger.info(`cannot fetchAccount of (${params.feePayer.toBase58()}, ${tokenId})`);
                     }
 
                     const redeemAccount = params.feePayer;
