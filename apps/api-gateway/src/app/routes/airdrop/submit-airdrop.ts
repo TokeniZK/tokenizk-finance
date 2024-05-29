@@ -67,9 +67,11 @@ const handler: RequestHandler<AirdropDto, null> = async function (
                 throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
             }
 
+            /*             
             if (airdropDto.startTimestamp > airdropDto.endTimestamp) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "startTimestamp should not be greater than endTimestamp");
-            }
+            } 
+            */
             if (airdropDto?.whitelistMembers) {
                 if (airdropDto.whitelistTreeRoot == WHITELIST_TREE_ROOT.toString() || airdropDto.whitelistTreeRoot.length == 0) {
                     throw req.throwError(httpCodes.BAD_REQUEST, "whitelistTreeRoot is not aligned with whitelistMembers");
