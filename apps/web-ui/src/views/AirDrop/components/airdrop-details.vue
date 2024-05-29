@@ -147,7 +147,7 @@ const init = async () => {
     }
 
     if (airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != (await ContractConstants).WHITELIST_TREE_ROOT.toString()) {
-        couldClaimAmount.value = Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply / airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length);
+        couldClaimAmount.value = Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply / (10 ** 9) / airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length);
     }
 
     checkAirdropStatusDynamically();
@@ -209,10 +209,12 @@ const claimTokens = async () => {
         // query whitelist witness
         const maskId = 'claimTokens';
 
-        const txFee = 0.21 * (10 ** 9)
-
+        const txFee = 0.21 * (10 ** 9);
+        
+        const { Mina, fetchAccount } = await import('o1js');
+        Mina.setActiveInstance(Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL));
         // deploy Redeem account
-        let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
+        let redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58 });
         if(!redeemAccount.account){
             ElMessage({
                 showClose: true,
@@ -611,7 +613,7 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
-                                    {{ airdropClaimersDetailDto.airdropDto.totalAirdropSupply }} {{
+                                    {{ airdropClaimersDetailDto.airdropDto.totalAirdropSupply / (10 ** 9) }} {{
             airdropClaimersDetailDto.airdropDto.tokenSymbol }}
                                 </el-row>
                             </el-col>
@@ -724,7 +726,7 @@ onUnmounted(() => {
                                     {{ airdropClaimersDetailDto.airdropDto.cliffAmountRate }}%
                                     <span v-if="airdropClaimersDetailDto.airdropDto.whitelistTreeRoot != '0'">(about
                                         {{
-            (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
+            (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply / (10 ** 9) /
                 airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length) *
                 (airdropClaimersDetailDto.airdropDto.cliffAmountRate / 100)).toFixed(2)
         }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }}
@@ -757,7 +759,7 @@ onUnmounted(() => {
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
                                     {{ airdropClaimersDetailDto.airdropDto.vestingIncrement }}%(about {{
-            (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply /
+            (Math.floor(airdropClaimersDetailDto.airdropDto.totalAirdropSupply / (10 **9) /
                 airdropClaimersDetailDto.airdropDto.whitelistMembers.split(',').length) *
                 (airdropClaimersDetailDto.airdropDto.vestingIncrement / 100)).toFixed(2)
         }} {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }})
@@ -917,7 +919,7 @@ onUnmounted(() => {
                             <el-row class="row-bg" justify="space-between">
                                 <el-col :span="10"> 0 </el-col>
                                 <!-- <el-col :span="8"></el-col> -->
-                                <el-col :span="6">{{ airdropClaimersDetailDto.airdropDto.totalAirdropSupply }}
+                                <el-col :span="6">{{ airdropClaimersDetailDto.airdropDto.totalAirdropSupply / (10 **9) }}
                                     {{ airdropClaimersDetailDto.airdropDto.tokenSymbol }}</el-col>
                             </el-row>
                         </el-col>
