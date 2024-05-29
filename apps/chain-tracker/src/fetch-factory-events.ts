@@ -182,8 +182,18 @@ export async function standardFetchFactoryEvents() {
                     airdrop.cliffAmountRate = Number(createAirdropEvent.airdropParams.cliffAmountRate.toString());
                     airdrop.vestingPeriod = Number(createAirdropEvent.airdropParams.vestingPeriod.toString());
                     airdrop.vestingIncrement = Number(createAirdropEvent.airdropParams.vestingIncrement.toString());
-
                     await queryRunner.manager.save(airdrop);
+
+                    const token = (await queryRunner.manager.findOne(BasiceToken, {
+                        address: createSaleEvent.basicTokenAddress.toBase58()
+                    }))!;
+                    logger.info('original token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
+                    logger.info('airdrop.totalAirdropSupply: '+ airdrop.totalAirdropSupply);
+                    token.totalAmountInCirculation += airdrop.totalAirdropSupply;
+                    logger.info('after adding airdrop.totalAirdropSupply, token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
+
+                    await queryRunner.manager.save(token);
+
                 }
 
             }

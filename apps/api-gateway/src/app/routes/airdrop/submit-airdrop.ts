@@ -49,7 +49,6 @@ const handler: RequestHandler<AirdropDto, null> = async function (
     try {
         const connection = getConnection();
         const airdropRepo = connection.getRepository(Airdrop)
-        const basicTokenRepo = connection.getRepository(BasiceToken)
 
         console.log(`airdropDto: ${JSON.stringify(airdropDto)}`);
 
@@ -102,15 +101,6 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             airdrop.createdAt = new Date();
             airdrop.updatedAt = new Date();
             airdrop = await airdropRepo.save(airdrop);
-
-            const token = await basicTokenRepo.findOne({
-                where: {
-                    address: airdropDto.tokenAddress
-                }
-            });
-            token!.totalAmountInCirculation += airdropDto.totalAirdropSupply;
-
-            await basicTokenRepo.save(token!);
         }
 
         return {
