@@ -91,7 +91,7 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             if (!airdropDto.airdropName) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "airdropName is not valid");
             }
-            if (airdropDto.totalAirdropSupply <= 0 || Number(tokenAccount?.account?.balance.toString()) < airdropDto.totalAirdropSupply) {
+            if (airdropDto.totalAirdropSupply <= 0 || Number(tokenAccount?.account?.zkapp?.appState[1]) < airdropDto.totalAirdropSupply) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "totalAirdropSupply is not valid");
             }
 
