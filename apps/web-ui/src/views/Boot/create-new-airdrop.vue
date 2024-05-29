@@ -462,10 +462,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             const factoryAddress = appState.tokeniZkFactoryAddress;
             const basicTokenZkAppAddress = tokenAddress;
 
-            airdropDto.totalAirdropSupply = airdropDto.totalAirdropSupply * (10 ** 9);// TODO consider if need * (10 ** 9)!!!
             const airdropParams = {
                 tokenAddress: airdropDto.tokenAddress,
-                totalAirdropSupply: airdropDto.totalAirdropSupply,
+                totalAirdropSupply: airdropDto.totalAirdropSupply * (10 ** 9),
                 totalMembersNumber: airdropDto.whitelistMembers.split(',').length,
                 whitelistTreeRoot: airdropDto.whitelistTreeRoot,
                 startTime: airdropDto.startTimestamp,
@@ -1049,7 +1048,7 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="9" class="wide4">Airdrop Total Supply :</el-col>
-                                            <el-col :span="15">{{ airdropDto.totalAirdropSupply / (10 ** 9) }}</el-col>
+                                            <el-col :span="15">{{ airdropDto.totalAirdropSupply }}</el-col>
                                         </el-row>
 
                                         <!-- 注意 下面两项 -->
