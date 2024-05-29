@@ -550,7 +550,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 ElMessage({
                     showClose: true,
                     type: 'warning',
-                    message: 'createPresale failed...',
+                    message: 'create Airdrop failed...',
                 });
 
                 closeLoadingMask(maskId);
@@ -1049,7 +1049,7 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="9" class="wide4">Airdrop Total Supply :</el-col>
-                                            <el-col :span="15">{{ airdropDto.totalAirdropSupply }}</el-col>
+                                            <el-col :span="15">{{ airdropDto.totalAirdropSupply / (10 ** 9) }}</el-col>
                                         </el-row>
 
                                         <!-- 注意 下面两项 -->
@@ -1109,7 +1109,7 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="9" class="wide4">Start at :</el-col>
-                                            <el-col :span="15">{{ airdropDto.startTimestamp }}</el-col>
+                                            <el-col :span="15">{{ new Date(airdropDto.startTimestamp) }}</el-col>
                                         </el-row>
 
                                         <!-- <el-row>
