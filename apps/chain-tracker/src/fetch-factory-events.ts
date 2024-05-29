@@ -135,7 +135,10 @@ export async function standardFetchFactoryEvents() {
                             address: createSaleEvent.basicTokenAddress.toBase58()
                         }))!;
 
+                        logger.info('original token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
+                        logger.info('sale.totalSaleSupply: '+ sale.totalSaleSupply);
                         token.totalAmountInCirculation += sale.totalSaleSupply;
+                        logger.info('after adding sale.totalSaleSupply, token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
 
                         await queryRunner.manager.save(token);
                     }
