@@ -69,7 +69,7 @@ const handler: RequestHandler<SaleDto, null> = async function (
             }
 
             if (saleDto.totalSaleSupply <= 0 /* || Number(tokenAccount?.account?.balance.toString()) < saleDto.totalSaleSupply */) {
-                throw req.throwError(httpCodes.BAD_REQUEST, "totalAirdropSupply is not valid");
+                throw req.throwError(httpCodes.BAD_REQUEST, "totalSaleSupply is not valid");
             }
 
             if (saleDto.saleType == 0 || saleDto.saleType == 2) {
