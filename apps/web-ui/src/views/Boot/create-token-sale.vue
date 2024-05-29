@@ -352,11 +352,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             if (!changeNumberBuy() || !changeSaleEndStartDateTime()) {
                 return;
             }
-            if (saleType.value == 0 && !changeRateCap()) {
-                return;
-            }
+            if (saleType.value == 0 ){
+                saleDto.totalSaleSupply = saleDto.saleRate * saleDto.hardCap;
 
-            saleDto.totalSaleSupply = saleDto.saleRate * saleDto.hardCap;
+                if(!changeRateCap()) {
+                    return;
+                }
+            }
+           
 
             const saleDto1 = JSON.parse(JSON.stringify(saleDto));
             let saleTag = '';
