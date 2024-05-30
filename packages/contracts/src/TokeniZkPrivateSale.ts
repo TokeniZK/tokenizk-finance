@@ -101,14 +101,14 @@ export class TokeniZkPrivateSale extends SmartContract {
     async configureSaleParams(saleParams0: SaleParams, saleParams1: SaleParams, adminSignature: Signature) {
         // cannot be changed after ('startTime' - 60 * 60 * 1000)
         // ~this.network.blockchainLength.requireBetween(saleParams0.startTime.sub(10), UInt32.MAXINT());~
-        this.network.timestamp.requireBetween(saleParams0.startTime.sub(10 * 3 * 60 * 1000), UInt64.MAXINT());
+        // this.network.timestamp.requireBetween(saleParams0.startTime.sub(10 * 3 * 60 * 1000), UInt64.MAXINT());TODO this.network.timestamp causes "the permutation was not constructed correctly: final value" error
 
         // check if privateSale params is aligned with the existing ones
         const hash0 = saleParams0.hash();
         const hash1 = saleParams1.hash();
 
         // ~this.network.blockchainLength.requireBetween(saleParams1.startTime.sub(10), UInt32.MAXINT());~
-        this.network.timestamp.requireBetween(saleParams1.startTime.sub(10 * 3 * 60 * 1000), UInt64.MAXINT());
+        // this.network.timestamp.requireBetween(saleParams1.startTime.sub(10 * 3 * 60 * 1000), UInt64.MAXINT());TODO this.network.timestamp causes "the permutation was not constructed correctly: final value" error
 
         this.saleParamsHash.getAndRequireEquals().assertEquals(hash0);
 
@@ -150,7 +150,7 @@ export class TokeniZkPrivateSale extends SmartContract {
 
         // check network timestamp
         // ~this.network.blockchainLength.requireBetween(saleParams.startTime, saleParams.endTime);~
-        this.network.timestamp.requireBetween(saleParams.startTime, saleParams.endTime);
+        // this.network.timestamp.requireBetween(saleParams.startTime, saleParams.endTime);TODO this.network.timestamp causes "the permutation was not constructed correctly: final value" error
 
         // check [minimumBuy, maximumBuy]
         minaAmount.assertGreaterThanOrEqual(saleParams.minimumBuy);
