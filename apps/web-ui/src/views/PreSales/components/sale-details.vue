@@ -32,7 +32,7 @@ const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
     let currentTime = new Date().getTime();
 
     itmes.forEach(item => {
-        if( item.totalContributedMina == item.hardCap){
+        if( item.saleType != 1 && item.totalContributedMina == item.hardCap){
             item.projectStatus = 'Ended'
         }else if (item.startTimestamp > currentTime) {
             item.projectStatus = 'Upcoming'
@@ -80,10 +80,10 @@ const ifSaleEnded = ref(false);
 const checkSaleStatusDynamically = () => {
     const currentTime = new Date().getTime();
     [saleContributorsDetailDto.saleDto].forEach((item: SaleDtoExtend) => {
-        if (item.endTimestamp <= currentTime) { // endTimestamp 已结束
+        if (item.endTimestamp <= currentTime || (item.saleType != 1 && item.totalContributedMina == item.hardCap * (10**9))) { // endTimestamp 已结束
 
             ifSaleEnded.value = true;
-            if (item.totalContributedMina >= item.softCap * (10 ** 9)) {// claim tokens
+            if (item.totalContributedMina >= item.softCap * (10**9)) {// claim tokens
                 flagBtn.value = 2
                 contributionBtnDisabled.value = false   //  启用按钮
                 tokenInput.value = item.saleRate * Number(curentUserContributionDto.currentUser.contributeCurrencyAmount)
@@ -1359,6 +1359,16 @@ onUnmounted(() => {
                                 </template>
                             </el-countdown>
                         </el-col>
+                        <el-col v-else-if="saleContributorsDetailDto.saleDto.projectStatus == 'Ended'">
+                            <el-countdown format="DD [days] HH:mm:ss"
+                                :value="Date.now()"
+                                @finish="countdownFinishCallback">
+
+                                <template #title>
+                                    <div style="display: inline-flex; align-items: center">End of Sale</div>
+                                </template>
+                            </el-countdown>
+                        </el-col>
                         <el-col v-else>
                             <el-countdown format="DD [days] HH:mm:ss"
                                 :value="saleContributorsDetailDto.saleDto.endTimestamp"
@@ -1412,8 +1422,11 @@ onUnmounted(() => {
                         </el-row>
                         <el-row v-if="currentUserHasContributed && !hasClaimedTxtShow && !hasRedeemedTxtShow">
                             You have contributed {{
-        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
+        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount??0) /
         (10 ** 9) }} Mina!
+                        </el-row>
+                        <el-row v-if="appState.connectedWallet58 && !currentUserHasContributed && !hasClaimedTxtShow && !hasRedeemedTxtShow">
+                            You did not contributed.
                         </el-row>
                         <el-row>
                             <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 2 && !hasClaimedTxtShow"

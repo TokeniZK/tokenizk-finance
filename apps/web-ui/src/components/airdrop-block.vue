@@ -90,7 +90,7 @@ const toDetailPage = `/airdrop-datails?airdropAddress=${airdropDtoRef.airdropAdd
                     </el-col>
                     <el-col :span="12">
                         <el-row justify="end">
-                            {{ airdropDtoRef.totalAirdropSupply }}
+                            {{ airdropDtoRef.totalAirdropSupply / (10 **9) }}
                         </el-row>
                     </el-col>
                 </el-row>
