@@ -1441,7 +1441,7 @@ onUnmounted(() => {
                         </el-row>
                         <el-row>
                             <el-button type="primary" :disabled="contributionBtnDisabled"
-                                v-show="flagBtn == 2 && !hasClaimedTxtShow" @click="claimTokens">claim your
+                                v-show="saleContributorsDetailDto.saleDto.saleType != 2 && flagBtn == 2 && !hasClaimedTxtShow" @click="claimTokens">claim your
                                 Tokens</el-button>
                             <el-button type="primary" :disabled="contributionBtnDisabled"
                                 v-show="flagBtn == 3 && !hasRedeemedTxtShow" @click="redeemFunds">redeem your
