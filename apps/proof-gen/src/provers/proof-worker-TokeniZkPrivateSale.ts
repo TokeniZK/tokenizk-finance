@@ -40,6 +40,7 @@ function processMsgFromMaster() {
                     if (params.feePayer.equals(params.methodParams.contributorAddress).not().toBoolean()) {
                         await syncAcctInfo(params.methodParams.contributorAddress);
                     }
+                    await syncAcctInfo(params.contractAddress);// fetch account.
 
                     const tokeniZkSaleZkApp = new TokeniZkPrivateSale(params.contractAddress);
                     let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {

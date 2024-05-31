@@ -54,16 +54,21 @@ function processMsgFromMaster() {
                     }
                     await syncAcctInfo(params.tokenAddress);// fetch account.
                     await syncAcctInfo(params.contractAddress, tokenId);// fetch account.
-                    //const holderAccount = await syncAcctInfo(params.methodParams.contributorAddress, tokenId);// fetch account.
+                    let contractMinaAccount;
+                    try {
+                        contractMinaAccount = await syncAcctInfo(params.contractAddress);// fetch account.
+                    } catch (error) {
+                        logger.info(`params.contractAddress[${params.contractAddress.toBase58()}] does not exist.`);
+                    }
 
                     const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(params.tokenAddress);
                     const tokeniZkSaleZkApp = new TokeniZkFairSale(params.contractAddress, tokenId);
                     let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
-                        /*
-                        if (!holderAccount) {
+
+                        if (!contractMinaAccount) {
                             AccountUpdate.fundNewAccount(params.feePayer);
                         }
-                        */
+
                         await tokeniZkSaleZkApp.contribute(params.methodParams.saleParams,
                             params.methodParams.contributorAddress,
                             params.methodParams.minaAmount,
