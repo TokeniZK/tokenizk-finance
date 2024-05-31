@@ -27,7 +27,7 @@ const chan = new BroadcastChannel(CHANNEL_MINA);
             eventType: WalletEventType.ACCOUNTS_CHANGED,
             connectedAddress: accounts[0],
         } as WalletEvent);
-        setConnectedWallet(accounts[0]);
+        setConnectedWallet(null);
     }
 });
 
@@ -63,7 +63,7 @@ onMounted(async () => {
     appState.connectedWallet58 = null;
     appState.minaNetwork = import.meta.env.VITE_MINA_NETWORK;
     appState.explorerUrl = import.meta.env.VITE_EXPLORER_TX_URL;
-    appState.tokeniZkFactoryAddress = import.meta.VITE_TOKENIZK_FACTORY_ADDR;
+    appState.tokeniZkFactoryAddress = import.meta.env.VITE_TOKENIZK_FACTORY_ADDR;
 
     // init web workers
     await createRemoteCircuitController();
@@ -95,7 +95,8 @@ onMounted(async () => {
     <el-dialog v-model="appState.mask.show" width="30%" :close-on-click-modal="appState.mask.closable"
         :close-on-press-escape="false" :show-close="false" class="dialog-box">
         <span style="font-size: 16px;  text-align: center;">{{ appState.mask.loadingText }}</span>
-        <a :href="appState.mask.loadingLink" v-if="appState.mask.loadingLink" class="urlLink" target="_blank">{{ appState.mask.loadingLink }}</a>
+        <a :href="appState.mask.loadingLink" v-if="appState.mask.loadingLink" class="urlLink" target="_blank">{{
+        appState.mask.loadingLink }}</a>
     </el-dialog>
 </template>
 <style lang="less">
