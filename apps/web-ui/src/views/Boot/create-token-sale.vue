@@ -359,7 +359,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     return;
                 }
             }
-           
+            if(!(await handleWhitelistInput())){
+                return;
+            }
 
             const saleDto1 = JSON.parse(JSON.stringify(saleDto));
             let saleTag = '';
@@ -412,6 +414,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 let whiteListMems: string = saleDto1.whitelistMembers.trim();
                 if(whiteListMems.endsWith(',')){
                     whiteListMems = whiteListMems.substring(0, whiteListMems.length - 1);
+                    saleDto1.whitelistMembers = whiteListMems;
                 }
                 const members = whiteListMems.split(',').filter(s => s.trim() != '');;
                 saleDto1.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
@@ -678,6 +681,7 @@ const changeRateCap = () => {
 const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
 const handleWhitelistInput = async () => {
+    let flag = true;
     const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
     saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
@@ -691,16 +695,20 @@ const handleWhitelistInput = async () => {
 
             if(item){
                 try {
-                (await o1js).PublicKey.fromBase58(item);
-            } catch (error) {
-                dialogTableVisibleErrorAlert.value = true;
-                console.log(error);
-                whiteListErrorAlert.whitelist.push(item)
-                // ElMessage.error({ message: item + ' is not a valid address!' });
-            }
+                    (await o1js).PublicKey.fromBase58(item);
+                } catch (error) {
+                    flag = false;
+
+                    dialogTableVisibleErrorAlert.value = true;
+                    console.log(error);
+                    whiteListErrorAlert.whitelist.push(item)
+                    // ElMessage.error({ message: item + ' is not a valid address!' });
+                }
             }
         }
     }
+
+    return flag;
 
 };
 
