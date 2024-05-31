@@ -58,6 +58,7 @@ export async function standardFetchFactoryEvents() {
                 const txHash = e.event.transactionInfo.transactionHash.toString();
 
                 const blockHeight = Number(e.blockHeight.toBigint());
+                logger.info(`blockHeight: ${blockHeight}`);
 
                 if (e.type == 'configLauchpadPlatformParams') {
                     const configLauchpadPlatformParamsEvent: ConfigLauchpadPlatformParamsEvent = e.event.data;
@@ -137,7 +138,7 @@ export async function standardFetchFactoryEvents() {
 
                         logger.info('original token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
                         logger.info('sale.totalSaleSupply: '+ sale.totalSaleSupply);
-                        token.totalAmountInCirculation += sale.totalSaleSupply;
+                        token.totalAmountInCirculation = Number(token.totalAmountInCirculation) + sale.totalSaleSupply;
                         logger.info('after adding sale.totalSaleSupply, token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
 
                         await queryRunner.manager.save(token);
@@ -185,11 +186,11 @@ export async function standardFetchFactoryEvents() {
                     await queryRunner.manager.save(airdrop);
 
                     const token = (await queryRunner.manager.findOne(BasiceToken, {
-                        address: createSaleEvent.basicTokenAddress.toBase58()
+                        address: createAirdropEvent.basicTokenAddress.toBase58()
                     }))!;
                     logger.info('original token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
                     logger.info('airdrop.totalAirdropSupply: '+ airdrop.totalAirdropSupply);
-                    token.totalAmountInCirculation += airdrop.totalAirdropSupply;
+                    token.totalAmountInCirculation = Number(token.totalAmountInCirculation) + airdrop.totalAirdropSupply;
                     logger.info('after adding airdrop.totalAirdropSupply, token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
 
                     await queryRunner.manager.save(token);
