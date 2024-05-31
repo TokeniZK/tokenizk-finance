@@ -682,10 +682,17 @@ const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
 const handleWhitelistInput = async () => {
     let flag = true;
-    const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
-    saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
     if (saleDto.whitelistMembers) {
+        if(saleDto.whitelistMembers.endsWith(',')){
+            flag = false;
+            ElMessage.error({ message: 'whitelistMembers should not ends with comma!' });
+
+            return flag;
+        }
+
+        const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
+        saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
         const whitelistMembers = saleDto.whitelistMembers.split(',');
 
@@ -693,17 +700,15 @@ const handleWhitelistInput = async () => {
 
             const item = whitelistMembers[i];
 
-            if(item){
-                try {
-                    (await o1js).PublicKey.fromBase58(item);
-                } catch (error) {
-                    flag = false;
+            try {
+                (await o1js).PublicKey.fromBase58(item);
+            } catch (error) {
+                flag = false;
 
-                    dialogTableVisibleErrorAlert.value = true;
-                    console.log(error);
-                    whiteListErrorAlert.whitelist.push(item)
-                    // ElMessage.error({ message: item + ' is not a valid address!' });
-                }
+                dialogTableVisibleErrorAlert.value = true;
+                console.log(error);
+                whiteListErrorAlert.whitelist.push(item??'empty string or space exist! please check.')
+                // ElMessage.error({ message: item + ' is not a valid address!' });
             }
         }
     }
@@ -1056,7 +1061,7 @@ const title = computed(() => {
                                         <el-form-item label="Whitelist">
                                             <el-input v-model.trim="saleDto.whitelistMembers" type="textarea"
                                                 :autosize="{ minRows: 2, maxRows: 1000 }"
-                                                placeholder="Please input as comma-sperated Mina wallet addresses"
+                                                placeholder="Please input as comma-sperated Mina wallet addresses, don't ends with comma"
                                                 @blur="handleWhitelistInput" />
 
                                             <el-dialog v-model="dialogTableVisibleErrorAlert"

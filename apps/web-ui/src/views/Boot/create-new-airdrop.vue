@@ -349,12 +349,17 @@ const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
 
 const handleWhitelistInput = async () => {
-
-    const noSpacesValue = airdropDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格 
-
-    airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
-
+    let flag = true;
     if (airdropDto.whitelistMembers) {
+        if (airdropDto.whitelistMembers.endsWith(',')) {
+            flag = false;
+            ElMessage.error({ message: 'whitelistMembers should not ends with comma!' });
+
+            return flag;
+        }
+
+        const noSpacesValue = airdropDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格 
+        airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
         const whitelistMembers = airdropDto.whitelistMembers.split(',');
 
@@ -362,20 +367,19 @@ const handleWhitelistInput = async () => {
 
             const item = whitelistMembers[i];
 
-            if (item) {
-                try {
-                    (await o1js).PublicKey.fromBase58(item);
-                } catch (error) {
-                    dialogTableVisibleErrorAlert.value = true;
-                    console.log(error);
-                    whiteListErrorAlert.whitelist.push(item)
-                    // ElMessage.error({ message: item + ' is not a valid address!' });
-                }
+            try {
+                (await o1js).PublicKey.fromBase58(item);
+            } catch (error) {
+                flag = false;
+
+                dialogTableVisibleErrorAlert.value = true;
+                console.log(error);
+                whiteListErrorAlert.whitelist.push(item ?? 'empty string or space exist! please check.')
+                // ElMessage.error({ message: item + ' is not a valid address!' });
             }
-
         }
-
     }
+    return flag;
 };
 
 const closeErrorWhitelistDialog = () => {
@@ -400,6 +404,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
 
         if (valid) {
+
+            if(!(await handleWhitelistInput())){
+                return ;
+            }
+
             let saleTag = 'Airdrop';
             const maskId = 'createAirdrop';
 
@@ -432,7 +441,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 console.log('members: ' + airdropDto.whitelistMembers);
 
                 let whiteListMems: string = airdropDto.whitelistMembers.trim();
-                if(whiteListMems.endsWith(',')){
+                if (whiteListMems.endsWith(',')) {
                     whiteListMems = whiteListMems.substring(0, whiteListMems.length - 1);
                 }
                 const members = whiteListMems.split(',').filter(s => s.trim() != '');
