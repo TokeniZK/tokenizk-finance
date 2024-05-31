@@ -275,7 +275,7 @@ export class TokeniZkFairSale extends SmartContract {
         const saleContribution = saleContributorMembershipWitnessData.leafData;
         const contributorAddress = saleContribution.contributorAddress;
 
-        this.self.balance.subInPlace(saleContribution.minaAmount.div(10 ** 9).mul(saleParams.saleRate));
+        this.self.balance.subInPlace(saleContribution.minaAmount.mul(saleParams.saleRate));
 
         const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
         await redeemAccount.updateState(

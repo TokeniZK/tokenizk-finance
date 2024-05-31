@@ -145,7 +145,7 @@ function processMsgFromMaster() {
 
                     const redeemAccount = params.feePayer;
                     const saleContribution = params.methodParams.saleContributorMembershipWitnessData.leafData;
-                    const minaAmount = saleContribution.minaAmount.div(10 ** 9).mul(params.methodParams.saleParams.saleRate);
+                    const minaAmount = saleContribution.minaAmount.mul(params.methodParams.saleParams.saleRate);
                     const vestingParams = params.methodParams.saleParams.vestingParams();
                     const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(params.tokenAddress);
                     const tokeniZkSaleZkApp = new TokeniZkFairSale(params.contractAddress, tokenId);

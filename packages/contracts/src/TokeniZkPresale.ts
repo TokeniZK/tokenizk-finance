@@ -187,7 +187,7 @@ export class TokeniZkPresale extends SmartContract {
         minaAmount.assertLessThanOrEqual(saleParams.maximumBuy);
 
         // check if exceed presale_token_account balance
-        const toPurchaseTokenAmount = minaAmount.div(10 ** 9).mul(saleParams.saleRate);
+        const toPurchaseTokenAmount = minaAmount.mul(saleParams.saleRate);
         // TODO do we really need this check ?? or indirectly check it by 'this.balance.subInPlace' ?
         this.account.balance.requireBetween(toPurchaseTokenAmount, UInt64.MAXINT());
 
@@ -301,7 +301,7 @@ export class TokeniZkPresale extends SmartContract {
         const saleContribution = saleContributorMembershipWitnessData.leafData;
         const contributorAddress = saleContribution.contributorAddress;
 
-        this.self.balance.subInPlace(saleContribution.minaAmount.div(10 ** 9).mul(saleParams.saleRate));// TODO !!need comment .div(10**9)!!
+        this.self.balance.subInPlace(saleContribution.minaAmount.mul(saleParams.saleRate));// TODO !!need comment .div(10**9)!!
 
         const redeemAccount = new RedeemAccount(contributorAddress);// MINA account
         await redeemAccount.updateState(

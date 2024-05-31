@@ -564,7 +564,7 @@ tx = await Mina.transaction(
             oldNullWitness
         );
         await basicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkPresaleZkapp.self, redeemAccountZkAppAddress,
-            saleContribution.minaAmount.div(10 ** 9).mul(presaleParams.saleRate), vestingParams);
+            saleContribution.minaAmount.mul(presaleParams.saleRate), vestingParams);
     }
 );
 await ctx.submitTx(tx, {
