@@ -636,7 +636,7 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
 
         let tokeniZkSaleZkApp: any = null;
         if (saleParams0.totalSaleSupply == 0) {
-            tokeniZkSaleZkApp = new TokeniZkPrivateSale(saleAddress1, tokenId);
+            tokeniZkSaleZkApp = new TokeniZkPrivateSale(saleAddress1);
         } else if (saleParams0.softCap == 0) {
             tokeniZkSaleZkApp = new TokeniZkFairSale(saleAddress1, tokenId);
         } else {

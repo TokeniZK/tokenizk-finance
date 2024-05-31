@@ -75,7 +75,7 @@ export async function standardFetchSaleEvents() {
                 } else if (sale.saleType == SaleType.FAIRSALE) {
                     tokenzkSaleContract = new TokeniZkFairSale(PublicKey.fromBase58(sale.saleAddress), TokenId.derive(PublicKey.fromBase58(sale.tokenAddress)));
                 } else if (sale.saleType == SaleType.PRIVATESALE) {
-                    tokenzkSaleContract = new TokeniZkPrivateSale(PublicKey.fromBase58(sale.saleAddress), TokenId.derive(PublicKey.fromBase58(sale.tokenAddress)));
+                    tokenzkSaleContract = new TokeniZkPrivateSale(PublicKey.fromBase58(sale.saleAddress), TokenId.default);
                 }
                 // fetch events
                 const eventList: EventsStandardResponse[] = await tokenzkSaleContract!.fetchEvents(new UInt32(startBlock));
