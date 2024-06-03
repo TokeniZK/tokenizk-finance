@@ -106,7 +106,7 @@ function processMsgFromMaster() {
                     let tokenZkApp = new TokeniZkBasicToken(params.methodParams.saleParams.tokenAddress);
                     const presaleContract = new TokeniZkPresale(params.contractAddress, tokenId);
 
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee, memo:'PRESALE_MAINTAIN_CONTRIBUTORS' }, async () => {
                         await presaleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
                         await tokenZkApp.approveAccountUpdate(presaleContract.self);
                     });

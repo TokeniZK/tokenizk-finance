@@ -63,7 +63,7 @@ function processMsgFromMaster() {
 
                     const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(params.tokenAddress);
                     const tokeniZkSaleZkApp = new TokeniZkFairSale(params.contractAddress, tokenId);
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee}, async () => {
 
                         if (!contractMinaAccount) {
                             AccountUpdate.fundNewAccount(params.feePayer);
@@ -111,7 +111,7 @@ function processMsgFromMaster() {
                     let tokenZkApp = new TokeniZkBasicToken(params.methodParams.saleParams.tokenAddress);
                     const saleContract = new TokeniZkFairSale(params.contractAddress, tokenId);
 
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee, memo:'FAIRSALE_MAINTAIN_CONTRIBUTOR' }, async () => {
                         await saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
                         await tokenZkApp.approveAccountUpdate(saleContract.self);
                     });

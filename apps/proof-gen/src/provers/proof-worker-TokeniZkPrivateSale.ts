@@ -82,7 +82,7 @@ function processMsgFromMaster() {
 
                     const saleContract = new TokeniZkPrivateSale(params.contractAddress);
 
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee, memo:'PRISALE_MAINTAIN_CONTRIBUTORS' }, async () => {
                         await saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
                     });
                     await tx.prove();
