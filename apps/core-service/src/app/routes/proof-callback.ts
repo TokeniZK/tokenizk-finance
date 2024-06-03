@@ -111,18 +111,19 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
         await l1Tx.send().then(async pendingTx => {// TODO what if it fails currently!
             try {
                 const includedTx = await pendingTx.wait();
-                logger.info('tx is confirmed, hash: ' + includedTx.hash);
+                logger.info('tx is confirmed, hash: '+ includedTx.hash);
                 // insert L1 tx into db, underlying 
                 const connection = getConnection();
                 const queryRunner = connection.createQueryRunner();
                 await queryRunner.startTransaction();
                 try {
                     const presale = (await queryRunner.manager.find(Sale, {}) ?? [])[0];
-
+    
                     presale.contributorsMaintainFlag = 1;
-
+                    presale.contributorsMaintainTxHash = includedTx.hash;
+    
                     await queryRunner.manager.save(presale);
-
+    
                     await queryRunner.commitTransaction();
                 } catch (error) {
                     logger.error(error);
@@ -132,8 +133,8 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
                 }
             } catch (error) {
                 logger.warn('error: broadcast tokenizkRollupContract\'s l1Tx failed!!!');
-                return;
-            }
+                    return;
+            }           
 
         }).catch(reason => {
             // TODO log it

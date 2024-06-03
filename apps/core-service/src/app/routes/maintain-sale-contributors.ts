@@ -164,7 +164,7 @@ const handler: RequestHandler<null, null> = async function (
             await queryRunner.manager.save(saleProofParam);
 
             sale.contributorsTreeRoot = (await this.saleContributorsDB.getRoot(true)).toString();
-            sale.contributorsMaintainFlag = 1;
+            // sale.contributorsMaintainFlag = 1;
             await queryRunner.manager.save(sale);
 
             await queryRunner.commitTransaction();
