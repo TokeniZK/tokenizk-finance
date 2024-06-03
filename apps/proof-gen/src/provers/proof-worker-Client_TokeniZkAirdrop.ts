@@ -47,7 +47,12 @@ function processMsgFromMaster() {
 
                     const tokenId = TokenId.derive(params.tokenAddress);
                     await syncAcctInfo(params.feePayer);
-                    const holderAccount = await syncAcctInfo(params.feePayer, tokenId);
+                    let holderAccount;
+                    try {
+                        holderAccount = await syncAcctInfo(params.feePayer, tokenId);
+                    } catch (error) {
+                        logger.info(`params.feePayer[${params.feePayer.toBase58()}, tokeId${tokenId.toString()}] does not exit.`);
+                    }
                     await syncAcctInfo(params.tokenAddress);// fetch account.
                     await syncAcctInfo(params.contractAddress, tokenId);// fetch account.
 

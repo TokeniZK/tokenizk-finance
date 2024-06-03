@@ -1,7 +1,7 @@
 import { PublicKey, Mina, TokenId, UInt64, Field, Signature, AccountUpdate } from 'o1js';
 import config from "../lib/config";
 
-import { SaleRollupProver, TokeniZkPrivateSale, SaleRollupProof, SaleParams, WhitelistMembershipMerkleWitness, SaleContributorMembershipWitnessData, PresaleMinaFundHolder, UserLowLeafWitnessData, UserNullifierMerkleWitness } from "@tokenizk/contracts";
+import { SaleRollupProver, TokeniZkPrivateSale, SaleRollupProof, SaleParams, WhitelistMembershipMerkleWitness, SaleContributorMembershipWitnessData, PresaleMinaFundHolder, UserLowLeafWitnessData, UserNullifierMerkleWitness, RedeemAccount } from "@tokenizk/contracts";
 import { activeMinaInstance, syncAcctInfo, syncNetworkStatus } from '@tokenizk/util';
 import { getLogger } from "../lib/logUtils";
 import { ProofTaskType } from '@tokenizk/types';
@@ -219,6 +219,10 @@ const initWorker = async () => {
     await SaleRollupProver.compile();
     console.timeEnd('SaleRollupProver.compile');
 
+    console.time('RedeemAccount.compile');
+    await RedeemAccount.compile();
+    console.timeEnd('RedeemAccount.compile');
+    
     console.time('TokeniZkPrivateSale.compile');
     await TokeniZkPrivateSale.compile();
     console.timeEnd('TokeniZkPrivateSale.compile');
