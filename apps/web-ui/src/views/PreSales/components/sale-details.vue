@@ -465,6 +465,15 @@ const claimTokens = async () => {
     const txFee = 0.21 * (10 ** 9)
 
     if (curentUserContributionDto.currentUser.contributorAddress) {
+        if (saleDto.contributorsMaintainFlag != 1) {
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: `Contributors are under maintainance. Please retry in minutes!`,
+            });
+
+            return;
+        }
 
         // query whitelist witness
         const maskId = 'claimTokens';
@@ -659,6 +668,17 @@ const redeemFunds = async () => {
                 type: 'warning',
                 message: 'You have redeemed funds.',
             });
+            return;
+        }
+
+        // check if backend server has maintained the contributors into contract
+        if (saleDto.contributorsMaintainFlag != 1) {
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: `Contributors are under maintainance. Please retry in minutes!`,
+            });
+
             return;
         }
 
