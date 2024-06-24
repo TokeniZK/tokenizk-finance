@@ -95,7 +95,7 @@ const handler: RequestHandler<null, null> = async function (
                 .sort((a, b) => a.contributeActionIndex - b.contributeActionIndex) // sort as action index
                 .map(e => new SaleContribution({
                     tokenAddress: PublicKey.fromBase58(e.tokenAddress),
-                    tokenId: TokenId.derive(PublicKey.fromBase58(e.tokenAddress)),
+                    tokenId: sale.saleType == 2 ? TokenId.default : TokenId.derive(PublicKey.fromBase58(e.tokenAddress)),
                     saleContractAddress: PublicKey.fromBase58(e.saleAddress),
                     contributorAddress: PublicKey.fromBase58(e.contributorAddress),
                     minaAmount: UInt64.from(e.contributeCurrencyAmount),
@@ -164,7 +164,7 @@ const handler: RequestHandler<null, null> = async function (
             await queryRunner.manager.save(saleProofParam);
 
             sale.contributorsTreeRoot = (await this.saleContributorsDB.getRoot(true)).toString();
-            sale.contributorsMaintainFlag = 1;
+            // sale.contributorsMaintainFlag = 1;
             await queryRunner.manager.save(sale);
 
             await queryRunner.commitTransaction();
