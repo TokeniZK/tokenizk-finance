@@ -32,7 +32,9 @@ const transformProjectStatus = (itmes: SaleDtoExtend[]) => {
     let currentTime = new Date().getTime();
 
     itmes.forEach(item => {
-        if (item.startTimestamp > currentTime) {
+        if (item.saleType != 1 && item.totalContributedMina == item.hardCap) {
+            item.projectStatus = 'Ended'
+        } else if (item.startTimestamp > currentTime) {
             item.projectStatus = 'Upcoming'
         } else if (item.startTimestamp <= currentTime && currentTime < item.endTimestamp) {
             item.projectStatus = 'Ongoing'
@@ -70,16 +72,18 @@ const saleContributorsDetailDto = reactive({
 const tokenInput = ref(0)
 const contributionBtnDisabled = ref(false);
 let flagBtn = ref(1)
+let hasRedeemedTxtShow = ref(false);
+let hasClaimedTxtShow = ref(false);
 
 const ifSaleEnded = ref(false);
 
 const checkSaleStatusDynamically = () => {
     const currentTime = new Date().getTime();
     [saleContributorsDetailDto.saleDto].forEach((item: SaleDtoExtend) => {
-        if (item.endTimestamp <= currentTime) { // endTimestamp 已结束
+        if (item.endTimestamp <= currentTime || (item.saleType != 1 && item.totalContributedMina == item.hardCap * (10 ** 9))) { // endTimestamp 已结束
 
             ifSaleEnded.value = true;
-            if (item.totalContributedMina >= item.softCap) {// claim tokens
+            if (item.totalContributedMina >= item.softCap * (10 ** 9)) {// claim tokens
                 flagBtn.value = 2
                 contributionBtnDisabled.value = false   //  启用按钮
                 tokenInput.value = item.saleRate * Number(curentUserContributionDto.currentUser.contributeCurrencyAmount)
@@ -118,6 +122,17 @@ const currentUserHasContributed = ref(false);
 watch(() => curentUserContributionDto.currentUser, async (value, oldValue) => {
     currentUserHasContributed.value = curentUserContributionDto.currentUser.saleAddress != null
         && curentUserContributionDto.currentUser.contributorAddress != undefined;
+
+    if (curentUserContributionDto.currentUser.redeemTxHash) {
+        // show 
+        hasRedeemedTxtShow.value = true;
+    }
+
+    if (curentUserContributionDto.currentUser.claimTxHash) {
+        // show 
+        hasClaimedTxtShow.value = true;
+    }
+
 }, { immediate: true });
 
 
@@ -137,13 +152,13 @@ let saleStatistic = reactive({
 const init = async () => {
     // query sale and current user
     const saleContributorsDetailDto0 = (await querySaleDetails(saleAddress, tokenAddress)) as SaleContributorsDetailDtoExtend;
-
+    /*
     if (appState.latestBlockInfo!.blockchainLength == 0 || new Date().getTime() - appState.fetchLatestBlockInfoTimestamp >= 2 * 60 * 1000) {
         appState.latestBlockInfo = (await syncLatestBlock()) ?? appState.latestBlockInfo;
         appState.fetchLatestBlockInfoTimestamp = new Date().getTime();
     }
 
-    /*
+    
     saleContributorsDetailDto0.saleDto.saleStartTimeStamp = Date.now() + (saleContributorsDetailDto0.saleDto.startTimestamp - Number(appState.latestBlockInfo.blockchainLength.toString())) * 3 * 60 * 1000;
     console.log('saleContributorsDetailDto0.saleDto.saleStartTimeStamp:' + saleContributorsDetailDto0.saleDto.saleStartTimeStamp);
 
@@ -185,7 +200,7 @@ const init = async () => {
 
 
     const totalSaledTokenAmount = saleContributorsDetailDto.saleDto.totalContributedMina / (10 ** 9) * saleContributorsDetailDto.saleDto.saleRate
-    const restUnsaledTokenAmount = saleContributorsDetailDto.saleDto.totalSaleSupply - totalSaledTokenAmount
+    const restUnsaledTokenAmount = saleContributorsDetailDto.saleDto.totalSaleSupply / (10 ** 9) - totalSaledTokenAmount
 
     saleStatistic.dataArr[0].value = totalSaledTokenAmount;
     saleStatistic.dataArr[1].value = restUnsaledTokenAmount;
@@ -269,6 +284,16 @@ const buyWithMina = async () => {
         let whitelistWitness: string[] = [];
         let leafIndex = 0;
         if (saleDto.whitelistMembers?.length > 0 || saleDto.whitelistTreeRoot != (await ContractConstants).WHITELIST_TREE_ROOT.toString()) {
+            if (!saleDto.whitelistMembers.includes(appState.connectedWallet58)) {
+                ElMessage({
+                    showClose: true,
+                    type: 'warning',
+                    message: `You are not in the whitelist!`,
+                });
+                closeLoadingMask(maskId);
+                return;
+            }
+
             showLoadingMask({ id: maskId, text: 'constructing whitelist tree...' });
 
             const members: string[] = saleDto.whitelistMembers.trim().split(',');
@@ -310,6 +335,8 @@ const buyWithMina = async () => {
                 } else {
                     try {
                         showLoadingMask({ id: maskId, text: 'sending transaction...' });
+
+                        console.log('txJson: ' + txJson);
 
                         let txHash = (await window.mina.sendTransaction({
                             transaction: txJson,
@@ -438,12 +465,32 @@ const claimTokens = async () => {
     const txFee = 0.21 * (10 ** 9)
 
     if (curentUserContributionDto.currentUser.contributorAddress) {
+        if (saleDto.contributorsMaintainFlag != 1) {
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: `Contributors are under maintainance. Please retry in minutes!`,
+            });
+
+            return;
+        }
 
         // query whitelist witness
         const maskId = 'claimTokens';
 
+        const { Mina, fetchAccount } = await import('o1js');
+        Mina.setActiveInstance(Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL));
         // deploy Redeem account
-        let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
+        let redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58 });
+        if (!redeemAccount.account) {
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: 'fetchAccount failed! Please check graphql endpoint and retry.',
+            });
+            return;
+        }
+
         if (!redeemAccount.account!.zkapp) {
             showLoadingMask({ id: maskId, text: 'compiling RedeemAccount circuit...' });
             const flag = await CircuitControllerState.remoteController!.compileRedeemAccount();
@@ -615,12 +662,42 @@ const redeemFunds = async () => {
     const txFee = 0.21 * (10 ** 9)
 
     if (curentUserContributionDto.currentUser.contributorAddress) {
+        if (curentUserContributionDto.currentUser.redeemTxHash) {
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: 'You have redeemed funds.',
+            });
+            return;
+        }
+
+        // check if backend server has maintained the contributors into contract
+        if (saleDto.contributorsMaintainFlag != 1) {
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: `Contributors are under maintainance. Please retry in minutes!`,
+            });
+
+            return;
+        }
 
         // query whitelist witness
         const maskId = 'redeemFunds';
 
+        const { Mina, fetchAccount } = await import('o1js');
+        Mina.setActiveInstance(Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL));
         // deploy Redeem account
-        let redeemAccount = await (await o1js).fetchAccount({ publicKey: appState.connectedWallet58 });
+        let redeemAccount = await fetchAccount({ publicKey: appState.connectedWallet58 });
+        if (!redeemAccount.account) {
+            ElMessage({
+                showClose: true,
+                type: 'warning',
+                message: 'fetchAccount failed! Please check graphql endpoint and retry.',
+            });
+            return;
+        }
+
         if (!redeemAccount.account!.zkapp) {
             showLoadingMask({ id: maskId, text: 'compiling RedeemAccount circuit...' });
             const flag = await CircuitControllerState.remoteController!.compileRedeemAccount();
@@ -721,7 +798,7 @@ const redeemFunds = async () => {
                 transaction: txJson,
                 feePayer: {
                     fee: 0.301,
-                    memo: `${saleTag.value}.claimToken`
+                    memo: `${saleTag.value}.redeemFunds`
                 },
             });
             console.log('tx send success, txHash: ', txHash);
@@ -971,8 +1048,8 @@ onUnmounted(() => {
                             </el-col>
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
-                                    {{ saleContributorsDetailDto.saleDto.totalSaleSupply }} {{
-        saleContributorsDetailDto.saleDto.tokenSymbol }}
+                                    {{ saleContributorsDetailDto.saleDto.totalSaleSupply / (10 ** 9) }} {{
+                                    saleContributorsDetailDto.saleDto.tokenSymbol }}
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1125,7 +1202,7 @@ onUnmounted(() => {
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
                                     {{ saleContributorsDetailDto.saleDto.cliffTime }} slots (about {{
-        saleContributorsDetailDto.saleDto.cliffTime * 3 }} minutes)
+                                        saleContributorsDetailDto.saleDto.cliffTime * 3 }} minutes)
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1152,7 +1229,7 @@ onUnmounted(() => {
                             <el-col :span="16">
                                 <el-row justify="end" class="titleContent">
                                     {{ saleContributorsDetailDto.saleDto.vestingPeriod }} slots (about {{
-        saleContributorsDetailDto.saleDto.vestingPeriod * 3 }} minutes)
+                                        saleContributorsDetailDto.saleDto.vestingPeriod * 3 }} minutes)
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1179,7 +1256,8 @@ onUnmounted(() => {
                         <el-row class="comment-row">
                             <el-col :span="24">
                                 <Suspense>
-                                    <Comment :address="saleContributorsDetailDto.saleDto.saleAddress" :projectType="saleContributorsDetailDto.saleDto.saleType" />
+                                    <Comment :address="saleContributorsDetailDto.saleDto.saleAddress"
+                                        :projectType="saleContributorsDetailDto.saleDto.saleType" />
                                 </Suspense>
                             </el-col>
                         </el-row>
@@ -1312,6 +1390,15 @@ onUnmounted(() => {
                                 </template>
                             </el-countdown>
                         </el-col>
+                        <el-col v-else-if="saleContributorsDetailDto.saleDto.projectStatus == 'Ended'">
+                            <el-countdown format="DD [days] HH:mm:ss" :value="Date.now()"
+                                @finish="countdownFinishCallback">
+
+                                <template #title>
+                                    <div style="display: inline-flex; align-items: center">End of Sale</div>
+                                </template>
+                            </el-countdown>
+                        </el-col>
                         <el-col v-else>
                             <el-countdown format="DD [days] HH:mm:ss"
                                 :value="saleContributorsDetailDto.saleDto.endTimestamp"
@@ -1353,18 +1440,32 @@ onUnmounted(() => {
                         </el-row>
                     </div>
                     <div v-else>
-                        <el-row v-if="currentUserHasContributed">
-                            You has contributed {{
-        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
-        (10 ** 9) }} Mina!
+                        <el-row v-if="hasRedeemedTxtShow">
+                            You have redeemed {{
+                                Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
+                            (10 ** 9) }} Mina!
+                        </el-row>
+                        <el-row v-if="hasClaimedTxtShow">
+                            You have claimed {{
+                                Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
+                                (10 ** 9) * saleContributorsDetailDto.saleDto.saleRate }} tokens!
+                        </el-row>
+                        <el-row v-if="currentUserHasContributed && !hasClaimedTxtShow && !hasRedeemedTxtShow">
+                            You have contributed {{
+                                Number(curentUserContributionDto.currentUser.contributeCurrencyAmount ?? 0) /
+                            (10 ** 9) }} Mina!
+                        </el-row>
+                        <el-row
+                            v-if="appState.connectedWallet58 && !currentUserHasContributed && !hasClaimedTxtShow && !hasRedeemedTxtShow">
+                            You did not contributed.
                         </el-row>
                         <el-row>
-                            <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 2"
-                                @click="claimTokens">claim
-                                your Tokens</el-button>
-                            <el-button type="primary" :disabled="contributionBtnDisabled" v-show="flagBtn == 3"
-                                @click="redeemFunds">redeem
-                                your
+                            <el-button type="primary" :disabled="contributionBtnDisabled"
+                                v-show="saleContributorsDetailDto.saleDto.saleType != 2 && flagBtn == 2 && !hasClaimedTxtShow"
+                                @click="claimTokens">claim your
+                                Tokens</el-button>
+                            <el-button type="primary" :disabled="contributionBtnDisabled"
+                                v-show="flagBtn == 3 && !hasRedeemedTxtShow" @click="redeemFunds">redeem your
                                 Funds</el-button>
                         </el-row>
                     </div>
