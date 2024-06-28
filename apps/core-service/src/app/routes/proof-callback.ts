@@ -40,9 +40,9 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
 
     const connection = getConnection();
     const presaleRepo = connection.getRepository(Sale);
+    const saleId = index.id;
 
     if (taskType == ProofTaskType.SALE_BATCH_MERGE) {
-        const saleId = index.id;
         // query presaleParams
         const presale = (await presaleRepo.findOne(saleId))!;
 
@@ -88,7 +88,7 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
                 }
             } as ProofTaskDto<any, any>;
 
-            const fileName = `./${ProofTaskType[taskType]}_proofTaskDto_proofReq_${getDateString()}.json`;
+            const fileName = `./${ProofTaskType[taskType]}_${saleId}_proofTaskDto_proofReq_${getDateString()}.json`;
             fs.writeFileSync(fileName, JSON.stringify(proofTaskDto));
 
             await $axiosProofGenerator.post<BaseResponse<string>>('/proof-gen', proofTaskDto).then(r => {
@@ -108,7 +108,8 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
         l1Tx.transaction.feePayer.lazyAuthorization = { kind: 'lazy-signature' };
         await l1Tx.sign([PrivateKey.fromBase58(config.txFeePayerPrivateKey)]);
 
-        await l1Tx.send().then(async pendingTx => {// TODO what if it fails currently!
+        // no need to await here
+        l1Tx.send().then(async pendingTx => {// TODO what if it fails currently!
             try {
                 const includedTx = await pendingTx.wait();
                 logger.info('tx is confirmed, hash: ' + includedTx.hash);
@@ -117,7 +118,7 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
                 const queryRunner = connection.createQueryRunner();
                 await queryRunner.startTransaction();
                 try {
-                    const presale = (await queryRunner.manager.find(Sale, {}) ?? [])[0];
+                    const presale = (await presaleRepo.findOne(saleId))!;
 
                     presale.contributorsMaintainFlag = 1;
                     presale.contributorsMaintainTxHash = includedTx.hash;
