@@ -54,22 +54,27 @@ function processMsgFromMaster() {
                     }
                     await syncAcctInfo(params.tokenAddress);// fetch account.
                     await syncAcctInfo(params.contractAddress, tokenId);// fetch account.
-                    //const holderAccount = await syncAcctInfo(params.methodParams.contributorAddress, tokenId);// fetch account.
+                    let contractMinaAccount;
+                    try {
+                        contractMinaAccount = await syncAcctInfo(params.contractAddress);// fetch account.
+                    } catch (error) {
+                        logger.info(`params.contractAddress[${params.contractAddress.toBase58()}] does not exist.`);
+                    }
 
                     const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(params.tokenAddress);
                     const tokeniZkSaleZkApp = new TokeniZkFairSale(params.contractAddress, tokenId);
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
-                        /*
-                        if (!holderAccount) {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
+
+                        if (!contractMinaAccount) {
                             AccountUpdate.fundNewAccount(params.feePayer);
                         }
-                        */
-                        tokeniZkSaleZkApp.contribute(params.methodParams.saleParams,
+
+                        await tokeniZkSaleZkApp.contribute(params.methodParams.saleParams,
                             params.methodParams.contributorAddress,
                             params.methodParams.minaAmount,
                             params.methodParams.membershipMerkleWitness,
                             params.methodParams.leafIndex);
-                        tokeniZkBasicTokenZkApp.approveAnyAccountUpdate(tokeniZkSaleZkApp.self);
+                        await tokeniZkBasicTokenZkApp.approveAccountUpdate(tokeniZkSaleZkApp.self);
 
                     });
                     await tx.prove();
@@ -87,7 +92,7 @@ function processMsgFromMaster() {
                         contractAddress: PublicKey.fromBase58(message.payload.contractAddress),
                         methodParams: {
                             saleParams: SaleParams.fromJSON(message.payload.methodParams.saleParams) as SaleParams,//??? rm 'as SaleParams'?
-                            saleRollupProof: SaleRollupProof.fromJSON(message.payload.methodParams.saleRollupProof)
+                            saleRollupProof: await SaleRollupProof.fromJSON(message.payload.methodParams.saleRollupProof)
                         }
                     }
 
@@ -106,9 +111,9 @@ function processMsgFromMaster() {
                     let tokenZkApp = new TokeniZkBasicToken(params.methodParams.saleParams.tokenAddress);
                     const saleContract = new TokeniZkFairSale(params.contractAddress, tokenId);
 
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
-                        saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
-                        tokenZkApp.approveAnyAccountUpdate(saleContract.self);
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee, memo: 'FAIRSALE_MAINTAIN_CONTRIBUTOR' }, async () => {
+                        await saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
+                        await tokenZkApp.approveAccountUpdate(saleContract.self);
                     });
                     await tx.prove();
 
@@ -136,25 +141,30 @@ function processMsgFromMaster() {
                     await syncAcctInfo(params.feePayer);
                     await syncAcctInfo(params.tokenAddress);// fetch account.
                     await syncAcctInfo(params.contractAddress, tokenId);// fetch account.
-                    const holderAccount = await syncAcctInfo(params.feePayer, tokenId);// fetch account.
+                    let holderAccount;
+                    try {
+                        holderAccount = await syncAcctInfo(params.feePayer, tokenId);// fetch account.
+                    } catch (error) {
+                        logger.info(`cannot fetchAccount of (${params.feePayer.toBase58()}, ${tokenId})`);
+                    }
 
                     const redeemAccount = params.feePayer;
                     const saleContribution = params.methodParams.saleContributorMembershipWitnessData.leafData;
-                    const minaAmount = saleContribution.minaAmount.div(10 ** 9).mul(params.methodParams.saleParams.saleRate);
+                    const minaAmount = saleContribution.minaAmount.mul(params.methodParams.saleParams.saleRate);
                     const vestingParams = params.methodParams.saleParams.vestingParams();
                     const tokeniZkBasicTokenZkApp = new TokeniZkBasicToken(params.tokenAddress);
                     const tokeniZkSaleZkApp = new TokeniZkFairSale(params.contractAddress, tokenId);
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
                         if (!holderAccount) {
                             AccountUpdate.fundNewAccount(params.feePayer);
                         }
 
-                        tokeniZkSaleZkApp.claimTokens(
+                        await tokeniZkSaleZkApp.claimTokens(
                             params.methodParams.saleParams,
                             params.methodParams.saleContributorMembershipWitnessData,
                             params.methodParams.lowLeafWitness,
                             params.methodParams.oldNullWitness);
-                        tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkSaleZkApp.self,
+                        await tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkSaleZkApp.self,
                             redeemAccount,
                             minaAmount,
                             vestingParams);
