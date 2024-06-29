@@ -16,7 +16,7 @@ import {
 } from 'o1js';
 import { LauchpadPlatformParams, TokeniZkFactory } from './TokeniZkFactory';
 import { CONTRIBUTORS_TREE_ROOT } from './constants';
-import { SaleParams, TokenTransferEvent, VestingParams,AirdropParams } from './sale-models';
+import { SaleParams, TokenTransferEvent, VestingParams, AirdropParams } from './sale-models';
 
 const SUPPLY = UInt64.from(10n ** 18n);
 
@@ -324,7 +324,10 @@ export class TokeniZkBasicToken extends TokenContract {
         receiverAddress: PublicKey,
         amount: UInt64,
     ) {
-        await this.transfer(zkappUpdate, receiverAddress, amount);
+        const tokenId = this.deriveTokenId();
+        let receiverAccountUpdate = AccountUpdate.createSigned(receiverAddress, tokenId);
+        this.approve(receiverAccountUpdate);
+        receiverAccountUpdate.balance.addInPlace(amount);
 
         this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
             tokenAddress: this.address,
@@ -349,14 +352,19 @@ export class TokeniZkBasicToken extends TokenContract {
         amount: UInt64,
         vestingParams: VestingParams
     ) {
-        await this.approveTransferCallback(zkappUpdate, receiverAddress, amount);
-
-        // increase receiver's token
         const tokenId = this.deriveTokenId();
-        let receiverAccountUpdate = AccountUpdate.create(receiverAddress, tokenId);
+        let receiverAccountUpdate = AccountUpdate.createSigned(receiverAddress, tokenId);
         this.approve(receiverAccountUpdate);
         receiverAccountUpdate.balance.addInPlace(amount);
-        
+
+        this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
+            tokenAddress: this.address,
+            tokenId: this.deriveTokenId(),
+            from: zkappUpdate.publicKey,
+            to: receiverAddress,
+            value: amount
+        }));
+
         AccountUpdate.assertEquals(
             zkappUpdate.body.preconditions.account.state[1],
             vestingParams.hash()
@@ -372,7 +380,6 @@ export class TokeniZkBasicToken extends TokenContract {
             vestingPeriod: vestingParams.vestingPeriod,
             vestingIncrement
         });
-        receiverAccountUpdate.requireSignature();
     }
 
 }

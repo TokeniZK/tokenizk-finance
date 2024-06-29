@@ -202,7 +202,7 @@ tx = await Mina.transaction(
     },
     async () => {
         AccountUpdate.fundNewAccount(feePayer);
-        await tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
+        await tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000 * (10 ** 9)));
     }
 );
 
@@ -235,7 +235,7 @@ console.log('current network state: ', JSON.stringify(Mina.activeInstance.getNet
 
 const presaleParams = new SaleParams({
     tokenAddress: basicTokenZkAppAddress,
-    totalSaleSupply: UInt64.from(100),
+    totalSaleSupply: UInt64.from(100 * (10 ** 9)),
     saleRate: UInt64.from(10),
     whitelistTreeRoot: whitelistTreeRoot,
     softCap: UInt64.from(3 * (10 ** 9)),
