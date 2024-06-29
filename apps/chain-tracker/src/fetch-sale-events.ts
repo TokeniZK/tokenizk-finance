@@ -161,9 +161,9 @@ export async function standardFetchSaleEvents() {
                         await queryRunner.manager.save(user);
 
                         ifNotifySyncNullifier = true;
-                    } else if (e.type == 'maintainContributors') {
-                        sale.contributorsMaintainFlag = 1;
-                        sale.contributorsMaintainTxHash = txHash;
+                    } else if (e.type == 'maintainContributors') {// no need to handle again, since it's done on tx confirmation.
+                        // sale.contributorsMaintainFlag = 1;
+                        // sale.contributorsMaintainTxHash = txHash;
                     }
                 }
 

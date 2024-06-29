@@ -40,6 +40,7 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
 
     const connection = getConnection();
     const presaleRepo = connection.getRepository(Sale);
+<<<<<<< HEAD
 
     if (taskType == ProofTaskType.SALE_BATCH_MERGE) {
         const saleId = index.id;
@@ -64,6 +65,32 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
 
         const presaleParams = presale.generateSaleParam();
 
+=======
+    const saleId = index.id;
+
+    if (taskType == ProofTaskType.SALE_BATCH_MERGE) {
+        // query presaleParams
+        const presale = (await presaleRepo.findOne(saleId))!;
+
+        let taskType = 0;
+        const saleType = presale.saleType;
+        switch (saleType) {
+            case SaleType.PRESALE:
+                taskType = ProofTaskType.PRESALE_CONTRACT_MAINTAIN_CONTRIBUTORS;
+                break;
+            case SaleType.FAIRSALE:
+                taskType = ProofTaskType.FAIRSALE_CONTRACT_MAINTAIN_CONTRIBUTORS;
+                break;
+            case SaleType.PRIVATESALE:
+                taskType = ProofTaskType.PRIVATESALE_CONTRACT_MAINTAIN_CONTRIBUTORS;
+                break;
+            default:
+                break;
+        }
+
+        const presaleParams = presale.generateSaleParam();
+
+>>>>>>> main
         // resend to proof-gen for PRESALE_CONTRACT_MAINTAIN_CONTRIBUTORS. if fail, proof-watcher will trigger again later.
         try {
             const proofTaskDto = {
@@ -88,7 +115,11 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
                 }
             } as ProofTaskDto<any, any>;
 
+<<<<<<< HEAD
             const fileName = `./${ProofTaskType[taskType]}_proofTaskDto_proofReq_${getDateString()}.json`;
+=======
+            const fileName = `./${ProofTaskType[taskType]}_${saleId}_proofTaskDto_proofReq_${getDateString()}.json`;
+>>>>>>> main
             fs.writeFileSync(fileName, JSON.stringify(proofTaskDto));
 
             await $axiosProofGenerator.post<BaseResponse<string>>('/proof-gen', proofTaskDto).then(r => {
@@ -118,7 +149,11 @@ const handler: RequestHandler<ProofTaskDto<any, any>, null> = async function (
                 const queryRunner = connection.createQueryRunner();
                 await queryRunner.startTransaction();
                 try {
+<<<<<<< HEAD
                     const presale = (await queryRunner.manager.find(Sale, {}) ?? [])[0];
+=======
+                    const presale = (await presaleRepo.findOne(saleId))!;
+>>>>>>> main
 
                     presale.contributorsMaintainFlag = 1;
                     presale.contributorsMaintainTxHash = includedTx.hash;
