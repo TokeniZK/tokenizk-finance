@@ -136,10 +136,10 @@ export async function standardFetchFactoryEvents() {
                             address: createSaleEvent.basicTokenAddress.toBase58()
                         }))!;
 
-                        logger.info('original token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
-                        logger.info('sale.totalSaleSupply: '+ sale.totalSaleSupply);
-                        token.totalAmountInCirculation = Number(token.totalAmountInCirculation) + sale.totalSaleSupply;
-                        logger.info('after adding sale.totalSaleSupply, token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
+                        logger.info('original token.totalAmountInCirculation: ' + token.totalAmountInCirculation);
+                        logger.info('sale.totalSaleSupply: ' + sale.totalSaleSupply);
+                        token.totalAmountInCirculation = Number(token.totalAmountInCirculation) + Number(sale.totalSaleSupply);
+                        logger.info('after adding sale.totalSaleSupply, token.totalAmountInCirculation: ' + token.totalAmountInCirculation);
 
                         await queryRunner.manager.save(token);
                     }
@@ -188,10 +188,10 @@ export async function standardFetchFactoryEvents() {
                     const token = (await queryRunner.manager.findOne(BasiceToken, {
                         address: createAirdropEvent.basicTokenAddress.toBase58()
                     }))!;
-                    logger.info('original token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
-                    logger.info('airdrop.totalAirdropSupply: '+ airdrop.totalAirdropSupply);
-                    token.totalAmountInCirculation = Number(token.totalAmountInCirculation) + airdrop.totalAirdropSupply;
-                    logger.info('after adding airdrop.totalAirdropSupply, token.totalAmountInCirculation: '+ token.totalAmountInCirculation);
+                    logger.info('original token.totalAmountInCirculation: ' + token.totalAmountInCirculation);
+                    logger.info('airdrop.totalAirdropSupply: ' + airdrop.totalAirdropSupply);
+                    token.totalAmountInCirculation = Number(token.totalAmountInCirculation) + Number(airdrop.totalAirdropSupply);
+                    logger.info('after adding airdrop.totalAirdropSupply, token.totalAmountInCirculation: ' + token.totalAmountInCirculation);
 
                     await queryRunner.manager.save(token);
 
