@@ -11,10 +11,11 @@ import {
     fetchAccount,
     Reducer,
     fetchLastBlock,
+    Int64,
 } from 'o1js';
 import fs from "fs";
 
-import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, SaleContribution, SaleContributorMembershipWitnessData, SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleRollupState } from "../src";
+import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, SaleContribution, SaleContributorMembershipWitnessData, SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleRollupState, TokenTransferEvent } from "../src";
 import { getTestContext } from '../src/test_utils';
 import { LeafData, PoseidonHasher, StandardIndexedTree, StandardTree, newTree } from '@tokenizk/merkle-tree';
 import { Level } from 'level';
@@ -592,7 +593,9 @@ tx = await Mina.transaction(
     },
     async () => {
         AccountUpdate.fundNewAccount(redeemAccountZkAppAddress, 1);
-        await basicTokenZkApp.transferToken(redeemAccountZkAppAddress, to, UInt64.from(11));
+
+        await basicTokenZkApp.transferToken(redeemAccountZkAppAddress, to, UInt64.from(1));
+
     }
 );
 await ctx.submitTx(tx, {

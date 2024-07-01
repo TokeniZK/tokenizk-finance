@@ -13,6 +13,7 @@ import {
     Reducer,
     TokenContract,
     AccountUpdateForest,
+    Int64,
 } from 'o1js';
 import { LauchpadPlatformParams, TokeniZkFactory } from './TokeniZkFactory';
 import { CONTRIBUTORS_TREE_ROOT } from './constants';
@@ -300,13 +301,21 @@ export class TokeniZkBasicToken extends TokenContract {
      */
     @method
     async transferToken(from: PublicKey, to: PublicKey, value: UInt64) {
-        await this.transfer(from, to, value);
+        const tokenId = this.deriveTokenId();
+        let fromAU = AccountUpdate.createSigned(from, tokenId);
+        await this.approve(fromAU);
+        fromAU.balance.subInPlace(value);
+
+        let receiverAU = AccountUpdate.create(to, tokenId);
+        receiverAU.balance.addInPlace(value);
+        await this.approve(receiverAU);
+
         this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
             tokenAddress: this.address,
-            tokenId: this.deriveTokenId(),
-            from: from,
+            tokenId,
+            from,
             to: to,
-            value: value
+            value
         }));
     }
 
@@ -324,10 +333,16 @@ export class TokeniZkBasicToken extends TokenContract {
         receiverAddress: PublicKey,
         amount: UInt64,
     ) {
+        await this.approve(zkappUpdate);
+        let negativeAmount = Int64.fromObject(
+            zkappUpdate.body.balanceChange
+        );
+        negativeAmount.assertEquals(Int64.from(amount).neg());
+
         const tokenId = this.deriveTokenId();
-        let receiverAccountUpdate = AccountUpdate.createSigned(receiverAddress, tokenId);
-        this.approve(receiverAccountUpdate);
+        let receiverAccountUpdate = AccountUpdate.create(receiverAddress, tokenId);
         receiverAccountUpdate.balance.addInPlace(amount);
+        await this.approve(receiverAccountUpdate);
 
         this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
             tokenAddress: this.address,
