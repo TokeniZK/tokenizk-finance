@@ -1,9 +1,9 @@
 import httpCodes from "@inip/http-codes"
 import { FastifyPlugin } from "fastify"
-import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema } from '@tokenizk/types'
+import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, SaleDtoSchema, SaleType } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
 
-import { getConnection, In } from "typeorm"
+import { getConnection, In, IsNull, Not } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
 
@@ -66,12 +66,12 @@ const handler: RequestHandler<SaleReq, null> = async function (
         if (saleList.length > 0) {
             const tokenList = await connection.getRepository(BasiceToken).find({
                 where: {
-                    address: In(saleList.map(p => p.tokenAddress))
+                    address: In(saleList.filter(s => s.saleType != SaleType.PRIVATESALE).map(p => p.tokenAddress))
                 }
             });
 
             if (tokenList.length > 0) {// for non-private sale case
-                saleList.forEach(p => {
+                saleList.filter(s => s.saleType != SaleType.PRIVATESALE).forEach(p => {
                     const token = tokenList.filter(t => t.address == p.tokenAddress)[0];
                     (p as any as SaleDto).tokenSymbol = token.symbol;
                     (p as any as SaleDto).teamName = token.name;
@@ -87,6 +87,7 @@ const handler: RequestHandler<SaleReq, null> = async function (
                     s.totalContributedMina = (await userTokenSaleRepo.find({
                         where: {
                             saleId: s.id,
+                            contributeTxHash: Not(IsNull())
                             // status: 1  // TODO !!! when fetchEvent is ok, then need it!!!
                         }
                     }) ?? []).reduce<number>((p, c)=>{

@@ -49,7 +49,6 @@ const handler: RequestHandler<AirdropDto, null> = async function (
     try {
         const connection = getConnection();
         const airdropRepo = connection.getRepository(Airdrop)
-        const basicTokenRepo = connection.getRepository(BasiceToken)
 
         console.log(`airdropDto: ${JSON.stringify(airdropDto)}`);
 
@@ -62,14 +61,16 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             airdrop = await airdropRepo.save(airdrop);
         } else {
             const tokenAddr = PublicKey.fromBase58(airdropDto.tokenAddress);
-            const tokenAccount = await fetchAccount({ publicKey: tokenAddr, tokenId: TokenId.derive(tokenAddr) });
+            const tokenAccount = await fetchAccount({ publicKey: tokenAddr});
             if (!tokenAccount || tokenAccount.error) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "token Account is not exiting");
             }
 
+            /*             
             if (airdropDto.startTimestamp > airdropDto.endTimestamp) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "startTimestamp should not be greater than endTimestamp");
-            }
+            } 
+            */
             if (airdropDto?.whitelistMembers) {
                 if (airdropDto.whitelistTreeRoot == WHITELIST_TREE_ROOT.toString() || airdropDto.whitelistTreeRoot.length == 0) {
                     throw req.throwError(httpCodes.BAD_REQUEST, "whitelistTreeRoot is not aligned with whitelistMembers");
@@ -90,7 +91,7 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             if (!airdropDto.airdropName) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "airdropName is not valid");
             }
-            if (airdropDto.totalAirdropSupply <= 0 || Number(tokenAccount?.account?.balance.toString()) < airdropDto.totalAirdropSupply) {
+            if (airdropDto.totalAirdropSupply <= 0 || Number(tokenAccount?.account?.zkapp?.appState[1]) < airdropDto.totalAirdropSupply) {
                 throw req.throwError(httpCodes.BAD_REQUEST, "totalAirdropSupply is not valid");
             }
 
@@ -100,15 +101,6 @@ const handler: RequestHandler<AirdropDto, null> = async function (
             airdrop.createdAt = new Date();
             airdrop.updatedAt = new Date();
             airdrop = await airdropRepo.save(airdrop);
-
-            const token = await basicTokenRepo.findOne({
-                where: {
-                    address: airdropDto.tokenAddress
-                }
-            });
-            token!.totalAmountInCirculation += airdropDto.totalAirdropSupply;
-
-            await basicTokenRepo.save(token!);
         }
 
         return {

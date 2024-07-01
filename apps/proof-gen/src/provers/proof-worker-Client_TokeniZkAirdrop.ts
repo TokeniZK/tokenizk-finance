@@ -47,7 +47,12 @@ function processMsgFromMaster() {
 
                     const tokenId = TokenId.derive(params.tokenAddress);
                     await syncAcctInfo(params.feePayer);
-                    const holderAccount = await syncAcctInfo(params.feePayer, tokenId);
+                    let holderAccount;
+                    try {
+                        holderAccount = await syncAcctInfo(params.feePayer, tokenId);
+                    } catch (error) {
+                        logger.info(`params.feePayer[${params.feePayer.toBase58()}, tokeId${tokenId.toString()}] does not exit.`);
+                    }
                     await syncAcctInfo(params.tokenAddress);// fetch account.
                     await syncAcctInfo(params.contractAddress, tokenId);// fetch account.
 
@@ -56,14 +61,14 @@ function processMsgFromMaster() {
 
                     const tokenAmount = params.methodParams.airdropParams.totalAirdropSupply.div(params.methodParams.airdropParams.totalMembersNumber);
 
-                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, () => {
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee }, async () => {
                         if (!holderAccount) {
                             AccountUpdate.fundNewAccount(params.feePayer);
                         }
 
-                        tokeniZkAirdropZkApp.claimTokens(params.methodParams.airdropParams, params.methodParams.membershipMerkleWitness, params.methodParams.leafIndex, params.methodParams.lowLeafWitness, params.methodParams.oldNullWitness);
+                        await tokeniZkAirdropZkApp.claimTokens(params.methodParams.airdropParams, params.methodParams.membershipMerkleWitness, params.methodParams.leafIndex, params.methodParams.lowLeafWitness, params.methodParams.oldNullWitness);
 
-                        tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkAirdropZkApp.self, params.feePayer, tokenAmount, params.methodParams.airdropParams.vestingParams());
+                        await tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkAirdropZkApp.self, params.feePayer, tokenAmount, params.methodParams.airdropParams.vestingParams());
 
                     });
                     await tx.prove();

@@ -1,30 +1,17 @@
 
 import {
-    isReady,
-    method,
     Mina,
     AccountUpdate,
     PrivateKey,
-    SmartContract,
-    PublicKey,
     UInt64,
-    Int64,
-    Experimental,
-    Permissions,
-    DeployArgs,
-    VerificationKey,
     TokenId,
-    state,
-    State,
     Field,
-    Bool,
-    Provable,
     UInt32,
     fetchAccount,
     fetchLastBlock
 } from 'o1js';
 
-import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, AirdropParams, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, UserNullifierMerkleWitness, AirdropClaim } from "../src";
+import { TokeniZkFactory, TokeniZkBasicToken, LauchpadPlatformParams, RedeemAccount, WHITELIST_TREE_HEIGHT, TokeniZkAirdrop, AirdropParams, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, AirdropClaim } from "../src";
 import { getTestContext } from '../src/test_utils';
 import { LeafData, PoseidonHasher, StandardIndexedTree, StandardTree, newTree } from '@tokenizk/merkle-tree';
 import { Level } from 'level';
@@ -165,7 +152,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy tokenFactory contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.deployZkApp(lauchpadPlatformParams);
     }
@@ -189,7 +176,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy BasicToken contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
     }
@@ -256,7 +243,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy Airdrop contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         basicTokenZkApp.createAirdrop(lauchpadPlatformParams, airdropZkAppAddress, TokeniZkFactory.airdropVk, airdropParams);
     }
@@ -283,7 +270,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Create Redeem Account',
     },
-    () => {
+    async () => {
         tokenFactoryZkApp.createRedeemAccount(lauchpadPlatformParams, redeemAccountZkAppAddress, TokeniZkFactory.redeemAccountVk);
     }
 );
@@ -390,7 +377,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'claim tokens',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(redeemAccountZkAppAddress);
         tokeniZkAirdrop.claimTokens(airdropParams, membershipMerkleWitness, leafIndex, lowLeafWitness, oldNullWitness);
         // basicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkAirdrop.self, redeemAccountZkAppAddress, tokenAmount, vestingParams);
@@ -421,7 +408,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'transfer tokens',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(redeemAccountZkAppAddress);// create a new account for a new address
         basicTokenZkApp.transferToken(redeemAccountZkAppAddress, to, UInt64.from(11));
     }

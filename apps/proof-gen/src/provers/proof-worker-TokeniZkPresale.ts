@@ -106,7 +106,11 @@ function processMsgFromMaster() {
                     let tokenZkApp = new TokeniZkBasicToken(params.methodParams.saleParams.tokenAddress);
                     const presaleContract = new TokeniZkPresale(params.contractAddress, tokenId);
 
+<<<<<<< HEAD
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee, memo:'PRESALE_MAINTAIN_CONTRIBUTORS' }, async () => {
+=======
                     let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee, memo: 'PRESALE_MAINTAIN_CONTRIBUTORS' }, async () => {
+>>>>>>> main
                         await presaleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
                         await tokenZkApp.approveAccountUpdate(presaleContract.self);
                     });
@@ -297,7 +301,11 @@ const initWorker = async () => {
     const saleVk = await TokeniZkPresale.compile();
     console.timeEnd('TokeniZkPresale.compile');
 
+<<<<<<< HEAD
+    console.log('saleVk.verificationKey.hash:'+saleVk.verificationKey.hash);
+=======
     console.log('saleVk.verificationKey.hash:' + saleVk.verificationKey.hash);
+>>>>>>> main
 
     console.time('PresaleMinaFundHolder.compile');
     await PresaleMinaFundHolder.compile()

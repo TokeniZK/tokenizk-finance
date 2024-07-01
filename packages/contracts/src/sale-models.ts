@@ -6,6 +6,7 @@ import {
     UInt32,
     Poseidon,
     Provable,
+    TokenId,
 } from 'o1js';
 import {
     CONTRIBUTORS_TREE_HEIGHT,
@@ -230,7 +231,7 @@ export class SaleContribution extends Struct({
         const tokenId = fields[2];
         const saleContractAddress = PublicKey.fromFields([fields[3], fields[4]]);
         const contributorAddress = PublicKey.fromFields([fields[5], fields[6]]);
-        const minaAmount = UInt64.from(fields[7]);
+        const minaAmount = UInt64.Unsafe.fromField(fields[7]);
         return new SaleContribution({
             tokenAddress,
             tokenId,
@@ -482,4 +483,124 @@ export class MaintainContributorsEvent extends Struct({
     fromActionState1: Field,
     contributorTreeRoot1: Field,
     totalContributedMina1: UInt64
+}) { }
+
+
+export class AirdropParams extends Struct({
+    tokenAddress: PublicKey,
+
+    totalAirdropSupply: UInt64,
+
+    totalMembersNumber: UInt64,
+
+    /**
+     * Whitelist Tree Root: default empty merkle tree root
+     */
+    whitelistTreeRoot: Field,
+
+    /** 
+     * Start time stamp
+     */
+    startTime: UInt64,
+
+    cliffTime: UInt32,
+    cliffAmountRate: UInt64,
+    vestingPeriod: UInt32, // 0 is not allowed, default value is 1
+    vestingIncrement: UInt64
+}) {
+    hash() {
+        return Poseidon.hash([
+            ...this.tokenAddress.toFields(),
+            ...this.totalAirdropSupply.toFields(),
+            ...this.totalMembersNumber.toFields(),
+            this.whitelistTreeRoot,
+            ...this.startTime.toFields(),
+            ...this.cliffTime.toFields(),
+            ...this.cliffAmountRate.toFields(),
+            ...this.vestingPeriod.toFields(),
+            ...this.vestingIncrement.toFields(),
+        ]
+        );
+    }
+
+    vestingParamsHash() {
+        return this.vestingParams().hash();
+    }
+
+    vestingParams() {
+        return new VestingParams({
+            cliffTime: this.cliffTime,
+            cliffAmountRate: this.cliffAmountRate,
+            vestingPeriod: this.vestingPeriod,
+            vestingIncrement: this.vestingIncrement
+        });
+    }
+
+    static fromDto(dto: {
+        tokenAddress: string,
+        totalAirdropSupply: number,
+        totalMembersNumber: number,
+        whitelistTreeRoot: string,
+
+        startTime: number,
+
+        cliffTime: number,
+        cliffAmountRate: number,
+        vestingPeriod: number, // 0 is not allowed, default value is 1
+        vestingIncrement: number
+    }) {
+        return new AirdropParams({
+            tokenAddress: PublicKey.fromBase58(dto.tokenAddress),
+            totalAirdropSupply: UInt64.from(dto.totalAirdropSupply),
+            totalMembersNumber: UInt64.from(dto.totalMembersNumber),
+
+            whitelistTreeRoot: Field(dto.whitelistTreeRoot),
+
+            startTime: UInt64.from(dto.startTime),
+
+            cliffTime: UInt32.from(dto.cliffTime),
+            cliffAmountRate: UInt64.from(dto.cliffAmountRate),
+            vestingPeriod: UInt32.from(dto.vestingPeriod), // 0 is not allowed, default value is 1
+            vestingIncrement: UInt64.from(dto.vestingIncrement)
+        });
+    }
+}
+
+export class AirdropClaim extends Struct({
+    tokenAddress: PublicKey,
+    tokenId: TokenId,
+    airdropContractAddress: PublicKey,
+    claimerAddress: PublicKey,
+    tokenAmount: UInt64,
+}) {
+    hash() {
+        return Poseidon.hash([
+            ...this.tokenAddress.toFields(),
+            ...this.tokenId.toFields(),
+            ...this.airdropContractAddress.toFields(),
+            ...this.claimerAddress.toFields(),
+            ...this.tokenAmount.toFields(),
+        ]
+        );
+    }
+
+    static fromDto(dto: {
+        tokenAddress: string,
+        tokenId: string,
+        airdropContractAddress: string,
+        claimerAddress: string,
+        tokenAmount: number,
+    }) {
+        return new AirdropClaim({
+            tokenAddress: PublicKey.fromBase58(dto.tokenAddress),
+            tokenId: Field(dto.tokenId),
+            airdropContractAddress: PublicKey.fromBase58(dto.airdropContractAddress),
+            claimerAddress: PublicKey.fromBase58(dto.claimerAddress),
+            tokenAmount: UInt64.from(dto.tokenAmount),
+        });
+    }
+}
+
+export class AirdropClaimTokenEvent extends Struct({
+    airdropClaim: AirdropClaim
 }) { }

@@ -6,9 +6,9 @@ export const checkTx = async (
     txId: string,
     options?: { maxAttempts?: number; interval?: number },
 ) => {
-    const { checkZkappTransaction } = await import('o1js');
-    // const Blockchain = Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL);
-    // Mina.setActiveInstance(Blockchain);
+    const { checkZkappTransaction, Mina } = await import('o1js');
+    const Blockchain = Mina.Network(import.meta.env.VITE_MINA_GRAPHQL_URL);
+    Mina.setActiveInstance(Blockchain);
     const maxAttempts = options?.maxAttempts ?? 500;
     const interval = options?.interval ?? 60 * 1000;
     let attempts = 0;

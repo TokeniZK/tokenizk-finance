@@ -86,7 +86,7 @@ const toDetailPage = `/sale-datails?saleAddress=${saleDtoRef.saleAddress}&tokenA
                     </el-col>
                     <el-col :span="10">
                         <el-row justify="end">
-                            {{ saleDtoRef.totalSaleSupply }} {{ saleDtoRef.tokenSymbol }}
+                            {{ saleDtoRef.totalSaleSupply / 10**9 }} {{ saleDtoRef.tokenSymbol }}
                         </el-row>
                     </el-col>
                 </el-row>

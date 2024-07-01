@@ -183,7 +183,7 @@ const tx = await Mina.transaction(
     fee: txFee,
     memo: `claimTokens`,
   },
-  () => {
+  async () => {
     AccountUpdate.fundNewAccount(feePayer);
 
     tokeniZkAirdropZkApp.claimTokens(airdropParams, membershipMerkleWitness, leafIndex, lowLeafWitness, oldNullWitness);

@@ -1,34 +1,20 @@
 
 import {
-    isReady,
-    method,
     Mina,
     AccountUpdate,
     PrivateKey,
-    SmartContract,
-    PublicKey,
     UInt64,
-    Int64,
-    Experimental,
-    Permissions,
-    DeployArgs,
-    VerificationKey,
     TokenId,
-    state,
-    State,
     Field,
-    Bool,
-    Provable,
     UInt32,
     fetchAccount,
 } from 'o1js';
 
-import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, AirdropParams, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, UserNullifierMerkleWitness, AirdropClaim } from "../src";
+import { TokeniZkFactory, TokeniZkBasicToken, LauchpadPlatformParams, RedeemAccount, WHITELIST_TREE_HEIGHT, TokeniZkAirdrop, AirdropParams } from "../src";
 import { getTestContext } from '../src/test_utils';
-import { LeafData, PoseidonHasher, StandardIndexedTree, StandardTree, newTree } from '@tokenizk/merkle-tree';
+import { PoseidonHasher, StandardTree, newTree } from '@tokenizk/merkle-tree';
 import { Level } from 'level';
 import { WhitelistMembershipMerkleWitness } from '../src';
-import { MerkleTreeId } from '@tokenizk/types';
 
 // ================
 const ctx = getTestContext();
@@ -164,7 +150,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy tokenFactory contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.deployZkApp(lauchpadPlatformParams);
     }
@@ -277,7 +263,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Create Redeem Account',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.createRedeemAccount(lauchpadPlatformParams, redeemAccountZkAppAddress, TokeniZkFactory.redeemAccountVk);
     }

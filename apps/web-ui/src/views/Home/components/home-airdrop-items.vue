@@ -41,11 +41,11 @@ const transformProjectStatus = async (itmes: AirdropDtoExtend[]) => {
   itmes.forEach(item => {
     if (item.startTimestamp > currentTimestamp) {
       item.projectStatus = 'Upcoming'
-    } else if (item.startTimestamp <= currentTimestamp && item.endTimestamp > currentTimestamp) {
+    } else if (item.startTimestamp <= currentTimestamp /* && item.endTimestamp > currentTimestamp */) {
       item.projectStatus = 'Ongoing'
-    } else if (item.endTimestamp < currentTimestamp) {
+    } /* else if (item.endTimestamp < currentTimestamp) {
       item.projectStatus = 'Ended'
-    } else {
+    }  */else {
       item.projectStatus = 'All Status'
     }
   });

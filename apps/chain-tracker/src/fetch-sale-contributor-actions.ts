@@ -1,5 +1,5 @@
-import { AccountUpdate, Field, PublicKey, Reducer, fetchAccount, TokenId, fetchLastBlock, Token } from 'o1js';
-import { IsNull, LessThan, getConnection } from 'typeorm';
+import { AccountUpdate, Field, PublicKey, Reducer, fetchAccount, TokenId, fetchLastBlock } from 'o1js';
+import { LessThan, getConnection } from 'typeorm';
 import { Sale, UserTokenSale } from '@tokenizk/entities';
 import { activeMinaInstance, syncActions } from "@tokenizk/util";
 import { getLogger } from "@/lib/logUtils";
@@ -28,7 +28,6 @@ setInterval(fetchSaleContributorActions, periodRange); // exec/1.5mins
 export async function fetchSaleContributorActions() {
     logger.info('start fetchSaleContributorActions ...');
 
-    const lastBlockInfo = await fetchLastBlock()
     try {
         const connection = getConnection();
 
@@ -36,7 +35,7 @@ export async function fetchSaleContributorActions() {
         const saleList = (await saleRepo.find({
             where: {
                 status: SaleStatus.CONFIRMED,
-                endTimestamp: LessThan(Number(lastBlockInfo.blockchainLength.toString())),// must guarantee this is later than fetch-events
+                endTimestamp: LessThan(Date.now() + 1.5 * 60 * 1000),// must guarantee this is later than fetch-events
                 contributorsFetchFlag: 0 // has NOT fetch actions
             }
         })) ?? [];
@@ -94,7 +93,7 @@ export async function fetchSaleContributorActions() {
             try {
                 await queryRunner.startTransaction();
 
-                let totalContributions = sale.totalContributedMina??0;
+                let totalContributions = sale.totalContributedMina ?? 0;
                 for (let i = 0; i < newActionList.length; i++) {
                     const item = newActionList[i];
                     const saleContribution = SaleContribution.fromFields(item.actions[0].map(a => Field(a)));

@@ -349,12 +349,17 @@ const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
 
 const handleWhitelistInput = async () => {
-
-    const noSpacesValue = airdropDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格 
-
-    airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
-
+    let flag = true;
     if (airdropDto.whitelistMembers) {
+        if (airdropDto.whitelistMembers.endsWith(',')) {
+            flag = false;
+            ElMessage.error({ message: 'whitelistMembers should not ends with comma!' });
+
+            return flag;
+        }
+
+        const noSpacesValue = airdropDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格 
+        airdropDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
         const whitelistMembers = airdropDto.whitelistMembers.split(',');
 
@@ -365,15 +370,16 @@ const handleWhitelistInput = async () => {
             try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
+                flag = false;
+
                 dialogTableVisibleErrorAlert.value = true;
                 console.log(error);
-                whiteListErrorAlert.whitelist.push(item)
+                whiteListErrorAlert.whitelist.push(item ?? 'empty string or space exist! please check.')
                 // ElMessage.error({ message: item + ' is not a valid address!' });
             }
-
         }
-
     }
+    return flag;
 };
 
 const closeErrorWhitelistDialog = () => {
@@ -398,6 +404,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
 
         if (valid) {
+
+            if(!(await handleWhitelistInput())){
+                return ;
+            }
+
             let saleTag = 'Airdrop';
             const maskId = 'createAirdrop';
 
@@ -429,7 +440,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                 console.log('members: ' + airdropDto.whitelistMembers);
 
-                const members = airdropDto.whitelistMembers.trim().split(',');
+                let whiteListMems: string = airdropDto.whitelistMembers.trim();
+                if (whiteListMems.endsWith(',')) {
+                    whiteListMems = whiteListMems.substring(0, whiteListMems.length - 1);
+                }
+                const members = whiteListMems.split(',').filter(s => s.trim() != '');
                 airdropDto.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
 
                 console.log('whitelistTreeRoot: ' + airdropDto.whitelistTreeRoot);
@@ -458,7 +473,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             const airdropParams = {
                 tokenAddress: airdropDto.tokenAddress,
-                totalAirdropSupply: airdropDto.totalAirdropSupply,// TODO consider if need * (10 ** 9)!!!
+                totalAirdropSupply: airdropDto.totalAirdropSupply * (10 ** 9),
                 totalMembersNumber: airdropDto.whitelistMembers.split(',').length,
                 whitelistTreeRoot: airdropDto.whitelistTreeRoot,
                 startTime: airdropDto.startTimestamp,
@@ -486,7 +501,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                         let airdropTargetAUList = tx.transaction.accountUpdates.filter(e => (e.body.publicKey.toBase58() == airdropAddress || e.body.publicKey.toBase58() == tokenAddress)
                             && e.body.authorizationKind.isSigned.toBoolean());
                         airdropTargetAUList.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-                        tx = tx.sign([airdropKey, tokenKey]);
+                        tx.sign([airdropKey, tokenKey]);
 
                         txJson = tx.toJSON();
                         console.log('createAirdrop txJson: ' + txJson);
@@ -543,7 +558,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 ElMessage({
                     showClose: true,
                     type: 'warning',
-                    message: 'createPresale failed...',
+                    message: 'create Airdrop failed...',
                 });
 
                 closeLoadingMask(maskId);
@@ -766,12 +781,12 @@ const title = computed(() => {
                                                         </el-form-item></el-col>
                                                     <el-col :span="8">
                                                         <el-form-item label="Token Total Supply">
-                                                            {{ tokenDto.totalSupply }}
+                                                            {{ tokenDto.totalSupply / (10 ** 9) }}
                                                         </el-form-item>
                                                     </el-col>
                                                     <el-col :span="8">
                                                         <el-form-item label="Amount In Circulation">
-                                                            {{ tokenDto.totalAmountInCirculation }}
+                                                            {{ tokenDto.totalAmountInCirculation / (10 ** 9) }}
                                                         </el-form-item>
                                                     </el-col>
                                                 </el-row>
@@ -1102,7 +1117,7 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="9" class="wide4">Start at :</el-col>
-                                            <el-col :span="15">{{ airdropDto.startTimestamp }}</el-col>
+                                            <el-col :span="15">{{ new Date(airdropDto.startTimestamp) }}</el-col>
                                         </el-row>
 
                                         <!-- <el-row>

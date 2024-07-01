@@ -25,6 +25,7 @@
     "jsonwebtoken": "^8.5.1",
     "mysql2": "2.3.3",
     "reflect-metadata": "^0.1.13",
+    "pino": "^9.0.0",
     "typeorm": "^0.2.45"
   },
   "devDependencies": {},

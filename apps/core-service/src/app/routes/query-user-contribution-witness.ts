@@ -26,9 +26,6 @@ export const queryUserContributionWitness: FastifyPlugin = async function (
     })
 }
 
-let lastFetchBlockTs = 0;
-let currentBlockHeight = 0;
-
 const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: string }, null> = async function (
     req,
     res
@@ -75,17 +72,6 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
             return { code: 1, data: undefined, msg: 'This asset has been claimed or redeemed!' } as BaseResponse<UserRedeemClaimWitnessDto>;
         }
 
-        if (new Date().getTime() - lastFetchBlockTs > 1000 * 60 * 1) {
-            currentBlockHeight = Number((await fetchLastBlock()).blockchainLength.toString());
-        }
-
-        /*
-                if (Number(sale.endTimestamp) < currentBlockHeight + 2) {
-                    logger.warn(`sale is not end yet, end.`);
-                    return { code: 1, data: undefined, msg: 'Please wait for sale end!' } as BaseResponse<UserRedeemClaimWitnessDto>;
-                }
-        */
-
         // check if already init
         const hasTree = await this.indexDB.get(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddr}`);
         if (!hasTree) {// undefined
@@ -108,7 +94,7 @@ const handler: RequestHandler<{ tokenAddr: string, saleAddr: string, userAddr: s
         const targetIndx = this.userNullifierDB.getNumLeaves(false);
 
         const tokenAddress = PublicKey.fromBase58(userTokenSale.tokenAddress);
-        const tokenId = TokenId.derive(tokenAddress);
+        const tokenId = sale.saleType == 2? TokenId.default: TokenId.derive(tokenAddress);
         const saleContributionHash = (new SaleContribution({
             tokenAddress,
             tokenId,

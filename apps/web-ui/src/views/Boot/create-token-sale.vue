@@ -352,11 +352,16 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             if (!changeNumberBuy() || !changeSaleEndStartDateTime()) {
                 return;
             }
-            if (saleType.value == 0 && !changeRateCap()) {
+            if (saleType.value == 0 ){
+                saleDto.totalSaleSupply = saleDto.saleRate * saleDto.hardCap;
+
+                if(!changeRateCap()) {
+                    return;
+                }
+            }
+            if(!(await handleWhitelistInput())){
                 return;
             }
-
-            saleDto.totalSaleSupply = saleDto.saleRate * saleDto.hardCap;
 
             const saleDto1 = JSON.parse(JSON.stringify(saleDto));
             let saleTag = '';
@@ -406,7 +411,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                 console.log('members: ' + saleDto1.whitelistMembers);
 
-                const members = saleDto1.whitelistMembers.trim().split(',');
+                let whiteListMems: string = saleDto1.whitelistMembers.trim();
+                if(whiteListMems.endsWith(',')){
+                    whiteListMems = whiteListMems.substring(0, whiteListMems.length - 1);
+                    saleDto1.whitelistMembers = whiteListMems;
+                }
+                const members = whiteListMems.split(',').filter(s => s.trim() != '');;
                 saleDto1.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
 
                 console.log('whitelistTreeRoot: ' + saleDto1.whitelistTreeRoot);
@@ -438,9 +448,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             saleDto1.minimumBuy = saleDto.minimumBuy * (10 ** 9);
             saleDto1.softCap = saleDto.softCap * (10 ** 9);
             saleDto1.hardCap = saleDto.hardCap * (10 ** 9);
+            saleDto1.totalSaleSupply = saleDto.totalSaleSupply * (10 ** 9);
             const saleParams = {
                 tokenAddress: saleDto1.tokenAddress,
-                totalSaleSupply: saleDto1.totalSaleSupply,// TODO consider if need * (10 ** 9)!!!
+                totalSaleSupply: saleDto1.totalSaleSupply,
                 saleRate: saleDto1.saleRate,
                 whitelistTreeRoot: saleDto1.whitelistTreeRoot,
                 softCap: saleDto1.softCap,
@@ -473,12 +484,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                         let targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == saleAddress && e.body.authorizationKind.isSigned.toBoolean());
                         targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-                        tx = tx.sign([saleKey]);
+                        tx.sign([saleKey]);
 
                         if (saleType.value != 2) {// skip private sale
                             targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == tokenAddress && e.body.authorizationKind.isSigned.toBoolean());
                             targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-                            tx = tx.sign([tokenKey]);
+                            tx.sign([tokenKey]);
                         }
 
                         txJson = tx.toJSON();
@@ -670,10 +681,18 @@ const changeRateCap = () => {
 const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
 const handleWhitelistInput = async () => {
-    const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
-    saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
+    let flag = true;
 
     if (saleDto.whitelistMembers) {
+        if(saleDto.whitelistMembers.endsWith(',')){
+            flag = false;
+            ElMessage.error({ message: 'whitelistMembers should not ends with comma!' });
+
+            return flag;
+        }
+
+        const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
+        saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
         const whitelistMembers = saleDto.whitelistMembers.split(',');
 
@@ -684,14 +703,17 @@ const handleWhitelistInput = async () => {
             try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
+                flag = false;
+
                 dialogTableVisibleErrorAlert.value = true;
                 console.log(error);
-                whiteListErrorAlert.whitelist.push(item)
+                whiteListErrorAlert.whitelist.push(item??'empty string or space exist! please check.')
                 // ElMessage.error({ message: item + ' is not a valid address!' });
             }
-
         }
     }
+
+    return flag;
 
 };
 
@@ -903,12 +925,12 @@ const title = computed(() => {
                                                         </el-form-item></el-col>
                                                     <el-col :span="8">
                                                         <el-form-item label="Token Total Supply">
-                                                            {{ tokenDto.totalSupply }}
+                                                            {{ tokenDto.totalSupply / (10 ** 9) }}
                                                         </el-form-item>
                                                     </el-col>
                                                     <el-col :span="8">
                                                         <el-form-item label="Amount In Circulation">
-                                                            {{ tokenDto.totalAmountInCirculation }}
+                                                            {{ tokenDto.totalAmountInCirculation / (10 ** 9) }}
                                                         </el-form-item>
                                                     </el-col>
                                                 </el-row>
@@ -928,7 +950,7 @@ const title = computed(() => {
 
                                         <el-form-item label="Creation Fee Options" prop="feeRate">
                                             <el-radio-group v-model="saleDto.feeRate">
-                                                <el-radio label="1">1 MINA</el-radio>
+                                                <el-radio label="1000000000">1 MINA</el-radio>
                                                 <!-- <el-radio label="0">Other</el-radio> -->
                                             </el-radio-group>
                                         </el-form-item>
@@ -1039,7 +1061,7 @@ const title = computed(() => {
                                         <el-form-item label="Whitelist">
                                             <el-input v-model.trim="saleDto.whitelistMembers" type="textarea"
                                                 :autosize="{ minRows: 2, maxRows: 1000 }"
-                                                placeholder="Please input as comma-sperated Mina wallet addresses"
+                                                placeholder="Please input as comma-sperated Mina wallet addresses, don't ends with comma"
                                                 @blur="handleWhitelistInput" />
 
                                             <el-dialog v-model="dialogTableVisibleErrorAlert"
@@ -1242,7 +1264,7 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="9" class="wide4">Sale creation fee :</el-col>
-                                            <el-col :span="15">{{ saleDto.feeRate }} {{ saleDto.currency }}</el-col>
+                                            <el-col :span="15">{{ Number(saleDto.feeRate)/(10**9) }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
                                         <el-row v-show="saleDto.saleRate">

@@ -1,33 +1,21 @@
 
 import {
-    isReady,
-    method,
     Mina,
     AccountUpdate,
     PrivateKey,
-    SmartContract,
-    PublicKey,
     UInt64,
-    Int64,
-    Experimental,
-    Permissions,
-    DeployArgs,
-    VerificationKey,
     TokenId,
-    state,
-    State,
     Field,
-    Bool,
     Provable,
     UInt32,
     fetchAccount,
     Reducer,
-    Account,
     fetchLastBlock,
+    Int64,
 } from 'o1js';
-import fs  from "fs";
+import fs from "fs";
 
-import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, AirdropParams, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, UserNullifierMerkleWitness, AirdropClaim, SaleContribution, SaleContributorMembershipWitnessData, SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleRollupState } from "../src";
+import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop, USER_NULLIFIER_TREE_HEIGHT, UserLowLeafWitnessData, SaleContribution, SaleContributorMembershipWitnessData, SALE_ACTION_BATCH_SIZE, SaleActionBatch, SaleRollupState, TokenTransferEvent } from "../src";
 import { getTestContext } from '../src/test_utils';
 import { LeafData, PoseidonHasher, StandardIndexedTree, StandardTree, newTree } from '@tokenizk/merkle-tree';
 import { Level } from 'level';
@@ -40,8 +28,10 @@ await ctx.initMinaNetwork();
 // ================
 
 // let feePayerKey = Local.testAccounts[0].privateKey;
-let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEm81DLyU44Gpu4egbX9g1zgrVS7NnGCcbNZYGrKiG4XRQacKRK') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
+let feePayerKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKDrANogDMiondrfdHsCn6tiASsQKjAEezVNHutB2Bn9vJCCVJG2') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), ''));
 let feePayer = feePayerKey.toPublicKey();
+console.log('feePayer: ', feePayerKey.toBase58());
+console.log('feePayerAddress: ', feePayer.toBase58());
 
 if (process.env.TEST_ON_BERKELEY === 'true') {
     await fetchAccount({ publicKey: feePayer });
@@ -59,17 +49,14 @@ let presaleZkAppAddress = presaleZkAppKey.toPublicKey();
 let airdropZkAppKey = PrivateKey.random(); //Local.testAccounts[3].privateKey;
 let airdropZkAppAddress = airdropZkAppKey.toPublicKey();
 
-let redeemAccountZkAppKey = (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), '')) //Local.testAccounts[5].privateKey;
+let redeemAccountZkAppKey = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKEFvjSHcyJh95nmp14VcRZZt96EmRmjwzet3iogusSZFqWH59xV') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), '')) //Local.testAccounts[5].privateKey;
 let redeemAccountZkAppAddress = redeemAccountZkAppKey.toPublicKey();
 
-let redeemAccountZkAppKey2 = (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), '')) //Local.testAccounts[5].privateKey;
+let redeemAccountZkAppKey2 = process.env.TEST_ON_BERKELEY === 'true' ? PrivateKey.fromBase58('EKF2we8KCPGhwHcDUDocrDrcPKkKLjk62rUiqcuorDKFDavvNcmM') : (await ctx.getFundedAccountForTest(BigInt(1000 * (10 ** 9)), '')) //Local.testAccounts[5].privateKey;
 let redeemAccountZkAppAddress2 = redeemAccountZkAppKey2.toPublicKey();
 
 let platfromFeeRecieverKey = PrivateKey.random() //Local.testAccounts[6].privateKey;
 let platfromFeeRecieverAddress = platfromFeeRecieverKey.toPublicKey();
-
-console.log('feePayer: ', feePayerKey.toBase58());
-console.log('feePayerAddress: ', feePayer.toBase58());
 
 console.log('platfromFeeRecieverKey: ', platfromFeeRecieverKey.toBase58());
 console.log('platfromFeeRecieverAddress: ', platfromFeeRecieverAddress.toBase58());
@@ -125,11 +112,6 @@ const presaleMinaFundHolderVK = (await PresaleMinaFundHolder.compile()).verifica
 TokeniZkFactory.presaleMinaFundHolderVk = presaleMinaFundHolderVK;
 console.timeEnd('compile (PresaleMinaFundHolder)');
 
-console.time('compile (TokeniZkAirdrop)');
-let tokeniZkAirdropVK = (await TokeniZkAirdrop.compile()).verificationKey;
-TokeniZkFactory.airdropVk = tokeniZkAirdropVK;
-console.timeEnd('compile (TokeniZkAirdrop)');
-
 console.time('compile (RedeemAccount)');
 let redeemAccountVk = (await RedeemAccount.compile()).verificationKey;
 TokeniZkFactory.redeemAccountVk = redeemAccountVk;
@@ -137,7 +119,7 @@ console.timeEnd('compile (RedeemAccount)');
 
 const metaEnv = {
     VITE_MINA_NETWORK: "Berkeley",
-    VITE_EXPLORER_URL: "https://minascan.io/berkeley/zk-tx/",
+    VITE_EXPLORER_URL: "https://minascan.io/devnet/zk-tx/",
 
     VITE_TOKENIZK_FACTORY_ADDR: tokenFactoryZkAppAddress.toBase58(),
 
@@ -149,14 +131,14 @@ const metaEnv = {
     VITE_TOKENIZK_PRESALE_SERVICE_FEE_RATE: 10,
     VITE_TOKENIZK_PRESALE_MINA_FUND_HOLDER_VK: TokeniZkFactory.presaleMinaFundHolderVk.hash.toString(),
 
-    VITE_TOKENIZK_FAIRSALE_VK: "5711107540178421197243482233532083938508251491438902584293724442780141074845",
+    VITE_TOKENIZK_FAIRSALE_VK: "17539417214210625958281318223941001599533520444554323923175772616556602275101",
     VITE_TOKENIZK_FAIRSALE_CREATION_FEE: 1,
     VITE_TOKENIZK_FAIRSALE_SERVICE_FEE_RATE: 10,
-    VITE_TOKENIZK_PRIVATESALE_VK: "27497478064496651044002647918087358394468556579612291364828180282252508727928",
+    VITE_TOKENIZK_PRIVATESALE_VK: "4336020902171883469746374749320150388196832995966644287313506059985478817805",
     VITE_TOKENIZK_PRIVATESALE_CREATION_FEE: 1,
     VITE_TOKENIZK_PRIVATESALE_SERVICE_FEE_RATE: 10,
 
-    VITE_TOKENIZK_AIRDROP_VK: "27497478064496651044002647918087358394468556579612291364828180282252508727928",
+    VITE_TOKENIZK_AIRDROP_VK: "20143490128670456148084503281839199030695599865951076260259159743873805669969",
     VITE_TOKENIZK_AIRDROP_CREATION_FEE: 10,
 
     VITE_TOKENIZK_REDEEM_ACCOUNT_VK: TokeniZkFactory.redeemAccountVk.hash.toString()
@@ -185,11 +167,7 @@ const launchpadParamDto = {
     redeemAccountVk: metaEnv.VITE_TOKENIZK_REDEEM_ACCOUNT_VK
 };
 const lauchpadPlatformParams = LauchpadPlatformParams.fromDto(launchpadParamDto);
-
-if (process.env.TEST_ON_BERKELEY === 'true') {
-    await fetchAccount({ publicKey: tokenFactoryZkAppAddress });
-}
-
+console.log('lauchpadPlatformParams.hash(): ', lauchpadPlatformParams.hash());
 
 console.log('============= deploy TokeniZkFactory =============');
 let tokenFactoryZkApp = new TokeniZkFactory(tokenFactoryZkAppAddress);
@@ -199,9 +177,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy tokenFactory contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
-        tokenFactoryZkApp.deployZkApp(lauchpadPlatformParams);
+        await tokenFactoryZkApp.deployZkApp(lauchpadPlatformParams);
     }
 );
 await ctx.submitTx(tx, {
@@ -223,9 +201,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy BasicToken contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
-        tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
+        await tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000 * (10 ** 9)));
     }
 );
 
@@ -255,11 +233,10 @@ if (process.env.TEST_ON_BERKELEY === 'true') {
     console.log('sync Berkeley Network status: done!');
 }
 console.log('current network state: ', JSON.stringify(Mina.activeInstance.getNetworkState()));
-const currentBlockHeight = Mina.activeInstance.getNetworkState().blockchainLength;
 
 const presaleParams = new SaleParams({
     tokenAddress: basicTokenZkAppAddress,
-    totalSaleSupply: UInt64.from(100),
+    totalSaleSupply: UInt64.from(100 * (10 ** 9)),
     saleRate: UInt64.from(10),
     whitelistTreeRoot: whitelistTreeRoot,
     softCap: UInt64.from(3 * (10 ** 9)),
@@ -284,9 +261,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy Presale contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer, 2);
-        basicTokenZkApp.createPresale(lauchpadPlatformParams, presaleZkAppAddress, tokeniZkPresaleVK, presaleParams, presaleMinaFundHolderVK);
+        await basicTokenZkApp.createPresale(lauchpadPlatformParams, presaleZkAppAddress, tokeniZkPresaleVK, presaleParams, presaleMinaFundHolderVK);
     }
 );
 console.log('generated tx: ' + tx.toJSON());
@@ -310,9 +287,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'user1 contribute',
     },
-    () => {
-        tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress, contributeMinaAmount, whitelistMembershipMerkleWitness, whitelistLeafIndex);
-        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
+    async () => {
+        await tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress, contributeMinaAmount, whitelistMembershipMerkleWitness, whitelistLeafIndex);
+        await basicTokenZkApp.approveAccountUpdate(tokeniZkPresaleZkapp.self);
     }
 );
 fs.writeFileSync('contribute-Presale-tx-pre-sign.json', tx.toJSON());
@@ -336,9 +313,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'user2 contribute',
     },
-    () => {
-        tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress2, contributeMinaAmount2, whitelistMembershipMerkleWitness2, whitelistLeafIndex2);
-        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
+    async () => {
+        await tokeniZkPresaleZkapp.contribute(presaleParams, redeemAccountZkAppAddress2, contributeMinaAmount2, whitelistMembershipMerkleWitness2, whitelistLeafIndex2);
+        await basicTokenZkApp.approveAccountUpdate(tokeniZkPresaleZkapp.self);
 
     }
 );
@@ -448,9 +425,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'maintain contributors',
     },
-    () => {
-        tokeniZkPresaleZkapp.maintainContributors(presaleParams, saleRollupProof);
-        basicTokenZkApp.approveAnyAccountUpdate(tokeniZkPresaleZkapp.self);
+    async () => {
+        await tokeniZkPresaleZkapp.maintainContributors(presaleParams, saleRollupProof);
+        await basicTokenZkApp.approveAccountUpdate(tokeniZkPresaleZkapp.self);
     }
 );
 await ctx.submitTx(tx, {
@@ -473,9 +450,9 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Create Redeem Account',
     },
-    () => {
+    async () => {
         // AccountUpdate.fundNewAccount(feePayer);
-        tokenFactoryZkApp.createRedeemAccount(lauchpadPlatformParams, redeemAccountZkAppAddress, TokeniZkFactory.redeemAccountVk);
+        await tokenFactoryZkApp.createRedeemAccount(lauchpadPlatformParams, redeemAccountZkAppAddress, TokeniZkFactory.redeemAccountVk);
     }
 );
 await ctx.submitTx(tx, {
@@ -579,16 +556,16 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'claim tokens',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(redeemAccountZkAppAddress, 1);
-        tokeniZkPresaleZkapp.claimTokens(
+        await tokeniZkPresaleZkapp.claimTokens(
             presaleParams,
             saleContributorMembershipWitnessData,
             lowLeafWitness,
             oldNullWitness
         );
-        basicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkPresaleZkapp.self, redeemAccountZkAppAddress,
-            saleContribution.minaAmount.div(10 ** 9).mul(presaleParams.saleRate), vestingParams);
+        await basicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkPresaleZkapp.self, redeemAccountZkAppAddress,
+            saleContribution.minaAmount.mul(presaleParams.saleRate), vestingParams);
     }
 );
 await ctx.submitTx(tx, {
@@ -614,9 +591,11 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'transfer tokens',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(redeemAccountZkAppAddress, 1);
-        basicTokenZkApp.transferToken(redeemAccountZkAppAddress, to, UInt64.from(11));
+
+        await basicTokenZkApp.transferToken(redeemAccountZkAppAddress, to, UInt64.from(1));
+
     }
 );
 await ctx.submitTx(tx, {

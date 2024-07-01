@@ -37,9 +37,9 @@ const handler: RequestHandler<string[]> = async function (
 
         const tokenList: BasiceToken[] = [];
         if (addressList?.length > 0) {
-            tokenList.push(... await tokenRepo.find({ where: { address: In(addressList) } }));
+            tokenList.push(... await tokenRepo.find({ where: { address: In(addressList), status: 1 } }));
         } else {
-            tokenList.push(... await tokenRepo.find());
+            tokenList.push(... await tokenRepo.find({ where: { status: 1 } }));
         }
 
         return {
@@ -57,7 +57,7 @@ const handler: RequestHandler<string[]> = async function (
 
 const schema = {
     description: 'query basic token list',
-    tags: ["Token"],    
+    tags: ["Token"],
     body: {
         type: 'array',
         items: {

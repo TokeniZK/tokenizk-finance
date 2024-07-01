@@ -1049,7 +1049,11 @@ onUnmounted(() => {
                             <el-col :span="12">
                                 <el-row justify="end" class="titleContent">
                                     {{ saleContributorsDetailDto.saleDto.totalSaleSupply / (10 ** 9) }} {{
+<<<<<<< HEAD
+        saleContributorsDetailDto.saleDto.tokenSymbol }}
+=======
                                     saleContributorsDetailDto.saleDto.tokenSymbol }}
+>>>>>>> main
                                 </el-row>
                             </el-col>
                         </el-row>
@@ -1442,6 +1446,10 @@ onUnmounted(() => {
                     <div v-else>
                         <el-row v-if="hasRedeemedTxtShow">
                             You have redeemed {{
+<<<<<<< HEAD
+        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
+        (10 ** 9) }} Mina!
+=======
                                 Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
                             (10 ** 9) }} Mina!
                         </el-row>
@@ -1458,11 +1466,30 @@ onUnmounted(() => {
                         <el-row
                             v-if="appState.connectedWallet58 && !currentUserHasContributed && !hasClaimedTxtShow && !hasRedeemedTxtShow">
                             You did not contributed.
+>>>>>>> main
+                        </el-row>
+                        <el-row v-if="hasClaimedTxtShow">
+                            You have claimed {{
+        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount) /
+        (10 ** 9) * saleContributorsDetailDto.saleDto.saleRate }} tokens!
+                        </el-row>
+                        <el-row v-if="currentUserHasContributed && !hasClaimedTxtShow && !hasRedeemedTxtShow">
+                            You have contributed {{
+        Number(curentUserContributionDto.currentUser.contributeCurrencyAmount ?? 0) /
+        (10 ** 9) }} Mina!
+                        </el-row>
+                        <el-row
+                            v-if="appState.connectedWallet58 && !currentUserHasContributed && !hasClaimedTxtShow && !hasRedeemedTxtShow">
+                            You did not contributed.
                         </el-row>
                         <el-row>
                             <el-button type="primary" :disabled="contributionBtnDisabled"
+<<<<<<< HEAD
+                                v-show="saleContributorsDetailDto.saleDto.saleType != 2 && flagBtn == 2 && !hasClaimedTxtShow" @click="claimTokens">claim your
+=======
                                 v-show="saleContributorsDetailDto.saleDto.saleType != 2 && flagBtn == 2 && !hasClaimedTxtShow"
                                 @click="claimTokens">claim your
+>>>>>>> main
                                 Tokens</el-button>
                             <el-button type="primary" :disabled="contributionBtnDisabled"
                                 v-show="flagBtn == 3 && !hasRedeemedTxtShow" @click="redeemFunds">redeem your

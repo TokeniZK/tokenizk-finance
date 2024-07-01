@@ -24,9 +24,9 @@ export async function activeMinaInstance() {
          });
          */
 
-    const Blockchain = isLocalBlockChain ? Mina.LocalBlockchain({ proofsEnabled: true }) : Mina.Network({
-        mina: 'https://proxy.berkeley.minaexplorer.com/graphql', // 'https://berkeley.minascan.io/graphql', // 'http://51.222.10.110/graphql', // 
-        archive: 'https://archive.berkeley.minaexplorer.com/' // 'https://api.minascan.io/archive/berkeley/v1/graphql' //'https://archive-node-api.p42.xyz/' //'http://51.222.10.110:8090',
+    const Blockchain = isLocalBlockChain ? await Mina.LocalBlockchain({ proofsEnabled: true }) : Mina.Network({
+        mina: 'https://api.minascan.io/node/devnet/v1/graphql/', // 'https://berkeley.minascan.io/graphql', // 'http://51.222.10.110/graphql', // 
+        archive: 'https://api.minascan.io/archive/devnet/v1/graphql/' // 'https://api.minascan.io/archive/berkeley/v1/graphql' //'https://archive-node-api.p42.xyz/' //'http://51.222.10.110:8090',
     });
 
     /*
@@ -206,7 +206,7 @@ export const makeAndSendTransaction = async <State extends ToString>({
     tokenId?: Field,
     mutateZkApp: () => void,
     transactionFee: number,
-    signTx: (tx: Mina.Transaction) => void,
+    signTx: (tx: Mina.Transaction<false, false>) => void,
     getState: () => State,
     statesEqual: (state1: State, state2: State) => boolean,
     isLocalBlockChain?: boolean
@@ -219,7 +219,7 @@ export const makeAndSendTransaction = async <State extends ToString>({
 
     let transaction = await Mina.transaction(
         { sender: feePayerPublicKey, fee: transactionFee },
-        () => {
+        async () => {
             mutateZkApp();
         }
     );
@@ -232,7 +232,7 @@ export const makeAndSendTransaction = async <State extends ToString>({
 
     const res = await transaction.send();
 
-    const hash = await res.hash();   // This will change in a future version of SnarkyJS
+    const hash = await res.hash;   // This will change in a future version of SnarkyJS
 
     if (hash == null) {
         throw new Error('error sending transaction');
@@ -240,7 +240,7 @@ export const makeAndSendTransaction = async <State extends ToString>({
         res.wait({ maxAttempts: 1000 });
         console.log(
             'See transaction at',
-            'https://berkeley.minaexplorer.com/transaction/' + hash
+            'https://minascan.io/devnet/tx/' + hash
         );
     }
 

@@ -1,5 +1,4 @@
 import config from '../config';
-import "reflect-metadata"
 
 import { createConnection } from 'typeorm'
 import { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectionOptions";

@@ -82,7 +82,11 @@ function processMsgFromMaster() {
 
                     const saleContract = new TokeniZkPrivateSale(params.contractAddress);
 
+<<<<<<< HEAD
+                    let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee, memo:'PRISALE_MAINTAIN_CONTRIBUTORS' }, async () => {
+=======
                     let tx = await Mina.transaction({ sender: params.feePayer, fee: params.fee, memo: 'PRISALE_MAINTAIN_CONTRIBUTORS' }, async () => {
+>>>>>>> main
                         await saleContract.maintainContributors(params.methodParams.saleParams, params.methodParams.saleRollupProof);
                     });
                     await tx.prove();
@@ -222,7 +226,11 @@ const initWorker = async () => {
     console.time('RedeemAccount.compile');
     await RedeemAccount.compile();
     console.timeEnd('RedeemAccount.compile');
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> main
     console.time('TokeniZkPrivateSale.compile');
     await TokeniZkPrivateSale.compile();
     console.timeEnd('TokeniZkPrivateSale.compile');

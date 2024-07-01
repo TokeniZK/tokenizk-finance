@@ -15,13 +15,9 @@ import {
     AccountUpdate,
     Bool,
     UInt32,
-    Experimental,
-    Int64,
 } from 'o1js';
-import { SaleParams } from './sale-models';
-import { CONTRIBUTORS_TREE_ROOT, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_16 } from './constants';
-import { AirdropParams } from './TokeniZkAirdrop';
-
+import { SaleParams, AirdropParams } from './sale-models';
+import { CONTRIBUTORS_TREE_ROOT, INDEX_TREE_INIT_ROOT_8 } from './constants';
 
 export class LauchpadPlatformParams extends Struct({
     basicTokenVk: Field,
@@ -138,8 +134,10 @@ export class CreateBasicTokenEvent extends Struct({
 export class CreateSaleEvent extends Struct({
     basicTokenAddress: PublicKey,
     saleContractAddress: PublicKey,
-    fee: UInt64,
-    saleParams: SaleParams
+    fee: UInt64, 
+
+    // saleParams: SaleParams //  TODO !!!temporarily comment this param to decrease the size of each event!!!
+
 }) { }
 
 export class CreateAirdropEvent extends Struct({
@@ -172,8 +170,8 @@ export class TokeniZkFactory extends SmartContract {
 
     static redeemAccountVk: VerificationKey;// TODO
 
-    deployZkApp(lauchpadPlatformParams: LauchpadPlatformParams) {
-        super.deploy();
+    async deployZkApp(lauchpadPlatformParams: LauchpadPlatformParams) {
+        await super.deploy();
 
         this.platfromFeeAddress.set(TokeniZkFactory.platfromFeeAddress);
         this.lauchpadPlatformParamsHash.set(lauchpadPlatformParams.hash());
@@ -209,8 +207,8 @@ export class TokeniZkFactory extends SmartContract {
     @state(Field)
     public lauchpadPlatformParamsHash = State<Field>();
 
-    @method
-    public getPlatfromFeeAddress() {
+    @method.returns(PublicKey)
+    public async getPlatfromFeeAddress() {
         return this.platfromFeeAddress.getAndRequireEquals();
     }
 
@@ -219,7 +217,7 @@ export class TokeniZkFactory extends SmartContract {
      * @param address 
      */
     @method
-    public setPlatfromFeeAddress(address: PublicKey) {
+    public async setPlatfromFeeAddress(address: PublicKey) {
         // const currentAddr = this.platfromFeeAddress.getAndRequireEquals();// TODO no need this??
 
         this.platfromFeeAddress.set(address);
@@ -227,10 +225,11 @@ export class TokeniZkFactory extends SmartContract {
         this.emitEvent('configPlatfromFeeAddress', new ConfigPlatfromFeeAddressEvent({
             platfromFeeAddress: address
         }));
+
     }
 
-    @method
-    public getLauchpadPlatformParamsHash() {
+    @method.returns(Field)
+    public async getLauchpadPlatformParamsHash() {
         return this.lauchpadPlatformParamsHash.getAndRequireEquals();
     }
 
@@ -239,7 +238,7 @@ export class TokeniZkFactory extends SmartContract {
      * @param newParams 
      */
     @method
-    public configLauchpadPlatformParams(newParams: LauchpadPlatformParams) {
+    public async configLauchpadPlatformParams(newParams: LauchpadPlatformParams) {
 
         newParams.basicTokenCreationFee.assertGreaterThan(UInt64.from(0));
         newParams.presaleCreationFee.assertGreaterThan(UInt64.from(0));
@@ -258,7 +257,7 @@ export class TokeniZkFactory extends SmartContract {
     }
 
     @method
-    public createBasicToken(newParams: LauchpadPlatformParams, tokenAddr: PublicKey, basicTokenVk: VerificationKey, totalSupply: Field) {
+    public async createBasicToken(newParams: LauchpadPlatformParams, tokenAddr: PublicKey, basicTokenVk: VerificationKey, totalSupply: Field) {
         // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
 
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
@@ -280,7 +279,7 @@ export class TokeniZkFactory extends SmartContract {
         AccountUpdate.setValue(zkapp.body.update.appState[0], totalSupply);//totalSupply
         AccountUpdate.setValue(zkapp.body.update.appState[1], Field(0));//totalAmountInCirculation
 
-        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feePayer = AccountUpdate.createSigned(this.sender.getUnconstrained());
         // const feeReceiverAU = AccountUpdate.create(platfromFeeAddress);
         const feeReceiverAU = AccountUpdate.create(this.address);
         feePayer.send({ to: feeReceiverAU, amount: newParams.basicTokenCreationFee });
@@ -293,7 +292,7 @@ export class TokeniZkFactory extends SmartContract {
     }
 
     @method
-    public createPresale(newParams: LauchpadPlatformParams, saleParams: SaleParams, tokenAddr: PublicKey, presaleAddress: PublicKey, presaleVk: VerificationKey, presaleMinaFundHolderVk: VerificationKey) {
+    public async createPresale(newParams: LauchpadPlatformParams, saleParams: SaleParams, tokenAddr: PublicKey, presaleAddress: PublicKey, presaleVk: VerificationKey, presaleMinaFundHolderVk: VerificationKey) {
         // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
         newParams.hash().assertEquals(lauchpadPlatformParamsHash);
@@ -313,47 +312,51 @@ export class TokeniZkFactory extends SmartContract {
             send: Permissions.proof(),
         });
 
-        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feePayer = AccountUpdate.createSigned(this.sender.getUnconstrained());
         // const feeReceiverAU = AccountUpdate.create(platfromFeeAddress);
         const feeReceiverAU = AccountUpdate.create(this.address);
         feePayer.send({ to: feeReceiverAU, amount: newParams.presaleCreationFee });
 
         this.emitEvent('createPresale', new CreateSaleEvent({
+             
             basicTokenAddress: tokenAddr,
             saleContractAddress: presaleAddress,
-            fee: newParams.presaleCreationFee,
-            saleParams
+            fee: newParams.presaleCreationFee, 
+
+            /*saleParams*/
         }));
     }
 
     @method
-    public createFairSale(lauchpadPlatformParams: LauchpadPlatformParams, saleParams: SaleParams, tokenAddr: PublicKey, fairsaleAddress: PublicKey, verificationKey: VerificationKey) {
+    public async createFairSale(lauchpadPlatformParams: LauchpadPlatformParams, saleParams: SaleParams, tokenAddr: PublicKey, fairsaleAddress: PublicKey, verificationKey: VerificationKey) {
         // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
         lauchpadPlatformParams.hash().assertEquals(lauchpadPlatformParamsHash);
         lauchpadPlatformParams.fairSaleContractVk.assertEquals(verificationKey.hash);
 
-        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feePayer = AccountUpdate.createSigned(this.sender.getUnconstrained());
         // const feeReceiverAU = AccountUpdate.create(platfromFeeAddress);
         const feeReceiverAU = AccountUpdate.create(this.address);
         feePayer.send({ to: feeReceiverAU, amount: lauchpadPlatformParams.fairSaleCreationFee });
-
+ 
         this.emitEvent('createFairsale', new CreateSaleEvent({
+            
             basicTokenAddress: tokenAddr,
             saleContractAddress: fairsaleAddress,
-            fee: lauchpadPlatformParams.fairSaleCreationFee,
-            saleParams
+            fee: lauchpadPlatformParams.fairSaleCreationFee, 
+
+            /* saleParams*/
         }));
     }
 
     @method
-    public createAirdrop(lauchpadPlatformParams: LauchpadPlatformParams, airdropParams: AirdropParams, tokenAddr: PublicKey, airdropAddress: PublicKey, verificationKey: VerificationKey) {
+    public async createAirdrop(lauchpadPlatformParams: LauchpadPlatformParams, airdropParams: AirdropParams, tokenAddr: PublicKey, airdropAddress: PublicKey, verificationKey: VerificationKey) {
         // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
         lauchpadPlatformParams.hash().assertEquals(lauchpadPlatformParamsHash);
         lauchpadPlatformParams.airdropVk.assertEquals(verificationKey.hash);
 
-        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feePayer = AccountUpdate.createSigned(this.sender.getUnconstrained());
         const feeReceiverAU = AccountUpdate.create(this.address);
         feePayer.send({ to: feeReceiverAU, amount: lauchpadPlatformParams.fairSaleCreationFee });
 
@@ -366,7 +369,7 @@ export class TokeniZkFactory extends SmartContract {
     }
 
     @method
-    public createPrivateSale(lauchpadPlatformParams: LauchpadPlatformParams, saleParams: SaleParams, tokenAddr: PublicKey, saleAddress: PublicKey, privateSaleVk: VerificationKey) {
+    public async createPrivateSale(lauchpadPlatformParams: LauchpadPlatformParams, saleParams: SaleParams, tokenAddr: PublicKey, saleAddress: PublicKey, privateSaleVk: VerificationKey) {
         // const platfromFeeAddress = this.platfromFeeAddress.getAndRequireEquals();
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
         lauchpadPlatformParams.hash().assertEquals(lauchpadPlatformParamsHash);
@@ -398,16 +401,18 @@ export class TokeniZkFactory extends SmartContract {
         zkapp.account.verificationKey.set(privateSaleVk);
         zkapp.requireSignature();
 
-        const feePayer = AccountUpdate.createSigned(this.sender);
+        const feePayer = AccountUpdate.createSigned(this.sender.getUnconstrained());
         // const feeReceiverAU = AccountUpdate.create(platfromFeeAddress);
         const feeReceiverAU = AccountUpdate.create(this.address);
         feePayer.send({ to: feeReceiverAU, amount: lauchpadPlatformParams.privateSaleCreationFee });
 
         this.emitEvent('createPrivateSale', new CreateSaleEvent({
+             
             basicTokenAddress: tokenAddr,// no token at private sale
             saleContractAddress: saleAddress,
-            fee: lauchpadPlatformParams.privateSaleCreationFee,
-            saleParams
+            fee: lauchpadPlatformParams.privateSaleCreationFee, 
+
+            /*saleParams*/
         }));
 
     }
@@ -419,7 +424,7 @@ export class TokeniZkFactory extends SmartContract {
      * @param redeemAccountVk 
      */
     @method
-    public createRedeemAccount(lauchpadPlatformParams: LauchpadPlatformParams, redeemAccountAddress: PublicKey, redeemAccountVk: VerificationKey) {
+    public async createRedeemAccount(lauchpadPlatformParams: LauchpadPlatformParams, redeemAccountAddress: PublicKey, redeemAccountVk: VerificationKey) {
         const lauchpadPlatformParamsHash = this.lauchpadPlatformParamsHash.getAndRequireEquals();
         lauchpadPlatformParams.hash().assertEquals(lauchpadPlatformParamsHash);
         lauchpadPlatformParams.redeemAccountVk.assertEquals(redeemAccountVk.hash);
@@ -434,7 +439,7 @@ export class TokeniZkFactory extends SmartContract {
         zkapp.account.isNew.assertEquals(Bool(true));
         zkapp.requireSignature();
         */
-        let zkapp = AccountUpdate.createSigned(redeemAccountAddress);
+        let zkapp = AccountUpdate.createSigned(redeemAccountAddress);// TODO next version: add FactoryTokenId as a param.
 
         AccountUpdate.setValue(zkapp.body.update.appState[0], INDEX_TREE_INIT_ROOT_8);//nullifierRoot
         AccountUpdate.setValue(zkapp.body.update.appState[1], Field(1));//nullStartIndex
@@ -451,24 +456,4 @@ export class TokeniZkFactory extends SmartContract {
         }));
     }
 
-    /**
-     * 
-     * @param senderAddress - address of the sender
-     * @param receiverAddress 
-     * @param amount 
-     * @param callback 
-     */
-    @method
-    approveAnyAccountUpdate(zkappUpdate: AccountUpdate) {
-        let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
-        let senderAccountUpdate = this.approve(zkappUpdate, layout);
-
-        let negativeAmount = Int64.fromObject(
-            senderAccountUpdate.body.balanceChange
-        );
-        negativeAmount.assertEquals(0);
-
-        let tokenId = this.token.id;
-        senderAccountUpdate.body.tokenId.assertEquals(tokenId);
-    }
 }

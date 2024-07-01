@@ -2,7 +2,7 @@ import httpCodes from "@inip/http-codes"
 import { FastifyPlugin } from "fastify"
 import { BaseResponse, SaleDto, SaleUserDto, SaleUserDtoSchema } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
-import { In, getConnection } from "typeorm"
+import { In, IsNull, Not, getConnection } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Sale, UserTokenSale } from "@tokenizk/entities"
 
@@ -37,7 +37,8 @@ const handler: RequestHandler<{ saleType: number, userAddress: string }, null> =
         const userTokenSaleRepo = connection.getRepository(UserTokenSale)
         const userSaleList = await userTokenSaleRepo.find({
             where: {
-                contributorAddress: userAddress
+                contributorAddress: userAddress,
+                contributeTxHash: Not(IsNull())
             }
         }) ?? [];
 
@@ -60,6 +61,7 @@ const handler: RequestHandler<{ saleType: number, userAddress: string }, null> =
                     sale.totalContributedMina = (await userTokenSaleRepo.find({
                         where: {
                             saleId: sale.id,
+                            contributeTxHash: Not(IsNull())
                             // status: 1  // TODO !!! when fetchEvent is ok, then need it!!!
                         }
                     }) ?? []).reduce<number>((p, c) => {

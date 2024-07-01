@@ -27,6 +27,8 @@ import TokeniZkPrivateSaleVK from "../../../../packages/contracts/deploy/verific
 import TokeniZkAirdropVK from "../../../../packages/contracts/deploy/verification-keys/TokeniZkAirdrop-VK.json";
 import RedeemAccountVK from "../../../../packages/contracts/deploy/verification-keys/RedeemAccount-VK.json";
 import { proofReq, checkProofResult } from '@/apis/proof-api';
+import { random } from 'nanoid';
+import { randomUUID } from 'crypto';
 // import SaleRollupProverVK from "../../../../packages/contracts/deploy/verification-keys/SaleRollupProver-VK.json";
 
 // Error.stackTraceLimit = Infinity;
@@ -278,9 +280,9 @@ const createBasicToken = async (factoryAddress: string, basicTokenZkAppAddress: 
                     fee: txFee,
                     memo: 'Deploy BasicToken contract',
                 },
-                () => {
+                async () => {
                     AccountUpdate.fundNewAccount(feePayer);
-                    tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, PublicKey.fromBase58(basicTokenZkAppAddress), TokeniZkFactory.basicTokenVk, Field(totalSupply));
+                    await tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, PublicKey.fromBase58(basicTokenZkAppAddress), TokeniZkFactory.basicTokenVk, Field(totalSupply));
                 }
             );
             await tx.prove();
@@ -326,11 +328,11 @@ const transferToken = async (basicTokenZkAppAddress: string, from: string, to: s
                     fee: txFee,
                     memo: 'Deploy BasicToken contract',
                 },
-                () => {
+                async () => {
                     if (!toHasAcct) {
                         AccountUpdate.fundNewAccount(feePayer);
                     }
-                    basicTokenZkApp.transferToken(PublicKey.fromBase58(from), PublicKey.fromBase58(to), UInt64.from(value));
+                    await basicTokenZkApp.transferToken(PublicKey.fromBase58(from), PublicKey.fromBase58(to), UInt64.from(value));
                 }
             );
             await tx.prove();
@@ -379,9 +381,9 @@ const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string
                     fee: txFee,
                     memo: 'Deploy PrivateSale contract',
                 },
-                () => {
+                async () => {
                     AccountUpdate.fundNewAccount(feePayer, 1);
-                    tokenFactoryZkApp.createPrivateSale(lauchpadPlatformParams, saleParams1, PublicKey.fromBase58(saleParams.tokenAddress), PublicKey.fromBase58(saleAddress), TokeniZkFactory.privateSaleContractVk);
+                    await tokenFactoryZkApp.createPrivateSale(lauchpadPlatformParams, saleParams1, PublicKey.fromBase58(saleParams.tokenAddress), PublicKey.fromBase58(saleAddress), TokeniZkFactory.privateSaleContractVk);
                 }
             );
 
@@ -414,9 +416,9 @@ const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string
                         fee: txFee,
                         memo: 'Deploy Fairsale contract',
                     },
-                    () => {
+                    async () => {
                         AccountUpdate.fundNewAccount(feePayer, 1);
-                        tokeniZkBasicTokenZkApp.createFairSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.fairSaleContractVk, saleParams1);
+                        await tokeniZkBasicTokenZkApp.createFairSale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.fairSaleContractVk, saleParams1);
                     }
                 );
 
@@ -427,9 +429,9 @@ const createSale = async (factoryAddress: string, basicTokenZkAppAddress: string
                         fee: txFee,
                         memo: 'Deploy Presale contract',
                     },
-                    () => {
+                    async () => {
                         AccountUpdate.fundNewAccount(feePayer, 2);
-                        tokeniZkBasicTokenZkApp.createPresale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.presaleContractVk, saleParams1, TokeniZkFactory.presaleMinaFundHolderVk);
+                        await tokeniZkBasicTokenZkApp.createPresale(lauchpadPlatformParams, PublicKey.fromBase58(saleAddress), TokeniZkFactory.presaleContractVk, saleParams1, TokeniZkFactory.presaleMinaFundHolderVk);
                     }
                 );
             }
@@ -528,8 +530,8 @@ const configureSaleParamsPresale = async (basicTokenZkAppAddress: string, saleAd
                 fee: txFee,
                 memo: 'Presale.configureSaleParams',
             },
-            () => {
-                tokeniZkPresaleZkApp.configureSaleParams(saleParams0_1, saleParams1_1, adminSignature1);
+            async () => {
+                await tokeniZkPresaleZkApp.configureSaleParams(saleParams0_1, saleParams1_1, adminSignature1);
             }
         );
         await tx.prove();
@@ -595,8 +597,10 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
         }
     }
 
+    let sessionId = Math.random().toString(36).slice(2)
     const clientProveTaskDto: ClientProveTaskDto = {
         id: 0,
+        sessionId,
         type: saleType,
         params: JSON.stringify(contributeTxParams),
         result: '',
@@ -615,7 +619,7 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
             //
             //
             //
-            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress, sessionId });
         } catch (error) {
             console.error(error);
         }
@@ -632,7 +636,7 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
 
         let tokeniZkSaleZkApp: any = null;
         if (saleParams0.totalSaleSupply == 0) {
-            tokeniZkSaleZkApp = new TokeniZkPrivateSale(saleAddress1, tokenId);
+            tokeniZkSaleZkApp = new TokeniZkPrivateSale(saleAddress1);
         } else if (saleParams0.softCap == 0) {
             tokeniZkSaleZkApp = new TokeniZkFairSale(saleAddress1, tokenId);
         } else {
@@ -647,8 +651,8 @@ const contributeSale = async (basicTokenZkAppAddress: string, saleAddress: strin
                 fee: txFee,
                 memo: `${saleTag}.contribute`,
             },
-            () => {
-                tokeniZkSaleZkApp.contribute(saleParams,
+            async () => {
+                await tokeniZkSaleZkApp.contribute(saleParams,
                     PublicKey.fromBase58(contributorAddress),
                     UInt64.from(minaAmount),
                     membershipMerkleWitness, Field(leafIndex));
@@ -738,9 +742,11 @@ const claimTokensSale = async (
         }
     }
 
+    let sessionId = Math.random().toString(36).slice(2)
     const clientProveTaskDto: ClientProveTaskDto = {
         id: undefined as any as number,
         type: saleType,
+        sessionId,
         params: JSON.stringify(contributeTxParams),
         result: undefined as any as string,
         userAddress: feePayerAddress,
@@ -751,14 +757,14 @@ const claimTokensSale = async (
         updatedAt: 0,
         createdAt: 0
     };
-    const rs = 1;// await proofReq(clientProveTaskDto);
+    const rs = await proofReq(clientProveTaskDto);
     if (rs > 0) {
         try {
             // setInterval to fetch result back
             //
             //
             //
-            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress, sessionId });
         } catch (error) {
             console.error(error);
         }
@@ -783,12 +789,12 @@ const claimTokensSale = async (
 
         const saleParams = SaleParams.fromDto(saleParams0)
 
-        const saleContribution = SaleContribution.fromJson({
-            tokenAddress: PublicKey.fromBase58(saleContribution0.tokenAddress),
-            tokenId: Field(saleContribution0.tokenId),
-            saleContractAddress: PublicKey.fromBase58(saleContribution0.saleContractAddress),
-            contributorAddress: PublicKey.fromBase58(saleContribution0.contributorAddress),
-            minaAmount: UInt64.from(saleContribution0.minaAmount)
+        const saleContribution = SaleContribution.fromJSON({
+            tokenAddress: saleContribution0.tokenAddress,
+            tokenId: saleContribution0.tokenId,
+            saleContractAddress: saleContribution0.saleContractAddress,
+            contributorAddress: saleContribution0.contributorAddress,
+            minaAmount: saleContribution0.minaAmount
         });
 
         const saleContributorMembershipWitnessData = SaleContributorMembershipWitnessData.fromDTO(saleContributorMembershipWitnessData0);
@@ -801,11 +807,11 @@ const claimTokensSale = async (
                 fee: txFee,
                 memo: `${saleTag}.claimTokens`,
             },
-            () => {
-                tokeniZkSaleZkApp.claimTokens(saleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
+            async () => {
+                await tokeniZkSaleZkApp.claimTokens(saleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
 
-                tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkSaleZkApp.self,
-                    saleContribution.contributorAddress, UInt64.from(saleContribution.minaAmount), saleParams.vestingParams());
+                await tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkSaleZkApp.self,
+                    saleContribution.contributorAddress, saleContribution.minaAmount, saleParams.vestingParams());
             }
         );
         await tx.prove();
@@ -907,9 +913,11 @@ const redeemFunds = async (
         }
     }
 
+    let sessionId = Math.random().toString(36).slice(2)
     const clientProveTaskDto: ClientProveTaskDto = {
         id: undefined as any as number,
         type: saleType,
+        sessionId,
         params: JSON.stringify(contributeTxParams),
         result: undefined as any as string,
         userAddress: feePayerAddress,
@@ -920,14 +928,14 @@ const redeemFunds = async (
         updatedAt: 0,
         createdAt: 0
     };
-    const rs = 1; //await proofReq(clientProveTaskDto);
+    const rs = await proofReq(clientProveTaskDto);
     if (rs > 0) {
         try {
             // setInterval to fetch result back
             //
             //
             //
-            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress });
+            return await checkProofResult({ userAddress: feePayerAddress, targetAddress: saleAddress, sessionId });
         } catch (error) {
             console.error(error);
         }
@@ -965,8 +973,8 @@ const redeemFunds = async (
                 fee: txFee,
                 memo: `${saleTag}.redeemFunds`,
             },
-            () => {
-                fundZkApp.redeem(saleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
+            async () => {
+                await fundZkApp.redeem(saleParams, saleContributorMembershipWitnessData, lowLeafWitness, oldNullWitness);
             }
         );
         await tx.prove();
@@ -1054,9 +1062,11 @@ const claimTokensAirdrop = async (
 
     console.log("claimTokensAirdropParams:" + JSON.stringify(claimTokensAirdropParams));
 
+    let sessionId = Math.random().toString(36).slice(2);
     const clientProveTaskDto: ClientProveTaskDto = {
         id: 0,
         type: ClientProofReqType.AIRDROP_CLAIM_TOKEN,
+        sessionId,
         params: JSON.stringify(claimTokensAirdropParams),
         result: '',
         userAddress: feePayerAddress,
@@ -1073,7 +1083,7 @@ const claimTokensAirdrop = async (
         //
         //
         //
-        return await checkProofResult({ userAddress: feePayerAddress, targetAddress: airdropAddress0 });
+        return await checkProofResult({ userAddress: feePayerAddress, targetAddress: airdropAddress0, sessionId });
     }
 
     const saleTag = 'Airdrop';
@@ -1108,12 +1118,12 @@ const claimTokensAirdrop = async (
                 fee: txFee,
                 memo: `${saleTag}.claimTokens`,
             },
-            () => {
+            async () => {
                 AccountUpdate.fundNewAccount(feePayer);
 
-                tokeniZkAirdropZkApp.claimTokens(airdropParams, membershipMerkleWitness, leafIndex, lowLeafWitness, oldNullWitness);
+                await tokeniZkAirdropZkApp.claimTokens(airdropParams, membershipMerkleWitness, leafIndex, lowLeafWitness, oldNullWitness);
 
-                tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkAirdropZkApp.self, feePayer, UInt64.from(tokenAmount), airdropParams.vestingParams());
+                await tokeniZkBasicTokenZkApp.approveTransferCallbackWithVesting(tokeniZkAirdropZkApp.self, feePayer, UInt64.from(tokenAmount), airdropParams.vestingParams());
             }
         );
         await tx.prove();
@@ -1146,9 +1156,9 @@ const deployRedeemAccount = async (feePayer: string, txFee: number) => {
                 fee: txFee,
                 memo: 'deploy Redeem Account',
             },
-            () => {
+            async () => {
                 // AccountUpdate.fundNewAccount(redeemAccountZkAppAddress);
-                tokenFactoryZkApp.createRedeemAccount(lauchpadPlatformParams, redeemAccountZkAppAddress, TokeniZkFactory.redeemAccountVk);
+                await tokenFactoryZkApp.createRedeemAccount(lauchpadPlatformParams, redeemAccountZkAppAddress, TokeniZkFactory.redeemAccountVk);
             }
         );
         await tx.prove();
@@ -1191,9 +1201,9 @@ const createAirdrop = async (factoryAddress: string, basicTokenZkAppAddress: str
                     fee: txFee,
                     memo: 'Deploy Airdrop contract',
                 },
-                () => {
+                async () => {
                     AccountUpdate.fundNewAccount(feePayer, 1);
-                    tokeniZkBasicTokenZkApp.createAirdrop(lauchpadPlatformParams, PublicKey.fromBase58(airdropAddress), TokeniZkFactory.airdropVk, airdropParam1);
+                    await tokeniZkBasicTokenZkApp.createAirdrop(lauchpadPlatformParams, PublicKey.fromBase58(airdropAddress), TokeniZkFactory.airdropVk, airdropParam1);
                 }
             );
             await tx.prove();

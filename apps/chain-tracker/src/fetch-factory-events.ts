@@ -56,7 +56,9 @@ export async function standardFetchFactoryEvents() {
                 const e = eventList[i];
                 logger.info(`e.type: ${e.type}`);
                 const txHash = e.event.transactionInfo.transactionHash.toString();
+
                 const blockHeight = Number(e.blockHeight.toBigint());
+                logger.info(`blockHeight: ${blockHeight}`);
 
                 if (e.type == 'configLauchpadPlatformParams') {
                     const configLauchpadPlatformParamsEvent: ConfigLauchpadPlatformParamsEvent = e.event.data;
@@ -106,9 +108,11 @@ export async function standardFetchFactoryEvents() {
                         saleAddress: createSaleEvent.saleContractAddress.toBase58()
                     }))![0];
 
-                    sale.feeRate = createSaleEvent.fee.toString();
+                    //sale.feeRate = createSaleEvent.fee.toString();// !! TODO just comment here
                     sale.status = 1;
                     sale.txHash = txHash;
+
+                    /* 
                     // must update the params!
                     sale.totalSaleSupply = Number(createSaleEvent.saleParams.totalSaleSupply.toString());
                     sale.saleRate = Number(createSaleEvent.saleParams.saleRate.toString());
@@ -123,6 +127,7 @@ export async function standardFetchFactoryEvents() {
                     sale.cliffAmountRate = Number(createSaleEvent.saleParams.cliffAmountRate.toString());
                     sale.vestingPeriod = Number(createSaleEvent.saleParams.vestingPeriod.toString());
                     sale.vestingIncrement = Number(createSaleEvent.saleParams.vestingIncrement.toString());
+                    */
 
                     await queryRunner.manager.save(sale);
 
@@ -131,7 +136,10 @@ export async function standardFetchFactoryEvents() {
                             address: createSaleEvent.basicTokenAddress.toBase58()
                         }))!;
 
-                        token.totalAmountInCirculation += sale.totalSaleSupply;
+                        logger.info('original token.totalAmountInCirculation: ' + token.totalAmountInCirculation);
+                        logger.info('sale.totalSaleSupply: ' + sale.totalSaleSupply);
+                        token.totalAmountInCirculation = Number(token.totalAmountInCirculation) + Number(sale.totalSaleSupply);
+                        logger.info('after adding sale.totalSaleSupply, token.totalAmountInCirculation: ' + token.totalAmountInCirculation);
 
                         await queryRunner.manager.save(token);
                     }
@@ -175,8 +183,18 @@ export async function standardFetchFactoryEvents() {
                     airdrop.cliffAmountRate = Number(createAirdropEvent.airdropParams.cliffAmountRate.toString());
                     airdrop.vestingPeriod = Number(createAirdropEvent.airdropParams.vestingPeriod.toString());
                     airdrop.vestingIncrement = Number(createAirdropEvent.airdropParams.vestingIncrement.toString());
-
                     await queryRunner.manager.save(airdrop);
+
+                    const token = (await queryRunner.manager.findOne(BasiceToken, {
+                        address: createAirdropEvent.basicTokenAddress.toBase58()
+                    }))!;
+                    logger.info('original token.totalAmountInCirculation: ' + token.totalAmountInCirculation);
+                    logger.info('airdrop.totalAirdropSupply: ' + airdrop.totalAirdropSupply);
+                    token.totalAmountInCirculation = Number(token.totalAmountInCirculation) + Number(airdrop.totalAirdropSupply);
+                    logger.info('after adding airdrop.totalAirdropSupply, token.totalAmountInCirculation: ' + token.totalAmountInCirculation);
+
+                    await queryRunner.manager.save(token);
+
                 }
 
             }

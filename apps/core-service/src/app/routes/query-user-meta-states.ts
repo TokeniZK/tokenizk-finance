@@ -1,3 +1,4 @@
+
 import { FastifyPlugin } from "fastify"
 import { RequestHandler } from '@/lib/types'
 import { BaseResponse, MerkleTreeId } from "@tokenizk/types";
@@ -8,30 +9,48 @@ import { User, UserTokenAirdrop, UserTokenSale } from "@tokenizk/entities";
 import { } from "typeorm";
 import { AirdropClaim, SaleContribution } from "@tokenizk/contracts";
 
-import * as StateDB from "@/app/grpc-endpoints/state-util"
-
 const logger = getLogger('queryUserMetaStates');
 
-export const queryUserMetaStates = async function (dto: { userAddress: string }) {
-    const userAddress = dto.userAddress;
+/**
+ * query User Meta States
+ */
+export const queryUserMetaStates: FastifyPlugin = async function (
+    instance,
+    options,
+    done
+): Promise<void> {
+    instance.route({
+        method: "GET",
+        url: "/query-user-meta-states",
+        //preHandler: [instance.authGuard],
+        schema,
+        handler
+    })
+}
+
+const handler: RequestHandler<null, { userAddress: string }> = async function (
+    req,
+    res
+): Promise<BaseResponse<{ root: string, depth: number, leaves: number }>> {
+    const userAddress = req.params.userAddress;
     try {
-        const hasTree = await StateDB.indexDB.get(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddress}`);
+        const hasTree = await this.indexDB.get(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddress}`);
         if (hasTree) {// undefined
-            await StateDB.userNullifierDB.initTree(PublicKey.fromBase58(userAddress));
-            await StateDB.userNullifierDB.commit();
+            await this.userNullifierDB.initTree(PublicKey.fromBase58(userAddress));
+            await this.userNullifierDB.commit();
             logger.info(`created userNullifierTree for ${userAddress}]`);
 
-            await StateDB.indexDB.put(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddress}`, '1');
+            await this.indexDB.put(`${MerkleTreeId[MerkleTreeId.USER_NULLIFIER_TREE]}:${userAddress}`, '1');
         } else {
-            await StateDB.userNullifierDB.loadTree(PublicKey.fromBase58(userAddress));
+            await this.userNullifierDB.loadTree(PublicKey.fromBase58(userAddress));
             logger.info(`loaded userNullifierTree for ${userAddress}]`);
         }
 
         return {
             code: 0, data: {
-                root: await StateDB.userNullifierDB.getRoot(false).toString(),
-                depth: await StateDB.userNullifierDB.getDepth(),
-                leaves: Number(await StateDB.userNullifierDB.getNumLeaves(false))
+                root: await this.userNullifierDB.getRoot(false).toString(),
+                depth: await this.userNullifierDB.getDepth(),
+                leaves: Number(await this.userNullifierDB.getNumLeaves(false))
             }, msg: ''
         };
 
@@ -40,14 +59,46 @@ export const queryUserMetaStates = async function (dto: { userAddress: string })
         logger.error(err);
 
     } finally {
-        await StateDB.userNullifierDB.reset();
+        await this.userNullifierDB.reset();
 
         logger.info(`process record[${userAddress}, done.]`);
     }
-
+    
     return {
-        code: 1,
-        data: undefined,
+        code: 1, 
+        data: undefined, 
         msg: ''
     };
+}
+
+const schema = {
+    description: 'queryUserMetaStates',
+    tags: ['Maintain Tree'],
+    response: {
+        200: {
+            type: 'object',
+            properties: {
+                code: {
+                    type: 'number',
+                },
+                data: {
+                    type: 'object',
+                    properties: {
+                        root: {
+                            type: 'string'
+                        },
+                        depth: {
+                            type: 'number'
+                        },
+                        leaves: {
+                            type: 'number'
+                        }
+                    }
+                },
+                msg: {
+                    type: 'string'
+                }
+            }
+        }
+    }
 }

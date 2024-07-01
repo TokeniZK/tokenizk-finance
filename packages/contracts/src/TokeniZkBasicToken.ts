@@ -3,34 +3,25 @@ import {
     state,
     UInt64,
     Bool,
-    SmartContract,
-    Mina,
-    PrivateKey,
     AccountUpdate,
     method,
     PublicKey,
     Permissions,
     VerificationKey,
     Field,
-    Experimental,
-    Int64,
-    TokenId,
-    Struct,
     UInt32,
-    Poseidon,
     Reducer,
-    DeployArgs,
-    Provable,
+    TokenContract,
+    AccountUpdateForest,
+    Int64,
 } from 'o1js';
 import { LauchpadPlatformParams, TokeniZkFactory } from './TokeniZkFactory';
-import { CONTRIBUTORS_TREE_ROOT, STANDARD_TREE_INIT_ROOT_12, STANDARD_TREE_INIT_ROOT_16 } from './constants';
-import { SaleParams, TokenTransferEvent, VestingParams } from './sale-models';
-import { AirdropParams } from './TokeniZkAirdrop';
-
+import { CONTRIBUTORS_TREE_ROOT } from './constants';
+import { SaleParams, TokenTransferEvent, VestingParams, AirdropParams } from './sale-models';
 
 const SUPPLY = UInt64.from(10n ** 18n);
 
-export class TokeniZkBasicToken extends SmartContract {
+export class TokeniZkBasicToken extends TokenContract {
 
     events = {
         tokenTransferEvent: TokenTransferEvent,
@@ -38,22 +29,22 @@ export class TokeniZkBasicToken extends SmartContract {
     /**
      * Total supply of tokens
      */
-    @state(UInt64) totalSupply = State<UInt64>();
+    @state(Field) totalSupply = State<Field>();
 
     /**
      * Total amount in circulation
      */
-    @state(UInt64) totalAmountInCirculation = State<UInt64>();
+    @state(Field) totalAmountInCirculation = State<Field>();
 
     @state(PublicKey) tokeniZkFactoryAddress = State<PublicKey>();
 
 
-    deployZkApp(totalSupply: UInt64) {
+    deployZkApp(totalSupply: Field) {
         super.deploy();
 
         this.totalSupply.set(totalSupply);// TODO should be as a constant inside circuit, rather than a state !!!
 
-        this.totalAmountInCirculation.set(UInt64.from(0));
+        this.totalAmountInCirculation.set(Field.from(0));
 
         // this.account.tokenSymbol.set('');
         // this.account.zkappUri.set('');
@@ -64,6 +55,11 @@ export class TokeniZkBasicToken extends SmartContract {
             access: Permissions.proofOrSignature(),// !!! need it
         });
 
+    }
+
+    @method
+    async approveBase(forest: AccountUpdateForest) {
+        this.checkZeroBalanceChange(forest);
     }
 
     /**
@@ -127,20 +123,17 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param saleContractVk 
      */
     @method
-    public createPresale(lauchpadPlatformParams: LauchpadPlatformParams,
+    public async createPresale(lauchpadPlatformParams: LauchpadPlatformParams,
         saleAddress: PublicKey, saleContractVk: VerificationKey, saleParams: SaleParams,
         presaleMinaFundHolderVk: VerificationKey) {
 
         const tokeniZkFactory = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);// TODO!!!
-        tokeniZkFactory.createPresale(lauchpadPlatformParams, saleParams, this.address, saleAddress, saleContractVk, presaleMinaFundHolderVk);
+        await tokeniZkFactory.createPresale(lauchpadPlatformParams, saleParams, this.address, saleAddress, saleContractVk, presaleMinaFundHolderVk);
 
-        let tokenId = this.token.id;
-        const zkapp = Experimental.createChildAccountUpdate(
-            this.self,
-            saleAddress,
-            tokenId
-        );
-        zkapp.account.isNew.assertEquals(Bool(true));
+        let tokenId = this.deriveTokenId();
+
+        const zkapp = AccountUpdate.createSigned(saleAddress, tokenId);
+        zkapp.account.isNew.requireEquals(Bool(true));
 
         saleParams.tokenAddress.assertEquals(this.address);
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
@@ -164,7 +157,6 @@ export class TokeniZkBasicToken extends SmartContract {
             // access: Permissions.proofOrSignature()
         });
         zkapp.account.verificationKey.set(saleContractVk);
-        zkapp.requireSignature();
         this.approve(zkapp);
 
         this.mintToken(saleAddress, saleParams.totalSaleSupply);
@@ -177,19 +169,15 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param saleContractVk 
      */
     @method
-    public createFairSale(lauchpadPlatformParams: LauchpadPlatformParams,
+    public async createFairSale(lauchpadPlatformParams: LauchpadPlatformParams,
         saleAddress: PublicKey, saleContractVk: VerificationKey, saleParams: SaleParams) {
 
         const tokeniZkFactory = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
-        tokeniZkFactory.createFairSale(lauchpadPlatformParams, saleParams, this.address, saleAddress, saleContractVk);
+        await tokeniZkFactory.createFairSale(lauchpadPlatformParams, saleParams, this.address, saleAddress, saleContractVk);
 
-        let tokenId = this.token.id;
-        const zkapp = Experimental.createChildAccountUpdate(
-            this.self,
-            saleAddress,
-            tokenId
-        );
-        zkapp.account.isNew.assertEquals(Bool(true));
+        let tokenId = this.deriveTokenId();
+        const zkapp = AccountUpdate.createSigned(saleAddress, tokenId);
+        zkapp.account.isNew.requireEquals(Bool(true));
 
         saleParams.tokenAddress.assertEquals(this.address);
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
@@ -213,7 +201,6 @@ export class TokeniZkBasicToken extends SmartContract {
             send: Permissions.proof(),
         });
         zkapp.account.verificationKey.set(saleContractVk);
-        zkapp.requireSignature();
         this.approve(zkapp);
 
         this.mintToken(saleAddress, saleParams.totalSaleSupply);
@@ -228,13 +215,13 @@ export class TokeniZkBasicToken extends SmartContract {
         let totalAmountInCirculation = this.totalAmountInCirculation.getAndRequireEquals();
         let totalSupply = this.totalSupply.getAndRequireEquals();
 
-        let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
+        let newTotalAmountInCirculation = totalAmountInCirculation.add(amount.toFields()[0]);
         newTotalAmountInCirculation.assertLessThanOrEqual(
             totalSupply,
             "Can't mint more than the total supply"
         );
 
-        this.token.mint({
+        this.internal.mint({
             address: receiverAddress,
             amount,
         });
@@ -244,7 +231,6 @@ export class TokeniZkBasicToken extends SmartContract {
         this.self.requireSignature();// mint need signature of tokenOwner
     }
 
-
     /**
      * 
      * @param lauchpadPlatformParams 
@@ -252,19 +238,15 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param airdropContractVk 
      */
     @method
-    public createAirdrop(lauchpadPlatformParams: LauchpadPlatformParams,
+    public async createAirdrop(lauchpadPlatformParams: LauchpadPlatformParams,
         airdropAddress: PublicKey, airdropContractVk: VerificationKey, airdropParams: AirdropParams) {
 
         const tokeniZkFactory = new TokeniZkFactory(TokeniZkFactory.tokeniZkFactoryAddress);
-        tokeniZkFactory.createAirdrop(lauchpadPlatformParams, airdropParams, this.address, airdropAddress, airdropContractVk);
+        await tokeniZkFactory.createAirdrop(lauchpadPlatformParams, airdropParams, this.address, airdropAddress, airdropContractVk);
 
-        let tokenId = this.token.id;
-        const zkapp = Experimental.createChildAccountUpdate(
-            this.self,
-            airdropAddress,
-            tokenId
-        );
-        zkapp.account.isNew.assertEquals(Bool(true));
+        let tokenId = this.deriveTokenId();
+        const zkapp = AccountUpdate.createSigned(airdropAddress, tokenId);
+        zkapp.account.isNew.requireEquals(Bool(true));
 
         airdropParams.tokenAddress.assertEquals(this.address);
         // saleParams.whitelistTreeRoot.equals(0).or(saleParams.whitelistTreeRoot.equals(STANDARD_TREE_INIT_ROOT_12)).assertEquals(true);
@@ -282,12 +264,10 @@ export class TokeniZkBasicToken extends SmartContract {
         });
 
         zkapp.account.verificationKey.set(airdropContractVk);
-        zkapp.requireSignature();
         this.approve(zkapp);
 
         this.mintToken(airdropAddress, airdropParams.totalAirdropSupply);
     }
-
 
     /**
      * 
@@ -296,15 +276,15 @@ export class TokeniZkBasicToken extends SmartContract {
      */
     burnToken(receiverAddress: PublicKey, amount: UInt64) {
         let totalAmountInCirculation = this.totalAmountInCirculation.get();
-        this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+        this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
 
-        let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
+        let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount.toFields()[0]);
         totalAmountInCirculation.assertGreaterThanOrEqual(
-            UInt64.from(0),
+            0,
             "Can't burn less than 0"
         );
 
-        this.token.burn({
+        this.internal.burn({
             address: receiverAddress,
             amount,
         });
@@ -320,14 +300,22 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param value 
      */
     @method
-    transferToken(from: PublicKey, to: PublicKey, value: UInt64) {
-        this.token.send({ from, to, amount: value });
+    async transferToken(from: PublicKey, to: PublicKey, value: UInt64) {
+        const tokenId = this.deriveTokenId();
+        let fromAU = AccountUpdate.createSigned(from, tokenId);
+        await this.approve(fromAU);
+        fromAU.balance.subInPlace(value);
+
+        let receiverAU = AccountUpdate.create(to, tokenId);
+        receiverAU.balance.addInPlace(value);
+        await this.approve(receiverAU);
+
         this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
             tokenAddress: this.address,
-            tokenId: this.token.id,
-            from: from,
+            tokenId,
+            from,
             to: to,
-            value: value
+            value
         }));
     }
 
@@ -339,40 +327,28 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param callback 
      */
     @method
-    approveTransferCallback(
+    async approveTransferCallback(
         //callback: Experimental.Callback<any>,
         zkappUpdate: AccountUpdate,
         receiverAddress: PublicKey,
         amount: UInt64,
     ) {
-        let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
-        let senderAccountUpdate = this.approve(zkappUpdate, layout);
-
-        //let layout = AccountUpdate.Layout.AnyChildren; // Allow only 1 accountUpdate with no children
-        //let senderAccountUpdate = this.approve(callback, layout);
-
+        await this.approve(zkappUpdate);
         let negativeAmount = Int64.fromObject(
-            senderAccountUpdate.body.balanceChange
+            zkappUpdate.body.balanceChange
         );
         negativeAmount.assertEquals(Int64.from(amount).neg());
 
-        let tokenId = this.token.id;
-        senderAccountUpdate.body.tokenId.assertEquals(tokenId);
-
-        // TODO !!!! check this approach is ok for new addresses !!!!
-        let receiverAccountUpdate = Experimental.createChildAccountUpdate(
-            this.self,
-            receiverAddress,
-            tokenId
-        );
+        const tokenId = this.deriveTokenId();
+        let receiverAccountUpdate = AccountUpdate.create(receiverAddress, tokenId);
         receiverAccountUpdate.balance.addInPlace(amount);
-
+        await this.approve(receiverAccountUpdate);
 
         this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
             tokenAddress: this.address,
-            tokenId: this.token.id,
-            from: senderAccountUpdate.publicKey,
-            to: receiverAccountUpdate.publicKey,
+            tokenId: this.deriveTokenId(),
+            from: zkappUpdate.publicKey,
+            to: receiverAddress,
             value: amount
         }));
     }
@@ -385,49 +361,29 @@ export class TokeniZkBasicToken extends SmartContract {
      * @param callback 
      */
     @method
-    approveTransferCallbackWithVesting(
+    async approveTransferCallbackWithVesting(
         zkappUpdate: AccountUpdate,
         receiverAddress: PublicKey,
         amount: UInt64,
         vestingParams: VestingParams
     ) {
-        let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
-        let senderAccountUpdate = this.approve(zkappUpdate, layout);
-
-        Provable.log('t1');
-        let negativeAmount = Int64.fromObject(
-            senderAccountUpdate.body.balanceChange
-        );
-        negativeAmount.assertEquals(Int64.from(amount).neg());
-        Provable.log('t2');
-
-        let tokenId = this.token.id;
-        senderAccountUpdate.body.tokenId.assertEquals(tokenId);
-        Provable.log('t3');
-
-        // create a new AccountUpdate to check vestingParams
-        let senderAU = Experimental.createChildAccountUpdate(
-            this.self,
-            zkappUpdate.body.publicKey,
-            tokenId
-        );
-        Provable.log('t4');
-
-        AccountUpdate.assertEquals(
-            senderAU.body.preconditions.account.state[1],
-            vestingParams.hash()
-        );
-
-        // increase receiver's token
-        let receiverAccountUpdate = Experimental.createChildAccountUpdate(
-            this.self,
-            receiverAddress,
-            tokenId
-        );
-        Provable.log('t5');
-
+        const tokenId = this.deriveTokenId();
+        let receiverAccountUpdate = AccountUpdate.createSigned(receiverAddress, tokenId);
+        this.approve(receiverAccountUpdate);
         receiverAccountUpdate.balance.addInPlace(amount);
 
+        this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
+            tokenAddress: this.address,
+            tokenId: this.deriveTokenId(),
+            from: zkappUpdate.publicKey,
+            to: receiverAddress,
+            value: amount
+        }));
+
+        AccountUpdate.assertEquals(
+            zkappUpdate.body.preconditions.account.state[1],
+            vestingParams.hash()
+        );
         // vesting receiver's token
         const initialMinimumBalance = amount.sub(1);
         const cliffAmount = UInt64.from(initialMinimumBalance.mul(vestingParams.cliffAmountRate).div(100));
@@ -439,38 +395,6 @@ export class TokeniZkBasicToken extends SmartContract {
             vestingPeriod: vestingParams.vestingPeriod,
             vestingIncrement
         });
-        Provable.log('t6');
-
-        receiverAccountUpdate.requireSignature();
-
-
-        this.emitEvent('tokenTransferEvent', new TokenTransferEvent({
-            tokenAddress: this.address,
-            tokenId: this.token.id,
-            from: senderAccountUpdate.publicKey,
-            to: receiverAccountUpdate.publicKey,
-            value: amount
-        }));
     }
 
-    /**
-     * 
-     * @param senderAddress - address of the sender
-     * @param receiverAddress 
-     * @param amount 
-     * @param callback 
-     */
-    @method
-    approveAnyAccountUpdate(zkappUpdate: AccountUpdate) {
-        let layout = AccountUpdate.Layout.AnyChildren; // TODO Allow only 1 accountUpdate with no children
-        let senderAccountUpdate = this.approve(zkappUpdate, layout);
-
-        let negativeAmount = Int64.fromObject(
-            senderAccountUpdate.body.balanceChange
-        );
-        negativeAmount.assertEquals(0);
-
-        let tokenId = this.token.id;
-        senderAccountUpdate.body.tokenId.assertEquals(tokenId);
-    }
 }

@@ -2,7 +2,6 @@ import {
     State,
     state,
     SmartContract,
-    AccountUpdate,
     method,
     Field,
     Struct,
@@ -22,17 +21,12 @@ export class UserState extends Struct({
 export class RedeemAccount extends SmartContract {
     @state(UserState) userState = State<UserState>();
 
-    deployZkApp(userState: UserState) {
-        super.deploy();
+    async deployZkApp(userState: UserState) {
+        await super.deploy();
         this.userState.set(userState);
     }
 
-    @method getUserState(): UserState {
-        const userState = this.userState.getAndRequireEquals();
-        return userState;
-    }
-
-    @method updateState(nullifier: Field,
+    @method async updateState(nullifier: Field,
         lowLeafWitness: UserLowLeafWitnessData,
         oldNullWitness: UserNullifierMerkleWitness) {
 

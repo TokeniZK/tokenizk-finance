@@ -347,6 +347,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             if (saleType.value == 0 && !changeRateCap()) {
                 return;
             }
+            
+            if(!(await handleWhitelistInput())){
+                return ;
+            }
 
             saleDto.totalSaleSupply = 0;
             saleDto.saleRate = 0;
@@ -380,7 +384,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             // calc whitelist tree root
             if (saleDto1.whitelistMembers) {
                 showLoadingMask({ id: maskId, text: 'constructing whitelist tree...' });
-                const members = saleDto1.whitelistMembers.trim().split(',');
+
+                let whiteListMems: string = saleDto1.whitelistMembers.trim();
+                if(whiteListMems.endsWith(',')){
+                    whiteListMems = whiteListMems.substring(0, whiteListMems.length - 1);
+                }
+                const members = whiteListMems.split(',').filter(s => s.trim() != '');;
                 saleDto1.whitelistTreeRoot = await calcWhitelistTreeRoot(members);
 
                 console.log('whitelistTreeRoot: ' + saleDto1.whitelistTreeRoot);
@@ -449,7 +458,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                         let targetAU = tx.transaction.accountUpdates.filter(e => e.body.publicKey.toBase58() == saleAddress && e.body.authorizationKind.isSigned.toBoolean());
                         targetAU.forEach(e => e.lazyAuthorization = { kind: 'lazy-signature' });
-                        tx = tx.sign([saleKey]);
+                        tx.sign([saleKey]);
 
                         txJson = tx.toJSON();
                         console.log('createSale txJson: ' + txJson);
@@ -617,11 +626,18 @@ const dialogTableVisibleErrorAlert = ref(false)
 const whiteListErrorAlert = reactive({ whitelist: [] as string[] });
 
 const handleWhitelistInput = async () => {
-
-    const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
-    saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
+    let flag = true;
 
     if (saleDto.whitelistMembers) {
+        if(saleDto.whitelistMembers.endsWith(',')){
+            flag = false;
+            ElMessage.error({ message: 'whitelistMembers should not ends with comma!' });
+
+            return flag;
+        }
+
+        const noSpacesValue = saleDto.whitelistMembers.replace(/\s+/g, ''); // 去除中间所有空格  
+        saleDto.whitelistMembers = noSpacesValue;   // 更新模型值
 
         const whitelistMembers = saleDto.whitelistMembers.split(',');
 
@@ -632,13 +648,17 @@ const handleWhitelistInput = async () => {
             try {
                 (await o1js).PublicKey.fromBase58(item);
             } catch (error) {
+                flag = false;
+
                 dialogTableVisibleErrorAlert.value = true;
                 console.log(error);
-                whiteListErrorAlert.whitelist.push(item)
+                whiteListErrorAlert.whitelist.push(item ?? 'empty string or space exist! please check.')
                 // ElMessage.error({ message: item + ' is not a valid address!' });
             }
         }
     }
+
+    return flag;
 };
 
 const closeErrorWhitelistDialog = () => {
@@ -815,7 +835,7 @@ const title = computed(() => {
 
                                         <el-form-item label="Creation Fee Options" prop="feeRate">
                                             <el-radio-group v-model="saleDto.feeRate">
-                                                <el-radio label="1">1 MINA</el-radio>
+                                                <el-radio label="1000000000">1 MINA</el-radio>
                                                 <!-- <el-radio label="0">Other</el-radio> -->
                                             </el-radio-group>
                                         </el-form-item>
@@ -1118,7 +1138,7 @@ const title = computed(() => {
 
                                         <el-row>
                                             <el-col :span="9" class="wide4">Sale creation fee :</el-col>
-                                            <el-col :span="15">{{ saleDto.feeRate }} MINA</el-col>
+                                            <el-col :span="15">{{ Number(saleDto.feeRate)/(10**9) }} MINA</el-col>
                                         </el-row>
 
                                         <!--                                         

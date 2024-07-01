@@ -32,6 +32,6 @@
     "gen-schema-comment-dto": "npx typescript-json-schema --refs false ./src/comment-dto.ts CommentDto -o ./src/comment-dto-schema.json"
   },
   "peerDependencies": {
-    "o1js": "0.15.1"
+    "o1js": "1.1.0"
   }
 }

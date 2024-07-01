@@ -177,7 +177,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             showLoadingMask({ id: maskId, text: 'witness calculating...' });
             const factoryAddress = appState.tokeniZkFactoryAddress;
             const basicTokenZkAppAddress = tokenDtoForm.address;
-            const totalSupply = tokenDtoForm.totalSupply;
+            const totalSupply = tokenDtoForm.totalSupply * (10 ** 9);
             const feePayerAddress = appState.connectedWallet58;
             const txFee = 0.3 * (10 ** 9)
             const txJson = await CircuitControllerState.remoteController?.createBasicToken(factoryAddress, basicTokenZkAppAddress, totalSupply, feePayerAddress, txFee);
@@ -206,7 +206,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             // send back to backend for recording
             showLoadingMask({ id: maskId, text: 'submit to backend...' });
-            const rs = await submitToken(tokenDtoForm);// TODO!!! 本尊
+            const dto = JSON.parse(JSON.stringify(tokenDtoForm));
+            dto.totalSupply = tokenDtoForm.totalSupply * (10 ** 9);
+            const rs = await submitToken(dto);// TODO!!! 本尊
             if (!rs) {
                 showLoadingMask({ id: maskId, text: 'submit to backend failed...' });
             }
@@ -394,7 +396,7 @@ const checkIfDeployed = async () => {
 
                             <el-row>
                                 <el-col :span="4" class="wide4">Total supply : </el-col>
-                                <el-col :span="19">{{ tokenDtoForm.totalSupply }}</el-col>
+                                <el-col :span="19">{{ tokenDtoForm.totalSupply / (10 ** 9) }}</el-col>
                             </el-row>
 
                             <el-row>

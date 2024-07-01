@@ -3,7 +3,7 @@ import { FastifyPlugin } from "fastify"
 import { BaseResponse, SaleReq, SaleReqSchema, SaleDto, UserContributionDto, SaleContributorsDetailDto, SaleContributorsDetailDtoSchema } from '@tokenizk/types'
 import { RequestHandler } from '@/lib/types'
 
-import { getConnection, In } from "typeorm"
+import { getConnection, In, IsNull, Not } from "typeorm"
 import { getLogger } from "@/lib/logUtils"
 import { BasiceToken, Sale, UserTokenSale, } from "@tokenizk/entities"
 
@@ -61,7 +61,8 @@ const handler: RequestHandler<SaleReq, null> = async function (
         const userTokenSaleRepo = connection.getRepository(UserTokenSale)
         const userTokenSaleList = await userTokenSaleRepo.find({
             where: {
-                saleId: sale.id
+                saleId: sale.id,
+                contributeTxHash: Not(IsNull())
             }
         });
 

@@ -35,41 +35,31 @@ const handler: RequestHandler<ClientProveTaskDto, null> = async function (
         const connection = getConnection();
         const clientProveTaskRepo = connection.getRepository(ClientProveTask)
 
-        let clientProveTask = await clientProveTaskRepo.findOne({
-            where: {
-                tokenAddress: clientProveTaskDto.tokenAddress,
-                targetAddress: clientProveTaskDto.targetAddress,
-                userAddress: clientProveTaskDto.userAddress
-            }
-        });
+        try {
+            PublicKey.fromBase58(clientProveTaskDto.tokenAddress);
+        } catch (error) {
+            logger.error(`tokenAddress: ${clientProveTaskDto.tokenAddress} is invalid`);
 
-        if (!clientProveTask) {
-            try {
-                PublicKey.fromBase58(clientProveTaskDto.tokenAddress);
-            } catch (error) {
-                logger.error(`tokenAddress: ${clientProveTaskDto.tokenAddress} is invalid`);
-
-                throw req.throwError(httpCodes.BAD_REQUEST, "tokenAddress is invalid")
-            }
-
-            try {
-                PublicKey.fromBase58(clientProveTaskDto.targetAddress);
-            } catch (error) {
-                logger.error(`targetAddress: ${clientProveTaskDto.targetAddress} is invalid`);
-
-                throw req.throwError(httpCodes.BAD_REQUEST, "targetAddress is invalid")
-            }
-
-            try {
-                PublicKey.fromBase58(clientProveTaskDto.userAddress);
-            } catch (error) {
-                logger.error(`userAddress: ${clientProveTaskDto.userAddress} is invalid`);
-
-                throw req.throwError(httpCodes.BAD_REQUEST, "userAddress is invalid")
-            }
+            throw req.throwError(httpCodes.BAD_REQUEST, "tokenAddress is invalid")
         }
 
-        clientProveTask = clientProveTask ?? new ClientProveTask();
+        try {
+            PublicKey.fromBase58(clientProveTaskDto.targetAddress);
+        } catch (error) {
+            logger.error(`targetAddress: ${clientProveTaskDto.targetAddress} is invalid`);
+
+            throw req.throwError(httpCodes.BAD_REQUEST, "targetAddress is invalid")
+        }
+
+        try {
+            PublicKey.fromBase58(clientProveTaskDto.userAddress);
+        } catch (error) {
+            logger.error(`userAddress: ${clientProveTaskDto.userAddress} is invalid`);
+
+            throw req.throwError(httpCodes.BAD_REQUEST, "userAddress is invalid")
+        }
+
+        let clientProveTask = new ClientProveTask();
         Object.assign(clientProveTask, clientProveTaskDto);
 
         clientProveTask.status = 0;

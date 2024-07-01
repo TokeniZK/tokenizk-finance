@@ -1,29 +1,14 @@
 import fs from "fs";
 import {
-    isReady,
-    method,
     Mina,
     AccountUpdate,
     PrivateKey,
-    SmartContract,
-    PublicKey,
     UInt64,
-    Int64,
-    Experimental,
-    Permissions,
-    DeployArgs,
-    VerificationKey,
-    TokenId,
-    state,
-    State,
     Field,
-    Bool,
-    Provable,
-    UInt32,
     fetchAccount,
 } from 'o1js';
 
-import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleParams, SaleRollupProver, RedeemAccount, STANDARD_TREE_INIT_ROOT_16, UserState, INDEX_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_8, STANDARD_TREE_INIT_ROOT_12, TokeniZkFairSale, TokeniZkPrivateSale, WHITELIST_TREE_HEIGHT, CONTRIBUTORS_TREE_HEIGHT, ContributorsMembershipMerkleWitness, TokeniZkAirdrop } from "../src";
+import { TokeniZkFactory, TokeniZkBasicToken, TokeniZkPresale, PresaleMinaFundHolder, LauchpadPlatformParams, SaleRollupProver, RedeemAccount, TokeniZkFairSale, TokeniZkPrivateSale, TokeniZkAirdrop } from "../src";
 import { getTestContext } from '../src/test_utils';
 
 // ================
@@ -108,7 +93,7 @@ fs.writeFileSync('./deploy/TestWorld/verification-keys/TokeniZkBasicToken-VK.jso
 let tokenFactoryZkApp = new TokeniZkFactory(tokenFactoryZkAppAddress);
 
 let basicTokenZkApp = new TokeniZkBasicToken(basicTokenZkAppAddress);
-let tokenId = basicTokenZkApp.token.id;
+let tokenId = basicTokenZkApp.deriveTokenId();
 
 console.time('compile (SaleRollupProver)');
 const saleRollupProverVK = (await SaleRollupProver.compile()).verificationKey;
@@ -229,7 +214,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy TokenFactory contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.deployZkApp(lauchpadPlatformParams);
     }
@@ -250,7 +235,7 @@ tx = await Mina.transaction(
         fee: ctx.txFee,
         memo: 'Deploy BasicToken contract',
     },
-    () => {
+    async () => {
         AccountUpdate.fundNewAccount(feePayer);
         tokenFactoryZkApp.createBasicToken(lauchpadPlatformParams, basicTokenZkAppAddress, tokeniZkBasicTokenVK, Field(2100 * 10000));
     }
