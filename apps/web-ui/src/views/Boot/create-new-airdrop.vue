@@ -405,8 +405,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
         if (valid) {
 
-            if(!(await handleWhitelistInput())){
-                return ;
+            if (!(await handleWhitelistInput())) {
+                return;
             }
 
             let saleTag = 'Airdrop';
@@ -492,7 +492,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
                 showLoadingMask({ id: maskId, text: 'submitting to backend...' });
                 // send back to backend for recording
+                let tmp = airdropDto.totalAirdropSupply;
+                airdropDto.totalAirdropSupply = airdropDto.totalAirdropSupply * (10 ** 9);
                 const rs = await submitAirdrop(airdropDto);// TODO!!! 本尊
+                airdropDto.totalAirdropSupply = tmp;
                 if (rs) {
                     try {
                         showLoadingMask({ id: maskId, text: 'sending transaction...' });
@@ -864,7 +867,7 @@ const title = computed(() => {
                                                     <el-scrollbar max-height="400px">
                                                         <li v-for="item in whiteListErrorAlert.whitelist"
                                                             :key="item.index" class="whiteListUl scrollbar-demo-item">{{
-            item }}</li>
+                                                            item }}</li>
                                                     </el-scrollbar>
                                                 </ul>
                                             </el-dialog>
@@ -902,8 +905,8 @@ const title = computed(() => {
                                                         <el-input v-model.number.trim="airdropDto.vestingPeriod"
                                                             placeholder="0" @change="changeVestingPeriod" />
                                                         <span v-if="dynamicalVestingPeriod">about {{
-            dynamicalVestingPeriod
-        }} minutes</span>
+                                                            dynamicalVestingPeriod
+                                                            }} minutes</span>
                                                     </el-form-item>
                                                 </el-col>
 
@@ -914,7 +917,7 @@ const title = computed(() => {
                                                         <el-input v-model.number.trim="airdropDto.vestingIncrement"
                                                             placeholder="0" @change="changeVestingIncrement" />
                                                         <span v-if="dynamicalVestingIncrement">about {{
-            dynamicalVestingIncrement }}
+                                                            dynamicalVestingIncrement }}
                                                             {{ tokenDto.symbol }}</span>
                                                     </el-form-item>
                                                 </el-col>
@@ -1050,8 +1053,8 @@ const title = computed(() => {
                                         <el-row>
                                             <el-col :span="9" class="wide4">Airdrop contract address :</el-col>
                                             <el-col :span="15">{{ (airdropDto.airdropAddress != null ||
-            airdropDto.airdropAddress !=
-            '') ? `click 'confirm' to generate...` : airdropDto.airdropAddress
+                                                airdropDto.airdropAddress !=
+                                                '') ? `click 'confirm' to generate...` : airdropDto.airdropAddress
                                                 }}</el-col>
                                         </el-row>
 
@@ -1128,13 +1131,13 @@ const title = computed(() => {
                                         <el-row>
                                             <el-col :span="9" class="wide4">Liquidity cliffTime :</el-col>
                                             <el-col :span="15">{{ airdropDto.cliffTime }} slots (about {{
-            dynamicalCliffTime
-        }} minutes )</el-col>
+                                                dynamicalCliffTime
+                                                }} minutes )</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="9" class="wide4">Liquidity cliffAmountRate :</el-col>
                                             <el-col :span="15">{{ airdropDto.cliffAmountRate }} (about {{
-            dynamicalCliffAmount }} {{ tokenDto.symbol }})</el-col>
+                                                dynamicalCliffAmount }} {{ tokenDto.symbol }})</el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="9" class="wide4">Liquidity vestingPeriod :</el-col>
