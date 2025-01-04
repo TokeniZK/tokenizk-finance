@@ -374,8 +374,7 @@ const checkIfDeployed = async () => {
             </el-row>
 
             <!-- 创建后 -->
-            <el-row class="row-bg tokenTable" justify="center" v-show="true">
-                <!-- <el-row class="row-bg tokenTable" justify="center" v-show="!flag"> -->
+            <el-row class="row-bg tokenTable" justify="center" v-show="!flag">
                 <el-col :span="24">
 
                     <el-row style=" color: #00c798;"> Your token was created ! </el-row>

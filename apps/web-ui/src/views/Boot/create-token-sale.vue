@@ -936,8 +936,7 @@ const title = computed(() => {
                                 </el-row>
 
                                 <!-- 步骤2 -->
-                                <!-- <el-row class="row-bg formTable1" v-show="flagX === 1"> -->
-                                <el-row class="row-bg formTable1" v-show="flagX === 0">
+                                <el-row class="row-bg formTable1" v-show="flagX === 1">
                                     <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
                                     <el-col :span="24">
@@ -1107,8 +1106,8 @@ const title = computed(() => {
                                 </el-row>
 
                                 <!-- 步骤3 -->
-                                <!-- <el-row class="row-bg formTable1" v-show="flagX === 2"> -->
-                                <el-row class="row-bg formTable1" v-show="flagX === 0">
+                                <el-row class="row-bg formTable1" v-show="flagX === 2">
+
                                     <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
                                     <el-col :span="24">
 
@@ -1211,8 +1210,7 @@ const title = computed(() => {
                                 </el-row>
 
                                 <!-- 步骤4 -->
-                                <!-- <el-row class="row-bg formTable2" v-show="flagX === 3"> -->
-                                <el-row class="row-bg formTable2" v-show="flagX === 0">
+                                <el-row class="row-bg formTable2" v-show="flagX === 3">
                                     <el-col :span="24">
 
                                         <el-row style="overflow-wrap: break-word;">
