@@ -354,10 +354,10 @@ const checkIfDeployed = async () => {
                                                 limit 1 file, new file will cover the old file
                                             </div>
                                         </template>
-                                    </el-upload>
-                                </el-form-item>
-                            </el-col>
-                            -->
+</el-upload>
+</el-form-item>
+</el-col>
+-->
 
                         </el-row>
 
@@ -374,7 +374,8 @@ const checkIfDeployed = async () => {
             </el-row>
 
             <!-- 创建后 -->
-            <el-row class="row-bg tokenTable" justify="center" v-show="!flag">
+            <el-row class="row-bg tokenTable" justify="center" v-show="true">
+                <!-- <el-row class="row-bg tokenTable" justify="center" v-show="!flag"> -->
                 <el-col :span="24">
 
                     <el-row style=" color: #00c798;"> Your token was created ! </el-row>
@@ -382,27 +383,27 @@ const checkIfDeployed = async () => {
                     <el-row>
                         <el-col :span="24">
 
-                            <el-row>
+                            <el-row style="overflow-wrap: break-word;">
                                 <el-col :span="4" class="wide4">Issuer Name : </el-col>
                                 <el-col :span="19">{{ tokenDtoForm.name }}</el-col>
                             </el-row>
 
-                            <el-row>
+                            <el-row style="overflow-wrap: break-word;">
                                 <el-col :span="4" class="wide4">Symbol : </el-col>
                                 <el-col :span="19">{{ tokenDtoForm.symbol }}</el-col>
                             </el-row>
 
-                            <el-row>
+                            <el-row style="overflow-wrap: break-word;">
                                 <el-col :span="4" class="wide4">Total supply : </el-col>
                                 <el-col :span="19">{{ tokenDtoForm.totalSupply }}</el-col>
                             </el-row>
 
-                            <el-row>
+                            <el-row style="overflow-wrap: break-word;">
                                 <el-col :span="4" class="wide4">Logo URL :</el-col>
                                 <el-col :span="19"> {{ tokenDtoForm.logoUrl }}</el-col>
                             </el-row>
 
-                            <el-row>
+                            <el-row style="overflow-wrap: break-word;">
                                 <el-col :span="4" class="wide4">txHash : </el-col>
                                 <el-col :span="19">{{ appState.explorerUrl.concat(tokenDtoForm.txHash) }}</el-col>
                             </el-row>
@@ -427,6 +428,7 @@ const checkIfDeployed = async () => {
                             Create Airdrop
                         </el-button>
                     </router-link>
+
                 </el-col>
             </el-row>
 
@@ -467,7 +469,7 @@ const checkIfDeployed = async () => {
     }
 
     .wide4 {
-        font-weight: 700;
+        // font-weight: 700;
     }
 
 
@@ -480,4 +482,3 @@ const checkIfDeployed = async () => {
     }
 }
 </style>
-

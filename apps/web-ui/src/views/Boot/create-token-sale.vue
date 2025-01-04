@@ -936,7 +936,8 @@ const title = computed(() => {
                                 </el-row>
 
                                 <!-- 步骤2 -->
-                                <el-row class="row-bg formTable1" v-show="flagX === 1">
+                                <!-- <el-row class="row-bg formTable1" v-show="flagX === 1"> -->
+                                <el-row class="row-bg formTable1" v-show="flagX === 0">
                                     <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
 
                                     <el-col :span="24">
@@ -1049,7 +1050,7 @@ const title = computed(() => {
                                                     <el-scrollbar max-height="400px">
                                                         <li v-for="item in whiteListErrorAlert.whitelist"
                                                             :key="item.index" class="whiteListUl scrollbar-demo-item">{{
-            item }}</li>
+                                                                item }}</li>
                                                     </el-scrollbar>
                                                 </ul>
                                             </el-dialog>
@@ -1085,8 +1086,8 @@ const title = computed(() => {
                                                         <el-input v-model.number.trim="saleDto.vestingPeriod"
                                                             placeholder="0" @change="changeVestingPeriod" />
                                                         <span v-if="dynamicalVestingPeriod">about {{
-            dynamicalVestingPeriod
-        }} minutes</span>
+                                                            dynamicalVestingPeriod
+                                                        }} minutes</span>
                                                     </el-form-item>
                                                 </el-col>
 
@@ -1106,7 +1107,8 @@ const title = computed(() => {
                                 </el-row>
 
                                 <!-- 步骤3 -->
-                                <el-row class="row-bg formTable1" v-show="flagX === 2">
+                                <!-- <el-row class="row-bg formTable1" v-show="flagX === 2"> -->
+                                <el-row class="row-bg formTable1" v-show="flagX === 0">
                                     <div class="form-notes" style="margin-bottom: 20px;">(*) is required field.</div>
                                     <el-col :span="24">
 
@@ -1209,48 +1211,53 @@ const title = computed(() => {
                                 </el-row>
 
                                 <!-- 步骤4 -->
-                                <el-row class="row-bg formTable2" v-show="flagX === 3">
+                                <!-- <el-row class="row-bg formTable2" v-show="flagX === 3"> -->
+                                <el-row class="row-bg formTable2" v-show="flagX === 0">
                                     <el-col :span="24">
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Sale name :</el-col>
                                             <el-col :span="15">{{ saleDto.saleName }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Token name :</el-col>
                                             <el-col :span="15">{{ saleDto.tokenSymbol }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Token address :</el-col>
                                             <el-col :span="15">{{ saleDto.tokenAddress }}</el-col>
                                         </el-row>
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Sale contract address :</el-col>
                                             <el-col :span="15">{{ saleDto.saleAddress ?? `click 'confirm' to
                                                 generate`}}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Sale Supply :</el-col>
-                                            <el-col :span="15">{{ saleDto.totalSaleSupply }} {{
-            saleDto.tokenSymbol }}</el-col>
+                                            <el-col :span="15">{{ saleDto.totalSaleSupply }} {{ saleDto.tokenSymbol
+                                                }}</el-col>
                                         </el-row>
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Sale currency :</el-col>
                                             <el-col :span="15">{{ saleDto.currency }}</el-col>
                                         </el-row>
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Sale creation fee :</el-col>
                                             <el-col :span="15">{{ saleDto.feeRate }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
-                                        <el-row v-show="saleDto.saleRate">
+                                        <el-row v-show="saleDto.saleRate" style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Sale Rate :</el-col>
                                             <el-col :span="15">{{ saleDto.saleRate }}</el-col>
                                         </el-row>
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Sale whitelist :</el-col>
                                             <el-col :span="15">
                                                 <!-- {{ saleDto.whitelistMembers }} -->
@@ -1262,7 +1269,7 @@ const title = computed(() => {
                                                     </el-button>
 
                                                     <el-dialog v-model="dialogTableVisible" title="Whilelist Table"
-                                                        style="width:600px;height: 570px;">
+                                                        style="width:600px;height: 570px;border-radius: 10px;">
                                                         <ul>
                                                             <el-scrollbar max-height="700px">
 
@@ -1294,50 +1301,55 @@ const title = computed(() => {
                                             </el-col>
                                         </el-row>
 
-                                        <el-row v-show="saleType != 1">
+                                        <el-row v-show="saleType != 1" style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Softcap :</el-col>
                                             <el-col :span="15">{{ saleDto.softCap }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
-                                        <el-row v-show="saleType != 1">
+                                        <el-row v-show="saleType != 1" style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">HardCap :</el-col>
                                             <el-col :span="15">{{ saleDto.hardCap }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Minimum buy :</el-col>
                                             <el-col :span="15">{{ saleDto.minimumBuy }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Maximum buy :</el-col>
                                             <el-col :span="15">{{ saleDto.maximumBuy }} {{ saleDto.currency }}</el-col>
                                         </el-row>
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Start Time :</el-col>
                                             <el-col :span="15">{{ new Date(saleDto.startTimestamp) }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">End Time :</el-col>
                                             <el-col :span="15">{{ new Date(saleDto.endTimestamp) }} </el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Liquidity cliffTime :</el-col>
                                             <el-col :span="15">{{ saleDto.cliffTime }} slots (about {{
-            dynamicalCliffTime }}
+                                                dynamicalCliffTime }}
                                                 minutes )</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Liquidity cliffAmountRate(%) :</el-col>
                                             <el-col :span="15">{{ saleDto.cliffAmountRate }}%</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Liquidity vestingPeriod :</el-col>
-                                            <el-col :span="5">{{ saleDto.vestingPeriod }} slots (about
+                                            <el-col :span="15">{{ saleDto.vestingPeriod }} slots (about
                                                 {{ dynamicalVestingPeriod }} minutes )</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Liquidity vestingIncrement :</el-col>
                                             <el-col :span="15">{{ saleDto.vestingIncrement }}%</el-col>
                                         </el-row>
@@ -1348,31 +1360,37 @@ const title = computed(() => {
                                             <el-col :span="15" style="">{{ saleDto.logoUrl }}</el-col>
                                         </el-row>
 
-                                        <el-row>
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">Website :</el-col>
                                             <el-col :span="15">{{ saleDto.website }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">facebook :</el-col>
                                             <el-col :span="15">{{ saleDto.facebook }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">github :</el-col>
                                             <el-col :span="15">{{ saleDto.github }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">twitter :</el-col>
                                             <el-col :span="15">{{ saleDto.twitter }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">telegram :</el-col>
                                             <el-col :span="15">{{ saleDto.telegram }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">discord :</el-col>
                                             <el-col :span="15">{{ saleDto.discord }}</el-col>
                                         </el-row>
-                                        <el-row>
+
+                                        <el-row style="overflow-wrap: break-word;">
                                             <el-col :span="9" class="wide4">reddit :</el-col>
                                             <el-col :span="15">{{ saleDto.reddit }}</el-col>
                                         </el-row>
@@ -1503,7 +1521,7 @@ const title = computed(() => {
         }
 
         .wide4 {
-            font-weight: 700;
+            // font-size: 15px;
         }
 
         .pagination-block {
